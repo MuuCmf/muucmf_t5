@@ -468,12 +468,12 @@
     }
 
     var ajaxRerurn = function(res){
-        if(res.status){
+        if(res.code){
             checkCan[obj.attr('name')] = 1;
-            check_form.success(res.info);
+            check_form.success(res.msg);
         }else{
             checkCan[obj.attr('name')] = 0;
-            check_form.error(res.info);
+            check_form.error(res.msg);
         }
     }
 

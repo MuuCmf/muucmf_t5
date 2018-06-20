@@ -58,6 +58,9 @@ package-lock.json
 
 # MuuCmf
 /ueditor
+/Conf/user.php
+/Conf/*.lock
+/Conf/common.php
 /Runtime
 /.hatccess
 

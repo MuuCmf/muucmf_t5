@@ -77,7 +77,7 @@ return array(
     '_MUUCMF_VERSION_' => 'MuuCmf主程序版本：',
     '_LIMIT_UPLOAD_' => '上传限制',
     '_MODIFY_HOW_TO_' => '如何修改',
-    '_USER_INCREASE_RECENT_' => '最近{$count_day}天用户增长数',
+    '_USER_INCREASE_RECENT_' => "最近{:count_day}天用户增长数",
     '_MEMBER_REG_TODAY_' => '当天新注册会员',
     '_STATISTICS_SET_' => '设置统计图',
     '_DISPLAY_DAYS_DEFAULT_' => '默认展示天数',

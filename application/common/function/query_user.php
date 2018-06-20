@@ -1,6 +1,4 @@
 <?php
-
-
 /**
  * 支持的字段有
  * member表中的所有字段，ucenter_member表中的所有字段
@@ -34,5 +32,5 @@ function write_query_user_cache($uid, $field, $value)
  */
 function clean_query_user_cache($uid, $field)
 {
-    model('Common/User')->clean_query_user_cache($uid, $field);
+    model('common/User')->clean_query_user_cache($uid, $field);
 }

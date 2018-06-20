@@ -70,7 +70,7 @@
 '_MUUCMF_VERSION_' =>' MuuCmf master program version:',
 '_LIMIT_UPLOAD_' =>' Upload limit',
 '_MODIFY_HOW_TO_' =>' How to modify',
-'_USER_INCREASE_RECENT_' =>' Number of users of {$count_day} days',
+'_USER_INCREASE_RECENT_' =>' Number of users of {:count_day} days',
 '_MEMBER_REG_TODAY_' =>' New member of the day',
 '_STATISTICS_SET_' =>' Set statistics',
 '_DISPLAY_DAYS_DEFAULT_' =>' Default display days',

@@ -83,11 +83,13 @@
                                 </div>
                             {/if}
 
-                            {volist name="regSwitch" id="regSwitch"}
-                                {switch name="regSwitch"}
+                            {volist name="regSwitch" id="vo"}
+
+                                {switch name="vo"}
+
                                     {case value="username"}
                                         <!--用户名注册-->
-                                        <div class="tab-pane  <if condition='$key eq 0'>active in</if>" id="username_reg">
+                                        <div class="tab-pane  {if condition='$key eq 0'}active in{/if}" id="username_reg">
                                             <div class="form-group">
                                                 <label for="username" class=".sr-only col-xs-12" style="display: none"></label>
                                                 <input type="text" id="username" class="form-control form_check input-lg new-input" check-type="Username" check-url="{:Url('ucenter/member/checkAccount')}"
@@ -102,7 +104,7 @@
                                     {/case}
                                     {case value="email"}
                                         <!--邮箱注册-->
-                                        <div class="tab-pane <if condition='$key eq 0'>active in</if>" id="email_reg">
+                                        <div class="tab-pane {if condition='$key eq 0'}active in{/if}" id="email_reg">
 
                                             <div class="form-group">
                                                 <label for="username" class=".sr-only col-xs-12" style="display: none"></label>
@@ -130,7 +132,7 @@
                                     {/case}
                                     {case value="mobile"}
                                         <!--手机注册-->
-                                        <div class="tab-pane <if condition='$key eq 0'>active in</if>" id="mobile_reg">
+                                        <div class="tab-pane {if condition='$key eq 0'}active in{/if}" id="mobile_reg">
 
                                             <div class="form-group">
                                                 <label for="username" class=".sr-only col-xs-12" style="display: none"></label>
@@ -258,14 +260,13 @@
                 return false;
 
                 function success(data) {
-                    if (data.status) {
-                        //toast.success(data.info, '温馨提示');
+                    if (data.code) {
+                        toast.success(data.msg, '温馨提示');
                         setTimeout(function () {
                             window.location.href = data.url
                         }, 10);
                     } else {
-                        toast.error(data.info, '温馨提示');
-                        //self.find(".Validform_checktip").text(data.info);
+                        toast.error(data.msg, '温馨提示');
                         //刷新验证码
                         $(".reloadverify").click();
                     }

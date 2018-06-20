@@ -3,9 +3,6 @@
 namespace app\api\controller;
 
 use app\common\controller\Api;
-use app\common\model\Area;
-use app\common\model\Version;
-use fast\Random;
 use think\Config;
 
 /**
@@ -24,25 +21,22 @@ class Common extends Api
 
     /**
      * 加载初始化
-     *
-     * @param string $version 版本号
      * @param string $lng 经度
      * @param string $lat 纬度
      */
     public function init()
     {
-        if ($version = $this->request->request('version')) {
+        if () {
             $lng = $this->request->request('lng');
             $lat = $this->request->request('lat');
             $content = [
                 'citydata'    => Area::getCityFromLngLat($lng, $lat),
-                'versiondata' => Version::check($version),
                 'uploaddata'  => Config::get('upload'),
                 'coverdata'   => Config::get("cover"),
             ];
             $this->success('', $content);
         } else {
-            $this->error(__('Invalid parameters'));
+            $this->error('error');
         }
     }
 

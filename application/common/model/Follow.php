@@ -1,23 +1,12 @@
 <?php
-/**
- * 所属项目 OnePlus.
- * 开发者: 陈一枭
- * 创建日期: 3/21/14
- * 创建时间: 10:17 AM
- * 版权所有 嘉兴想天信息科技有限公司(www.ourstu.com)
- */
+namespace app\common\Model;
 
-namespace Common\Model;
+use think\Model;
 
-
-use Think\Model;
-
-class FollowModel extends Model
+class Follow extends Model
 {
 
-    protected $_auto = array(
-        array('create_time', NOW_TIME, self::MODEL_INSERT));
-
+    protected $autoWriteTimestamp = true;
     /**关注
      * @param $uid
      * @return int|mixed
@@ -37,7 +26,7 @@ class FollowModel extends Model
 
         clean_query_user_cache($uid, 'fans');
         clean_query_user_cache(is_login(), 'following');
-        S('atUsersJson_' . is_login(), null);
+        cache('atUsersJson_' . is_login(), null);
         /**
          * @param $to_uids 接收消息的用户们
          * @param string $title 消息标题
@@ -49,8 +38,8 @@ class FollowModel extends Model
          * @param string $tpl 消息模板标识，对应各模块message_config.php中设置的消息模板
          */
         $user = query_user(array('id', 'nickname', 'space_url'));
-        $this->S($follow['who_follow'], $follow['follow_who'], null);
-        D('Message')->sendMessage($uid, L('_FANS_NUMBER_INCREASED_'), $user['nickname'] . L('_CONCERN_YOU_WITH_PERIOD_'), 'Ucenter/Index/index', array('uid' => is_login()),is_login(),'Ucenter');
+        $this->cache($follow['who_follow'], $follow['follow_who'], null);
+        model('Message')->sendMessage($uid, lang('_FANS_NUMBER_INCREASED_'), $user['nickname'] . lang('_CONCERN_YOU_WITH_PERIOD_'), 'Ucenter/Index/index', array('uid' => is_login()),is_login(),'Ucenter');
         return $this->add($follow);
     }
 
@@ -67,7 +56,7 @@ class FollowModel extends Model
         S('atUsersJson_' . is_login(), null);
         $user = query_user(array('id', 'nickname', 'space_url'));
 
-        D('Message')->sendMessage($uid, L('_NUMBER_OF_FANS_'), $user['nickname'] . L('_CANCEL_YOUR_ATTENTION_WITH_PERIOD_'), 'Ucenter/Index/index', array('uid' => is_login()),is_login(),'Ucenter');
+        D('Message')->sendMessage($uid, lang('_NUMBER_OF_FANS_'), $user['nickname'] . lang('_CANCEL_YOUR_ATTENTION_WITH_PERIOD_'), 'Ucenter/Index/index', array('uid' => is_login()),is_login(),'Ucenter');
 
 
         $this->S($follow['who_follow'], $follow['follow_who'], null);
@@ -176,38 +165,28 @@ class FollowModel extends Model
         if ($this->where($follow)->count() > 0) {
             return 0;
         }
-        $follow = $this->create($follow);
-
         clean_query_user_cache($follow_who, 'fans');
         clean_query_user_cache($who_follow, 'following');
-        S('atUsersJson_' . $who_follow, null);
-        /**
-         * @param $to_uid 接受消息的用户ID
-         * @param string $content 内容
-         * @param string $title 标题，默认为  您有新的消息
-         * @param $url 链接地址，不提供则默认进入消息中心
-         * @param $int $from_uid 发起消息的用户，根据用户自动确定左侧图标，如果为用户，则左侧显示头像
-         * @param int $type 消息类型，0系统，1用户，2应用
-         */
+        cache('atUsersJson_' . $who_follow, null);
+
         $user = query_user(array('id', 'nickname', 'space_url'), $who_follow);
         if ($invite) {
             if ($who_follow < $follow_who) {
-                $content = L('_INVITED_') . $user['nickname'] . L('_CONCERN_YOU_WITH_PERIOD_');
+                $content = lang('_INVITED_') . $user['nickname'] . lang('_CONCERN_YOU_WITH_PERIOD_');
             } else {
-                $content = L('_YOURE_INVITING_THE_USER_') . $user['nickname'] . L('_CONCERN_YOU_WITH_PERIOD_');
+                $content = lang('_YOURE_INVITING_THE_USER_') . $user['nickname'] . lang('_CONCERN_YOU_WITH_PERIOD_');
             }
         } else {
             if ($who_follow < $follow_who) {
-                $content = L('_SYSTEM_RECOMMENDED_USERS_') . $user['nickname'] . L('_CONCERN_YOU_WITH_PERIOD_');
+                $content = lang('_SYSTEM_RECOMMENDED_USERS_') . $user['nickname'] . lang('_CONCERN_YOU_WITH_PERIOD_');
             } else {
-                $content = L('_NEW_USER_') . $user['nickname'] . L('_CONCERN_YOU_WITH_PERIOD_');
+                $content = lang('_NEW_USER_') . $user['nickname'] . lang('_CONCERN_YOU_WITH_PERIOD_');
             }
         }
+        //发送消息
+        model('Message')->sendMessage($follow_who, lang('_FANS_NUMBER_INCREASED_'), $content, 'Ucenter/Index/index', array('uid' => $who_follow), $who_follow);
 
-
-        D('Message')->sendMessage($follow_who, L('_FANS_NUMBER_INCREASED_'), $content, 'Ucenter/Index/index', array('uid' => $who_follow), $who_follow);
-
-        return $this->add($follow);
+        return $this->save($follow);
     }
 
 } 

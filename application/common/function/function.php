@@ -333,13 +333,12 @@ function time_format($time = NULL, $format = 'Y-m-d H:i')
  * @param int $record_id 触发行为的记录id
  * @param int $user_id 执行行为的用户id
  * @return boolean
- * @author huajie <banhuajie@163.com>
  */
 function action_log($action = null, $model = null, $record_id = null, $user_id = null)
 {
     //参数检查
     if (empty($action) || empty($model) || empty($record_id)) {
-        return L('_PARAMETERS_CANT_BE_EMPTY_');
+        return lang('_PARAMETERS_CANT_BE_EMPTY_');
     }
     if (empty($user_id)) {
         $user_id = is_login();
@@ -347,6 +346,7 @@ function action_log($action = null, $model = null, $record_id = null, $user_id =
 
     //查询行为,判断是否执行
     $action_info = Db::name('Action')->getByName($action);
+
     if ($action_info['status'] != 1) {
         return lang('_THE_ACT_IS_DISABLED_OR_DELETED_');
     }
@@ -393,6 +393,7 @@ function action_log($action = null, $model = null, $record_id = null, $user_id =
         //执行行为
         $res = execute_action($rules, $action_info['id'], $user_id, $log_id);
     }
+
 }
 
 /**
@@ -518,7 +519,7 @@ function execute_action($rules = false, $action_id = null, $user_id = null, $log
     }
     if ($log_score) {
         cookie('score_tip', $log_score, 30);
-        M('ActionLog')->where(array('id' => $log_id))->setField('remark', array('exp', "CONCAT(remark,'" . $log_score . "')"));
+        Db::name('ActionLog')->where(array('id' => $log_id))->setField('remark', array('exp', "CONCAT(remark,'" . $log_score . "')"));
     }
     return $return;
 }
@@ -774,9 +775,9 @@ function real_strip_tags($str, $allowable_tags = "")
 function getLou($k)
 {
     $lou = array(
-        2 => L('_SOFA_'),
-        3 => L('_BENCH_'),
-        4 => L('_FLOOR_')
+        2 => lang('_SOFA_'),
+        3 => lang('_BENCH_'),
+        4 => lang('_FLOOR_')
     );
     !empty($lou[$k]) && $res = $lou[$k];
     empty($lou[$k]) && $res = $k . '楼';
@@ -805,7 +806,7 @@ function getScoreTip($before, $after)
     $score_change = $after - $before;
     $tip = '';
     if ($score_change) {
-        $tip = L('_INTEGRAL_') . ($score_change > 0 ? '加&nbsp;' . $score_change : '减&nbsp;' . $score_change) . ' 。';
+        $tip = lang('_INTEGRAL_') . ($score_change > 0 ? '加&nbsp;' . $score_change : '减&nbsp;' . $score_change) . ' 。';
     }
     return $tip;
 }
@@ -995,7 +996,11 @@ function get_data_field_id($map = null, $field = null, $table = null, $yesnoid =
         return $list;
     }
 }
-
+/**
+ * 验证码开关
+ * @param  [type] $open [description]
+ * @return [type]       [description]
+ */
 function check_verify_open($open)
 {
     $config = Config('VERIFY_OPEN');
@@ -1193,8 +1198,6 @@ function check_sms_hook_is_exist($driver){
 }
 
 
-
-
 function home_addons_url($url, $param=array(), $suffix = true, $domain = false)
 {
     $url = parse_url($url);
@@ -1235,7 +1238,7 @@ function render_picture_path($path)
 
 function get_area_name($id)
 {
-    return M('district')->where(array('id' => $id))->getField('name');
+    return Db::name('district')->where(array('id' => $id))->field('name')->find();
 }
 
 function get_all_module_lang($common_lang = array())
@@ -1265,24 +1268,6 @@ function get_all_module_lang($common_lang = array())
     return $lang;
 }
 
-/**
- * 获取当前移动端与桌面端的主题设置名称
- * @return [type] [description]
- */
-function muu_now_theme(){
-
-    if(MODULE_NAME!='Install'){
-        if(is_mobile()){
-            $now_theme =  D('Theme')->getThemeValue('_THEME_NOW_MTHEME');
-        }else{
-            $now_theme = D('Theme')->getThemeValue('_THEME_NOW_THEME');
-        }
-        return $now_theme;
-    }else{
-        return 'default';
-    }
-        
-}
 /**
  * 获取当前完整URL
  * @return [type] [description]
@@ -1342,12 +1327,3 @@ foreach($array as $item) {
 return false;   
 }
 
-/**
- * 系统用户非常规MD5加密方法
- * @param  string $str 要加密的字符串
- * @return string
- */
-function user_md5($str, $key = '')
-{
-    return '' === $str ? '' : md5(sha1($str) . $key);
-}

@@ -2,7 +2,7 @@
 
 namespace app\common\controller;
 
-use app\common\library\Auth;
+use muucmf\Auth;
 use think\Config;
 use think\exception\HttpResponseException;
 use think\exception\ValidateException;

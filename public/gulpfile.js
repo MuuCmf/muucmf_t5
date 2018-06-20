@@ -47,6 +47,12 @@ gulp.task('mod_js', function() {
     .pipe(uglify())
     .pipe(gulp.dest(dist));
 });
+// CSS文件直接copy
+gulp.task('css', function () {
+    gulp.src(src+'/**/css/**/*.css')
+    .pipe(copy())
+    .pipe(gulp.dest(dist));
+});
 // 图片文件直接copy
 gulp.task('images', function () {
     gulp.src(src+'/**/images/**/*')
@@ -77,4 +83,4 @@ gulp.task('server', function() {
     gulp.watch(src+'/**/css/*.css').on("change", reload);
 });
 // 监听事件
-gulp.task('default', ['scss', 'common_js', 'mod_js', 'images', 'lib', 'server'])
+gulp.task('default', ['scss', 'common_js', 'mod_js', 'css','images', 'lib', 'server'])

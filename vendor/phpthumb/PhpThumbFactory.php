@@ -1,5 +1,4 @@
 <?php
-namespace PhpThumbFactory;
 /**
  * PhpThumb Library Definition File
  * 

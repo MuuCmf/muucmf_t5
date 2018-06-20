@@ -1,50 +1,14 @@
 <?php
-use think\Db;
 
-class ActionLimit
-{
-    var $item = array();
-    var $state = true;
-    var $url;
-    var $info = '';
-    var $punish = array(
-        array('warning','警告并禁止'),
-        array('logout_account', '强制退出登陆'),
-        array('ban_account', '封停账户'),
-        array('ban_ip', '封IP'),
-    );
-
-    function __construct()
-    {
-        $this->url = '';
-        $this->info = '';
-        $this->state = true;
-    }
-
-    
-    /**
-     * ban_account  封停帐号
-     * @param $item
-     * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
-     */
-    function ban_account($item)
-    {
-        set_user_status($item['user_id'], 0);
-    }
-
-    function ban_ip($item,$val)
-    {
-       //TODO 进行封停IP的操作
-    }
-
-    function warning($item,$val){
-        $this->state = false;
-        $this->info = lang('_OPERATION_IS_FREQUENT_PLEASE_').$val['time_number'].get_time_unit($val['time_unit']).lang('_AND_THEN_');
-        $this->url = Url('index/index/index');
-    }
-}
-
-
+/**
+ * 检查行为限制
+ * @param  [type]  $action    [description]
+ * @param  [type]  $model     [description]
+ * @param  [type]  $record_id [description]
+ * @param  [type]  $user_id   [description]
+ * @param  boolean $ip        [description]
+ * @return [type]             [description]
+ */
 function check_action_limit($action = null, $model = null, $record_id = null, $user_id = null, $ip = false)
 {
     $obj = model('ActionLimit');
@@ -55,6 +19,7 @@ function check_action_limit($action = null, $model = null, $record_id = null, $u
     }
 
     $obj->checkOne($item);
+
     $return = array();
     if (!$obj->state) {
         $return['state'] = $obj->state;

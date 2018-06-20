@@ -6,7 +6,16 @@ use think\Db;
 
 class ActionLimit extends Model
 {
+    var $item = array();
     var $state = true;
+    var $url;
+    var $info = '';
+    var $punish = array(
+        array('warning','警告并禁止'),
+        array('logout_account', '强制退出登陆'),
+        array('ban_account', '封停账户'),
+        array('ban_ip', '封IP'),
+    );
 
     function __construct()
     {
@@ -16,6 +25,29 @@ class ActionLimit extends Model
     }
     protected $autoWriteTimestamp = true;
     
+
+    /**
+     * ban_account  封停帐号
+     * @param $item
+     * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
+     */
+    public function ban_account($item)
+    {
+        set_user_status($item['user_id'], 0);
+    }
+
+    public function ban_ip($item,$val)
+    {
+       //TODO 进行封停IP的操作
+    }
+
+    public function warning($item,$val){
+        $this->state = false;
+        $this->info = lang('_OPERATION_IS_FREQUENT_PLEASE_').$val['time_number'].get_time_unit($val['time_unit']).lang('_AND_THEN_');
+        $this->url = Url('index/index/index');
+    }
+
+
     public function addActionLimit($data)
     {
         $res = $this->add($data);
@@ -64,17 +96,16 @@ class ActionLimit extends Model
             }
         }
         unset($k, $v);
-        $time = time();
-        $map[] = ['action_list','like',$item['action']];
-        $map[] = ['status','=',1];
-        $limitList = Db::name('actionLimit')->where($map)->select();
-        dump('sdfsdf');exit;
+
+        $limitList = Db::name('actionLimit')->where('action_list','like','%'.$item['action'].'%')->where('status','=',1)->select();
+        
         $item['action_id'] = Db::name('action')->where(array('name' => $item['action']))->field('id')->find();
 
         $item['action_id'] = implode($item['action_id']);
         unset($item['action']);
+
         foreach ($limitList as &$val) {
-            $ago = get_time_ago($val['time_unit'], $val['time_number'], $time);
+            $ago = get_time_ago($val['time_unit'], $val['time_number'], time());
 
             $item['create_time'] = array('egt', $ago);
 

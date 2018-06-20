@@ -6,7 +6,7 @@
 namespace app\ucenter\controller;
 
 use think\Controller;
-use common\controller\Common;
+use app\common\controller\Common;
 
 
 class Base extends Common

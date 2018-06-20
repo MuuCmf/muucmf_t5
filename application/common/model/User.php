@@ -2,6 +2,7 @@
 namespace app\common\model;
 
 use think\Model;
+use think\Db;
 use app\ucenter\widget\UploadAvatar;
 /**
  * 会员模型
@@ -25,6 +26,7 @@ class User Extends Model
             return array('nickname', 'space_url', 'space_mob_url', 'avatar32', 'avatar64', 'avatar128', 'uid');
         }
 
+
         //如果fields不是数组，直接返回需要的值
         if (is_array($pFields)) {
             $fields = $pFields;
@@ -41,6 +43,9 @@ class User Extends Model
                 $fields[] = 'score1';
             }
         }
+
+
+
         return $fields;
 
     }
@@ -107,8 +112,8 @@ class User Extends Model
      */
     public function query_user($pFields = null, $uid = 0)
     {
-        
         $fields = $this->getFields($pFields);//需要检索的字段
+        
         $uid = (intval($uid) != 0 ? $uid : get_uid());//用户UID
         //获取缓存过的字段，尽可能在此处命中全部数据
 
@@ -128,7 +133,6 @@ class User Extends Model
         $user_data = $this->getPinyin($fields, $user_data);
         //如果全部命中，则直接返回数据
 
-
         if (array_intersect(array('score','score1'), $pFields)) {
             $user_data['score'] = $user_data['score1'];
         }
@@ -139,7 +143,6 @@ class User Extends Model
         $user_data = $this->handleTitle($uid, $fields, $user_data);
         //获取头像Avatar数据
         $user_data = $this->getAvatars($user_data, $fields, $uid);
-        //$this->debug($user_data, $fields);
         
         $user_data = $this->getUrls($fields, $uid, $user_data);
 
@@ -147,23 +150,23 @@ class User Extends Model
 
         $user_data = $this->getExpandInfo($fields, $uid, $user_data);
 
-        //粉丝数、关注数、微博数
+        //粉丝数、关注数
         if (in_array('fans', $fields)) {
-            $user_data['fans'] = Model('Follow')->where('follow_who=' . $uid)->count();
+            $user_data['fans'] = Db::name('Follow')->where('follow_who=' . $uid)->count();
             $this->write_query_user_cache($uid, 'fans', $user_data['fans']);
         }
         if (in_array('following', $fields)) {
-            $user_data['following'] = M('Follow')->where('who_follow=' . $uid)->count();
+            $user_data['following'] = Db::name('Follow')->where('who_follow=' . $uid)->count();
             $this->write_query_user_cache($uid, 'following', $user_data['following']);
         }
         //是否关注、是否被关注
         if (in_array('is_following', $fields)) {
-            $follow = model('Follow')->where(array('who_follow' => get_uid(), 'follow_who' => $uid))->find();
+            $follow = Db::name('Follow')->where(array('who_follow' => get_uid(), 'follow_who' => $uid))->find();
             $user_data['is_following'] = $follow ? true : false;
             $this->write_query_user_cache($uid, 'is_following', $user_data['is_following']);
         }
         if (in_array('is_followed', $fields)) {
-            $follow = model('Follow')->where(array('who_follow' => $uid, 'follow_who' => get_uid()))->find();
+            $follow = Db::name('Follow')->where(array('who_follow' => $uid, 'follow_who' => get_uid()))->find();
             $user_data['is_followed'] = $follow ? true : false;
             $this->write_query_user_cache($uid, 'is_followed', $user_data['is_following']);
         }
@@ -185,7 +188,7 @@ class User Extends Model
         if ($alias === false) {
             //没有缓存
             $alias = '';
-            $follow = model('Common/Follow')->getFollow(get_uid(), $uid);//获取关注情况
+            $follow = model('common/Follow')->getFollow(get_uid(), $uid);//获取关注情况
             if ($follow && $follow['alias'] != '') {//已关注
                 $alias = $follow['alias'];
             }
@@ -208,16 +211,15 @@ class User Extends Model
      * @param $uid
      * @param $field
      */
-    function clean_query_user_cache($uid, $field)
+    public function clean_query_user_cache($uid, $field)
     {
         if (is_array($field)) {
-            foreach ($field as $field_item) {
-                cache("query_user_{$uid}_{$field_item}", null);
+            foreach ($field as $item) {
+                cache("query_user_{$uid}_{$item}", NULL);
             }
         } else {
-            cache("query_user_{$uid}_{$field}", null);
+            cache("query_user_{$uid}_{$field}", NULL);
         }
-
     }
 
     /**
@@ -295,9 +297,9 @@ class User Extends Model
      */
     public function getSplittedFieldsValue($fields, $uid)
     {
-//获取两张用户表格中的所有字段
-        $homeFields = Model('Member')->getDBFields();
-        $ucenterFields = Model('UcenterMember')->getDBFields();
+        //获取两张用户表格中的所有字段
+        $homeFields = model('Member')->getDBFields();
+        $ucenterFields = model('UcenterMember')->getDBFields();
 
         //分析每个表格分别要读取哪些字段
         list($avatarFields, $homeFields, $ucenterFields) = $this->getSplittedFields($fields, $homeFields, $ucenterFields);
@@ -340,11 +342,10 @@ class User Extends Model
                 }
                 $avatars[$e] = $avatarUrl;
             }
-
+            //dump($avatars);exit;
             $user_data = array_merge($user_data, $avatars);
             $this->write_query_user_cache($uid, 'avatars', $avatars);
             $this->popGotFields($fields, $avatarFields);
-           // dump($user_data);
         }
 
         return $user_data;
@@ -361,8 +362,8 @@ class User Extends Model
     //获取个人中心地址
         $spaceUrlResult = array();
         if (array_intersect(array('space_url', 'space_link', 'space_mob_url'), $fields)) {
-            $urls['space_url'] = Url('Ucenter/Index/index', array('uid' => $uid));
-            $urls['space_link'] = '<a ucard="' . $uid . '" target="_blank" href="' . U('Ucenter/Index/index', array('uid' => $uid)) . '">' . $result['nickname'] . '</a>';
+            $urls['space_url'] = Url('ucenter/Index/index', array('uid' => $uid));
+            $urls['space_link'] = '<a ucard="' . $uid . '" target="_blank" href="' . Url('ucenter/Index/index', array('uid' => $uid)) . '">' . $result['nickname'] . '</a>';
             $result = array_merge($result, $urls);
             $this->write_query_user_cache($uid, 'urls', $urls);
         }
@@ -412,10 +413,10 @@ class User Extends Model
     {
         //获取用户头衔链接
         if (in_array('rank_link', $fields)) {
-            $rank_List = model('rank_user')->where(array('uid' => $uid, 'status' => 1))->select();
+            $rank_List = Db::name('rank_user')->where(array('uid' => $uid, 'status' => 1))->select();
             $num = 0;
             foreach ($rank_List as &$val) {
-                $rank = db('rank')->where('id=' . $val['rank_id'])->find();
+                $rank = Db::name('rank')->where('id=' . $val['rank_id'])->find();
                 $val['title'] = $rank['title'];
                 $val['logo_url'] = get_pic_src(db('picture')->where('id=' . $rank['logo'])->field('path')->getField('path'));
                 $val['label_content'] = $rank['label_content'];
@@ -449,15 +450,15 @@ class User Extends Model
     {
         if (in_array('expand_info', $fields)) {
             $map['status'] = 1;
-            $field_group = db('field_group')->where($map)->select();
+            $field_group = Db::name('field_group')->where($map)->select();
             $field_group_ids = array_column($field_group, 'id');
             $map['profile_group_id'] = array('in', $field_group_ids);
-            $fields_list = db('field_setting')->where($map)->getField('id,field_name,form_type,visiable');
+            $fields_list = Db::name('field_setting')->where($map)->getField('id,field_name,form_type,visiable');
             $fields_list = array_combine(array_column($fields_list, 'field_name'), $fields_list);
             $map_field['uid'] = $uid;
             foreach ($fields_list as $key => $val) {
                 $map_field['field_id'] = $val['id'];
-                $field_data = db('field')->where($map_field)->getField('field_data');
+                $field_data = Db::name('field')->where($map_field)->value('field_data');
                 if ($field_data == null || $field_data == '') {
                     unset($fields_list[$key]);
                 } else {

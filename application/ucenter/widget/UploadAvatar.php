@@ -4,6 +4,7 @@ namespace app\ucenter\widget;
 
 require_once(VENDOR_PATH.'PHPImageWorkshop/ImageWorkshop.php');
 use think\Controller;
+use think\Db;
 use PHPImageWorkshop\Core\ImageWorkshopLayer;
 use PHPImageWorkshop\ImageWorkshop;
 
@@ -13,13 +14,13 @@ class UploadAvatar extends Controller
     {
         $this->assign('user', query_user(array('avatar256', 'avatar128', 'avatar64','avatar32','avatar512'), $uid));
         $this->assign('uid', $uid);
-        $this->display(T('Application://Ucenter@Widget/uploadavatar'));
+        return $this->fetch('ucenter@widget/uploadavatar');
     }
 
 
     public function getAvatar($uid = 0, $size = 256)
     {
-        $avatar = db('avatar')->where(array('uid' => $uid, 'status' => 1, 'is_temp' => 0))->find();
+        $avatar = Db::name('avatar')->where(array('uid' => $uid, 'status' => 1, 'is_temp' => 0))->find();
         if ($avatar) {
 
             if($avatar['driver'] == 'local'){
@@ -78,10 +79,10 @@ class UploadAvatar extends Controller
             }
         }else{//角色没有默认
             if ($size != 0) {
-                $default_avatar = "./static/common/images/default_avatar.jpg";
+                $default_avatar = "/static/common/images/default_avatar.jpg";
                 $path=$this->getImageUrlByPath($default_avatar, $size, false);
             } else {
-                $path= get_pic_src("./static/commonPublic/images/default_avatar.jpg");
+                $path= get_pic_src("/static/common/images/default_avatar.jpg");
             }
         }
         return $path;
@@ -125,9 +126,5 @@ class UploadAvatar extends Controller
             $new_img = $class->crop($path,$crop);
             return $new_img;
         }
-
-
     }
-
-
 } 

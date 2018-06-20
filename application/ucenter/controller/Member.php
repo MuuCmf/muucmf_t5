@@ -4,9 +4,10 @@
  */
 namespace app\ucenter\controller;
 
-use common\Model\FollowModel;
 use think\Controller;
-use user\api\UserApi;
+use think\Db;
+use app\ucenter\model\UcenterMember;
+use app\common\Model\FollowModel;
 
 //require_once APP_PATH . 'user/config.php';
 
@@ -23,13 +24,13 @@ class Member extends Controller
     public function register()
     {
         //获取参数
-        $aUsername = $username = input('post.username', '', 'op_t');
-        $aNickname = input('post.nickname', '', 'op_t');
-        $aPassword = input('post.password', '', 'op_t');
-        $aVerify = input('post.verify', '', 'op_t');
-        $aRegVerify = input('post.reg_verify', '', 'op_t');
-        $aRegType = input('post.reg_type', '', 'op_t');
-        $aStep = input('get.step', 'start', 'op_t');
+        $aUsername = $username = input('post.username', '', 'text');
+        $aNickname = input('post.nickname', '', 'text');
+        $aPassword = input('post.password', '', 'text');
+        $aVerify = input('post.verify', '', 'text');
+        $aRegVerify = input('post.reg_verify', '', 'text');
+        $aRegType = input('post.reg_type', '', 'text');
+        $aStep = input('get.step', 'start', 'text');
         $aRole = input('post.role', 0, 'intval');
 
         if (!modC('REG_SWITCH', '', 'USERCONFIG')) {
@@ -38,7 +39,7 @@ class Member extends Controller
         if (request()->isPost()) {
             //注册用户
             $return = check_action_limit('reg', 'ucenter_member', 1, 1, true);
-            dump($return);exit;
+            
             if ($return && !$return['state']) {
                 $this->error($return['info'], $return['url']);
             }
@@ -78,25 +79,32 @@ class Member extends Controller
             }
 
             /* 注册用户 */
-            $ucenterMemberModel=model('UCenterMember');
-            $uid =$ucenterMemberModel ->register($aUsername, $aNickname, $aPassword, $email, $mobile, $aUnType);
-            if (0 < $uid) { //注册成功
 
+            $ucenterMemberModel = new UCenterMember;
+            $uid =$ucenterMemberModel->register($aUsername, $aNickname, $aPassword, $email, $mobile, $aUnType);
+            if (0 < $uid) { //注册成功
+                //echo $uid;exit;
                 $this->initInviteUser($uid, $aCode, $aRole);
-                $ucenterMemberModel->initRoleUser($aRole, $uid); //初始化角色用户
+
+                model('Member')->initRoleUser($aRole, $uid); //初始化角色用户
+
                 if (modC('EMAIL_VERIFY_TYPE', 0, 'USERCONFIG') == 1 && $aUnType == 2) {
                     set_user_status($uid, 3);
-                    $verify = D('Verify')->addVerify($email, 'email', $uid);
+                    $verify = model('Verify')->addVerify($email, 'email', $uid);
                     $res = $this->sendActivateEmail($email, $verify, $uid); //发送激活邮件
                     // $this->success('注册成功，请登录邮箱进行激活');
                 }
 
                 $uid = $ucenterMemberModel->login($username, $aPassword, $aUnType); //通过账号密码取到uid
-                model('Member')->login($uid, false, $aRole); //登陆
-                
+
+                $res = model('Member')->login($uid, false, $aRole); //登陆
+                //dump($res);exit;
                 //未设置启用任何注册后步骤操作就跳过
                 $step_config = modC('REG_STEP','','USERCONFIG');
-                $step_config = json_decode($step_config,ture);
+                if($step_config){
+                   $step_config = json_decode($step_config,ture); 
+                }
+                
                 if(empty($step_config[1]['items'])){
                     Db::name('UserRole')->where(array('uid' => $uid))->setField('step', 'finish');
                     $step_url = Url('index/Index/index');
@@ -104,7 +112,7 @@ class Member extends Controller
                     //构建注册步骤URL
                     $step_url = Url('Ucenter/member/step', array('step' => get_next_step('start')));
                 }
-                $this->success('', $step_url);
+                $this->success('注册成功', $step_url);
             } else { //注册失败，显示错误信息
                 $this->error($this->showRegError($uid));
             }
@@ -113,7 +121,7 @@ class Member extends Controller
             if (is_login()) {
                 redirect(Url('index/Index/index'));
             }
-            $this->checkRegisterType();
+            $regType = $this->checkRegisterType();
             $aType = input('get.type', '', 'op_t');
             $regSwitch = modC('REG_SWITCH', '', 'USERCONFIG');
             $regSwitch = explode(',', $regSwitch);
@@ -189,12 +197,12 @@ class Member extends Controller
 
     public function upRole()
     {
-        $aRoleId = I('role_id', 0, 'intval');
+        $aRoleId = input('role_id', 0, 'intval');
         if (IS_POST) {
             $uid = is_login();
             $result['status'] = 0;
             if ($uid > 0 && $aRoleId != get_login_role()) {
-                $aCode = I('post.code', '', 'op_t');
+                $aCode = input('post.code', '', 'text');
                 if (!mb_strlen($aCode)) {
                     $result['info'] = lang('_INFO_PLEASE_INPUT_').lang('_EXCLAMATION_');
                     $this->ajaxReturn($result);
@@ -242,7 +250,7 @@ class Member extends Controller
     public function login()
     {
         if (request()->isPost()) {
-            $result = controller('Ucenter/Login', 'Widget')->doLogin();
+            $result = controller('ucenter/Login', 'widget')->doLogin();
 
             if ($result['status']) {
                 $this->success($result['info'], Input('post.from', Url('index/index/index'), 'text'));
@@ -271,7 +279,7 @@ class Member extends Controller
     {
         if (is_login()) {
             model('Member')->logout();
-            $this->success(lang('_SUCCESS_LOGOUT_').lang('_EXCLAMATION_'), Url('member/login'));
+            $this->success(lang('_SUCCESS_LOGOUT_').lang('_EXCLAMATION_'), Url('index/Index/index'));
         } else {
             $this->redirect('member/login');
         }
@@ -664,17 +672,16 @@ class Member extends Controller
 
     /**
      * checkAccount  ajax验证用户帐号是否符合要求
-     * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
      */
     public function checkAccount()
     {
-        $aAccount = I('post.account', '', 'op_t');
-        $aType = I('post.type', '', 'op_t');
+        $aAccount = input('post.account', '', 'text');
+        $aType = input('post.type', '', 'text');
         if (empty($aAccount)) {
             $this->error(lang('_EMPTY_CANNOT_').lang('_EXCLAMATION_'));
         }
         check_username($aAccount, $email, $mobile, $aUnType);
-        $mUcenter = UCenterMember();
+        $mUcenter = new UCenterMember;
         switch ($aType) {
             case 'username':
                 empty($aAccount) && $this->error(lang('_ERROR_USERNAME_FORMAT_').lang('_EXCLAMATION_'));
@@ -684,7 +691,7 @@ class Member extends Controller
                 }
 
 
-                $id = $mUcenter->where(array('username' => $aAccount))->getField('id');
+                $id = $mUcenter->where(array('username' => $aAccount))->value('id');
                 if ($id) {
                     $this->error(lang('_ERROR_USERNAME_EXIST_2_'));
                 }
@@ -702,7 +709,7 @@ class Member extends Controller
 
                 $id = $mUcenter->where(array('email' => $email))->getField('id');
                 if ($id) {
-//                    $this->error(lang('_ERROR_EMAIL_LENGTH_LIMIT_'));
+
                     $this->error(lang('_ERROR_EMAIL_EXIST_'));
                 }
                 break;
@@ -723,7 +730,7 @@ class Member extends Controller
      */
     public function checkNickname()
     {
-        $aNickname = I('post.nickname', '', 'op_t');
+        $aNickname = input('post.nickname', '', 'text');
 
         if (empty($aNickname)) {
             $this->error(lang('_EMPTY_CANNOT_').lang('_EXCLAMATION_'));
@@ -734,8 +741,8 @@ class Member extends Controller
             $this->error(lang('_ERROR_NICKNAME_LENGTH_11_').modC('NICKNAME_MIN_LENGTH',2,'USERCONFIG').'-'.modC('NICKNAME_MAX_LENGTH',32,'USERCONFIG').lang('_ERROR_USERNAME_LENGTH_2_'));
         }
 
-        $memberModel = D('member');
-        $uid = $memberModel->where(array('nickname' => $aNickname))->getField('uid');
+        $memberModel = model('member');
+        $uid = $memberModel->where(array('nickname' => $aNickname))->value('uid');
         if ($uid) {
             $this->error(lang('_ERROR_NICKNAME_EXIST_'));
         }
@@ -927,7 +934,7 @@ class Member extends Controller
     private function initInviteUser($uid = 0, $code = '', $role = 0)
     {
         if ($code != '') {
-            $inviteModel = D('Ucenter/Invite');
+            $inviteModel = model('ucenter/Invite');
             $invite = $inviteModel->getByCode($code);
             $data['inviter_id'] = abs($invite['uid']);
             $data['uid'] = $uid;

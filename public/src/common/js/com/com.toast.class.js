@@ -49,7 +49,7 @@ var toast = {
      * @param text
      */
     showLoading: function () {
-        $('body').append('<div class="big_loading"><img src="static/common/images/big_loading.gif"/></div>');
+        $('body').append('<div class="big_loading"><img src="/static/common/images/big_loading.gif"/></div>');
     },
     /**
      * 隐藏loading

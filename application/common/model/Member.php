@@ -3,8 +3,6 @@ namespace app\common\model;
 
 use think\Model;
 use think\Db;
-use app\user\api\UserApi;
-
 
 /**
  * 用户基础模型
@@ -96,21 +94,27 @@ class Member extends Model
         return true;
     }
     /**
-     * 注册用户
+     * 注册用户资料
      * @param  string $nickname [description]
      * @return [type]           [description]
      */
     public function registerMember($nickname = '')
     {
         /* 在当前应用中注册用户 */
-        if ($user = $this->create(array('nickname' => $nickname, 'status' => 1))) {
-            $uid = $this->add($user);
-            if (!$uid) {
-                $this->error = L('_THE_FOREGROUND_USER_REGISTRATION_FAILED_PLEASE_TRY_AGAIN_WITH_EXCLAMATION_');
+        $user = [
+            'nickname' => $nickname,
+            'status' => 1
+        ];
+        $this->nickname = $nickname;
+        $this->status   = 1;
+        if ($res = $this->save()) {
+            // $this->uid;主键ID;
+            if (!$res) {
+                $this->error = lang('_THE_FOREGROUND_USER_REGISTRATION_FAILED_PLEASE_TRY_AGAIN_WITH_EXCLAMATION_');
                 return false;
             }
-            $this->initFollow($uid);
-            return $uid;
+            $res_follow = $this->initFollow($this->uid);
+            return $this->uid;
         } else {
             return $this->getError(); //错误详情见自动验证注释
         }
@@ -127,7 +131,8 @@ class Member extends Model
     public function login($uid, $remember = false, $role_id = 0)
     {
         /* 检测是否在当前应用注册 */
-        $user = $this->field(true)->find($uid);
+        $user = $this->find($uid);
+
         if ($role_id != 0) {
             $user['last_login_role'] = $role_id;
         } else {
@@ -138,9 +143,9 @@ class Member extends Model
         if ($user['status'] == 3 /*判断是否激活*/) {
             header('Content-Type:application/json; charset=utf-8');
             $data['status'] = 1;
-            $data['url'] = Url('Ucenter/Member/activate');
+            $data['url'] = Url('ucenter/Member/activate');
 
-            if (IS_AJAX) {
+            if (request()->isAjax()) {
                 exit(json_encode($data));
             } else {
                 redirect($data['url']);
@@ -148,7 +153,7 @@ class Member extends Model
         }
 
         if (1 != $user['status']) {
-            $this->error = L('_USERS_ARE_NOT_ACTIVATED_OR_DISABLED_WITH_EXCLAMATION_'); //应用级别禁用
+            $this->error = lang('_USERS_ARE_NOT_ACTIVATED_OR_DISABLED_WITH_EXCLAMATION_'); //应用级别禁用
             return false;
         }
         
@@ -157,23 +162,11 @@ class Member extends Model
         //挂载登录成功后钩子
         hook('Login_after');
         //记录行为
+        
         action_log('user_login', 'member', $uid, $uid);
         return true;
     }
 
-    /**
-     * 注销当前用户
-     * @return void
-     */
-    public function logout()
-    {
-        session('_AUTH_LIST_' . get_uid() . '1', null);
-        session('_AUTH_LIST_' . get_uid() . '2', null);
-        session('user_auth', null);
-        session('user_auth_sign', null);
-
-        cookie('MUU_LOGGED_USER', NULL);
-    }
 
     /**
      * 自动登录用户
@@ -226,6 +219,21 @@ class Member extends Model
             cookie('MUU_LOGGED_USER', $this->jiami($this->change() . ".{$user['uid']}.{$token}"), $expire);
         }
     }
+
+    /**
+     * 注销当前用户
+     * @return void
+     */
+    public function logout()
+    {
+        session('_AUTH_LIST_' . get_uid() . '1', null);
+        session('_AUTH_LIST_' . get_uid() . '2', null);
+        session('user_auth', null);
+        session('user_auth_sign', null);
+
+        cookie('MUU_LOGGED_USER', NULL);
+    }
+
     /**
      * 通用用户授权判断
      * 增加微信网页判断
@@ -360,24 +368,51 @@ class Member extends Model
     }
 
     /**
+     * 初始化角色用户信息
+     * @param $role_id
+     * @param $uid
+     * @return bool
+     * @author 郑钟良<zzl@ourstu.com>
+     */
+    public  function initRoleUser($role_id = 0, $uid)
+    {
+
+        $role = Db::name('role')->where(array('id' => $role_id))->find();
+        $user_role = array('uid' => $uid, 'role_id' => $role_id, 'step' => "start");
+        if ($role['audit']) { //该角色需要审核
+            $user_role['status'] = 2; //未审核
+        } else {
+            $user_role['status'] = 1;
+        }
+        $result = Db::name('UserRole')->insert($user_role);
+        if (!$role['audit']) {
+            //该角色不需要审核
+            $this->initUserRoleInfo($role_id, $uid);
+        }
+        $this->initDefaultShowRole($role_id, $uid);
+
+        return $result;
+    }
+    /**
      * 设置角色用户默认基本信息
      * @param $role_id
      * @param $uid
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function initUserRoleInfo($role_id, $uid)
     {
-        $roleModel = D('Role');
-        $roleConfigModel = D('RoleConfig');
-        $authGroupAccessModel = D('AuthGroupAccess');
-        D('UserRole')->where(array('role_id' => $role_id, 'uid' => $uid))->setField('init', 1);
+        //$roleModel = Db::name('Role');
+        //$roleConfigModel = Db::name('RoleConfig');
+        //$authGroupAccessModel = Db::name('AuthGroupAccess');
+
+        Db::name('UserRole')->where(array('role_id' => $role_id, 'uid' => $uid))->setField('init', 1);
+
         //默认用户组设置
-        $role = $roleModel->where(array('id' => $role_id))->find();
+        $role = Db::name('Role')->where(array('id' => $role_id))->find();
         if ($role['user_groups'] != '') {
             $role = explode(',', $role['user_groups']);
 
             //查询已拥有用户组
-            $have_user_group_ids = $authGroupAccessModel->where(array('uid' => $uid))->select();
+            $have_user_group_ids = Db::name('AuthGroupAccess')->where(array('uid' => $uid))->select();
             $have_user_group_ids = array_column($have_user_group_ids, 'group_id');
             //查询已拥有用户组 end
 
@@ -390,13 +425,13 @@ class Member extends Model
                 }
             }
             unset($val);
-            $authGroupAccessModel->addAll($authGroupAccess_list);
+            Db::name('AuthGroupAccess')->insertAll($authGroupAccess_list);
         }
         //默认用户组设置 end
 
         $map['role_id'] = $role_id;
         $map['name'] = array('in', array('score', 'rank'));
-        $config = $roleConfigModel->where($map)->select();
+        $config = Db::name('RoleConfig')->where($map)->select();
         $config = array_combine(array_column($config, 'name'), $config);
 
 
@@ -424,7 +459,6 @@ class Member extends Model
             $ranks = explode(',', $config['rank']['value']);
             if (count($ranks)) {
                 //查询已拥有头衔
-                $rankUserModel = D('RankUser');
                 $have_rank_ids = $rankUserModel->where(array('uid' => $uid))->select();
                 $have_rank_ids = array_column($have_rank_ids, 'rank_id');
                 //查询已拥有头衔 end
@@ -443,7 +477,7 @@ class Member extends Model
                     }
                 }
                 unset($val);
-                $rankUserModel->addAll($rank_user_list);
+                Db::name('RankUser')->insertAll($rank_user_list);
             }
         }
         //默认头衔设置 end
@@ -452,13 +486,11 @@ class Member extends Model
     //默认显示哪一个角色的个人主页设置
     public function initDefaultShowRole($role_id, $uid)
     {
-        $userRoleModel = D('UserRole');
-
-        $roles = $userRoleModel->where(array('uid' => $uid, 'status' => 1, 'role_id' => array('neq', $role_id)))->select();
+        $roles = Db::name('UserRole')->where(array('uid' => $uid, 'status' => 1, 'role_id' => array('neq', $role_id)))->select();
         if (!count($roles)) {
             $data['show_role'] = $role_id;
             //执行member表默认值设置
-            $this->where(array('uid' => $uid))->save($data);
+            $this->where(array('uid' => $uid))->update($data);
         }
     }
     //默认显示哪一个角色的个人主页设置 end
@@ -559,11 +591,15 @@ class Member extends Model
         }
         return $change;
     }
-
+    /**
+     * 初始关注用户
+     * @param  integer $uid [description]
+     * @return [type]       [description]
+     */
     private function initFollow($uid = 0)
     {
         if ($uid != 0) {
-            $followModel = model('Common/Follow');
+            $followModel = model('common/Follow');
             $follow = modC('NEW_USER_FOLLOW', '', 'USERCONFIG');
             $fans = modC('NEW_USER_FANS', '', 'USERCONFIG');
             $friends = modC('NEW_USER_FRIENDS', '', 'USERCONFIG');

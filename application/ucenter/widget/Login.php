@@ -3,6 +3,7 @@ namespace app\ucenter\widget;
 
 use think\Controller;
 use think\Db;
+use app\ucenter\model\UcenterMember;
 
 class Login extends Controller
 {
@@ -10,7 +11,7 @@ class Login extends Controller
     {
         if ($type != "quickLogin") {
             if (is_login()) {
-                redirect(Url('Index/Index/index'));
+                redirect(Url('index/Index/index'));
             }
         }
         $this->assign('login_type', $type);
@@ -38,16 +39,17 @@ class Login extends Controller
             }
         }
 
-        /* 调用UC登录接口登录 */
+        /* 根据type或用户名来判断注册使用的是用户名、邮箱或者手机 */
         check_username($aUsername, $email, $mobile, $aUnType);
         //echo $aUnType;exit;
         if (!check_reg_type($aUnType)) {
             $res['info']=lang('_INFO_TYPE_NOT_OPENED_').lang('_PERIOD_');
         }
-
+        //用户登录认证
         $uid = model('UcenterMember')->login($username, $aPassword, $aUnType);
+
         if (0 < $uid) { //登录成功
-            /* 登录用户 */
+            
             $Member = model('Member');
             $args['uid'] = $uid;
             $args = array('uid'=>$uid,'nickname'=>$username);
@@ -55,19 +57,9 @@ class Login extends Controller
 
             if ($Member->login($uid, $aRemember == 1)) { //登录用户
                 //TODO:跳转到登录前页面
-                //echo $uid;exit;
-                $html_uc = '';
-                //if (UC_SYNC && $uid != 1) {
-                    //include_once './api/uc_client/client.php';
-                    //同步登录到UC
-                    $ref = Db::name('ucenter_user_link')->where(array('uid' => $uid))->find();
-                    //$html_uc = uc_user_synlogin($ref['uc_uid']);
-                //}
-                $html = $html_uc;
                 $res['status']=1;
-                $res['info']=$html;
+                $res['info']=lang('_WELCOME_RETURN_');
                 $res['uid']=$uid;
-                //$this->success($html, get_nav_url(C('AFTER_LOGIN_JUMP_URL')));
             } else {
                 $res['status']=0;
                 $res['info']=$Member->getError();

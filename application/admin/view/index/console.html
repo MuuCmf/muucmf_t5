@@ -1,0 +1,327 @@
+{extend name="common/main_iframe"/}
+{block name="style"}
+
+{/block}
+
+{block name="body"}
+
+    <div class="index-content-box">
+        <div class="">
+            <div class="count clearfix">
+                <div class="col-xs-3 text-center">
+                    <div class="small-box bg-green">
+                        <div class="inner">
+                          <h3>{$count.today_action_log}</h3>
+                          <p>{:lang('_USER_ACTION_TODAY_')}</p>
+                        </div>
+                        <div class="small-icon-box">
+                            <i class="icon icon-tasks"></i>
+                        </div>
+                        <a href="{:Url('action/actionlog')}" class="small-box-footer">
+                            更多 <i class="icon-circle-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-xs-3 text-center">
+                    <div class="small-box bg-aqua">
+                        <div class="inner">
+                          <h3>{$count.today_user} </h3>
+                          <p>{:lang('_USER_INCREASE_TODAY_')}</p>
+                        </div>
+                        <div class="small-icon-box">
+                            <i class="icon icon-user"></i>
+                        </div>
+                        <a href="{:Url('user/index')}" class="small-box-footer">
+                            更多 <i class="icon-circle-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-xs-3 text-center">
+                    <div class="small-box bg-yellow">
+                        <div class="inner">
+                          <h3>{$count.total_user} </h3>
+                          <p>{:lang('_USER_COUNT_')}</p>
+                        </div>
+                        <div class="small-icon-box">
+                            <i class="icon icon-bar-chart-alt"></i>
+                        </div>
+                        <a href="{:Url('user/index')}" class="small-box-footer">
+                            更多 <i class="icon-circle-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-xs-3 text-center">
+                    <div class="small-box bg-red">
+                        <div class="inner">
+                          <h3>{$count.now_inline}</h3>
+                          <p>{:lang('_USER_ONLINE_')}</p>
+                        </div>
+                        <div class="small-icon-box">
+                            <i class="icon icon-group"></i>
+                        </div>
+                        <a href="{:Url('count/nowuserlist')}" class="small-box-footer">
+                            更多 <i class="icon-circle-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <div class="index-content-box">
+
+        <div class="with-padding-lg">
+            <div class="count clearfix">
+                {include file="index/_count_file"/}
+
+                <div class="col-xs-6 text-center">
+                    <a class="with-padding-lg bg-info index-block-box" target="_blank" href="http://www.muucmf.cn/muucmf/index/document.html">
+                        <i class="icon-book"></i> {:lang('_DOCUMENT_CENTER_')}</a>
+                </div>
+                <div class="col-xs-6 text-center">
+                    <a class="with-padding-lg bg-warning index-block-box" target="_blank" href="http://www.muucmf.cn/forum">
+                        <i class="icon-chrome"></i> {:lang('_OFFICIAL_GROUP_')}
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="with-padding-lg">
+            <div class="col-xs-12">
+                <div class="bd">
+                <div class="count_common_box">
+                    <div class="portlet-title">
+                        <div class="caption text-center">
+                            <span class="caption-subject">系统信息</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+                        <table class="table table-bordered table-striped ">
+                            <tr>
+                                <th>{:lang('_SERVER_OS_')}</th>
+                                <td>{$Think.const.PHP_OS}</td>
+                            </tr>
+                            <tr>
+                                <th>{:lang('_THINKPHP_VERSION_')}</th>
+                                <td>{$Think.VERSION}</td>
+                            </tr>
+                            <tr>
+                                <th>{:lang('_RUNTIME_ENVIR_')}</th>
+                                <td>{$_SERVER['SERVER_SOFTWARE']}</td>
+                            </tr>
+                            <tr>
+                                <th>{:lang('_MYSQL_VERSION_')}</th>
+                                {php}
+                                    $system_info_mysql = db()->query("select version() as v;");
+                                {/php}
+                                <td>{$system_info_mysql.0.v}</td>
+                            </tr>
+                            <tr>
+                                <th>{:lang('_LIMIT_UPLOAD_')}</th>
+                                <td>{:ini_get('upload_max_filesize')}
+
+                                   {:lang('_MODIFY_HOW_TO_')}</td>
+                            </tr>
+                            <tr>
+                                <th>{:lang('_MUUCMF_VERSION_')}</th>
+                                <td data-id="version" data-value="{$version}">{$version}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    
+    <div class="modal fade" id="settingCount">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span
+                        class="sr-only">{:lang('_CLOSE_')}</span></button>
+                <h4 class="modal-title">{:lang('_STATISTICS_SET_')}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="with-padding">
+                    <label>{:lang('_DISPLAY_DAYS_DEFAULT_')} </label>
+                    <input class="form-control" name="count_day" value="{$count.count_day}">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn " data-role="saveCountSetting">
+                    <i class="icon-ok"></i> {:lang('_SAVE_')}
+                </button>
+                <button class="btn " data-dismiss="modal">
+                    <i class="icon-remove"></i> {:lang('_CANCEL_')}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+
+
+ {block name="script"}
+    <script type="text/javascript" src="__LIB__/highcharts/highcharts.js"></script>
+    <script>
+        $('[data-role=saveCountSetting]').click(function () {
+            $.post("__SELF__", {count_day: $('[name=count_day]').val()}, function (msg) {
+                handleAjax(msg);
+            });
+        })
+
+        $(function () {
+            $('#myChart').highcharts({
+                chart: {
+                    type: "spline",
+                    style: {
+                        fontFamily: '"Microsoft Yahei", "宋体"'
+                    }
+                },
+                title: {
+                    text: "{:lang('_USER_INCREASE_RECENT_',array('count_day'=>$count['count_day']))}",
+                    x: -20 //center
+                },
+                xAxis: {
+                    categories: eval('{$count.last_day.days}'),
+                    title: {
+                        text: "{:lang('_MEMBER_REG_TODAY_')}",
+                        enabled: false
+                    }
+                },
+                yAxis: {
+                    title: ''
+                },
+                legend: {
+                    layout: 'vertical',
+                    verticalAlign: 'middle',
+                    borderWidth: 0,
+                    enabled: false
+                },
+                series: [{
+                    name: "{:lang('_MEMBER_REG_TODAY_')}",
+                    data: eval('{$count.last_day.data}'),
+                    enable: true
+                }], credits: {enabled: false}
+            });
+        });
+    </script>
+    <!-- ChartJS 1.0.1 -->
+<script src="__ZUI__/lib/chart/zui.chart.min.js"></script>
+<script>
+$(function(){
+//图表配置项
+    var options = {
+        ///Boolean - 是否在图表上显示网格
+        scaleShowGridLines : true,
+
+        //String - 网格线条颜色
+        scaleGridLineColor : "rgba(0,0,0,.05)",
+
+        //Number - 网格宽度
+        scaleGridLineWidth : 1,
+
+        //Boolean - 是否显示水平坐标，即X轴
+        scaleShowHorizontalLines: true,
+
+        //Boolean - 是否显示垂直坐标，即Y轴
+        scaleShowVerticalLines: true,
+
+        //Boolean - 是否显示为平滑曲线
+        bezierCurve : true,
+
+        //Number - 平滑曲线时所使用的贝塞尔曲线参数
+        bezierCurveTension : 0.4,
+
+        //Boolean - 是否显示顶点
+        pointDot : true,
+
+        //Number - 顶点半径，单位像素
+        pointDotRadius : 4,
+
+        //Number - 顶点描边线条宽度，单位像素
+        pointDotStrokeWidth : 1,
+
+        //Number - 检测鼠标点击所使用依据的半径大小，单位像素
+        pointHitDetectionRadius : 20,
+
+        //Boolean - 是否
+        datasetStroke : true,
+
+        //Number - 数据集线条宽度，单位为像素
+        datasetStrokeWidth : 2,
+
+        //Boolean - 是否用颜色来填充数据集
+        datasetFill : true,
+
+    }; // 图表配置项，可以留空来使用默认的配置
+    var activeList={$activeList};
+    var dayLineChartData={
+        labels: activeList.labels,
+        datasets: [
+            {
+                fillColor: "rgba(23,182,200,0.2)",
+                strokeColor: "rgba(23,182,200,1)",
+                pointColor: "rgba(23,182,200,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(220,220,220,1)",
+                data: activeList.datas.num
+            }
+        ]
+    }
+    var weekActiveList={$weekActiveList};
+    var weekLineChartData={
+        labels: weekActiveList.labels,
+        datasets: [
+            {
+                fillColor: "rgba(23,182,200,0.2)",
+                strokeColor: "rgba(23,182,200,1)",
+                pointColor: "rgba(23,182,200,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(220,220,220,1)",
+                data: weekActiveList.datas.num
+            }
+        ]
+    }
+    var monthActiveList={$monthActiveList};
+    var monthLineChartData={
+        labels: monthActiveList.labels,
+        datasets: [
+            {
+                fillColor: "rgba(23,182,200,0.2)",
+                strokeColor: "rgba(23,182,200,1)",
+                pointColor: "rgba(23,182,200,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(220,220,220,1)",
+                data: monthActiveList.datas.num
+            }
+        ]
+    }
+    var refreshChart=function($tag){
+        switch ($tag){
+            case 'count_active_day':
+                var lineChartCanvas = $("#dayActiveChart").lineChart(dayLineChartData,options);
+                break;
+            case 'count_active_week':
+                var lineChartCanvas = $("#weekActiveChart").lineChart(weekLineChartData, options);
+                break;
+            case 'count_active_month':
+                var lineChartCanvas = $("#monthActiveChart").lineChart(monthLineChartData, options);
+                break;
+            default :;
+        }
+    }
+
+    refreshChart('count_active_day');
+    refreshChart('count_active_week');
+    refreshChart('count_active_month');
+});
+</script>
+<!--ChartJS 图表 End-->
+{/block}   
+    

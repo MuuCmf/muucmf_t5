@@ -1,6 +1,5 @@
 <?php
 use think\Db;
-use phpthumb\PhpThumbFactory;
 /**
  * 获取文档封面图片
  * @param int $cover_id
@@ -12,7 +11,7 @@ function get_cover($cover_id, $field = null)
     if (empty($cover_id)) {
         return false;
     }
-    $picture = Db::name('Picture')->where(array('status' => 1))->getById($cover_id);
+    $picture = Db::name('Picture')->where(array('status' => 1))->get($cover_id);
     $picture['path'] = get_pic_src($picture['path']);
     return empty($field) ? $picture : $picture[$field];
 }
@@ -78,7 +77,7 @@ function getThumbImage($filename, $width = 100, $height = 'auto', $type = 0, $re
             if (intval($height) == 0 || intval($width) == 0) {
                 return 0;
             }
-            //require_once(VENDOR_PATH.'phpthumb/PhpThumbFactory.class.php');
+            require_once(VENDOR_PATH.'phpthumb/PhpThumbFactory.php');
             $thumb = PhpThumbFactory::create($UPLOAD_PATH . $filename);
             if ($type == 0) {
                 $thumb->adaptiveResize($width, $height);
@@ -100,7 +99,7 @@ function getThumbImage($filename, $width = 100, $height = 'auto', $type = 0, $re
  */
 function getRootUrl()
 {
-    return './';
+    return '/';
 }
 
 /**通过ID获取到图片的缩略图
@@ -115,10 +114,10 @@ function getRootUrl()
 function getThumbImageById($cover_id, $width = 100, $height = 'auto', $type = 0, $replace = false)
 {
     //存在cover_id为空时，写入public/images路径的bug待修复
-    $picture = S('picture_' . $cover_id);
+    $picture = cache('picture_' . $cover_id);
     if (empty($picture)) {
         $picture = Db::name('Picture')->where(array('status' => 1))->getById($cover_id);
-        S('picture_' . $cover_id, $picture);
+        cache('picture_' . $cover_id, $picture);
     }
     if (empty($picture)) {
         $attach = getThumbImage('Uploads/Picture/nopic.png', $width, $height, $type, $replace);

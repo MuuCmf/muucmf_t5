@@ -133,15 +133,15 @@ function send_mail_local($to = '', $subject = '', $body = '', $name = '', $attac
     $mail->SMTPAuth = true; // 启用 SMTP 验证功能
 
     $mail->SMTPSecure = ''; // 使用安全协议
-    $mail->Host = C('MAIL_SMTP_HOST'); // SMTP 服务器
-    $mail->Port = C('MAIL_SMTP_PORT'); // SMTP服务器的端口号
-    $mail->Username = C('MAIL_SMTP_USER'); // SMTP服务器用户名
-    $mail->Password = C('MAIL_SMTP_PASS'); // SMTP服务器密码
+    $mail->Host = Config('MAIL_SMTP_HOST'); // SMTP 服务器
+    $mail->Port = Config('MAIL_SMTP_PORT'); // SMTP服务器的端口号
+    $mail->Username = Config('MAIL_SMTP_USER'); // SMTP服务器用户名
+    $mail->Password = Config('MAIL_SMTP_PASS'); // SMTP服务器密码
     $mail->SetFrom($from_email, $from_name);
     $replyEmail = $reply_email ? $reply_email : $from_email;
     $replyName = $reply_name ? $reply_name : $from_name;
     if ($to == '') {
-        $to = C('MAIL_SMTP_CE'); //邮件地址为空时，默认使用后台默认邮件测试地址
+        $to = Config('MAIL_SMTP_CE'); //邮件地址为空时，默认使用后台默认邮件测试地址
     }
     if ($name == '') {
         $name = modC('WEB_SITE_NAME', L('_MUUCMF_'), 'Config'); //发送者名称为空时，默认使用网站名称
@@ -256,9 +256,6 @@ function get_kanban_config($key, $kanban, $default = '', $module = '')
 
 }
 
-
-
-
 /**
  *
  * function qrcode(){
@@ -327,7 +324,7 @@ function qrcode($data,$filename,$picPath=false,$logo=false,$size='4',$level='L',
 }
 
 function import_lang($module_name){
-    $file=APP_PATH . '/'.$module_name.'/Lang/' . LANG_SET . '.php';
+    $file=APP_PATH . '/'.$module_name.'/lang/' . LANG_SET . '.php';
     if (is_file($file))
-        L(include $file);
+        lang(include $file);
 }

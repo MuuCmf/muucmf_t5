@@ -28,6 +28,14 @@ function _need_login(){
     return model('Common/Member')->need_login();
 }
 /**
+ * 获取登陆用户uid;
+ * @return [type] [description]
+ */
+function get_uid()
+{
+    return is_login();
+}
+/**
  * 根据用户ID获取用户名
  * @param  integer $uid 用户ID
  * @return string       用户名
@@ -80,7 +88,7 @@ function get_userdata_join($id = null, $field = null, $table = null)
 }
 
 /**
- * 构造用户配置表 D('UserConfig')查询条件
+ * 构造用户配置表查询条件
  * @param string $name 表中name字段的值(配置标识)
  * @param string $model 表中model字段的值(模块标识)
  * @param int $uid 用户uid
@@ -101,10 +109,7 @@ function getUserConfigMap($name = '', $model = '', $uid = 0, $role_id = 0)
     return $map;
 }
 
-function get_uid()
-{
-    return is_login();
-}
+
 
 /**
  * 检测权限
@@ -157,7 +162,7 @@ function check_auth($rule = '', $except_uid = -1, $type = AuthRule::RULE_URL)
 function is_administrator($uid = null)
 {
     $uid = is_null($uid) ? is_login() : $uid;
-    $admin_uids = explode(',', Config('user_administrator'));//调整验证机制，支持多管理员，用,分隔
+    $admin_uids = explode(',', config('user_administrator'));//调整验证机制，支持多管理员，用,分隔
     
     return $uid && (in_array(intval($uid), $admin_uids));//调整验证机制，支持多管理员，用,分隔
 }
@@ -389,4 +394,14 @@ function match_users($content)
     $user_pattern = "/\@([^\#|\s]+)\s/"; //匹配用户
     preg_match_all($user_pattern, $content, $user_math);
     return $user_math;
+}
+
+/**
+ * 系统用户非常规MD5加密方法
+ * @param  string $str 要加密的字符串
+ * @return string
+ */
+function user_md5($str, $key = '')
+{
+    return '' === $str ? '' : md5(sha1($str) . $key);
 }
