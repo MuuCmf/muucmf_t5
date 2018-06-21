@@ -1,87 +1,88 @@
 <label class="item-label">{$field.title|htmlspecialchars}
-    <if condition="$field['subtitle']">
+    {if condition="$field['subtitle']"}
         <span class="check-tips">（{$field.subtitle}）</span>
-    </if>
+    {/if}
 </label>
-<if condition="$field['name'] == 'action'">
-    <p style="color: #f00;">{:L("_DEVELOPMENT_STAFF_ATTENTION_")}{:L("_YOU_USE_A_FIELD_NAMED_ACTION_")}，{:L("_BECAUSE_THIS_FIELD_NAME_WILL_BE_WITH_FORM_")}[action]{:L("_CONFLICT_WHICH_CAUSES_THE_FORM_TO_BE_UNABLE_TO_COMMIT_PLEASE_USE_ANOTHER_NAME_")}</p>
-</if>
+{if condition="$field['name'] == 'action'"}
+    <p style="color: #f00;">{:lang("_DEVELOPMENT_STAFF_ATTENTION_")}{:lang("_YOU_USE_A_FIELD_NAMED_ACTION_")}，{:lang("_BECAUSE_THIS_FIELD_NAME_WILL_BE_WITH_FORM_")}[action]{:lang("_CONFLICT_WHICH_CAUSES_THE_FORM_TO_BE_UNABLE_TO_COMMIT_PLEASE_USE_ANOTHER_NAME_")}</p>
+{/if}
 <div class="controls ">
-<switch name="field.type">
-    <case value="text">
+{switch name="field.type"}
+
+    {case value="text"}
         <input type="text" name="{$field.name}" value="{$field.value|htmlspecialchars}"
                class="text input-large form-control" style="width: 400px"/>
-    </case>
+    {/case}
 
-    <case value="label">
+    {case value="label"}
         {$field.value}
-    </case>
+    {/case}
 
-    <case value="hidden">
+    {case value="hidden"}
         <input type="hidden" name="{$field.name}" value="{$field.value}" class="text input-large"/>
-    </case>
+    {/case}
 
-    <case value="readonly">
+    {case value="readonly"}
         <input type="hidden" name="{$field.name}" value="{$field.value}" class="text input-large form-control"
-               style="width: 400px" placeholder={:L("_NO_NEED_TO_FILL_IN_WITH_DOUBLE_")} readonly/>
+               style="width: 400px" placeholder={:lang("_NO_NEED_TO_FILL_IN_WITH_DOUBLE_")} readonly/>
         <p class="" >{$field.value}</p>
-    </case>
-    <case value="readonlytext">
+    {/case}
+    {case value="readonlytext"}
         <input type="text" name="{$field.name}" value="{$field.value}" class="text input-large form-control"
-               style="width: 400px" placeholder={:L("_NO_NEED_TO_FILL_IN_WITH_DOUBLE_")} readonly/>
-    </case>
-    <case value="readonlyhtml">
+               style="width: 400px" placeholder={:lang("_NO_NEED_TO_FILL_IN_WITH_DOUBLE_")} readonly/>
+    {/case}
+    {case value="readonlyhtml"}
         {$field.value}
-    </case>
-    <case value="integer">
+    {/case}
+    {case value="integer"}
         <input type="text" name="{$field.name}" value="{$field.value}" class="text input-large form-control"
                style="width: 400px"/>
-    </case>
-    <case value="uid">
+    {/case}
+    {case value="uid"}
         <input type="text" name="{$field.name}" value="{$field.value}" class="text input-large form-control"
                style="width: 100px"/>
-    </case>
-    <case value="select">
+    {/case}
+    {case value="select"}
         <select name="{$field.name}" class="form-control" style="width:auto;">
-            <volist name="field.opt" id="option">
-                <php>
+            {volist name="field.opt" id="option"}
+                {php}
                     $selected = $field['value']==$key ? 'selected' : '';
-                </php>
+                {/php}
                 <option value="{$key}"
                 {$selected}>{$option|htmlspecialchars}</option>
-            </volist>
+            {/volist}
         </select>
-    </case>
-    <case value="colorPicker">
-        <php>
+    {/case}
+    {case value="colorPicker"}
+        {php}
             $colorPicker = 1;
-        </php>
+        {/php}
         <div class="color-picker" style="width:100px;height: 30px;">
             <input type="text" name="{$field.name}" class="simple_color_callback form-control" onchange="setColorPicker(this);" value="{$field.value|default=''}" style="width: 100px;"/>
         </div>
-    </case>
-    <case value="radio">
-        <volist name="field.opt" id="option">
-            <php>
+    {/case}
+    {case value="radio"}
+        {volist name="field.opt" id="option"}
+            {php}
                 $checked = $field['value']==$key ? 'checked' : '';
                 $inputId = "id_$field[name]_$key";
-            </php>
+            {/php}
             <label for="{$inputId}"> <input id="{$inputId}" name="{$field.name}" value="{$key}" type="radio"
                 {$checked}/>
                 {$option}</label> &nbsp;&nbsp;&nbsp;&nbsp;
-        </volist>
-    </case>
-    <case value="icon">
-        <div class='icon-chose' title={:L("_SELECT_ICON_WITH_DOUBLE_")} style="width: 400px;">
-            <select name="{$field.name}" title={:L("_SELECT_ICON_WITH_DOUBLE_")} class="chosen-icons" data-value="{$field.value|default='icon-star'}"></select>
+        {/volist}
+    {/case}
+    {case value="icon"}
+        <div class='icon-chose' title={:lang("_SELECT_ICON_WITH_DOUBLE_")} style="width: 400px;">
+            <select name="{$field.name}" title={:lang("_SELECT_ICON_WITH_DOUBLE_")} class="chosen-icons" data-value="{$field.value|default='icon-star'}"></select>
         </div>
-        <php>
+        {php}
             if(!$have_icon){
             $have_icon=1;
-        </php>
+        {/php}
         <script src="__ZUI__/lib/chosen/chosen.icons.min.js"></script>
         <link href="__ZUI__/lib/chosen/chosen.icons.css" rel="stylesheet">
-        <php>}</php>
+        {php}}{/php}
         <script>
             $(function(){
                 $('.chosen-container').remove()
@@ -91,30 +92,30 @@
                 $('form select.chosen-icons').chosenIcons();
             });
         </script>
-    </case>
+    {/case}
 
-    <case value="singleFile">
+    {case value="singleFile"}
         {:W('Common/UploadFile/render',array(array('name'=>$field['name'],'value'=>$field['value'])))}
-    </case>
-    <case value="multiFile">
+    {/case}
+    {case value="multiFile"}
         {:W('Common/UploadMultiFile/render',array(array('name'=>$field['name'],'limit'=>9,'value'=>$field['value'])))}
-    </case>
-    <case value="singleImage">
+    {/case}
+    {case value="singleImage"}
         <div class="controls">
-            <div id="upload_single_image_{$field.name}" style="padding-bottom: 5px;">{:L("_SELECT_PICTURES_")}</div>
+            <div id="upload_single_image_{$field.name}" style="padding-bottom: 5px;">{:lang("_SELECT_PICTURES_")}</div>
             <input class="attach" type="hidden" name="{$field.name}" value="{$field['value']}"/>
             <div class="upload-img-box">
                 <div class="upload-pre-item popup-gallery">
 
-                <notempty name="field.value">
+                {notempty name="field.value"}
                     <div class="each">
-                    <a href="{$field.value|get_cover='path'}" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+                    <a href="{$field.value|get_cover='path'}" title={:lang("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
                         <img src="{$field.value|get_cover='path'}">
                     </a>
                         <div class="text-center opacity del_btn" ></div>
-                        <div onclick="admin_image.removeImage($(this),'{$field.value}')"  class="text-center del_btn">{:L("_DELETE_")}</div>
+                        <div onclick="admin_image.removeImage($(this),'{$field.value}')"  class="text-center del_btn">{:lang("_DELETE_")}</div>
                     </div>
-                </notempty>
+                {/notempty}
                 </div>
             </div>
         </div>
@@ -145,8 +146,8 @@
                     if (data.status) {
                         $("[name='{$field.name}']").val(data.id);
                         $("[name='{$field.name}']").parent().find('.upload-pre-item').html(
-                                ' <div class="each"><a href="'+ data.path+'" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}><img src="'+ data.path+'"></a><div class="text-center opacity del_btn" ></div>' +
-                                        '<div onclick="admin_image.removeImage($(this),'+data.id+')"  class="text-center del_btn">{:L("_DELETE_")}</div></div>'
+                                ' <div class="each"><a href="'+ data.path+'" title={:lang("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}><img src="'+ data.path+'"></a><div class="text-center opacity del_btn" ></div>' +
+                                        '<div onclick="admin_image.removeImage($(this),'+data.id+')"  class="text-center del_btn">{:lang("_DELETE_")}</div></div>'
                         );
                         uploader_{$field.name}.reset();
                     } else {
@@ -160,26 +161,26 @@
             })
         </script>
 
-    </case>
+    {/case}
 
-    <case value="multiImage">
+    {case value="multiImage"}
         <div class="controls multiImage">
-            <div id="upload_multi_image_{$field.name}" style="padding-bottom: 5px;">{:L("_SELECT_PICTURES_")}</div>
+            <div id="upload_multi_image_{$field.name}" style="padding-bottom: 5px;">{:lang("_SELECT_PICTURES_")}</div>
             <input class="attach" type="hidden" name="{$field.name}" value="{$field['value']}"/>
             <div class="upload-img-box">
                 <div class="upload-pre-item popup-gallery">
 
                     <notempty name="field.value">
-                        <php>$aIds = explode(',',$field['value']);</php>
-                        <volist name="aIds" id="aId">
+                        {php}$aIds = explode(',',$field['value']);{/php}
+                        {volist name="aIds" id="aId"}
                             <div class="each">
-                                <a href="{$aId|get_cover='path'}" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+                                <a href="{$aId|get_cover='path'}" title={:lang("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
                                     <img src="{$aId|get_cover='path'}">
                                 </a>
                                 <div class="text-center opacity del_btn" ></div>
-                                <div onclick="admin_image.removeImage($(this),'{$aId}')"  class="text-center del_btn">{:L("_DELETE_")}</div>
+                                <div onclick="admin_image.removeImage($(this),'{$aId}')"  class="text-center del_btn">{:lang("_DELETE_")}</div>
                             </div>
-                        </volist>
+                        {/volist}
 
 
                     </notempty>
@@ -192,16 +193,16 @@
                 var limit = parseInt('{$field.opt}');
                 var uploader_{$field.name}= WebUploader.create({
                     // 选完文件后，是否自动上传。
-                      // sw{:L("_F_FILE_PATH_")}
+                      // sw{:lang("_F_FILE_PATH_")}
                     swf: 'Uploader.swf',
                     // 文件接收服务端。
                     server: "{:U('File/uploadPicture',array('session_id'=>session_id()))}",
                     // 选择文件的按钮。可选。
-                    // 内部根据当前运行是创建，可能是input元素，{:L("_AND_IT_COULD_BE_FLASH_")}.
+                    // 内部根据当前运行是创建，可能是input元素，{:lang("_AND_IT_COULD_BE_FLASH_")}.
                     //pick: '#upload_multi_image_{$field.name}',
                     pick: {'id': id, 'multi': true},
                     fileNumLimit: limit,
-                    // 只允许{:L("_SELECT_PICTURES_")}文件。
+                    // 只允许{:lang("_SELECT_PICTURES_")}文件。
                     accept: {
                         title: 'Images',
                         extensions: 'gif,jpg,jpeg,bmp,png',
@@ -222,15 +223,15 @@
                           if( ids.indexOf(data.id) == -1){
                                 var rids = admin_image.upAttachVal('add',data.id, $("[name='{$field.name}']"));
                               if(rids.length>limit){
-                                  updateAlert({:L('_EXCEED_THE_PICTURE_LIMIT_WITH_SINGLE_')});
+                                  updateAlert({:lang('_EXCEED_THE_PICTURE_LIMIT_WITH_SINGLE_')});
                                   return;
                               }
                               $("[name='{$field.name}']").parent().find('.upload-pre-item').append(
-                                        ' <div class="each"><a href="'+ data.path+'" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}><img src="'+ data.path+'"></a><div class="text-center opacity del_btn" ></div>' +
-                                                '<div onclick="admin_image.removeImage($(this),'+data.id+')"  class="text-center del_btn">{:L("_DELETE_")}</div></div>'
+                                        ' <div class="each"><a href="'+ data.path+'" title={:lang("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}><img src="'+ data.path+'"></a><div class="text-center opacity del_btn" ></div>' +
+                                                '<div onclick="admin_image.removeImage($(this),'+data.id+')"  class="text-center del_btn">{:lang("_DELETE_")}</div></div>'
                                 );
                             }else{
-                                updateAlert({:L('_THE_PICTURE_ALREADY_EXISTS_WITH_SINGLE_')});
+                                updateAlert({:lang('_THE_PICTURE_ALREADY_EXISTS_WITH_SINGLE_')});
                             }
                         } else {
                             updateAlert(data.info);
@@ -243,84 +244,84 @@
             })
         </script>
 
-    </case>
+    {/case}
 
-    <case value="checkbox">
-        <php>
+    {case value="checkbox"}
+        {php}
             $importCheckBox = true;
-        </php>
-        <php>
+        {/php}
+        {php}
             $field['value_array'] = explode(',', $field['value']);
-        </php>
-        <volist name="field.opt" id="option">
-            <php>
+        {/php}
+        {volist name="field.opt" id="option"}
+            {php}
                 $checked = in_array($key,$field['value_array']) ? 'checked' : '';
                 $inputId = "id_$field[name]_$key";
-            </php>
+            {/php}
             <label for="{$inputId}"> <input type="checkbox" value="{$key}" id="{$inputId}" class="oneplus-checkbox"
                                             data-field-name="{$field.name}" {$checked}/>
                 {$option}</label>
 
-        </volist>
+        {/volist}
         <input type="hidden" name="{$field.name}" class="oneplus-checkbox-hidden"
                data-field-name="{$field.name}" value="{$field.value}"/>
 
-    </case>
-    <case value="ueditor">
+    {/case}
+    {case value="ueditor"}
             {:W('Common/Ueditor/editor',array($field['name'],$field['name'],$field['value'],$field['config'],$field['style'],$field['param'],$field['width']))}
 
-    </case>
-    <case value="simditor">
+    {/case}
+    {case value="simditor"}
             {:W('Common/Simditor/editor',array($field['name'],$field['name'],$field['value'],$field['config'],$field['style'],$field['param'],$field['width']))}
 
-    </case>
-    <case value="wangeditor">
+    {/case}
+    {case value="wangeditor"}
             {:W('Common/Wangeditor/editor',array($field['name'],$field['name'],$field['value'],$field['config'],$field['style'],$field['param'],$field['width']))}
 
-    </case>
-    <case value="textarea">
+    {/case}
+    {case value="textarea"}
         <textarea name="{$field.name}" class="text input-large form-control"
                   style="height: 8em;width: 400px;height: 200px">{$field.value|htmlspecialchars}</textarea>
-    </case>
-    <case value="time">
-        <php>
+    {/case}
+    {case value="time"}
+        {php}
             $importDatetimePicker = true;
             //默认为当前时间
             if(!$field['value']){
             $field['value'] = time();
             }
-        </php>
+        {/php}
         <input type="hidden" name="{$field.name}" value="{$field.value}"/>
         <input type="text" data-field-name="{$field.name}" class="text input-large form-time time form-control"
-               style="width: 400px" value="{$field.value|time_format='H:i'}" placeholder={:L("_PLEASE_CHOOSE_TIME_WITH_DOUBLE_")}/>
-    </case>
-    <case value="date">
-        <php>
+               style="width: 400px" value="{$field.value|time_format='H:i'}" placeholder={:lang("_PLEASE_CHOOSE_TIME_WITH_DOUBLE_")}/>
+    {/case}
+    {case value="date"}
+        {php}
             $importDatetimePicker = true;
             //默认为当前时间
             if(!$field['value']){
             $field['value'] = time();
             }
-        </php>
+        {/php}
         <input type="hidden" name="{$field.name}" value="{$field.value}"/>
         <input type="text" data-field-name="{$field.name}" class="text input-large form-date time form-control"
-               style="width: 400px" value="{$field.value|time_format='Y-m-d'}" placeholder={:L("_PLEASE_CHOOSE_TIME_WITH_DOUBLE_")}/>
-    </case>
-    <case value="datetime">
-        <php>
+               style="width: 400px" value="{$field.value|time_format='Y-m-d'}" placeholder={:lang("_PLEASE_CHOOSE_TIME_WITH_DOUBLE_")}/>
+    {/case}
+    {case value="datetime"}
+        {php}
             $importDatetimePicker = true;
             //默认为当前时间
             if(!$field['value']){
             $field['value'] = time();
             }
-        </php>
+        {/php}
         <input type="hidden" name="{$field.name}" value="{$field.value}"/>
         <input type="text" data-field-name="{$field.name}" class="text input-large form-datetime time form-control"
-               style="width: 400px" value="{$field.value|time_format}" placeholder={:L("_PLEASE_CHOOSE_TIME_WITH_DOUBLE_")}/>
-    </case>
+               style="width: 400px" value="{$field.value|time_format}" placeholder={:lang("_PLEASE_CHOOSE_TIME_WITH_DOUBLE_")}/>
+    {/case}
 
     <!--添加城市选择（需安装城市联动插件,css样式不好处理排版有点怪）-->
-    <case value="city">
+    {case value="city"}
             <style type="text/css">
     			.form-control {
 				display:inline-block;
@@ -329,12 +330,12 @@
 			</style>
             <!--修正在编辑信息时无法正常显示已经保存的地区信息-->
             {:hook('J_China_City',array('province'=>$field['value']['0'],'city'=>$field['value']['1'],'district'=>$field['value']['2'],'community'=>$field['value']['3']))}
-    </case>
+    {/case}
 
     <!--弹出窗口选择并返回值（目前只支持返回ID）开始->
-    <case value="dataselect">
+    {case value="dataselect">
         <input type="text" name="{$field.name}" id="{$field.name}" value="{$field.value|htmlspecialchars}"
-               class="text input-large form-control" style="width: 400px;display:inline-block;"/><input class="btn" style="margin-left:10px" type="button" value={:L("_CHOICE_WITH_DOUBLE_")} onclick="openwin('{$field.opt}','600','500')">
+               class="text input-large form-control" style="width: 400px;display:inline-block;"/><input class="btn" style="margin-left:10px" type="button" value={:lang("_CHOICE_WITH_DOUBLE_")} onclick="openwin('{$field.opt}','600','500')">
 			     <script type="text/javascript">
 						//弹出窗口
 						function openwin(url,width,height){
@@ -342,7 +343,7 @@
 						    var w= window.screen.height;
 						    var al=(l-width)/2;
 						    var aw=(w-height)/2;
-						    var OpenWindow=window.open(url,{:L("_POP_UP_WINDOW_WITH_DOUBLE_")},"toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,width="+width+",height="+height+",top="+aw+",left="+al+"");
+						    var OpenWindow=window.open(url,{:lang("_POP_UP_WINDOW_WITH_DOUBLE_")},"toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,width="+width+",height="+height+",top="+aw+",left="+al+"");
 						    OpenWindow.focus();
 						if(OpenWindow!=null){ //弹出窗口关闭事件
 						//if(window.attachEvent) OpenWindow.attachEvent("onbeforeunload",   quickOut);
@@ -352,32 +353,32 @@
 						//关闭触发方法
 						function quickOut()
 						{
-						alert({:L("_THE_WINDOW_IS_CLOSED_WITH_DOUBLE_")});
+						alert({:lang("_THE_WINDOW_IS_CLOSED_WITH_DOUBLE_")});
 						}
 				 </script>
-    </case>
+    {/case}
 	<!--弹出窗口选择并返回值（目前只支持返回ID）结束 -->
 
-    <case value="kanban">
+    {case value="kanban"}
 
         <input type="hidden" name="{$field.name}" value='{:json_encode($field["value"])}'/>
         <div class="kanbans" id="{$field.name}">
-            <php>foreach($field['value'] as $key =>$kanban){</php>
+            {php}foreach($field['value'] as $key =>$kanban){{/php}
             <div class="kanban panel" data-id="{$kanban['data-id']}" data-title="{$kanban['title']}">
                 <div class="panel-heading">
                     <strong>{$kanban['title']}</strong>
                 </div>
                 <div class="panel-body">
                     <div class="kanban-list">
-                        <volist name="kanban.items" id="vo">
+                        {volist name="kanban.items" id="vo"}
                             <div class="kanban-item item" data-id="{$vo.data-id}" data-title="{$vo.title}">
                                 {$vo.title}
                             </div>
-                        </volist>
+                        {/volist}
                     </div>
                 </div>
             </div>
-            <php>}</php>
+            {php}}{/php}
         </div>
         <script>
             $(function () {
@@ -405,70 +406,70 @@
             })
         </script>
 
-    </case>
-<case value="chosen">
+    {/case}
+{case value="chosen"}
     <select name="{$field.name}[]" style="width: 400px" class="chosen-select" multiple="multiple">
-        <php>
+        {php}
             if( key($field['opt']) === 0){
-        </php>
-        <volist name="field['opt']" id="option">
-            <php>
+        {/php}
+        {volist name="field['opt']" id="option"}
+            {php}
                 $selected = in_array(reset($option),$field['value'])? 'selected' : '';
-            </php>
+            {/php}
             <option value="{:reset($option)}" {$selected}>{$option|end|htmlspecialchars}</option>
-        </volist>
-        <php>
+        {/volist}
+        {php}
             }else{
             foreach($field['opt'] as $optgroupkey =>$optgroup){
-        </php>
+        {/php}
         <optgroup label="{$optgroupkey}">
-            <volist name="optgroup" id="option">
-                <php>
+            {volist name="optgroup" id="option"}
+                {php}
                     $selected = in_array(reset($option),$field['value'])? 'selected' : '';
-                </php>
+                {/php}
                 <option value="{:reset($option)}" {$selected}>{$option|end|htmlspecialchars}</option>
-            </volist>
+            {/volist}
         </optgroup>
-        <php>
+        {php}
             }
             }
-        </php>
+        {/php}
     </select>
-</case>
+{/case}
 
-    <case value="multiInput">
+    {case value="multiInput"}
         <div class="clearfix" style="{$field['style']}">
-        <php>
+        {php}
             $field['name'] = is_array($field['name'])?$field['name']:explode('|',$field['name']);
             foreach($field['name'] as $key=>$val){
-        </php>
-        <switch name="field['config'][$key]['type']">
-            <case value="text">
+        {/php}
+        {switch name="field['config'][$key]['type']"}
+            {case value="text"}
                 <input type="text" name="{$val}" value="{$field['value'][$key]|htmlspecialchars}"
                        class=" pull-left text input-large form-control" style="{$field['config'][$key]['style']}" placeholder="{$field['config'][$key]['placeholder']}"/>
-            </case>
-            <case value="select">
+            {/case}
+            {case value="select"}
                 <select name="{$val}" class="pull-left form-control" style="{$field['config'][$key]['style']}" >
-                    <php>foreach($field['config'][$key]['opt'] as $key_opt =>$option){</php>
-                    <php>
+                    {php}foreach($field['config'][$key]['opt'] as $key_opt =>$option){{/php}
+                    {php}
                         $selected = $field['value'][$key]==$key_opt ? 'selected' : '';
-                    </php>
+                    {/php}
                     <option value="{$key_opt}"{$selected}>{$option|htmlspecialchars}</option>
-                    <php>}</php>
+                    {php}}{/php}
                 </select>
-            </case>
-        </switch>
-        <php>
+            {/case}
+        {/switch}
+        {php}
             }
-        </php>
+        {/php}
         </div>
-    </case>
-    <case value="userDefined">
+    {/case}
+    {case value="userDefined"}
         {$field.definedHtml}
-    </case>
+    {/case}
 
-    <default/>
-    <span style="color: #f00;">{:L("_ERROR_")}{:L("_COLON_")}{:L("_UNKNOWN_FIELD_TYPE_")}{$field.type}</span>
+    {default/}
+    <span style="color: #f00;">{:lang("_ERROR_")}{:lang("_COLON_")}{:lang("_UNKNOWN_FIELD_TYPE_")}{$field.type}</span>
     <input type="hidden" name="{$field.name}" value="{$field.value|htmlspecialchars}"/>
-</switch>
+{/switch}
 </div>

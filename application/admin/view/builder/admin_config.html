@@ -1,6 +1,6 @@
-<extend name="Public/base"/>
+{extend name="common/main_iframe"/}
 
-<block name="body">
+{block name="body"}
     <div class="main-title">
         <h2>{$title}            <if condition="$suggest">（{$suggest}）</if></h2>
     </div>
@@ -9,46 +9,45 @@
 
         <div class="tab-wrap" style="margin-bottom: 5px">
             <ul class="nav nav-primary group_nav">
-                <volist name="group" id="vGroup">
-                    <li class="<if condition="
-                    $i eq 1">active</if>"><a href="javascript:">{$key}</a></li>
-                </volist>
+                {volist name="group" id="vGroup"}
+                    <li class="{if condition="$i eq 1"}active{/if}"><a href="javascript:">{$key}</a></li>
+                {/volist}
             </ul>
         </div>
 
         <form action="{$savePostUrl}" method="post" class="form-horizontal">
-            <php>if($group){</php>
-            <volist name="group" id="vGroup">
-                <div class="group_list" style="<if condition='$i neq 1'>display: none;</if>">
-                    <volist name="keyList" id="field">
-                        <php>if(in_array($field['name'],$vGroup)){</php>
-                        <include file="Builder/_key"/>
-                        <php>}</php>
+            {php}if($group){{/php}
+            {volist name="group" id="vGroup"}
+                <div class="group_list" style="{if condition='$i neq 1'}display: none;{/if}">
+                    {volist name="keyList" id="field"}
+                        {php}if(in_array($field['name'],$vGroup)){{/php}
+                        {include file="builder/_key"/}
+                        {php}}{/php}
 
-                    </volist>
+                    {/volist}
                 </div>
-            </volist>
+            {/volist}
 
-            <php>}else{</php>
-            <volist name="keyList" id="field">
-                <include file="Builder/_key"/>
-            </volist>
-            <php>}</php>
+            {php}}else{{/php}
+            {volist name="keyList" id="field"}
+                {include file="builder/_key"/}
+            {/volist}
+            {php}}{/php}
             <br/>
 
             <div class="form-item">
-                <volist name="buttonList" id="button">
+                {volist name="buttonList" id="button"}
                     <button {$button.attr}>{$button.title}</button>  &nbsp;
-                </volist>
+                {/volist}
             </div>
         </form>
     </div>
 
-</block>
+{/block}
 
-<block name="script">
+{block name="script"}
 
-    <if condition="$importDatetimePicker">
+    
         <link href="__ZUI__/lib/datetimepicker/datetimepicker.css" rel="stylesheet" type="text/css">
         <script type="text/javascript" src="__ZUI__/lib/datetimepicker/datetimepicker.min.js"></script>
 
@@ -79,8 +78,7 @@
                 $('[name=' + fieldName + ']').val(Math.floor(timestamp / 1000));
             });
         </script>
-    </if>
-    <if condition="$colorPicker">
+
         <script type="text/javascript" src="__JS__/jquery.simple-color.js"></script>
         <script>
             $(function(){
@@ -107,9 +105,7 @@
                 $(obj).parents('.color-picker').find('.simpleColorDisplay').css('background',color);
             }
         </script>
-    </if>
 
-    <if condition="$importCheckBox">
         <script>
             $(function () {
                 function implode(x, list) {
@@ -137,7 +133,7 @@
                 });
             })
         </script>
-    </if>
+ 
 
     <script type="text/javascript">
         $(function () {
@@ -151,11 +147,11 @@
         Think.setValue("type", {$info.type|default=0});
         Think.setValue("group", {$info.group|default=0});
     </script>
-    <link type="text/css" rel="stylesheet" href="__PUBLIC__/lib/magnific/magnific-popup.css"/>
-    <script type="text/javascript" src="__PUBLIC__/lib/magnific/jquery.magnific-popup.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="__COMMON__/lib/magnific/magnific-popup.css"/>
+    <script type="text/javascript" src="__COMMON__/lib/magnific/jquery.magnific-popup.min.js"></script>
 
-    <script type="text/javascript" charset="utf-8" src="__PUBLIC__/lib/webuploader/js/webuploader.js"></script>
-    <link href="__PUBLIC__/lib/webuploader/css/webuploader.css" type="text/css" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="__COMMON__/lib/webuploader/js/webuploader.js"></script>
+    <link href="__COMMON__/lib/webuploader/css/webuploader.css" type="text/css" rel="stylesheet">
 
 
     <script>
@@ -164,7 +160,7 @@
                 $(this).magnificPopup({
                     delegate: 'a',
                     type: 'image',
-                    tLoading: '{:L("_LOADING_")}#%curr%...',
+                    tLoading: '{:lang("_LOADING_")}#%curr%...',
                     mainClass: 'mfp-img-mobile',
                     gallery: {
                         enabled: true,
@@ -173,7 +169,7 @@
 
                     },
                     image: {
-                        tError: '<a href="%url%">{:L("_PICTURE_")}#%curr%</a>{:L("_COULD_NOT_BE_LOADED_")}',
+                        tError: '<a href="%url%">{:lang("_PICTURE_")}#%curr%</a>{:lang("_COULD_NOT_BE_LOADED_")}',
                         titleSrc: function (item) {
                             /*           return item.el.attr('title') + '<small>by Marsel Van Oosten</small>';*/
                             return '';
@@ -182,7 +178,7 @@
                     }
                 });
             });
-            {$myJs}
+            
         });
     </script>
-</block>
+{/block}

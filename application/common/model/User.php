@@ -19,91 +19,6 @@ class User Extends Model
     private $avatar_fields = array('avatar32', 'avatar64', 'avatar128', 'avatar256', 'avatar512');
     private $avatar_html_fields=array('avatar_html32', 'avatar_html64', 'avatar_html128', 'avatar_html256', 'avatar_html512');
 
-    private function getFields($pFields)
-    {
-        //默认赋值
-        if ($pFields === null) {
-            return array('nickname', 'space_url', 'space_mob_url', 'avatar32', 'avatar64', 'avatar128', 'uid');
-        }
-
-
-        //如果fields不是数组，直接返回需要的值
-        if (is_array($pFields)) {
-            $fields = $pFields;
-        } else {
-            $fields = (array)explode(',', $pFields);
-        }
-        //替换score和score1
-        if (array_intersect(array('score','score1'), $fields)) {
-            $fields = array_diff($fields, array('score', 'score1'));
-            $fields[] = 'score1';
-        }
-        if (in_array('title', $fields)) {
-            if (!in_array('score1', $fields)) {
-                $fields[] = 'score1';
-            }
-        }
-
-
-
-        return $fields;
-
-    }
-
-    private function popGotFields($fiels, $gotFields)
-    {
-        if(count($gotFields)!=0){
-            return array_diff($fiels, $gotFields);
-        }
-        return $fiels;
-
-    }
-
-    private function combineUserData($user_data, $values)
-    {
-        return array_merge($user_data, (array)$values);
-    }
-
-    /**从数据库获取需要检索的数据
-     * @param $user_data
-     * @param $fields
-     * @return array
-     */
-    private function getNeedQueryData($user_data, $fields, $uid)
-    {
-        $need_query = array_intersect($this->table_fields, $fields);
-        //如果有需要检索的数据
-        if (!empty($need_query)) {
-            $db_prefix=Config('database.prefix');
-            
-            $query_results = db('')->query('select ' . implode(',', $need_query) . " from `{$db_prefix}member`,`{$db_prefix}ucenter_member` where uid=id and uid={$uid} limit 1");
-            
-            if($query_results){
-                $query_result = $query_results[0];
-                $user_data = $this->combineUserData($user_data, $query_result);
-                $fields = $this->popGotFields($fields, $need_query);
-                $this->writeCache($uid, $query_result);
-            }
-            
-        }
-        return array($user_data, $fields);
-    }
-
-    private function handleNickName($user_data, $uid)
-    {
-        if($user_data['nickname']){
-            $user_data['real_nickname'] = $user_data['nickname'];
-            if (get_uid() != $uid && is_login()) {//如果已经登陆，并且获取的用户不是自己
-                $alias = $this->getAlias($uid);
-                if ($alias != '') {//如果设置了备注名
-                    $user_data['nickname'] = $alias;
-                    $user_data['alias'] = $alias;
-                }
-            }
-        }
-        
-        return $user_data;
-    }
 
     /**
      * @param null $pFields
@@ -113,7 +28,7 @@ class User Extends Model
     public function query_user($pFields = null, $uid = 0)
     {
         $fields = $this->getFields($pFields);//需要检索的字段
-        
+
         $uid = (intval($uid) != 0 ? $uid : get_uid());//用户UID
         //获取缓存过的字段，尽可能在此处命中全部数据
 
@@ -128,7 +43,6 @@ class User Extends Model
             if($user_data){
                 $user_data = $this->handleNickName($user_data, $uid);
             }
-            
         //获取昵称拼音 pinyin
         $user_data = $this->getPinyin($fields, $user_data);
         //如果全部命中，则直接返回数据
@@ -174,6 +88,87 @@ class User Extends Model
         return $user_data;
 
 
+    }
+
+    private function getFields($pFields)
+    {
+        //默认赋值
+        if ($pFields === null) {
+            return array('nickname', 'space_url', 'avatar32', 'avatar64', 'avatar128', 'uid');
+        }
+
+        //如果fields不是数组，直接返回需要的值
+        if (is_array($pFields)) {
+            $fields = $pFields;
+        } else {
+            $fields = (array)explode(',', $pFields);
+        }
+        //替换score和score1
+        if (array_intersect(array('score','score1'), $fields)) {
+            $fields = array_diff($fields, array('score', 'score1'));
+            $fields[] = 'score1';
+        }
+        if (in_array('title', $fields)) {
+            if (!in_array('score1', $fields)) {
+                $fields[] = 'score1';
+            }
+        }
+        return $fields;
+    }
+
+    private function popGotFields($fiels, $gotFields)
+    {
+        if(count($gotFields)!=0){
+            return array_diff($fiels, $gotFields);
+        }
+        return $fiels;
+
+    }
+
+    private function combineUserData($user_data, $values)
+    {
+        return array_merge($user_data, (array)$values);
+    }
+
+    /**从数据库获取需要检索的数据
+     * @param $user_data
+     * @param $fields
+     * @return array
+     */
+    private function getNeedQueryData($user_data, $fields, $uid)
+    {
+        //返回数组交集
+        $need_query = array_intersect($this->table_fields, $fields);
+        //如果有需要检索的数据
+        if (!empty($need_query)) {
+            $db_prefix=Config('database.prefix');
+            
+            $query_results = Db::query('select ' . implode(',', $need_query) . " from `{$db_prefix}member`,`{$db_prefix}ucenter_member` where uid=id and uid={$uid} limit 1");
+            
+            if($query_results){
+                $query_result = $query_results[0];
+                $user_data = $this->combineUserData($user_data, $query_result);
+                $fields = $this->popGotFields($fields, $need_query);
+                $this->writeCache($uid, $query_result);
+            } 
+        }
+        return array($user_data, $fields);
+    }
+
+    private function handleNickName($user_data, $uid)
+    {
+        if($user_data['nickname']){
+            $user_data['real_nickname'] = $user_data['nickname'];
+            if (get_uid() != $uid && is_login()) {//如果已经登陆，并且获取的用户不是自己
+                $alias = $this->getAlias($uid);
+                if ($alias != '') {//如果设置了备注名
+                    $user_data['nickname'] = $alias;
+                    $user_data['alias'] = $alias;
+                }
+            }
+        }
+        
+        return $user_data;
     }
 
     /**获取用户昵称
@@ -309,11 +304,10 @@ class User Extends Model
         $homeResult = array();
         $ucenterResult = array();
         if ($homeFields) {
-            $homeResult = Model('Member')->where(array('uid' => $uid))->field($homeFields)->find();
+            $homeResult = Db::name('Member')->where(array('uid' => $uid))->field($homeFields)->find();
         }
         if ($ucenterFields) {
-            $model = Model('UcenterMember');
-            $ucenterResult = $model->where(array('id' => $uid))->field($ucenterFields)->find();
+            $ucenterResult = Db::name('UcenterMember')->where(['id' => $uid])->field($ucenterFields)->find();
             return array($avatarFields, $homeResult, $ucenterResult);
         }
         return array($avatarFields, $homeResult, $ucenterResult);
@@ -335,14 +329,8 @@ class User Extends Model
             foreach ($avatarFields as $e) {
                 $avatarSize = intval(substr($e, 6));
                 $avatarUrl = $avatarObject->getAvatar($uid, $avatarSize);
-                $check = file_exists('./api/uc_login.lock');
-                if ($check) {
-                    include_once './api/uc_client/client.php';
-                    $avatarUrl = UC_API . '/avatar.php?uid=' . $uid . '&size=big';
-                }
                 $avatars[$e] = $avatarUrl;
             }
-            //dump($avatars);exit;
             $user_data = array_merge($user_data, $avatars);
             $this->write_query_user_cache($uid, 'avatars', $avatars);
             $this->popGotFields($fields, $avatarFields);

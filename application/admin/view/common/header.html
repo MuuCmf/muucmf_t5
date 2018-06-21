@@ -1,6 +1,6 @@
 <header class="main-header">
     <!-- Logo -->
-    <a href="index2.html" class="logo">
+    <a href="index.html" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini"><b>M</b>uu</span>
       <!-- logo for regular state and mobile devices -->
@@ -10,30 +10,14 @@
     <nav class="navbar navbar-static-top">
       <!-- Sidebar toggle button-->
       <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
-        <i class="icon icon-bars"></i>
+        <i class="fa fa-bars"></i>
       </a>
-
-      <ul id="nav_bar" class="nav navbar-nav">
-          {volist name="__MENU__.main" id="menu"}
-              {neq name="menu.hide" value="1"}
-                  <li data-id="{$menu.id}" class="{$menu.class|default=''}">
-                      <a href="{$menu.url|Url}" target="main_iframe">
-                          {neq name="menu.icon" value=""}
-                              <i class="icon-{$menu.icon}"></i>&nbsp; 
-                          {/neq}
-                          {$menu.title}
-                      </a>
-                  </li>
-              {/neq}
-          {/volist}
-      </ul>
-
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
           <!-- Messages: style can be found in dropdown.less-->
           <li class="dropdown messages-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="icon icon-bell"></i>
+              <i class="fa fa-bell"></i>
               <span class="label label-success">4</span>
             </a>
             <ul class="dropdown-menu">
@@ -48,92 +32,60 @@
                       </div>
                       <h4>
                         Support Team
-                        <small><i class="icon icon-clock-o"></i> 5 mins</small>
+                        <small><i class="fa fa-clock-o"></i> 5 mins</small>
                       </h4>
                       <p>Why not buy a new awesome theme?</p>
                     </a>
                   </li>
                   <!-- end message -->
-                  <li>
-                    <a href="#">
-                      <div class="pull-left">
-                        <img src="dist/img/user3-128x128.jpg" class="img-circle" alt="User Image">
-                      </div>
-                      <h4>
-                        AdminLTE Design Team
-                        <small><i class="fa fa-clock-o"></i> 2 hours</small>
-                      </h4>
-                      <p>Why not buy a new awesome theme?</p>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <div class="pull-left">
-                        <img src="dist/img/user4-128x128.jpg" class="img-circle" alt="User Image">
-                      </div>
-                      <h4>
-                        Developers
-                        <small><i class="fa fa-clock-o"></i> Today</small>
-                      </h4>
-                      <p>Why not buy a new awesome theme?</p>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <div class="pull-left">
-                        <img src="dist/img/user3-128x128.jpg" class="img-circle" alt="User Image">
-                      </div>
-                      <h4>
-                        Sales Department
-                        <small><i class="fa fa-clock-o"></i> Yesterday</small>
-                      </h4>
-                      <p>Why not buy a new awesome theme?</p>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <div class="pull-left">
-                        <img src="dist/img/user4-128x128.jpg" class="img-circle" alt="User Image">
-                      </div>
-                      <h4>
-                        Reviewers
-                        <small><i class="fa fa-clock-o"></i> 2 days</small>
-                      </h4>
-                      <p>Why not buy a new awesome theme?</p>
-                    </a>
-                  </li>
                 </ul>
               </li>
               <li class="footer"><a href="#">See All Messages</a></li>
             </ul>
           </li>
-          
+          <li><a href="javascript:;" data-id="clear_cache" data-msg="{:lang('_CACHE_CLEAR_SUCCESS_')}{:lang('_PERIOD_')}">
+                <i class="fa fa-trash"></i> {:lang('_CACHE_CLEAR_')}
+              </a>
+          </li>
+
+          <li><a target="_blank" href="{:Url('index/Index/index')}">
+                <i class="fa fa-copy"></i> {:lang('_FORESTAGE_OPEN_')}
+              </a>
+          </li>
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <span class="hidden-xs">admin</span>
+              <img src="{$__AUTH_USER__.avatar32}" class="user-image" alt="User Image">
+              <span class="hidden-xs">{$__AUTH_USER__.nickname}</span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
               <li class="user-header">
-                <img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-
+                <img src="{$__AUTH_USER__.avatar64}" class="img-circle" alt="User Image">
                 <p>
-                  Alexander Pierce - Web Developer
-                  <small>Member since Nov. 2012</small>
+                  {$__AUTH_USER__.nickname}
+                  <small>
+                      {empty name="__AUTH_USER__['signature']"}
+                        这家伙太懒，不爱写签名
+                      {else /}
+                        {$__AUTH_USER__.signature}
+                      {/empty}
+                  </small>
                 </p>
               </li>
               <!-- Menu Body -->
               <li class="user-body">
                 <div class="row">
                   <div class="col-xs-4 text-center">
-                    <a href="#">Followers</a>
+                    <a href="#">关注 {$__AUTH_USER__.following}</a>
                   </div>
                   <div class="col-xs-4 text-center">
-                    <a href="#">Sales</a>
+                    <a href="#">粉丝 {$__AUTH_USER__.fans}</a>
                   </div>
                   <div class="col-xs-4 text-center">
-                    <a href="#">Friends</a>
+                    <a href="#">
+                      {$__AUTH_USER__.title}
+                    </a>
                   </div>
                 </div>
                 <!-- /.row -->
@@ -141,13 +93,22 @@
               <!-- Menu Footer-->
               <li class="user-footer">
                 <div class="pull-left">
-                  <a href="#" class="btn btn-default btn-flat">Profile</a>
+                  <a target="main_iframe" href="{:Url('User/updatePassword')}" class="btn btn-default btn-flat">{:lang('_PASSWORD_CHANGE_')}</a>
+                  <a target="main_iframe" href="{:Url('User/updateNickname')}" class="btn btn-default btn-flat">{:lang('_NICKNAME_CHANGE_')}</a>
                 </div>
                 <div class="pull-right">
-                  <a href="#" class="btn btn-default btn-flat">Sign out</a>
+                  <a href="{:Url('common/logout')}" class="btn btn-default btn-flat">
+                    {:lang('_EXIT_')}
+                  </a>
                 </div>
               </li>
             </ul>
+          </li>
+
+          <!-- fullscreen Btn-->
+          <li><a id="full-screen" data-toggle="fullscreen">
+                <i class="fa fa-arrows-alt"></i>
+              </a>
           </li>
         </ul>
       </div>

@@ -57,11 +57,8 @@ package-lock.json
 /.idea
 
 # MuuCmf
-/ueditor
-/Conf/user.php
-/Conf/*.lock
-/Conf/common.php
-/Runtime
+/public/src
+/runtime
 /.hatccess
 
 .htaccess
