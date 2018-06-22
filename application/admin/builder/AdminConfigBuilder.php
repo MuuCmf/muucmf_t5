@@ -2,6 +2,7 @@
 namespace app\admin\builder;
 
 use think\Db;
+use think\Request;
 
 class AdminConfigBuilder extends AdminBuilder
 {
@@ -46,11 +47,10 @@ class AdminConfigBuilder extends AdminBuilder
      * @param      $type
      * @param null $opt
      * @return $this
-     * @auth 陈一枭
      */
     public function key($name, $title, $subtitle = null, $type, $opt = null)
     {
-        $key = array('name' => $name, 'title' => $title, 'subtitle' => $subtitle, 'type' => $type, 'opt' => $opt);
+        $key = ['name' => $name, 'title' => $title, 'subtitle' => $subtitle, 'type' => $type, 'opt' => $opt];
         $this->_keyList[] = $key;
         return $this;
     }
@@ -389,10 +389,10 @@ class AdminConfigBuilder extends AdminBuilder
                     $n--;
                 }
             } else {
+                //修复未定义数组下标提示
+                empty($this->_data[$e['name']]) && $this->_data[$e['name']] = null;
                 $e['value'] = $this->_data[$e['name']];
             }
-            //原代码
-            /*$e['value'] = $this->_data[$e['name']];*/
         }
 
         //编译按钮的html属性
@@ -493,8 +493,8 @@ class AdminConfigBuilder extends AdminBuilder
     {
         if (request()->isPost()) {
             $success = false;
-            $configModel = Db::name('Config');
-            foreach (input('') as $k => $v) {
+            $configModel = Db::name('config');
+            foreach (input() as $k => $v) {
                 $config['name'] = '_' . strtoupper(request()->controller()) . '_' . strtoupper($k);
                 $config['type'] = 0;
                 $config['title'] = '';
@@ -506,7 +506,16 @@ class AdminConfigBuilder extends AdminBuilder
                 $config['status'] = 1;
                 $config['value'] = is_array($v) ? implode(',', $v) : $v;
                 $config['sort'] = 0;
-                if ($configModel->save($config, null, true)) {
+
+                //查询是否存在
+                $this_conf = $configModel->where(['name' => $config['name']])->find();
+
+                if($this_conf) {
+                    //$config['id'] = $this_conf['id'];
+                    $configModel->where(['id' => $this_conf['id']])->update($config);
+                    $success = 1;
+                }else{
+                    $configModel->insert($config);
                     $success = 1;
                 }
                 $tag = 'conf_' . strtoupper(request()->controller()) . '_' . strtoupper($k);
@@ -517,11 +526,18 @@ class AdminConfigBuilder extends AdminBuilder
                     $str = $this->_callback;
                     controller(request()->controller())->$str(input(''));
                 }
+                //当前模块url地址
+                $request= Request::instance();
+                $module_name=$request->module();
+                $controller_name=$request->controller();
+                $action=$request->action();
+                $active_url=$module_name.'/'.$controller_name.'/'.$action;
+
                 header('Content-type: application/json');
-                exit(json_encode(array('info' => lang('_SUCCESS_CONF_SAVE_').lang('_PERIOD_'), 'status' => 1, 'url' => __SELF__)));
+                exit(json_encode(['info' => lang('_SUCCESS_CONF_SAVE_').lang('_PERIOD_'), 'status' => 1, 'url' => Url($active_url)]));
             } else {
                 header('Content-type: application/json');
-                exit(json_encode(array('info' => lang('_FAIL_CONF_SAVE_').lang('_PERIOD_'), 'status' => 0, 'url' => __SELF__)));
+                exit(json_encode(['info' => lang('_FAIL_CONF_SAVE_').lang('_PERIOD_'), 'status' => 0, 'url' => Url($active_url)]));
             }
 
 
@@ -538,7 +554,7 @@ class AdminConfigBuilder extends AdminBuilder
 
     private function readUserGroups()
     {
-        $list = M('AuthGroup')->where(array('status' => 1))->order('id asc')->select();
+        $list = Db::name('AuthGroup')->where(array('status' => 1))->order('id asc')->select();
         $result = array();
         foreach ($list as $group) {
             $result[$group['id']] = $group['title'];
@@ -552,7 +568,6 @@ class AdminConfigBuilder extends AdminBuilder
      * @param array $item
      * @param array $default
      * @return array|mixed
-     * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
      */
     public function parseKanbanArray($data, $item = array(), $default = array())
     {
@@ -561,17 +576,18 @@ class AdminConfigBuilder extends AdminBuilder
             if (!array_key_exists("items", $head)) {
                 $temp = array();
                 foreach ($default as $k => $v) {
-                    $temp[] = array('data-id' => $k, 'title' => $k, 'items' => $v);
+                    $temp[] = array('id' => $k, 'title' => $k, 'items' => $v);
                 }
                 $default = $temp;
             }
             $result = $default;
         } else {
             $data = json_decode($data, true);
-            $item_d = getSubByKey($item, 'data-id');
+
+            $item_d = getSubByKey($item, 'id');
             $all = array();
             foreach ($data as $key => $v) {
-                $data_id = getSubByKey($v['items'], 'data-id');
+                $data_id = getSubByKey($v['items'], 'id');
                 $data_d[$key] = $v;
                 unset($data_d[$key]['items']);
                 $data_d[$key]['items'] = $data_id ? $data_id : array();
@@ -598,14 +614,16 @@ class AdminConfigBuilder extends AdminBuilder
             unset($v);
             $item_t = array();
             foreach ($item as $val) {
-                $item_t[$val['data-id']] = $val['title'];
+
+                $item_t[$val['id']] = $val['title'];
             }
             unset($v);
+
             foreach ($data_d as &$v) {
                 foreach ($v['items'] as &$val) {
                     $t = $val;
                     $val = array();
-                    $val['data-id'] = $t;
+                    $val['id'] = $t;
                     $val['title'] = $item_t[$t];
                 }
                 unset($val);
@@ -627,6 +645,7 @@ class AdminConfigBuilder extends AdminBuilder
     public function keyDefault($key, $value)
     {
         $data = $this->_data;
+        empty($data[$key]) && $data[$key]=null;
         $data[$key] = $data[$key]!==null ? $data[$key] : $value;
         $this->_data = $data;
         return $this;

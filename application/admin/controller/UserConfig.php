@@ -13,38 +13,27 @@ class UserConfig extends Admin
     public function index()
     {
         $admin_config = new AdminConfigBuilder();
-        $init_data = [
-            'REG_SWITCH'=>'',
-            'REG_STEP' => '',
-            'SMS_CONTENT' =>'',
-            'SMS_RESEND' => '',
-            'NICKNAME_MIN_LENGTH' =>'',
-            'NICKNAME_MAX_LENGTH' => '',
-            'USERNAME_MIN_LENGTH' => '',
-            'USERNAME_MAX_LENGTH' =>'',
-            'REG_EMAIL_VERIFY'=>'',
-            'REG_EMAIL_ACTIVATE'=>'',
-            'EMAIL_VERIFY_TYPE' => '',
-            'MOBILE_VERIFY_TYPE' => '',
-            'NEW_USER_FOLLOW' =>'',
-            'NEW_USER_FANS'=>'',
-            'NEW_USER_FRIENDS'=>'',
-            'REG_CAN_SKIP'=>'',
-            'OPEN_WECHAT_AUTH'=>'',
-        ];
+        $data = $admin_config->handleConfig();
 
-        $db_data = $admin_config->handleConfig();
-        $data = array_merge($init_data,$db_data);
-        //$data = array_unique($data);
         $mStep = controller('ucenter/RegStep', 'widget')->mStep;
-        $step = array();
+        $step = [];
         foreach ($mStep as $key => $v) {
-            $step[] = array('data-id' => $key, 'title' => $v);
+            $step[] = ['id' => $key, 'title' => $v];
         }
-
-        $default = array(array('data-id' => 'disable', 'title' => lang('_DISABLE_'), 'items' => $step), array('data-id' => 'enable', 'title' => lang('_ENABLE_'), 'items' => array()));
+        $default = [
+            [
+                'id' => 'disable',
+                'title' => lang('_DISABLE_'), 
+                'items' => $step
+            ],
+            [
+                'id' => 'enable', 
+                'title' => lang('_ENABLE_'), 
+                'items' => array()
+             ],
+        ];
         //$default=array(lang('_DISABLE_')=>$step,lang('_ENABLE_AND_SKIP_')=>array(),lang('_ENABLE_BUT_NOT_SKIP_')=>array());
-        
+        empty($data['REG_STEP']) && $data['REG_STEP'] = '';
         $data['REG_STEP'] = $admin_config->parseKanbanArray($data['REG_STEP'],$step,$default);
 
         empty($data['LEVEL']) && $data['LEVEL'] = <<<str
@@ -62,7 +51,9 @@ str;
         $admin_config->title(lang('_USER_CONFIGURATION_'))->data($data)
             //注册配置
             ->keyCheckBox('REG_SWITCH', lang('_REGISTRATION_SWITCH_'), lang('_THE_REGISTRATION_OPTION_THAT_ALLOWS_THE_USE_OF_THE_REGISTRATION_IS_CLOSED_'), array('username' => lang('_USER_NAME_'),'email' => lang('_MAILBOX_'), 'mobile' => lang('_MOBILE_PHONE_')))
+
             ->keyRadio('EMAIL_VERIFY_TYPE', lang('_MAILBOX_VERIFICATION_TYPE_'), lang('_TYPE_MAILBOX_VERIFICATION_'), array(0 => lang('_NOT_VERIFIED_'), 1 => lang('_POST_REGISTRATION_ACTIVATION_MAIL_'), 2 => lang('_EMAIL_VERIFY_SEND_BEFORE_REG_')))
+
             ->keyRadio('MOBILE_VERIFY_TYPE', lang('_MOBILE_VERIFICATION_TYPE_'), lang('_TYPE_OF_CELL_PHONE_VERIFICATION_'), array(0 => lang('_NOT_VERIFIED_'), 1 => lang('_REGISTER_BEFORE_SENDING_A_VALIDATION_MESSAGE_')))
             ->keyText('NEW_USER_FOLLOW', lang('_NEW_USER_ATTENTION_'), lang('_ID_INPUT_SEPARATE_COMMA_'))
             ->keyText('NEW_USER_FANS', lang('_NEW_USER_FANS_'), lang('_ID_INPUT_SEPARATE_COMMA_'))

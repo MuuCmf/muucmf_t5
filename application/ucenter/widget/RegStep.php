@@ -15,7 +15,7 @@ class RegStep extends Controller
         'set_tag'=>'选择个人标签',
     );
 
-    public function  view()
+    public function view()
     {
         $aStep = I('get.step','','op_t');
         //调用方法输出参数
@@ -29,7 +29,7 @@ class RegStep extends Controller
     {   
         $aUid = is_login();
         if(empty($aUid)){
-            $this->error(L('_ERROR_PARAM_'));
+            $this->error(lang('_ERROR_PARAM_'));
         }
         $this->assign('user',query_user(array('avatar128')));
         $this->assign('uid',$aUid);
@@ -39,7 +39,7 @@ class RegStep extends Controller
     {
         $aUid = is_login();
         if( empty($aUid)){
-            $this->error(L('_ERROR_PARAM_'));
+            $this->error(lang('_ERROR_PARAM_'));
         }
         $this->getExpandInfo($aUid);
         $this->assign('uid',$aUid);
@@ -76,7 +76,7 @@ class RegStep extends Controller
             $res['status']=1;
         }else{
             $res['status']=0;
-            $res['info']=L('_INFO_OPERATE_FAIL_').L('_EXCLAMATION_');
+            $res['info']=lang('_INFO_OPERATE_FAIL_').lang('_EXCLAMATION_');
         }
         return $res;
     }
@@ -161,7 +161,7 @@ class RegStep extends Controller
                     $validation['max'] = '';
                 }
                 $info['succ'] = 0;
-                $info['msg'] = $data['field_name'] . L('_MSG_LENGTH_1_') . $validation['min'] . "-" . $validation['max'] . L('_MSG_LENGTH_2_');
+                $info['msg'] = $data['field_name'] . lang('_MSG_LENGTH_1_') . $validation['min'] . "-" . $validation['max'] . lang('_MSG_LENGTH_2_');
             }
         } else {
             switch ($data['child_form_type']) {
@@ -172,7 +172,7 @@ class RegStep extends Controller
                             $validation['max'] = '';
                         }
                         $info['succ'] = 0;
-                        $info['msg'] = $data['field_name'] . L('_MSG_LENGTH_1_') . $validation['min'] . "-" . $validation['max'] . L('_MSG_LENGTH_2_');
+                        $info['msg'] = $data['field_name'] . lang('_MSG_LENGTH_1_') . $validation['min'] . "-" . $validation['max'] . lang('_MSG_LENGTH_2_');
                     }
                     break;
                 case 'number':
@@ -183,23 +183,23 @@ class RegStep extends Controller
                                 $validation['max'] = '';
                             }
                             $info['succ'] = 0;
-                            $info['msg'] = $data['field_name'] . L('_MSG_LENGTH_1_') . $validation['min'] . "-" . $validation['max'] . L('_MSG_LENGTH_2_').L('_COMMA_').L('_DIGITAL_AND_');
+                            $info['msg'] = $data['field_name'] . lang('_MSG_LENGTH_1_') . $validation['min'] . "-" . $validation['max'] . lang('_MSG_LENGTH_2_').lang('_COMMA_').lang('_DIGITAL_AND_');
                         }
                     } else {
                         $info['succ'] = 0;
-                        $info['msg'] = $data['field_name'] . L('_DIGITAL_MUST_');
+                        $info['msg'] = $data['field_name'] . lang('_DIGITAL_MUST_');
                     }
                     break;
                 case 'email':
                     if (!preg_match("/^([0-9A-Za-z\\-_\\.]+)@([0-9a-z]+\\.[a-z]{2,3}(\\.[a-z]{2})?)$/i", $data['value'])) {
                         $info['succ'] = 0;
-                        $info['msg'] = $data['field_name'] . L('_COMMA_').L('_MSG_EMAIL_MUST_');
+                        $info['msg'] = $data['field_name'] . lang('_COMMA_').lang('_MSG_EMAIL_MUST_');
                     }
                     break;
                 case 'phone':
                     if (!preg_match("/^\d{11}$/", $data['value'])) {
                         $info['succ'] = 0;
-                        $info['msg'] = $data['field_name'] . L('_MSG_FORMAT_').L('_COMMA_').L('_MSG_PHONE_MUST_');
+                        $info['msg'] = $data['field_name'] . lang('_MSG_FORMAT_').lang('_COMMA_').lang('_MSG_PHONE_MUST_');
                     }
                     break;
             }
@@ -238,13 +238,13 @@ class RegStep extends Controller
         if($field_list){
             $map_field['id']=array('in',$field_list);
         }else{
-            $this->error(L('_ERROR_INFO_SAVE_NONE_').L('_EXCLAMATION_'));
+            $this->error(lang('_ERROR_INFO_SAVE_NONE_').lang('_EXCLAMATION_'));
         }
         $map_field['status']=1;
         $field_setting_list = D('field_setting')->where($map_field)->order('sort asc')->select();
 
         if (!$field_setting_list) {
-            $this->error(L('_ERROR_INFO_MODIFY_NONE_').L('_EXCLAMATION_'));
+            $this->error(lang('_ERROR_INFO_MODIFY_NONE_').lang('_EXCLAMATION_'));
         }
 
         $data = null;
@@ -256,7 +256,7 @@ class RegStep extends Controller
                     $val['value'] = op_t($_POST['expand_' . $val['id']]);
                     if (!$val['value'] || $val['value'] == '') {
                         if ($val['required'] == 1) {
-                            $this->error($val['field_name'] . L('_ERROR_CONTENT_CANNOT_EMPTY_').L('_EXCLAMATION_'));
+                            $this->error($val['field_name'] . lang('_ERROR_CONTENT_CANNOT_EMPTY_').lang('_EXCLAMATION_'));
                         }
                     } else {
                         $val['submit'] = $this->_checkInput($val);
@@ -273,7 +273,7 @@ class RegStep extends Controller
                 case 'checkbox':
                     $val['value'] = $_POST['expand_' . $val['id']];
                     if (!is_array($val['value']) && $val['required'] == 1) {
-                        $this->error(L('_ERROR_AT_LEAST_ONE_').L('_COLON_') . $val['field_name']);
+                        $this->error(lang('_ERROR_AT_LEAST_ONE_').lang('_COLON_') . $val['field_name']);
                     }
                     $data[$key]['field_data'] = is_array($val['value']) ? implode('|', $val['value']) : '';
                     break;
@@ -290,7 +290,7 @@ class RegStep extends Controller
                     $val['value'] = op_t($_POST['expand_' . $val['id']]);
                     if (!$val['value'] || $val['value'] == '') {
                         if ($val['required'] == 1) {
-                            $this->error($val['field_name'] .L('_ERROR_CONTENT_CANNOT_EMPTY_').L('_EXCLAMATION_'));
+                            $this->error($val['field_name'] .lang('_ERROR_CONTENT_CANNOT_EMPTY_').lang('_EXCLAMATION_'));
                         }
                     } else {
                         $val['submit'] = $this->_checkInput($val);
@@ -318,14 +318,14 @@ class RegStep extends Controller
                 if ($dl['field_data'] != '' && $dl['field_data'] != null) {
                     $dl['createTime'] = $dl['changeTime'] = time();
                     if (!D('field')->add($dl)) {
-                        $result['info']=L('_ERROR_INFO_ADD_').L('_EXCLAMATION_');
+                        $result['info']=lang('_ERROR_INFO_ADD_').lang('_EXCLAMATION_');
                         $result['status']=0;
                     }
                 }
             } else {
                 $dl['changeTime'] = time();
                 if (!D('field')->where('id=' . $res['id'])->save($dl)) {
-                    $result['info']=L('_ERROR_INFO_MODIFY_').L('_EXCLAMATION_');
+                    $result['info']=lang('_ERROR_INFO_MODIFY_').lang('_EXCLAMATION_');
                     $result['status']=0;
                 }
             }

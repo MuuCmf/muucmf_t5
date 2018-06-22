@@ -1,25 +1,33 @@
 {extend name="common/main_iframe"/}
+{block name="style"}
+    <style>
+        .button-box {
 
+            margin-bottom: 10px;
+        }
+    </style>
+{/block}
 {block name="body"}
     <!-- 标题栏 -->
     <div class="main-title">
         <h2>{:lang('_USER_LIST_')}</h2>
     </div>
-    <div class="clearfix">
+    <div class="button-box clearfix">
+        <div class="row">
         <div class="col-xs-10">
-            <button class="btn ajax-post" url="{:Url('User/changeStatus',array('method'=>'resumeUser'))}"
+            <button class="btn btn-success ajax-post" url="{:Url('User/changeStatus',array('method'=>'resumeUser'))}"
                     target-form="ids">{:lang('_ENABLED_')}
             </button>
-            <button class="btn ajax-post" url="{:Url('User/changeStatus',array('method'=>'forbidUser'))}"
+            <button class="btn btn-warning ajax-post" url="{:Url('User/changeStatus',array('method'=>'forbidUser'))}"
                     target-form="ids">{:lang('_DISABLE_')}
             </button>
-            <button class="btn ajax-post confirm" url="{:Url('User/changeStatus',array('method'=>'deleteUser'))}"
+            <button class="btn btn-danger ajax-post confirm" url="{:Url('User/changeStatus',array('method'=>'deleteUser'))}"
                     target-form="ids">{:lang('_DELETE_')}
             </button>
-            <button class="btn " onclick="post_select_form()"
+            <button class="btn btn-info" onclick="post_select_form()"
                     target-form="ids">{:lang('_USER_GROUP_SELECT_')}
             </button>
-            <button class="btn ajax-post confirm" data-confirm="{:lang('_PW_RESET_CONFIRM_')}" url="{:Url('User/initPass')}" target-form="ids">{:lang('_PW_RESET_')}
+            <button class="btn ajax-post btn-danger confirm" data-confirm="{:lang('_PW_RESET_CONFIRM_')}" url="{:Url('User/initPass')}" target-form="ids">{:lang('_PW_RESET_')}
             </button>
             <span style="font-size: 14px;color: #999898;margin-left: 11px;">{:lang('_PW_RESET_TIP_')}</span>
         </div>
@@ -40,6 +48,7 @@
                        placeholder="{:lang('_PLACEHOLDER_NICKNAME_ID_')}">
                                  <span class="input-group-btn">  <a class="btn btn-default" href="javascript:;" id="search" url="{:Url('index')}"><i class="icon-search"></i></a></span>
             </div>
+        </div>
         </div>
     </div>
     <!-- 数据列表 -->

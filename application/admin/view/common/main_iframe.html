@@ -8,21 +8,25 @@
 <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 <!-- ZUI -->
 <link href="__ZUI__/css/zui.min.css" rel="stylesheet">
+<link href="__ZUI__/css/zui-theme.min.css" rel="stylesheet">
 <!-- MAIN IFRAME BASE -->
 <link href="__CSS__/main_iframe.min.css" rel="stylesheet">
 <!-- pagination -->
 <link rel="stylesheet" href="__CSS__/pagination.min.css">
 {block name="style"}{/block}
-</head>
-<body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">	
-	<section class="content">
-		{block name="body"}{/block}
-	</section>	
-</div>
-<!-- ZUI -->
 <script src="__COMMON__/lib/jquery-2.1.1/jquery.min.js"></script>
+</head>
+<body class="hold-transition">
+
+<section class="container-fluid">
+	<div class="wrapper">	
+		{block name="body"}{/block}
+	</div>
+</section>	
+
+<!-- ZUI -->
 <script src="__COMMON__/lib/zui/js/zui.min.js"></script>
+<script src="__JS__/main.min.js"></script>
 {block name="script"}{/block}
 </body>
 </html>

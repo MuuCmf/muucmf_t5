@@ -1,6 +1,7 @@
 <label class="item-label">{$field.title|htmlspecialchars}
     {if condition="$field['subtitle']"}
         <span class="check-tips">（{$field.subtitle}）</span>
+        }
     {/if}
 </label>
 {if condition="$field['name'] == 'action'"}
@@ -95,10 +96,10 @@
     {/case}
 
     {case value="singleFile"}
-        {:W('Common/UploadFile/render',array(array('name'=>$field['name'],'value'=>$field['value'])))}
+        {:widget('common/UploadFile/render',array(array('name'=>$field['name'],'value'=>$field['value'])))}
     {/case}
     {case value="multiFile"}
-        {:W('Common/UploadMultiFile/render',array(array('name'=>$field['name'],'limit'=>9,'value'=>$field['value'])))}
+        {:widget('common/UploadMultiFile/render',array(array('name'=>$field['name'],'limit'=>9,'value'=>$field['value'])))}
     {/case}
     {case value="singleImage"}
         <div class="controls">
@@ -268,15 +269,15 @@
 
     {/case}
     {case value="ueditor"}
-            {:W('Common/Ueditor/editor',array($field['name'],$field['name'],$field['value'],$field['config'],$field['style'],$field['param'],$field['width']))}
+            {:widget('common/Ueditor/editor',array($field['name'],$field['name'],$field['value'],$field['config'],$field['style'],$field['param'],$field['width']))}
 
     {/case}
     {case value="simditor"}
-            {:W('Common/Simditor/editor',array($field['name'],$field['name'],$field['value'],$field['config'],$field['style'],$field['param'],$field['width']))}
+            {:widget('Common/Simditor/editor',array($field['name'],$field['name'],$field['value'],$field['config'],$field['style'],$field['param'],$field['width']))}
 
     {/case}
     {case value="wangeditor"}
-            {:W('Common/Wangeditor/editor',array($field['name'],$field['name'],$field['value'],$field['config'],$field['style'],$field['param'],$field['width']))}
+            {:widget('Common/Wangeditor/editor',array($field['name'],$field['name'],$field['value'],$field['config'],$field['style'],$field['param'],$field['width']))}
 
     {/case}
     {case value="textarea"}
@@ -357,55 +358,62 @@
 						}
 				 </script>
     {/case}
-	<!--弹出窗口选择并返回值（目前只支持返回ID）结束 -->
+	<!-- 弹出窗口选择并返回值（目前只支持返回ID）结束 -->
 
     {case value="kanban"}
 
         <input type="hidden" name="{$field.name}" value='{:json_encode($field["value"])}'/>
-        <div class="kanbans" id="{$field.name}">
-            {php}foreach($field['value'] as $key =>$kanban){{/php}
-            <div class="kanban panel" data-id="{$kanban['data-id']}" data-title="{$kanban['title']}">
-                <div class="panel-heading">
-                    <strong>{$kanban['title']}</strong>
-                </div>
-                <div class="panel-body">
-                    <div class="kanban-list">
+        <!-- 使用 .boards 类来管理多个 .board -->
+        <div class="boards" id="{$field.name}">
+          <!-- .board 为单个容器 -->
+          {php}foreach($field['value'] as $key =>$kanban){{/php}
+          <div class="board panel" data-id="{$kanban['id']}" data-title="{$kanban['title']}">
+            <div class="panel-heading">
+              <strong>{$kanban['title']}</strong>
+            </div>
+            <div class="panel-body">
+              <div class="board-list">
+                    {notempty name="kanban.items"}
                         {volist name="kanban.items" id="vo"}
-                            <div class="kanban-item item" data-id="{$vo.data-id}" data-title="{$vo.title}">
+                            <div class="board-item" data-id="{$vo.id}" data-title="{$vo.title}">
                                 {$vo.title}
                             </div>
                         {/volist}
-                    </div>
-                </div>
+                    {/notempty}
+              </div>
             </div>
-            {php}}{/php}
+          </div>
+          {php}}{/php}
         </div>
-        <script>
-            $(function () {
+        <script type="text/javascript">
+           $(function(){
                 var flag = "{$field.name}"
-                $('#{$field.name}').kanbans({'drop': function () {
-                    var kanban =new Array();
-                    $('.kanbans .kanban').each(function (index, element) {
-                        if ($(element).data('id')) {
-                            kanban[index] =  new Object();
-                            kanban[index]['data-id'] =  $(element).data('id');
-                            kanban[index]['title'] =  $(element).data('title');
-                            kanban[index]['items'] =  new Array();
-                            var obj = $(element).find('.item');
-                            for (var i = 0; i < obj.length; i++) {
-                                kanban[index]['items'][i] = new Object();
-                                kanban[index]['items'][i]['data-id'] = $(obj[i]).data('id');
-                                kanban[index]['items'][i]['title'] = $(obj[i]).data('title');
-                            };
-                        }
-                    })
-                    var kanban_str = JSON.stringify(kanban);
-                    $('[name="'+flag+'"]').val(kanban_str);
-                }
-                })
-            })
+                $('#{$field.name}').boards({
+                    drop: function(e){
+                        var kanban =new Array();
+                        $('.boards .board').each(function (index, element) {
+                            if ($(element).data('id')) {
+                                kanban[index] =  new Object();
+                                kanban[index]['id'] =  $(element).data('id');
+                                kanban[index]['title'] =  $(element).data('title');
+                                kanban[index]['items'] =  new Array();
+                                var obj = $(element).find('.board-item');
+                                if(obj){
+                                    for (var i = 0; i < obj.length; i++) {
+                                        kanban[index]['items'][i] = new Object();
+                                        kanban[index]['items'][i]['id'] = $(obj[i]).data('id');
+                                        kanban[index]['items'][i]['title'] = $(obj[i]).data('title');
+                                    };
+                                }
+                            }
+                        })
+                        var kanban_str = JSON.stringify(kanban);
+                        $('[name="'+flag+'"]').val(kanban_str);
+                        //console.log(kanban_str);
+                    }
+                });
+           }) 
         </script>
-
     {/case}
 {case value="chosen"}
     <select name="{$field.name}[]" style="width: 400px" class="chosen-select" multiple="multiple">
