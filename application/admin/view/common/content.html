@@ -1,19 +1,8 @@
 
 
 <div class="content-wrapper">
-  <iframe width="100%" id="main_iframe" name="main_iframe" scrolling="no" frameborder="no" border="0" framespacing="0" src="{:Url('admin/index/console')}" onload="changeFrameHeight()" >
+  <iframe width="100%" id="main_iframe" name="main_iframe" scrolling="yes" frameborder="no" border="0" framespacing="0" src="{:Url('admin/index/console')}" >
 
   </iframe>
-  <script>
-  function changeFrameHeight(){
-      document.getElementById("main_iframe").height=0;  
-      document.getElementById("main_iframe").height=document.getElementById("main_iframe").contentWindow.document.body.scrollHeight;  
 
-  }
-
-  window.onresize=function(){  
-       changeFrameHeight();  
-
-  } 
-  </script>
 </div>

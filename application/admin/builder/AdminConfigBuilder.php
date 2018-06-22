@@ -534,10 +534,10 @@ class AdminConfigBuilder extends AdminBuilder
                 $active_url=$module_name.'/'.$controller_name.'/'.$action;
 
                 header('Content-type: application/json');
-                exit(json_encode(['info' => lang('_SUCCESS_CONF_SAVE_').lang('_PERIOD_'), 'status' => 1, 'url' => Url($active_url)]));
+                exit(json_encode(['msg' => lang('_SUCCESS_CONF_SAVE_').lang('_PERIOD_'), 'code' => 1, 'url' => Url($active_url)]));
             } else {
                 header('Content-type: application/json');
-                exit(json_encode(['info' => lang('_FAIL_CONF_SAVE_').lang('_PERIOD_'), 'status' => 0, 'url' => Url($active_url)]));
+                exit(json_encode(['msg' => lang('_FAIL_CONF_SAVE_').lang('_PERIOD_'), 'code' => 0, 'url' => Url($active_url)]));
             }
 
 

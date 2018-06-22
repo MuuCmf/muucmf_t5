@@ -1,3 +1,5 @@
+// 通用gulp文件，不推荐使用通用方法，建议在各模块目录单独建立
+
 var gulp        = require('gulp'),
     sass        = require('gulp-sass'),
     minifyCss   = require('gulp-minify-css'),
@@ -37,7 +39,7 @@ gulp.task('common_js', function() {
 });
 // 编译模块js 并压缩不合并
 gulp.task('mod_js', function() {
-  gulp.src([src+'/**/js/**/*.js','!'+src+'/common/js','!'+src+'/common/js/**'])
+  gulp.src([src+'/**/js/**/*.js','!'+src+'/common/js','!'+src+'/common/js/**','!'+src+'/admin/js','!'+src+'/admin/js/**',])
     .pipe(plumber())
     .pipe(babel({
       presets: ['es2015']

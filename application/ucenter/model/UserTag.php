@@ -33,6 +33,9 @@ class UserTag extends Model {
         /* 获取所有分类 */
         $map  = array('status' => array('gt', -1));
         $list = $this->field($field)->where($map)->order('sort')->select();
+        $list = collection($list)->toArray();
+
+        //dump($list);exit;
         $list = list_to_tree($list, $pk = 'id', $pid = 'pid', $child = '_', $root = $id);
 
 

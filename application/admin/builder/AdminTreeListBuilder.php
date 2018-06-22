@@ -1,14 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: caipeichao
- * Date: 14-3-12
- * Time: AM10:08
- */
-
 namespace app\admin\builder;
 
-class AdminTreeListBuilder extends Admin
+use think\Db;
+use think\Request;
+
+class AdminTreeListBuilder extends AdminBuilder
 {
     private $_title;
     private $_suggest;
@@ -262,7 +258,7 @@ class AdminTreeListBuilder extends Admin
         return $this;
     }
 
-    public function display()
+    public function display($templateFile = '', $charset = '', $contentType = '', $content = '', $prefix = '')
     {
         //key类型的等价转换
         //map转换成text
@@ -346,7 +342,7 @@ class AdminTreeListBuilder extends Admin
         }
 
         //生成翻页HTML代码
-        C('VAR_PAGE', 'page');
+        config('VAR_PAGE', 'page');
         $pager = new \Think\Page($this->_pagination['totalCount'], $this->_pagination['listRows'], $_REQUEST);
         $pager->setConfig('theme', '%FIRST% %UP_PAGE% %LINK_PAGE% %DOWN_PAGE% %END% %HEADER%');
         $paginationHtml = $pager->show();
@@ -423,7 +419,7 @@ class AdminTreeListBuilder extends Admin
     {
         return function ($item) use ($pattern) {
             $pattern = str_replace('###', $item['id'], $pattern);
-            return U($pattern);
+            return Url($pattern);
         };
     }
 

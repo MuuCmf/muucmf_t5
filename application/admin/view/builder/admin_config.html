@@ -1,6 +1,7 @@
 {extend name="common/main_iframe"/}
 
 {block name="body"}
+<div class="builder">
     <div class="main-title">
         <h2>{$title} {if condition="$suggest"}<span>（{$suggest}）</span>{/if}</h2>
     </div>
@@ -44,7 +45,7 @@
             </div>
         </form>
     </div>
-
+</div>
 {/block}
 
 {block name="script"}

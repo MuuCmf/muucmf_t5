@@ -2,6 +2,7 @@
 namespace app\admin\controller;
 
 use app\admin\builder\AdminListBuilder;
+use think\Db;
 
 /**
  * 行为控制器
@@ -14,13 +15,13 @@ class Action extends Admin {
      */
     public function actionLog(){
         //获取列表数据
-        $aUid=I('get.uid',0,'intval');
+        $aUid=input('get.uid',0,'intval');
         if($aUid) $map['user_id']=$aUid;
 
         //按时间和行为筛选   路飞
-        $sTime=I('post.sTime',0,'text');
-        $eTime=I('post.eTime',0,'text');
-        $aSelect=I('post.select',0,'intval');
+        $sTime=input('post.sTime',0,'text');
+        $eTime=input('post.eTime',0,'text');
+        $aSelect=input('post.select',0,'intval');
         if($sTime && $eTime) {
             $map['create_time']=array('between',array(strtotime($sTime),strtotime($eTime)));
         }
@@ -37,21 +38,21 @@ class Action extends Admin {
             $list[$key]['ip']=long2ip($value['action_ip']);
         }
 
-        $actionList = D('Action')->select();
+        $actionList = Db::name('Action')->select();
         $this->assign('action_list', $actionList);
 
         $this->assign('_list', $list);
-        $this->meta_title = L('_BEHAVIOR_LOG_');
-        $this->display();
+        $this->meta_title = lang('_BEHAVIOR_LOG_');
+        return $this->fetch();
     }
     public function scoreLog($r=20,$p=1){
 
-        if(I('type')=='clear'){
+        if(input('type')=='clear'){
             D('ScoreLog')->where(array('id>0'))->delete();
             $this->success('清空成功。',U('scoreLog'));
             exit;
         }else{
-            $aUid=I('uid',0,'');
+            $aUid=input('uid',0,'');
             if($aUid){
                 $map['uid']=$aUid;
             }
@@ -74,7 +75,7 @@ class Action extends Admin {
 
             $listBuilder->keyId()->keyUid('uid','用户')->keyText('scoreType','积分类型')->keyText('adjustType','调整类型')->keyHtml('value','积分变动')->keyText('finally_value','积分最终值')->keyText('remark','变动描述')->keyCreateTime();
             $listBuilder->pagination($scoreLog['count'],$r);
-            $listBuilder->search(L('_SEARCH_'),'uid','text','输入UID');
+            $listBuilder->search(lang('_SEARCH_'),'uid','text','输入UID');
 
             $listBuilder->button('清空日志',array('url'=>U('scoreLog',array('type'=>'clear')),'class'=>'btn ajax-get confirm'));
             $listBuilder->display();
@@ -89,12 +90,12 @@ class Action extends Admin {
      * @author huajie <banhuajie@163.com>
      */
     public function edit($id = 0){
-        empty($id) && $this->error(L('_PARAMETER_ERROR_'));
+        empty($id) && $this->error(lang('_PARAMETER_ERROR_'));
 
         $info = M('ActionLog')->field(true)->find($id);
 
         $this->assign('info', $info);
-        $this->meta_title = L('_CHECK_THE_BEHAVIOR_LOG_');
+        $this->meta_title = lang('_CHECK_THE_BEHAVIOR_LOG_');
         $this->display();
     }
 
@@ -104,7 +105,7 @@ class Action extends Admin {
      * @author huajie <banhuajie@163.com>
      */
     public function remove($ids = 0){
-        empty($ids) && $this->error(L('_PARAMETER_ERROR_'));
+        empty($ids) && $this->error(lang('_PARAMETER_ERROR_'));
         if(is_array($ids)){
             $map['id'] = array('in', $ids);
         }elseif (is_numeric($ids)){
@@ -112,9 +113,9 @@ class Action extends Admin {
         }
         $res = M('ActionLog')->where($map)->delete();
         if($res !== false){
-            $this->success(L('_DELETE_SUCCESS_'));
+            $this->success(lang('_DELETE_SUCCESS_'));
         }else {
-            $this->error(L('_DELETE_FAILED_'));
+            $this->error(lang('_DELETE_FAILED_'));
         }
     }
 
@@ -124,9 +125,9 @@ class Action extends Admin {
     public function clear(){
         $res = M('ActionLog')->where('1=1')->delete();
         if($res !== false){
-            $this->success(L('_LOG_EMPTY_SUCCESSFULLY_'));
+            $this->success(lang('_LOG_EMPTY_SUCCESSFULLY_'));
         }else {
-            $this->error(L('_LOG_EMPTY_'));
+            $this->error(lang('_LOG_EMPTY_'));
         }
     }
 
@@ -136,7 +137,7 @@ class Action extends Admin {
      */
     public function csv()
     {
-        $aIds = I('ids', array());
+        $aIds = input('ids', array());
 
         if(count($aIds)) {
             $map['id'] = array('in', $aIds);
@@ -146,7 +147,7 @@ class Action extends Admin {
 
         $list = M('ActionLog')->where($map)->order('create_time asc')->select();
 
-        $data = L('_DATA_MORE_')."\n";
+        $data = lang('_DATA_MORE_')."\n";
         foreach ($list as $val) {
             $val['create_time'] = time_format($val['create_time']);
             $data.=$val['id'].",".get_action($val['action_id'], 'title').",".get_nickname($val['user_id']).",".long2ip($val['action_ip']).",".$val['remark'].",".$val['create_time']."\n";

@@ -5,14 +5,14 @@ use app\admin\builder\AdminConfigBuilder;
 use app\admin\builder\AdminListBuilder;
 use app\admin\builder\AdminTreeListBuilder;
 
-class UserTagr extends Admin
+class UserTag extends Admin
 {
     protected $userTagModel;
 
     public function _initialize()
     {
         parent::_initialize();
-        $this->userTagModel=model('Ucenter/UserTag');
+        $this->userTagModel=model('ucenter/UserTag');
     }
     /**
      * 标签分类
@@ -27,9 +27,11 @@ class UserTagr extends Admin
 
         $tree = $this->userTagModel->getTree(0, 'id,title,sort,pid,status');
 
-        $builder->title(lang('_USER_TAG_MANAGER_'))
+        $builder
+            ->title(lang('_USER_TAG_MANAGER_'))
             ->suggest(lang('_USER_TAG_MANAGER_VICE_'))
-            ->buttonNew(Url('UserTag/add'))->button(lang('_RECYCLE_BIN_'),array('href'=>U('UserTag/TagTrash')))
+            ->buttonNew(Url('UserTag/add'))
+            ->button(lang('_RECYCLE_BIN_'),array('href'=>Url('UserTag/TagTrash')))
             ->data($tree)
             ->display();
     }
@@ -44,7 +46,7 @@ class UserTagr extends Admin
             if ($id != 0) {
                 $result=$this->userTagModel->saveData();
                 if ($result) {
-                    $this->success(lang('_SUCCESS_EDIT_').L('_PERIOD_'), U('UserTag/userTag'));
+                    $this->success(lang('_SUCCESS_EDIT_').L('_PERIOD_'), Url('UserTag/userTag'));
                 } else {
                     $this->error(lang('_FAIL_EDIT_').L('_PERIOD_').$this->userTagModel->getError());
                 }
@@ -86,7 +88,7 @@ class UserTagr extends Admin
             $builder->keyId()->keyText('title', L('_TITLE_'))->keySelect('pid', L('_FATHER_CLASS_'), L('_FATHER_CLASS_SELECT_'), array('0' => L('_TOP_CLASS_')) + $opt)
                 ->keyStatus()
                 ->data($category)
-                ->buttonSubmit(U('UserTag/add'))->buttonBack()->display();
+                ->buttonSubmit(Url('UserTag/add'))->buttonBack()->display();
         }
 
     }
@@ -108,7 +110,7 @@ class UserTagr extends Admin
         //显示页面
 
         $builder->title(lang('_TRASH_TAG_CATEGORY_'))
-            ->setStatusUrl(U('setStatus'))->buttonRestore()->buttonDeleteTrue(U('UserTag/userTagClear'))
+            ->setStatusUrl(Url('setStatus'))->buttonRestore()->buttonDeleteTrue(Url('UserTag/userTagClear'))
             ->keyId()->keyText('title', L('_TITLE_'))->keyText('pid',L('_ID_CATEGORY_FATHER_'))
             ->data($list)
             ->pagination($totalCount, $r)
@@ -127,7 +129,7 @@ class UserTagr extends Admin
      * @param $status
      * @author 郑钟良<zzl@ourstu.com>
      */
-    public function setStatus($ids, $status)
+    public function setStatusThis($ids, $status)
     {
         $builder = new AdminListBuilder();
         if($status==-1){
