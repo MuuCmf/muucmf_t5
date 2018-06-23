@@ -1,13 +1,11 @@
-{extend name="common/main_iframe"/}
+{extend name="common/main"/}
 {block name="style"}
     <style>
-        .button-box {
 
-            margin-bottom: 10px;
-        }
     </style>
 {/block}
 {block name="body"}
+<div class="builder">
     <!-- 标题栏 -->
     <div class="main-title">
         <h2>{:lang('_USER_LIST_')}</h2>
@@ -107,10 +105,13 @@
             {/notempty}
             </tbody>
         </table>
+
+        <div class="page text-center">
+            {$page}
+        </div>
     </div>
-    <div class="with-padding text-center">
-        {$page}
-    </div>
+    
+</div>
 {/block}
 
 {block name="script"}

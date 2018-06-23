@@ -1,26 +1,14 @@
 <?php
-// +----------------------------------------------------------------------
-// | OneThink [ WE CAN DO IT JUST THINK IT ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
-// +----------------------------------------------------------------------
-// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
-// +----------------------------------------------------------------------
+namespace app\admin\model;
 
-namespace Admin\Model;
-use Think\Model;
+use think\Model;
 
 /**
  * 用户模型
- * @author 麦当苗儿 <zuojiazi@vip.qq.com>
  */
 
-class MemberModel extends Model {
+class Member extends Model {
 
-    protected $_validate = array(
-        array('nickname','nicknameLength', '', '', 'callback'),
-        array('nickname', '', '昵称被占用', self::EXISTS_VALIDATE, 'unique'), //用户名被占用
-    );
 
     public function lists($status = 1, $order = 'uid DESC', $field = true){
         $map = array('status' => $status);
@@ -36,7 +24,7 @@ class MemberModel extends Model {
         /* 检测是否在当前应用注册 */
         $user = $this->field(true)->find($uid);
         if(!$user || 1 != $user['status']) {
-            $this->error = L('_USERS_DO_NOT_EXIST_OR_HAVE_BEEN_DISABLED_WITH_EXCLAMATION_'); //应用级别禁用
+            $this->error = lang('_USERS_DO_NOT_EXIST_OR_HAVE_BEEN_DISABLED_WITH_EXCLAMATION_'); //应用级别禁用
             return false;
         }
 
@@ -84,13 +72,13 @@ class MemberModel extends Model {
     }
 
     public function getNickName($uid){
-        return $this->where(array('uid'=>(int)$uid))->getField('nickname');
+        return $this->where(array('uid'=>(int)$uid))->value('nickname');
     }
 
     public function nicknameLength($nickname)
     {
         if(mb_strlen($nickname,'utf-8')<modC('NICKNAME_MIN_LENGTH',2,'USERCONFIG')||mb_strlen($nickname,'utf-8')<modC('NICKNAME_MAX_LENGTH',32,'USERCONFIG')){
-            $this->error=L('_NICKNAME_LENGTH_MUST_BE_IN_').modC('NICKNAME_MIN_LENGTH',2,'USERCONFIG').'-'.modC('NICKNAME_MAX_LENGTH',32,'USERCONFIG').L('_POSITION_WITH_EXCLAMATION_');
+            $this->error=lang('_NICKNAME_LENGTH_MUST_BE_IN_').modC('NICKNAME_MIN_LENGTH',2,'USERCONFIG').'-'.modC('NICKNAME_MAX_LENGTH',32,'USERCONFIG').lang('_POSITION_WITH_EXCLAMATION_');
         }
         return true;
     }

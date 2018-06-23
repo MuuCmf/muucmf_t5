@@ -33,8 +33,8 @@ class Index extends Admin
 
         }else{
             
-            $this->getUserCount();
             $this->meta_title = lang('_INDEX_MANAGE_');
+            $this->getUserCount();
             $this->assign('meta_title',$this->meta_title);
             $this->getOtherCount();
             return $this->fetch();

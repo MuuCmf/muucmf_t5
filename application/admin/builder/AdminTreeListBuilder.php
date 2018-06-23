@@ -10,11 +10,12 @@ class AdminTreeListBuilder extends AdminBuilder
     private $_suggest;
     private $_keyList = array();
     private $_buttonList = array();
-    private $_pagination = array();
+    //private $_pagination = array();
     private $_data = array();
     private $_setStatusUrl;
     private $_level = 2;
     private $_model = '';
+    private $_page; //分页HTML代码
 
     private $_move=false;
     private $_merge=false;
@@ -37,7 +38,17 @@ class AdminTreeListBuilder extends AdminBuilder
         return $this;
     }
     /**
-     * @param $url string 已被U函数解析的地址
+     * 分页html
+     * @param  [type] $page [description]
+     * @return [type]       [description]
+     */
+    public function page($page)
+    {
+        $this->_page = $page;
+        return $this;
+    }
+    /**
+     * @param $url string 已被Url函数解析的地址
      * @return $this
      */
     public function setStatusUrl($url)
@@ -340,22 +351,19 @@ class AdminTreeListBuilder extends AdminBuilder
             $this->addDefaultCssClass($button);
             $button['attr'] = $this->compileHtmlAttr($button['attr']);
         }
-
         //生成翻页HTML代码
         config('VAR_PAGE', 'page');
-        $pager = new \Think\Page($this->_pagination['totalCount'], $this->_pagination['listRows'], $_REQUEST);
-        $pager->setConfig('theme', '%FIRST% %UP_PAGE% %LINK_PAGE% %DOWN_PAGE% %END% %HEADER%');
-        $paginationHtml = $pager->show();
-
+        
         //显示页面
         $this->assign('title', $this->_title);
         $this->assign('suggest', $this->_suggest);
         $this->assign('keyList', $this->_keyList);
         $this->assign('buttonList', $this->_buttonList);
-        $this->assign('pagination', $paginationHtml);
+        //$this->assign('pagination', $paginationHtml);
         $this->assign('level', $this->_level);
         $this->assign('model', $this->_model);
         $this->assign('tree', $this->_data);
+        $this->assign('page',$this->_page);
         $this->assign('canMove',$this->_move);
         $this->assign('canMerge',$this->_merge);
         parent::display('admin_tree');

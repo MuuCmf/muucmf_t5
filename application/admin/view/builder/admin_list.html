@@ -1,143 +1,148 @@
-<extend name="Public/base"/>
+{extend name="common/main"/>
 
-<block name="body">
-    <link type="text/css" rel="stylesheet" href="__PUBLIC__/lib/magnific/magnific-popup.css"/>
+{block name="body"}
+<div class="builder">
+    <link type="text/css" rel="stylesheet" href="__COMMON__/lib/magnific/magnific-popup.css"/>
     <!-- 标题 -->
     <div class="main-title">
         <h2>
             {$title|htmlspecialchars}
-            <if condition="$suggest">（{$suggest|htmlspecialchars}）</if>
+
+            {if condition="$suggest"}<small>（{$suggest|htmlspecialchars}）</small>{/if}
         </h2>
     </div>
-    <php>
+    {php}
+        $show=0;
         foreach($searches as $search){
-            if($_REQUEST[$search['name']])
-        {
-        $show=1;
-        }
-        }
-    </php>
-
-    <div style="margin-bottom: 10px;" <eq name='show' value="">class="hide" </eq> id="search_form">
-
-        <style>
-            .tb_search td{
-                padding: 5px 10px;
+            if(input($search['name']))
+            {
+                $show=1;
+            }else{
+                $show=0;
             }
-        </style>
-<form id="searchForm" method="get" action="{$searchPostUrl||default='__SELF__'}" class="form-dont-clear-url-param">
-    <div class="search-form  cf " style="margin-bottom: 10px">
+        }
+    {/php}
+
+    <div style="margin-bottom: 10px;" {eq name='show' value='0'}class="hide" {/eq} id="search_form">
+
+    <form id="searchForm" method="get" action="{$searchPostUrl}?" class="form-dont-clear-url-param">
+    <div class="search-form cf">
         <table class="tb_search">
 
-    <volist name="searches" id="search">
+    {volist name="searches" id="search"}
 
-             <!--判断搜索选项是TEXT还是SELECT-->
-    		 <if condition="$search['type'] == 'select'">
-			 	<tr style="line-height: 28px">
-                  <td>
-                      {$search.title} 
-                  </td>			  
-                  <td>
-                  	<select size="1" name="{$search['name']}" class="search-input form-control form-input-width">
-                  		<option value="">{:L("_ALL_")}</option>
-                  		<volist name="search['arrvalue']" id="svo">
-                  			<option value="{$svo.id}" <eq name="svo.id" value="$_GET[$search['name']]">selected</eq>>{$svo.value}</option>
-                  		</volist>
-					</select>
-                  </td>
-                  <td>
-                      {$search.des}
-                  </td>
-              </tr>
-			 <else/>
-			 	 <tr style="line-height: 28px">
-                  <td>
-                      {$search.title}
-                  </td>
-                  <td>
-                      <input style="float: none" type="text" name="{$search.name}" class="search-input form-control form-input-width"
-                             value="{:I($search['name'])}">
-                  </td>
-                  <td>
-                      {$search.des}
-                  </td>
-              </tr>
-			 </if>
+         <!--判断搜索选项是TEXT还是SELECT-->
+		 {eq name="search['type']" value="select"}
+		 	<tr style="line-height: 28px">
+              <td>
+                  {$search.title} 
+              </td>			  
+              <td>
+              	<select size="1" name="{$search['name']}" class="search-input form-control form-input-width">
+              		<option value="">{:lang("_ALL_")}</option>
+              		{volist name="search['arrvalue']" id="svo"}
+              			<option value="{$svo.id}" {eq name="svo.id" value=''}selected{/eq}>{$svo.value}</option>
+              		{/volist}
+				</select>
+              </td>
+              <td>
+                  {$search.des}
+              </td>
+          </tr>
+		 {else/}
+		 	 <tr style="line-height: 28px">
+              <td>
+                  {$search.title}
+              </td>
+              <td>
+                  <input style="float: none" type="text" name="{$search.name}" class="search-input form-control form-input-width"
+                         value="{:input($search['name'])}">
+              </td>
+              <td>
+                  {$search.des}
+              </td>
+          </tr>
+		 {/eq}
 
-    </volist>
+    {/volist}
             <tr><td></td>
-                <td><input type="submit" class="btn" value={:L("_DETERMINATION_WITH_DOUBLE_")}/> <button class="btn ajax-post btn" onclick="toggle_search()">{:L("_CLOSE_")}</button></td>
+                <td><input type="submit" class="btn" value={:lang("_DETERMINATION_WITH_DOUBLE_")}/> <button class="btn ajax-post btn" onclick="toggle_search()">{:lang("_CLOSE_")}</button></td>
                 <td></td>
             </tr>
     </table>
         </div>
-        </form>
-        <div style="border-top:1px solid #ccc;border-bottom: 1px solid white"></div>
+    </form>
+
+
     </div>
-    <!-- 按钮工具栏 -->
-    <div class="with-padding">
-        <div class="fl">
-<if condition="count($searches) gt 0">
-    <button class="btn submit-btn" url="?status=-1" target-form="ids" style="padding: 6px 16px;" onclick="toggle_search()">{:L("_SEARCH_")}</button>
+    
 
-</if>
+<!-- 按钮工具栏 -->
+    <div class="button-box clearfix">
+    <div class="fl">
+        {if condition="count($searches) gt 0"}
+            <button class="btn submit-btn" url="?status=-1" target-form="ids" style="padding: 6px 16px;" onclick="toggle_search()">
+                {:lang("_SEARCH_")}
+            </button>
+        {/if}
 
-            <volist name="buttonList" id="button">
-                <{$button.tag} {$button.attr}>{$button.title|htmlspecialchars}</{$button.tag}>&nbsp;
-            </volist>
+        {volist name="buttonList" id="button"}
+            <{$button.tag} {$button.attr}>{$button.title|htmlspecialchars}</{$button.tag}>&nbsp;
+        {/volist}
 
 
 
-            <php>
-                foreach($selects as $select){
-                if($_REQUEST[$select['name']])
+        {php}
+            foreach($selects as $select){
+            if($_REQUEST[$select['name']])
                 {
-                $show=1;
+                    $show=1;
                 }
+            }
+        {/php}
+        <!-- 选择框select -->
+        <div style="float: right;" >
+            <style>
+                .oneselect{
+                    display: inline-block;
+                    margin-left: 10px;
                 }
-            </php>
-            <!-- 选择框select -->
-            <div style="float: right;" >
-                <style>
-                    .oneselect{
-                        display: inline-block;
-                        margin-left: 10px;
-                    }
-                    .oneselect .title{
-                        float: left;
-                        line-height: 32px;
-                    }
-                    .oneselect .select_box{
-                        float: left;
-                        line-height: 32px;
-                    }
-                    .oneselect .select_box select{
-                        min-width: 200px;
-                    }
-                </style>
-                <form id="selectForm" method="get" action="{$selectPostUrl||default='__SELF__'}" class="form-dont-clear-url-param">
-                    <input type="hidden" name="{$search['name']}" value="{:I($search['name'])}"/>
-                    <volist name="selects" id="select">
-                        <div class="oneselect">
-                            <div class="title">{$select.title}</div>
-                            <div class="select_box">
-                            <select name="{$select['name']}" data-role="select_text" class="form-control">
-                                <volist name="select['arrvalue']" id="svo">
-                                    <option value="{$svo.id}" <eq name="svo.id" value="$_GET[$select['name']]">selected</eq>>{$svo.value}</option>
-                                </volist>
-                            </select>
-                            </div>
+                .oneselect .title{
+                    float: left;
+                    line-height: 32px;
+                }
+                .oneselect .select_box{
+                    float: left;
+                    line-height: 32px;
+                }
+                .oneselect .select_box select{
+                    min-width: 200px;
+                }
+            </style>
+            <form id="selectForm" method="get" action="{$selectPostUrl}?" class="form-dont-clear-url-param">
+                
+                {volist name="selects" id="select"}
+                    <div class="oneselect">
+                        <div class="title">{$select.title}</div>
+                        <div class="select_box">
+                        <select name="{$select['name']}" data-role="select_text" class="form-control">
+                            {volist name="select['arrvalue']" id="svo"}
+                                <option value="{$svo.id}" {eq name="svo.id" value=''} selected{/eq}>
+                                    {$svo.value}
+                                </option>
+                            {/volist}
+                        </select>
                         </div>
-                    </volist>
-                </form>
-            </div>
+                    </div>
+                {/volist}
+            </form>
         </div>
-
     </div>
 
-
+    </div>
     <!-- 数据表格 -->
     <div class="with-padding">
+
         <table id="table-data" class="table table-bordered table-striped table-hover">
             <!-- 表头 -->
             <thead>
@@ -145,32 +150,33 @@
                 <th class="row-selected row-selected" style="width: 20px">
                     <input class="check-all" type="checkbox"/>
                 </th>
-                <volist name="keyList" id="field">
+                {volist name="keyList" id="field"}
                     <th>{$field.title|htmlspecialchars}</th>
-                </volist>
+                {/volist}
             </tr>
             </thead>
 
             <!-- 列表 -->
             <tbody>
-            <volist name="list" id="e">
+            {volist name="list" id="e"}
                 <tr>
                     <td><input class="ids" type="checkbox" value="{$e['id']}" name="ids[]"></td>
-                    <volist name="keyList" id="field">
+                    {volist name="keyList" id="field"}
                         <td style="width:auto;max-width: {$field['width']};"  class="text-ellipsis">{$e[$field['name']]}</td>
 
-                    </volist>
+                    {/volist}
                 </tr>
-            </volist>
+            {/volist}
             </tbody>
         </table>
+        <div class="page">
+            {$page}
+        </div>
     </div>
     <!-- 分页 -->
-    <div class="with-padding">
-        {$pagination}
-    </div>
+    
     <!--列表说明-->
-    <notempty name="explain">
+    {notempty name="explain"}
     <div class="with-padding">
         <div class="alert">
             <h4>{$explain.title}</h4>
@@ -178,10 +184,13 @@
             <p>{$explain.content}</p>
         </div>
     </div>
-    </notempty>
+    {/notempty}
 
 
-    <script>
+</div>  
+{/block}
+{block name="script"}
+<script>
         function toggle_search(){
             $('#search_form').toggle('slide');
         }
@@ -230,7 +239,7 @@
                     //设置了参数时，把参数加入
                     var form=$('.'+target_form);
                     if (form.get(0) == undefined ) {
-                        updateAlert({:L('_NO_OPERATIONAL_DATA_WITH_SINGLE_')},'danger');
+                        updateAlert({:lang('_NO_OPERATIONAL_DATA_WITH_SINGLE_')},'danger');
                         return false;
                     } else if (form.get(0).nodeName == 'FORM') {
                         query = form.serialize();
@@ -240,7 +249,7 @@
                         query = form.find('input,select,textarea').serialize();
                     }
                     if(!query.length && $(this).attr('can_null') != 'true'){
-                        updateAlert({:L('_NO_OPERATIONAL_DATA_WITH_SINGLE_')},'danger');
+                        updateAlert({:lang('_NO_OPERATIONAL_DATA_WITH_SINGLE_')},'danger');
                         return false;
                     }
                     target_url=target_url+'&'+query;
@@ -272,7 +281,7 @@
                 $(this).magnificPopup({
                     delegate: 'a',
                     type: 'image',
-                    tLoading: '{:L("_LOADING_")}#%curr%...',
+                    tLoading: '{:lang("_LOADING_")}#%curr%...',
                     mainClass: 'mfp-img-mobile',
                     gallery: {
                         enabled: true,
@@ -281,7 +290,7 @@
 
                     },
                     image: {
-                        tError: '<a href="%url%">{:L("_PICTURE_")}#%curr%</a>{:L("_COULD_NOT_BE_LOADED_")}',
+                        tError: '<a href="%url%">{:lang("_PICTURE_")}#%curr%</a>{:lang("_COULD_NOT_BE_LOADED_")}',
                         titleSrc: function (item) {
                             /*           return item.el.attr('title') + '<small>by Marsel Van Oosten</small>';*/
                             return '';
@@ -304,5 +313,5 @@
             $(window).resize(reset);
         });
     </script>
-    <script type="text/javascript" src="__PUBLIC__/lib/magnific/jquery.magnific-popup.min.js"></script>
-</block>
+    <script type="text/javascript" src="__COMMON__/lib/magnific/jquery.magnific-popup.min.js"></script>
+{/block}

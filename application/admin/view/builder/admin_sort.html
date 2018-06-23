@@ -1,15 +1,15 @@
-<extend name="Public/base" />
+{extend name="common/main" /}
 
-<block name="body">
+{block name="body"}
     <div class="main-title cf">
         <h2>
-           {:L("_CONFIGURATION_SORTING_")}
+           {:lang("_CONFIGURATION_SORTING_")}
         </h2>
     </div>
     <div class="sort">
         <form action="{$savePostUrl}" method="post">
             <!-- <div class="sort_top">
-               {:L("_SEARCH:_")}<input type="text"><button class="btn search" type="button">{:L("_CHECK_WITH_SPACE_")}</button>
+               {:lang("_SEARCH:_")}<input type="text"><button class="btn search" type="button">{:lang("_CHECK_WITH_SPACE_")}</button>
             </div> -->
 
             <div class="clearfix">
@@ -22,10 +22,10 @@
                     </select>
                 </div>
                 <div class="col-xs-1">
-                    <button class="top btn btn-block" type="button">{:L("_FIRST_WITH_SPACE_")}</button>
-                    <button class="up btn btn-block" type="button">{:L("_UPPER_SHIFT_WITH_SPACE_")}</button>
-                    <button class="down btn btn-block" type="button">{:L("_NEXT_MOVE_WITH_SPACE_")}</button>
-                    <button class="bottom btn btn-block" type="button">{:L("_AFTER_THE_MOST_WITH_SPACE_")}</button>
+                    <button class="top btn btn-block" type="button">{:lang("_FIRST_WITH_SPACE_")}</button>
+                    <button class="up btn btn-block" type="button">{:lang("_UPPER_SHIFT_WITH_SPACE_")}</button>
+                    <button class="down btn btn-block" type="button">{:lang("_NEXT_MOVE_WITH_SPACE_")}</button>
+                    <button class="bottom btn btn-block" type="button">{:lang("_AFTER_THE_MOST_WITH_SPACE_")}</button>
                 </div>
             </div>
             <div class="sort_bottom with-padding">
@@ -36,9 +36,9 @@
             </div>
         </form>
     </div>
-</block>
+{/block}
 
-<block name="script">
+{block name="script"}
     <script type="text/javascript">
         $(function(){
             sort();
@@ -91,7 +91,7 @@
                         },
                         function(data){
                             if (data.status) {
-                                updateAlert(data.info + {:L('_THE_PAGE_WILL_AUTOMATICALLY_JUMP_TO_WALK_THE_WALK_TODAY_WITH_SINGLE_')},'alert-success');
+                                updateAlert(data.info + {:lang('_THE_PAGE_WILL_AUTOMATICALLY_JUMP_TO_WALK_THE_WALK_TODAY_WITH_SINGLE_')},'alert-success');
                             }else{
                                 updateAlert(data.info,'alert-error');
                             }
@@ -106,4 +106,4 @@
             });
         })
     </script>
-</block>
+{/block}

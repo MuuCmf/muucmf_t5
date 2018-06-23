@@ -18,6 +18,7 @@ class Admin extends Controller
      */
     protected function _initialize()
     {
+        $this->meta_title = '';
         // 获取当前用户ID
         define('UID', is_login());
         if (!UID) {// 还没登录 跳转到登录页面
@@ -62,6 +63,7 @@ class Admin extends Controller
         //获取管理员数据
         $auth_user = query_user(['nickname','username','sex','avatar32','title','fans', 'following','signature'],is_login());
 
+        $this->assign('meta_title',$this->meta_title);
         $this->assign('__AUTH_USER__',$auth_user);
         $this->assign('__MANAGE_COULD__',$this->checkRule('admin/module/lists',array('in','1,2')));
         $this->assign('__MENU__', $this->getTreeMenus());
@@ -149,7 +151,7 @@ class Admin extends Controller
         $id = is_array($id) ? implode(',', $id) : $id;
         $where = array_merge(array('id' => array('in', $id)), (array)$where);
         $msg = array_merge(array('success' => lang('_OPERATION_SUCCESS_'), 'error' => lang('_OPERATION_FAILED_'), 'url' => '', 'ajax' => request()->isAjax()), (array)$msg);
-        if (Db::name($model)->where($where)->save($data) !== false) {
+        if (Db::name($model)->where($where)->update($data) !== false) {
             $this->success($msg['success'], $msg['url'], $msg['ajax']);
         } else {
             $this->error($msg['error'], $msg['url'], $msg['ajax']);
@@ -192,7 +194,7 @@ class Admin extends Controller
      * @param array  $msg 执行正确和错误的消息 array('success'=>'','error'=>'', 'url'=>'','ajax'=>false)
      *                     url为跳转页面,ajax是否ajax方式(数字则为倒数计时秒数)
      */
-    protected function restore($model, $where = [], $msg = array('success' => '状态还原成功！', 'error' => '状态还原失败！'))
+    protected function restore($model, $where = [], $msg = ['success' => '状态还原成功！', 'error' => '状态还原失败！'])
     {
         $data = ['status' => 1];
         $where = array_merge(array('status' => -1), $where);
@@ -206,10 +208,10 @@ class Admin extends Controller
      * @param array  $msg 执行正确和错误的消息 array('success'=>'','error'=>'', 'url'=>'','ajax'=>false)
      *                     url为跳转页面,ajax是否ajax方式(数字则为倒数计时秒数)
      */
-    protected function delete($model, $where = array(), $msg = array('success' => '删除成功！', 'error' => '删除失败！'))
+    protected function delete($model, $where = [], $msg =['success' => '删除成功！', 'error' => '删除失败！'])
     {
         $data['status'] = -1;
-        $data['update_time'] = time();
+        //$data['update_time'] = time();
         $this->editRow($model, $data, $where, $msg);
     }
 

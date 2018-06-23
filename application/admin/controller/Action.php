@@ -45,39 +45,57 @@ class Action extends Admin {
         $this->meta_title = lang('_BEHAVIOR_LOG_');
         return $this->fetch();
     }
+
+    /**
+     * 积分日志
+     * @param  integer $r [description]
+     * @param  integer $p [description]
+     * @return [type]     [description]
+     */
     public function scoreLog($r=20,$p=1){
 
         if(input('type')=='clear'){
-            D('ScoreLog')->where(array('id>0'))->delete();
-            $this->success('清空成功。',U('scoreLog'));
+            Db::name('ScoreLog')->where(array('id>0'))->delete();
+            $this->success('清空成功。',Url('scoreLog'));
             exit;
         }else{
             $aUid=input('uid',0,'');
+            $map=[];
             if($aUid){
                 $map['uid']=$aUid;
             }
-            $listBuilder=new AdminListBuilder();
-            $listBuilder->title('积分日志');
-            $map['status']    =   array('gt', -1);
-            $scoreLog=D('ScoreLog')->where($map)->order('create_time desc')->findPage($r);
+            
+            $scoreLog=Db::name('ScoreLog')->where($map)->order('create_time desc')->paginate($r);
+            $totalCount=Db::name('ScoreLog')->count();
+            //分页HTML
+            $page = $scoreLog->render();
+            //转数组处理
+            $scoreLog = $scoreLog->toArray()['data'];
 
-            $scoreTypes=D('Ucenter/Score')->getTypeListByIndex();
-            foreach ($scoreLog['data'] as &$v) {
+            $scoreTypes=model('Ucenter/Score')->getTypeListByIndex();
+
+            foreach ($scoreLog as &$v) {
                 $v['adjustType']=$v['action']=='inc'?'增加':'减少';
                 $v['scoreType']=$scoreTypes[$v['type']]['title'];
                 $class=$v['action']=='inc'?'text-success':'text-danger';
                 $v['value']='<span class="'.$class.'">' .  ($v['action']=='inc'?'+':'-'). $v['value']. $scoreTypes[$v['type']]['unit'].'</span>';
                 $v['finally_value']= $v['finally_value']. $scoreTypes[$v['type']]['unit'];
             }
+            unset($v);
+            //dump($scoreLog);
+            $listBuilder=new AdminListBuilder();
 
+            $listBuilder->title('积分日志');
 
-            $listBuilder->data($scoreLog['data']);
+            $listBuilder->data($scoreLog);
+
+            $listBuilder->page($page);
 
             $listBuilder->keyId()->keyUid('uid','用户')->keyText('scoreType','积分类型')->keyText('adjustType','调整类型')->keyHtml('value','积分变动')->keyText('finally_value','积分最终值')->keyText('remark','变动描述')->keyCreateTime();
-            $listBuilder->pagination($scoreLog['count'],$r);
+
             $listBuilder->search(lang('_SEARCH_'),'uid','text','输入UID');
 
-            $listBuilder->button('清空日志',array('url'=>U('scoreLog',array('type'=>'clear')),'class'=>'btn ajax-get confirm'));
+            $listBuilder->button('清空日志',array('url'=>Url('scoreLog',array('type'=>'clear')),'class'=>'btn ajax-get confirm'));
             $listBuilder->display();
         }
 

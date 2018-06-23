@@ -53,6 +53,7 @@ class User extends Admin
         }
         int_to_string($list_arr);
         //dump($list_arr);exit;
+        $this->assign('title','用户列表');
         $this->assign('_list', $list_arr);
         $this->assign('seek', $aSeek);
         $this->meta_title = lang('_USER_INFO_');
@@ -480,16 +481,39 @@ class User extends Admin
     public function profile($page = 1, $r = 20)
     {
         $map['status'] = array('egt', 0);
-        $profileList = D('field_group')->where($map)->order("sort asc")->page($page, $r)->select();
-        $totalCount = D('field_group')->where($map)->count();
+        $profileList = Db::name('field_group')->where($map)->order("sort asc")->page($page, $r)->paginate($r);
+        $totalCount = Db::name('field_group')->where($map)->count();
+        $page = $profileList->render();
+
+        $profileList = $profileList->toArray()['data'];
+
+        //dump($profileList);
+
         $builder = new AdminListBuilder();
+
         $builder->title(lang('_GROUP_EXPAND_INFO_LIST_'));
-        $builder->meta_title = lang('_GROUP_EXPAND_INFO_');
-        $builder->buttonNew(Url('editProfile', array('id' => '0')))->buttonDelete(Url('changeProfileStatus', array('status' => '-1')))->setStatusUrl(Url('changeProfileStatus'))->buttonSort(Url('sortProfile'));
-        $builder->keyId()->keyText('profile_name', lang('_GROUP_NAME_'))->keyText('sort', lang('_SORT_'))->keyTime("createTime", lang('_CREATE_TIME_'))->keyBool('visiable', lang('_PUBLIC_IF_'));
-        $builder->keyStatus()->keyDoAction('User/field?id=###', lang('_FIELD_MANAGER_'))->keyDoAction('User/editProfile?id=###', lang('_EDIT_'));
+        //$builder->meta_title = lang('_GROUP_EXPAND_INFO_');
+
+        $builder
+            ->buttonNew(Url('editProfile', array('id' => '0')))
+            ->buttonDelete(Url('changeProfileStatus', array('status' => '-1')))
+            ->setStatusUrl(Url('changeProfileStatus'))
+            ->buttonSort(Url('sortProfile'));
+
+        $builder
+            ->keyId()
+            ->keyText('profile_name', lang('_GROUP_NAME_'))
+            ->keyText('sort', lang('_SORT_'))
+            ->keyTime("createTime", lang('_CREATE_TIME_'))
+            ->keyBool('visiable', lang('_PUBLIC_IF_'));
+
+        $builder
+            ->keyStatus()
+            ->keyDoAction('User/field?id=###', lang('_FIELD_MANAGER_'))
+            ->keyDoAction('User/editProfile?id=###', lang('_EDIT_'));
+
         $builder->data($profileList);
-        $builder->pagination($totalCount, $r);
+        $builder->page($page);
         $builder->display();
     }
 

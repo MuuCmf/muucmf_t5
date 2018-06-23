@@ -1,51 +1,48 @@
-<extend name="Public/base"/>
+{extend name="common/main"/}
 
-<block name="body">
+{block name="body"}
+<div class="builder">
     <!-- 标题 -->
     <div class="main-title">
         <h2>
-            {$title|htmlspecialchars}            <if condition="$suggest">（{$suggest|htmlspecialchars}）</if>
+            {$title|htmlspecialchars}{if condition="$suggest"}<small>（{$suggest|htmlspecialchars}）</small>{/if}
         </h2>
     </div>
 
-
     <div class="with-padding">
-
-    <!-- 表格列表-->
-    <div class="tb-unit posr">
-        <div class="tb-unit-bar">
-            <volist name="buttonList" id="button">
-                <{$button.tag} {$button.attr} style="margin-right:5px;">{$button.title|htmlspecialchars}</{$button.tag}>
-            </volist>
-        </div>
-        <div class="category">
-            <div class="hd clearfix">
-                <div class="fold">{:L("_FOLD_")}</div>
-                <div class="order">{:L("_SORT_")}</div>
-                <volist name="keyList" id="field">
-                    <th>{$field.title|htmlspecialchars}</th>
-                </volist>
-                <div class="name">{:L("_NAME_")}</div>
+        <!-- 表格列表-->
+        <div class="tb-unit posr">
+            <div class="tb-unit-bar">
+                {volist name="buttonList" id="button"}
+                    <{$button.tag} {$button.attr} style="margin-right:5px;">{$button.title|htmlspecialchars}</{$button.tag}>
+                {/volist}
             </div>
-            <php>
-
-                $tree_list = new Admin\Builder\AdminTreeListBuilder();
-                $tree_list->setLevel($level);
-                $tree_list->setModel($model);
-                $tree_list->tree($tree);
-            </php>
+            <div class="category">
+                <div class="hd clearfix">
+                    <div class="fold">{:lang("_FOLD_")}</div>
+                    <div class="order">{:lang("_SORT_")}</div>
+                    {volist name="keyList" id="field"}
+                        <th>{$field.title|htmlspecialchars}</th>
+                    {/volist}
+                    <div class="name">{:lang("_NAME_")}</div>
+                </div>
+                {php}
+                    $tree_list = new app\admin\builder\AdminTreeListBuilder();
+                    $tree_list->setLevel($level);
+                    $tree_list->setModel($model);
+                    $tree_list->tree($tree);
+                {/php}
+            </div>
+        </div>
+        <!-- /表格列表-->
+        <!-- 分页 -->
+        <div class="page">
+            {$page}
         </div>
     </div>
-    <!-- /表格列表-->
-    <!-- 分页 -->
-    <div class="page">
-        {$pagination}
-    </div>
-        </div>
-    </div>
-
-</block>
-<block name="script">
+</div>
+{/block}
+{block name="script"}
     <script type="text/javascript">
         (function($){
             /* 分类展开收起 */
@@ -99,4 +96,4 @@
                     });
         })(jQuery);
     </script>
-</block>
+{/block}

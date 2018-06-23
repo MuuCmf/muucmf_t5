@@ -1,7 +1,7 @@
 <?php
+namespace app\admin\builder;
 
-
-namespace Admin\Builder;
+use think\Db;
 
 class AdminListBuilder extends AdminBuilder
 {
@@ -17,6 +17,7 @@ class AdminListBuilder extends AdminBuilder
     private $_searchPostUrl;
     private $_selectPostUrl;
     private $_setDeleteTrueUrl;
+    private $_page; //分页HTML代码
 
     private $_search = array();
     private $_select = array();
@@ -50,7 +51,11 @@ class AdminListBuilder extends AdminBuilder
         $this->_tips = $content;
         return $this;
     }
-
+    public function page($page)
+    {
+        $this->_page = $page;
+        return $this;
+    }
     /**
      * @param $url string 已被U函数解析的地址
      * @return $this
@@ -185,7 +190,7 @@ class AdminListBuilder extends AdminBuilder
     {
         if (!$url) $url = $this->_setStatusUrl;
         $attr['class']='btn ajax-post btn-danger';
-        $attr['data-confirm'] = L('_CONFIRM_DELETE_COMPLETELY_');
+        $attr['data-confirm'] = lang('_CONFIRM_DELETE_COMPLETELY_');
         return $this->buttonSetStatus($url, -1, $title, $attr);
     }
 
@@ -202,7 +207,7 @@ class AdminListBuilder extends AdminBuilder
      */
     public function buttonClear($model = null)
     {
-        return $this->button(L('_CLEAR_OUT_'), array('class' => 'btn ajax-post tox-confirm', 'data-confirm' => L('_CONFIRM_CLEAR_OUT_'), 'url' => U('', array('model' => $model)), 'target-form' => 'ids', 'hide-data' => 'true'));
+        return $this->button(lang('_CLEAR_OUT_'), array('class' => 'btn ajax-post tox-confirm', 'data-confirm' => lang('_CONFIRM_CLEAR_OUT_'), 'url' => U('', array('model' => $model)), 'target-form' => 'ids', 'hide-data' => 'true'));
     }
 
     /**彻底删除
@@ -214,10 +219,10 @@ class AdminListBuilder extends AdminBuilder
     {
         if (!$url) $url = $this->_setDeleteTrueUrl;
         $attr['class'] = 'btn ajax-post tox-confirm';
-        $attr['data-confirm'] = L('_CONFIRM_DELETE_COMPLETELY_');
+        $attr['data-confirm'] = lang('_CONFIRM_DELETE_COMPLETELY_');
         $attr['url'] = $url;
         $attr['target-form'] = 'ids';
-        return $this->button(L('_DELETE_COMPLETELY_'), $attr);
+        return $this->button(lang('_DELETE_COMPLETELY_'), $attr);
     }
 
     public function buttonSort($href, $title = '排序', $attr = array())
@@ -254,7 +259,7 @@ class AdminListBuilder extends AdminBuilder
      * @return $this
      * @auth MingYang <xint5288@126.com>
      */
-    public function search($title = '搜索', $name = 'key', $type = 'text', $des = '', $attr, $arrdb = '', $arrvalue = null)
+    public function search($title = '搜索', $name = 'key', $type = 'text', $des = '', $attr = '', $arrdb = '', $arrvalue = null)
     {
 
         if (empty($type) && $type = 'text') {
@@ -262,7 +267,8 @@ class AdminListBuilder extends AdminBuilder
 //            $this->setSearchPostUrl('');
         } else {
             if (empty($arrdb)) {
-                $this->_search[] = array('title' => $title, 'name' => $name, 'type' => $type, 'des' => $des, 'attr' => $attr, 'field' => $field, 'table' => $table, 'arrvalue' => $arrvalue);
+                //$this->_search[] = array('title' => $title, 'name' => $name, 'type' => $type, 'des' => $des, 'attr' => $attr, 'field' => $field, 'table' => $table, 'arrvalue' => $arrvalue);
+                $this->_search[] = array('title' => $title, 'name' => $name, 'type' => $type, 'des' => $des, 'attr' => $attr);
                 $this->setSearchPostUrl('');
             } else {
                 //TODO:呆完善如果$arrdb存在的就把当前数据表的$name字段的信息全部查询出来供筛选。
@@ -319,7 +325,7 @@ class AdminListBuilder extends AdminBuilder
      */
     public function keyHtml($name, $title, $width = '150px')
     {
-        return $this->key($name, op_h($title), 'html', null, $width);
+        return $this->key($name, html($title), 'html', null, $width);
     }
 
     public function keyMap($name, $title, $map)
@@ -370,13 +376,13 @@ class AdminListBuilder extends AdminBuilder
 
     public function keyStatus($name = 'status', $title = '状态')
     {
-        $map = array(-1 => L('_DELETE_'), 0 => L('_DISABLE_'), 1 => L('_ENABLE_'), 2 => L('_UNAUDITED_'));
+        $map = array(-1 => lang('_DELETE_'), 0 => lang('_DISABLE_'), 1 => lang('_ENABLE_'), 2 => lang('_UNAUDITED_'));
         return $this->key($name, $title, 'status', $map);
     }
 
     public function keyYesNo($name, $title)
     {
-        $map = array(0 => L('_NO_'), 1 => L('_YES_'));
+        $map = array(0 => lang('_NO_'), 1 => lang('_YES_'));
         return $this->keymap($name, $title, $map);
     }
 
@@ -536,7 +542,7 @@ class AdminListBuilder extends AdminBuilder
     }
 
     /**
-     * 列表说明文字
+     * 列表说明文字,位于列表页最下部
      * @param $title
      * @param $content
      * @return $this
@@ -556,8 +562,9 @@ class AdminListBuilder extends AdminBuilder
     /**
      * $solist 判断是否属于选择返回数据的列表页，如果是在列表页->display('admin_solist');@mingyangliu
      * */
-    public function display($solist = '')
+    public function display($templateFile = '', $charset = '', $contentType = '', $content = '', $prefix = '', $solist = '')
     {
+
         //key类型的等价转换
         //map转换成text
         $this->convertKey('map', 'text', function ($value, $key) {
@@ -567,13 +574,13 @@ class AdminListBuilder extends AdminBuilder
         //uid转换成text
         $this->convertKey('uid', 'text', function ($value) {
             $value = query_user(array('nickname', 'uid', 'space_url'), $value);
-            return "<a href='" . $value['space_url'] . "' target='_blank'>[{$value[uid]}]" . $value['nickname'] . '</a>';
+            return "<a href='" . $value['space_url'] . "' target='_blank'>[{$value['uid']}]" . $value['nickname'] . '</a>';
         });
 
         //nickname转换成text
         $this->convertKey('nickname', 'text', function ($value) {
             $value = query_user(array('nickname', 'uid', 'space_url'), $value);
-            return "<a href='" . $value['space_url'] . "' target='_blank'>[{$value[uid]}]" . $value['nickname'] . '</a>';
+            return "<a href='" . $value['space_url'] . "' target='_blank'>[{$value['uid']}]" . $value['nickname'] . '</a>';
         });
 
         //time转换成text
@@ -613,7 +620,7 @@ class AdminListBuilder extends AdminBuilder
         $this->convertKey('icon', 'html', function ($value, $key, $item) {
             $value = htmlspecialchars($value);
             if ($value == '') {
-                $html = L('_NONE_');
+                $html = lang('_NONE_');
             } else {
                 $html = "<i class=\"$value\"></i> $value";
             }
@@ -633,10 +640,10 @@ class AdminListBuilder extends AdminBuilder
 
                 $src = getThumbImageById($value, 80, 80);
                 $sc_src = $sc_src == '' ? $src : $sc_src;
-                $html = "<div class='popup-gallery'><a title=\"" . L('_VIEW_BIGGER_') . "\" href=\"$sc_src\"><img src=\"$sc_src\"/ style=\"width:80px;height:80px\"></a></div>";
+                $html = "<div class='popup-gallery'><a title=\"" . lang('_VIEW_BIGGER_') . "\" href=\"$sc_src\"><img src=\"$sc_src\"/ style=\"width:80px;height:80px\"></a></div>";
             } else {//value是图片路径
                 $sc_src = $value;
-                $html = "<div class='popup-gallery'><a title=\"" . L('_VIEW_BIGGER_') . "\" href=\"$sc_src\"><img src=\"$sc_src\"/ style=\"border-radius:100%;\"></a></div>";
+                $html = "<div class='popup-gallery'><a title=\"" . lang('_VIEW_BIGGER_') . "\" href=\"$sc_src\"><img src=\"$sc_src\"/ style=\"border-radius:100%;\"></a></div>";
             }
             return $html;
         });
@@ -703,7 +710,7 @@ class AdminListBuilder extends AdminBuilder
         //如果html为空
         $this->convertKey('html', 'html', function ($value) {
             if ($value === '') {
-                return '<span style="color:#bbb;">' . L('_EMPTY_BRACED_') . '</span>';
+                return '<span style="color:#bbb;">' . lang('_EMPTY_BRACED_') . '</span>';
             }
             return $value;
         });
@@ -717,17 +724,15 @@ class AdminListBuilder extends AdminBuilder
         }
 
         //生成翻页HTML代码
-        C('VAR_PAGE', 'page');
-        $pager = new \Think\Page($this->_pagination['totalCount'], $this->_pagination['listRows'], $_REQUEST);
-        $pager->setConfig('theme', '%FIRST% %UP_PAGE% %LINK_PAGE% %DOWN_PAGE% %END% %HEADER%');
-        $paginationHtml = $pager->show();
+        config('VAR_PAGE', 'page');
 
         //显示页面
         $this->assign('title', $this->_title);
         $this->assign('suggest', $this->_suggest);
         $this->assign('keyList', $this->_keyList);
         $this->assign('buttonList', $this->_buttonList);
-        $this->assign('pagination', $paginationHtml);
+        //$this->assign('pagination', $paginationHtml);
+        $this->assign('page',$this->_page);
         $this->assign('explain', $this->_explain);
         $this->assign('list', $this->_data);
         /*加入搜索 陈一枭*/
@@ -738,6 +743,7 @@ class AdminListBuilder extends AdminBuilder
         $this->assign('selects', $this->_select);
         $this->assign('selectPostUrl', $this->_selectPostUrl);
         //如果是选择返回数据的列表页就调用admin_solist模板文件，否则编译原有模板
+        
         if ($solist) {
             parent::display('admin_solist');
         } else {
@@ -750,9 +756,9 @@ class AdminListBuilder extends AdminBuilder
         $id = array_unique((array)$ids);
         $rs = M($model)->where(array('id' => array('in', $id)))->save(array('status' => $status));
         if ($rs === false) {
-            $this->error(L('_ERROR_SETTING_') . L('_PERIOD_'));
+            $this->error(lang('_ERROR_SETTING_') . lang('_PERIOD_'));
         }
-        $this->success(L('_SUCCESS_SETTING_'), $_SERVER['HTTP_REFERER']);
+        $this->success(lang('_SUCCESS_SETTING_'), $_SERVER['HTTP_REFERER']);
     }
 
 
@@ -782,7 +788,7 @@ class AdminListBuilder extends AdminBuilder
     }
 
     /**
-     * @param $pattern U函数解析的URL字符串，例如 Admin/Test/index?test_id=###
+     * @param $pattern Url函数解析的URL字符串，例如 Admin/Test/index?test_id=###
      * Admin/Test/index?test_id={other_id}
      * ###将被id替换
      * {other_id}将被替换
@@ -792,13 +798,16 @@ class AdminListBuilder extends AdminBuilder
     {
         $explode = explode('|', $pattern);
         $pattern = $explode[0];
-        $fun = empty($explode[1]) ? 'U' : $explode[1];
+        $fun = empty($explode[1]) ? 'Url' : $explode[1];
+
         return function ($item) use ($pattern, $fun) {
             $pattern = str_replace('###', $item['id'], $pattern);
             //调用ThinkPHP中的解析引擎解析变量
-            $view = new \Think\View();
+            $view = new \think\View();
             $view->assign($item);
-            $pattern = $view->fetch('', $pattern);
+
+            //dump($pattern);
+            //$pattern = $view->fetch('', $pattern);
             return $fun($pattern);
         };
     }
@@ -816,26 +825,25 @@ class AdminListBuilder extends AdminBuilder
 
     /**自动处理清空回收站
      * @param string $model 要清空的模型
-     * @auth 陈一枭
      */
     public function clearTrash($model = '')
     {
-        if (IS_POST) {
+        if (request()->isPost()) {
             if ($model != '') {
-                $aIds = I('post.ids', array());
+                $aIds = input('post.ids', array());
                 if (!empty($aIds)) {
                     $map['id'] = array('in', $aIds);
                 } else {
                     $map['status'] = -1;
                 }
 
-                $result = D($model)->where($map)->delete();
+                $result = Db::name($model)->where($map)->delete();
                 if ($result) {
-                    $this->success(L('_SUCCESS_TRASH_CLEARED_', array('result' => $result)));
+                    $this->success(lang('_SUCCESS_TRASH_CLEARED_', array('result' => $result)));
                 }
-                $this->error(L('_TRASH_ALREADY_EMPTY_'));
+                $this->error(lang('_TRASH_ALREADY_EMPTY_'));
             } else {
-                $this->error(L('_TRASH_SELECT_'));
+                $this->error(lang('_TRASH_SELECT_'));
             }
         }
     }
@@ -849,7 +857,7 @@ class AdminListBuilder extends AdminBuilder
     {
         $ids = is_array($ids) ? $ids : explode(',', $ids);
         M($model)->where(array('id' => array('in', $ids)))->delete();
-        $this->success(L('_SUCCESS_DELETE_COMPLETELY_'), $_SERVER['HTTP_REFERER']);
+        $this->success(lang('_SUCCESS_DELETE_COMPLETELY_'), $_SERVER['HTTP_REFERER']);
     }
 
     /**

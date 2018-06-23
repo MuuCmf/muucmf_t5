@@ -95,16 +95,16 @@ function get_status_title($status = null)
     }
     switch ($status) {
         case -1 :
-            return L('_DELETED_');
+            return lang('_DELETED_');
             break;
         case 0  :
-            return L('_DISABLE_');
+            return lang('_DISABLE_');
             break;
         case 1  :
-            return L('_NORMAL_');
+            return lang('_NORMAL_');
             break;
         case 2  :
-            return L('_PENDING_AUDIT_');
+            return lang('_PENDING_AUDIT_');
             break;
         default :
             return false;
@@ -117,13 +117,13 @@ function show_status_op($status)
 {
     switch ($status) {
         case 0  :
-            return L('_ENABLE_');
+            return lang('_ENABLE_');
             break;
         case 1  :
-            return L('_DISABLE_');
+            return lang('_DISABLE_');
             break;
         case 2  :
-            return L('_AUDIT_');
+            return lang('_AUDIT_');
             break;
         default :
             return false;
@@ -144,13 +144,13 @@ function get_document_type($type = null)
     }
     switch ($type) {
         case 1  :
-            return L('_DIRECTORY_');
+            return lang('_DIRECTORY_');
             break;
         case 2  :
-            return L('_THEME_');
+            return lang('_THEME_');
             break;
         case 3  :
-            return L('_PARAGRAPH_');
+            return lang('_PARAGRAPH_');
             break;
         default :
             return false;
@@ -224,7 +224,7 @@ function lists_plus(&$data)
 
         $mid = M('action_log')->field("max(create_time),remark")->where('action_id=' . $data[$key]['id'])->select();
         $mid_s = $mid[0]['remark'];
-        if( isset($mid_s) && strpos($mid_s , L('_INTEGRAL_')) !== false)
+        if( isset($mid_s) && strpos($mid_s , lang('_INTEGRAL_')) !== false)
         {
         $data[$key]['vary'] = $mid_s;
         }
@@ -424,8 +424,8 @@ function get_document_field($value = null, $condition = 'id', $field = null)
 function get_action_type($type, $all = false)
 {
     $list = array(
-        1 => L('_SYSTEM_'),
-        2 => L('_USER_'),
+        1 => lang('_SYSTEM_'),
+        2 => lang('_USER_'),
     );
     if ($all) {
         return $list;
