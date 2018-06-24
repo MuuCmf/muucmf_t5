@@ -1,12 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: caipeichao
- * Date: 14-3-13
- * Time: PM4:54
- */
-
 namespace Admin\Builder;
+
+use think\Db;
 
 class AdminSortBuilder extends AdminBuilder {
     private $_title;
@@ -78,12 +73,12 @@ class AdminSortBuilder extends AdminBuilder {
         $ids = explode(',', $ids);
         $res = 0;
         foreach ($ids as $key=>$value){
-            $res += M($table)->where(array('id'=>$value))->setField('sort', $key+1);
+            $res += Db::name($table)->where(array('id'=>$value))->setField('sort', $key+1);
         }
         if(!$res) {
-            $this->error(L('_ERROR_SORT_').L('_PERIOD_'));
+            $this->error(lang('_ERROR_SORT_').lang('_PERIOD_'));
         } else {
-            $this->success(L('_SUCCESS_SORT_').L('_PERIOD_'), cookie('__SELF__'));
+            $this->success(lang('_SUCCESS_SORT_').lang('_PERIOD_'), cookie('__SELF__'));
         }
     }
 }

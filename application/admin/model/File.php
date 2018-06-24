@@ -1,22 +1,15 @@
 <?php
-// +----------------------------------------------------------------------
-// | OneThink [ WE CAN DO IT JUST THINK IT ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
-// +----------------------------------------------------------------------
-// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
-// +----------------------------------------------------------------------
+namespace app\admin\model;
 
-namespace Admin\Model;
-use Think\Model;
-use Think\Upload;
+use think\Model;
+use think\Upload;
 
 /**
  * 文件模型
  * 负责文件的下载和上传
  */
 
-class FileModel extends Model{
+class File extends Model{
     /**
      * 文件模型自动完成
      * @var array

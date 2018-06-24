@@ -179,7 +179,7 @@ class Admin extends Controller
     {
         $id = array_unique((array)input('id/a', 0));
         $id = is_array($id) ? implode(',', $id) : $id;
-        
+
         if($where) {
             $where = $where;
         }else{
@@ -552,16 +552,13 @@ class Admin extends Controller
      * @return array|false
      * 返回数据集
      */
-    protected function lists($model, $where = array(), $order = '', $base = ['status' => ['egt', 0]], $field = true)
+    protected function lists($model, $where = [], $order = '', $base = ['status' => ['egt', 0]], $field = true)
     {
-        $options = array();
+        $options = [];
         $REQUEST = (array)input('request.');
         if (is_string($model)) {
             $model = Db::name($model);
         }
-
-        $OPT = new \ReflectionProperty($model, 'options');
-        $OPT->setAccessible(true);
 
         $pk = $model->getPk();
         if ($order === null) {
@@ -587,7 +584,7 @@ class Admin extends Controller
         if (empty($options['where'])) {
             unset($options['where']);
         }
-        $options = array_merge((array)$OPT->getValue($model), $options);
+
         $total = $model->where($options['where'])->count();
 
         if (isset($REQUEST['r'])) {
@@ -595,7 +592,7 @@ class Admin extends Controller
         } else {
             $listRows = cache('LIST_ROWS') > 0 ? cache('LIST_ROWS') : 10;
         }
-
+        //获取列表
         $list = $model->where($options['where'])->order($options['order'])->paginate(20);
         // 获取分页显示
         $page = $list->render();

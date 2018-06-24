@@ -1,24 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 15-3-10
- * Time: 下午3:27
- * @author 郑钟良<zzl@ourstu.com>
- */
+namespace app\admin\model;
 
-namespace Admin\Model;
+use think\Model;
 
-use Think\Model;
-
-class RoleConfigModel extends Model
+class RoleConfig extends Model
 {
 
     public function addData($data){
-        $data=$this->create($data);
+        
         if(!$data) return false;
         $data['update_time']=time();
-        $result=$this->add($data);
+        $result=$this->save($data);
         return $result;
     }
 

@@ -4,14 +4,15 @@
     {/if}
 </label>
 {if condition="$field['name'] == 'action'"}
-    <p style="color: #f00;">{:lang("_DEVELOPMENT_STAFF_ATTENTION_")}{:lang("_YOU_USE_A_FIELD_NAMED_ACTION_")}，{:lang("_BECAUSE_THIS_FIELD_NAME_WILL_BE_WITH_FORM_")}[action]{:lang("_CONFLICT_WHICH_CAUSES_THE_FORM_TO_BE_UNABLE_TO_COMMIT_PLEASE_USE_ANOTHER_NAME_")}</p>
+    <p>{:lang("_DEVELOPMENT_STAFF_ATTENTION_")}{:lang("_YOU_USE_A_FIELD_NAMED_ACTION_")}，{:lang("_BECAUSE_THIS_FIELD_NAME_WILL_BE_WITH_FORM_")}[action]{:lang("_CONFLICT_WHICH_CAUSES_THE_FORM_TO_BE_UNABLE_TO_COMMIT_PLEASE_USE_ANOTHER_NAME_")}
+    </p>
 {/if}
 <div class="controls ">
 {switch name="field.type"}
 
     {case value="text"}
         <input type="text" name="{$field.name}" value="{$field.value|htmlspecialchars}"
-               class="text input-large form-control" style="width: 400px"/>
+               class="text input-large form-control" />
     {/case}
 
     {case value="label"}
@@ -24,23 +25,22 @@
 
     {case value="readonly"}
         <input type="hidden" name="{$field.name}" value="{$field.value}" class="text input-large form-control"
-               style="width: 400px" placeholder={:lang("_NO_NEED_TO_FILL_IN_WITH_DOUBLE_")} readonly/>
+                placeholder={:lang("_NO_NEED_TO_FILL_IN_WITH_DOUBLE_")} readonly/>
         <p class="" >{$field.value}</p>
     {/case}
     {case value="readonlytext"}
         <input type="text" name="{$field.name}" value="{$field.value}" class="text input-large form-control"
-               style="width: 400px" placeholder={:lang("_NO_NEED_TO_FILL_IN_WITH_DOUBLE_")} readonly/>
+                placeholder={:lang("_NO_NEED_TO_FILL_IN_WITH_DOUBLE_")} readonly/>
     {/case}
     {case value="readonlyhtml"}
         {$field.value}
     {/case}
     {case value="integer"}
-        <input type="text" name="{$field.name}" value="{$field.value}" class="text input-large form-control"
-               style="width: 400px"/>
+        <input type="text" name="{$field.name}" value="{$field.value}" class="text input-large form-control"/>
     {/case}
     {case value="uid"}
         <input type="text" name="{$field.name}" value="{$field.value}" class="text input-large form-control"
-               style="width: 100px"/>
+               />
     {/case}
     {case value="select"}
         <select name="{$field.name}" class="form-control" style="width:auto;">
@@ -58,7 +58,7 @@
             $colorPicker = 1;
         {/php}
         <div class="color-picker" style="width:100px;height: 30px;">
-            <input type="text" name="{$field.name}" class="simple_color_callback form-control" onchange="setColorPicker(this);" value="{$field.value|default=''}" style="width: 100px;"/>
+            <input type="text" name="{$field.name}" class="simple_color_callback form-control" onchange="setColorPicker(this);" value="{$field.value|default=''}">
         </div>
     {/case}
     {case value="radio"}
@@ -165,7 +165,7 @@
 
     {case value="multiImage"}
         <div class="controls multiImage">
-            <div id="upload_multi_image_{$field.name}" style="padding-bottom: 5px;">{:lang("_SELECT_PICTURES_")}</div>
+            <div id="upload_multi_image_{$field.name}">{:lang("_SELECT_PICTURES_")}</div>
             <input class="attach" type="hidden" name="{$field.name}" value="{$field['value']}"/>
             <div class="upload-img-box">
                 <div class="upload-pre-item popup-gallery">
@@ -258,8 +258,9 @@
                 $checked = in_array($key,$field['value_array']) ? 'checked' : '';
                 $inputId = "id_$field[name]_$key";
             {/php}
-            <label for="{$inputId}"> <input type="checkbox" value="{$key}" id="{$inputId}" class="oneplus-checkbox"
-                                            data-field-name="{$field.name}" {$checked}/>
+            <label for="{$inputId}">
+                <input type="checkbox" value="{$key}" id="{$inputId}" class="oneplus-checkbox"
+                data-field-name="{$field.name}" {$checked}/>
                 {$option}</label>
 
         {/volist}
@@ -280,8 +281,7 @@
 
     {/case}
     {case value="textarea"}
-        <textarea name="{$field.name}" class="text input-large form-control"
-                  style="height: 8em;width: 400px;height: 200px">{$field.value|htmlspecialchars}</textarea>
+        <textarea name="{$field.name}" class="text input-large form-control">{$field.value|htmlspecialchars}</textarea>
     {/case}
     {case value="time"}
         {php}
@@ -293,7 +293,7 @@
         {/php}
         <input type="hidden" name="{$field.name}" value="{$field.value}"/>
         <input type="text" data-field-name="{$field.name}" class="text input-large form-time time form-control"
-               style="width: 400px" value="{$field.value|time_format='H:i'}" placeholder={:lang("_PLEASE_CHOOSE_TIME_WITH_DOUBLE_")}/>
+                value="{$field.value|time_format='H:i'}" placeholder={:lang("_PLEASE_CHOOSE_TIME_WITH_DOUBLE_")}/>
     {/case}
     {case value="date"}
         {php}
@@ -305,7 +305,7 @@
         {/php}
         <input type="hidden" name="{$field.name}" value="{$field.value}"/>
         <input type="text" data-field-name="{$field.name}" class="text input-large form-date time form-control"
-               style="width: 400px" value="{$field.value|time_format='Y-m-d'}" placeholder={:lang("_PLEASE_CHOOSE_TIME_WITH_DOUBLE_")}/>
+            value="{$field.value|time_format='Y-m-d'}" placeholder={:lang("_PLEASE_CHOOSE_TIME_WITH_DOUBLE_")}/>
     {/case}
     {case value="datetime"}
         {php}
@@ -317,7 +317,7 @@
         {/php}
         <input type="hidden" name="{$field.name}" value="{$field.value}"/>
         <input type="text" data-field-name="{$field.name}" class="text input-large form-datetime time form-control"
-               style="width: 400px" value="{$field.value|time_format}" placeholder={:lang("_PLEASE_CHOOSE_TIME_WITH_DOUBLE_")}/>
+            value="{$field.value|time_format}" placeholder={:lang("_PLEASE_CHOOSE_TIME_WITH_DOUBLE_")}/>
     {/case}
 
     <!--添加城市选择（需安装城市联动插件,css样式不好处理排版有点怪）-->
@@ -415,13 +415,17 @@
         </script>
     {/case}
 {case value="chosen"}
-    <select name="{$field.name}[]" style="width: 400px" class="chosen-select" multiple="multiple">
+    <select name="{$field.name}[]" class="chosen-select" multiple="multiple">
         {php}
             if( key($field['opt']) === 0){
         {/php}
         {volist name="field['opt']" id="option"}
             {php}
-                $selected = in_array(reset($option),$field['value'])? 'selected' : '';
+                $selected = '';
+
+                if($field['value']){
+                    $selected = in_array(reset($option),$field['value'])? 'selected' : '';
+                }
             {/php}
             <option value="{:reset($option)}" {$selected}>{$option|end|htmlspecialchars}</option>
         {/volist}
@@ -432,7 +436,10 @@
         <optgroup label="{$optgroupkey}">
             {volist name="optgroup" id="option"}
                 {php}
-                    $selected = in_array(reset($option),$field['value'])? 'selected' : '';
+                    $selected = '';
+                    if($field['value']){
+                        $selected = in_array(reset($option),$field['value'])? 'selected' : '';
+                    }
                 {/php}
                 <option value="{:reset($option)}" {$selected}>{$option|end|htmlspecialchars}</option>
             {/volist}
@@ -476,7 +483,7 @@
     {/case}
 
     {default/}
-    <span style="color: #f00;">{:lang("_ERROR_")}{:lang("_COLON_")}{:lang("_UNKNOWN_FIELD_TYPE_")}{$field.type}</span>
+    <span>{:lang("_ERROR_")}{:lang("_COLON_")}{:lang("_UNKNOWN_FIELD_TYPE_")}{$field.type}</span>
     <input type="hidden" name="{$field.name}" value="{$field.value|htmlspecialchars}"/>
 {/switch}
 </div>

@@ -59,11 +59,10 @@ function get_role_id($uid=0)
 }
 
 /**
- * 获取角色配置表 D('RoleConfig')查询条件
+ * 获取角色配置表 ('RoleConfig')查询条件
  * @param $type 类型
  * @param int $role_id 角色id
  * @return mixed 查询条件 $map
- * @author 郑钟良<zzl@ourstu.com>
  */
 function getRoleConfigMap($type,$role_id=0){
     $map['role_id']=$role_id;

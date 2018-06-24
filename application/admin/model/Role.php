@@ -55,14 +55,13 @@ class Role extends Model
      * @param $order 排序
      * @param null $fields 查询字段，null表示全部字段
      * @return mixed 结果列表
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function selectByMap($map=array(),$order=null,$fields=null){
         $order=$order?$order:"id asc";
         if($fields==null){
-            $list=$this->where($map)->order($order)->select();
+            $list=collection($this->where($map)->order($order)->select())->toArray();
         }else{
-            $list=$this->where($map)->order($order)->field($fields)->select();
+            $list=collection($this->where($map)->order($order)->field($fields)->select())->toArray();
         }
         return $list;
     }

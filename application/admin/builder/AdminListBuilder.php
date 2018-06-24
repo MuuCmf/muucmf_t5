@@ -755,7 +755,7 @@ class AdminListBuilder extends AdminBuilder
     public function doSetStatus($model, $ids, $status = 1)
     {
         $id = array_unique((array)$ids);
-        $rs = M($model)->where(array('id' => array('in', $id)))->save(array('status' => $status));
+        $rs = Db::name($model)->where(array('id' => array('in', $id)))->update(['status' => $status]);
         if ($rs === false) {
             $this->error(lang('_ERROR_SETTING_') . lang('_PERIOD_'));
         }
@@ -804,8 +804,8 @@ class AdminListBuilder extends AdminBuilder
         return function ($item) use ($pattern, $fun) {
             $pattern = str_replace('###', $item['id'], $pattern);
             //调用ThinkPHP中的解析引擎解析变量
-            $view = new \think\View();
-            $view->assign($item);
+            //$view = new \think\View();
+            //$view->assign($item);
 
             //dump($pattern);
             //$pattern = $view->fetch('', $pattern);
@@ -849,15 +849,16 @@ class AdminListBuilder extends AdminBuilder
         }
     }
 
-    /**执行彻底删除数据，只适用于无关联的数据表
+    /**
+     * 执行彻底删除数据，只适用于无关联的数据表
      * @param $model
      * @param $ids
-     * @author 郑钟良<zzl@ourstu.com>
+     * @author 大蒙<59262424@qq.com>
      */
     public function doDeleteTrue($model, $ids)
     {
         $ids = is_array($ids) ? $ids : explode(',', $ids);
-        M($model)->where(array('id' => array('in', $ids)))->delete();
+        Db::name($model)->where(array('id' => array('in', $ids)))->delete();
         $this->success(lang('_SUCCESS_DELETE_COMPLETELY_'), $_SERVER['HTTP_REFERER']);
     }
 
@@ -897,7 +898,7 @@ class AdminListBuilder extends AdminBuilder
             $view = new \Think\View();
             $view->assign($item);
             $pattern = $view->fetch('', $pattern);
-            return U($pattern);
+            return Url($pattern);
         };
     }
 

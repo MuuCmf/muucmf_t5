@@ -145,22 +145,26 @@ class User extends Admin
 
     /**用户扩展资料信息页
      * @param null $uid
-     * @author 郑钟良<zzl@ourstu.com>
      */
-    public function expandinfo_select($page = 1, $r = 20)
+    public function expandinfo_select($r = 20)
     {
         $nickname = input('nickname');
-        $map['status'] = array('egt', 0);
+        $map['status'] = array('>', 0);
         if (is_numeric($nickname)) {
-            $map['uid|nickname'] = array(intval($nickname), array('like', '%' . $nickname . '%'), '_multi' => true);
+            $map['uid|nickname'] = [intval($nickname), ['like', '%' . $nickname . '%'], '_multi' => true];
         } else {
-            $map['nickname'] = array('like', '%' . (string)$nickname . '%');
+            $map['nickname'] = ['like', '%' . (string)$nickname . '%'];
         }
-        $list = Db::name('Member')->where($map)->order('last_login_time desc')->page($page, $r)->select();
-
+        $list = Db::name('Member')->where($map)->order('uid desc')->paginate($r);
         $totalCount = Db::name('Member')->where($map)->count();
 
+        // 获取分页显示
+        $page = $list->render();
+
+        $list = $list->toArray()['data'];
+        
         int_to_string($list);
+
         //扩展信息查询
         $map_profile['status'] = 1;
         
@@ -168,9 +172,9 @@ class User extends Admin
 
         $field_group_ids = array_column($field_group, 'id');
 
-        $map_profile['profile_group_id'] = array('in', $field_group_ids);
+        $map_profile['profile_group_id'] = ['in', $field_group_ids];
 
-        $fields_list = Db::name('field_setting')->where($map_profile)->field('id,field_name,form_type')->find();
+        $fields_list = Db::name('field_setting')->where($map_profile)->field('id,field_name,form_type')->select();
 
         $fields_list = array_combine(array_column($fields_list, 'field_name'), $fields_list);
 
@@ -191,15 +195,22 @@ class User extends Admin
         }
 
         $builder = new AdminListBuilder();
+
         $builder->title(lang('_USER_EXPAND_INFO_LIST_'));
-        $builder->meta_title = lang('_USER_EXPAND_INFO_LIST_');
-        $builder->setSearchPostUrl(Url('Admin/User/expandinfo_select'))->search(lang('_SEARCH_'), 'nickname', 'text', lang('_PLACEHOLDER_NICKNAME_ID_'));
-        $builder->keyId()->keyLink('nickname', lang('_NICKNAME_'), 'User/expandinfo_details?uid=###');
+        $builder
+            ->setSearchPostUrl(Url('admin/User/expandinfo_select'))
+            ->search(lang('_SEARCH_'), 'nickname', 'text', lang('_PLACEHOLDER_NICKNAME_ID_'));
+        $builder
+            ->keyId()
+            ->keyLink('nickname', lang('_NICKNAME_'), 'User/expandinfo_details?uid=###');
+
         foreach ($fields_list as $vt) {
             $builder->keyText($vt['field_name'], $vt['field_name']);
         }
+
         $builder->data($list);
-        $builder->pagination($totalCount, $r);
+        $builder->page($page);
+
         $builder->display();
     }
 
@@ -212,8 +223,8 @@ class User extends Admin
      */
     public function expandinfo_details($uid = 0)
     {
-        if (IS_POST) {
-            /* 修改积分 xjw129xjt(肖骏涛)*/
+        if (request()->isPost()) {
+            /* 修改积分 */
             $data = input('post.');
             foreach ($data as $key => $val) {
                 if (substr($key, 0, 5) == 'score') {
@@ -221,21 +232,21 @@ class User extends Admin
                 }
             }
             unset($key, $val);
-            $res = D('Member')->where(array('uid' => $data['id']))->save($data_score);
+            $res = Db::name('Member')->where(array('uid' => $data['id']))->update($data_score);
             foreach ($data_score as $key => $val) {
                 $value = query_user(array($key), $data['id']);
                 if ($val == $value[$key]) {
                     continue;
                 }
-                D('Ucenter/Score')->addScoreLog($data['id'], cut_str('score', $key, 'l'), 'to', $val, '', 0, get_nickname(is_login()) . lang('_BACKGROUND_ADJUSTMENT_'));
-                D('Ucenter/Score')->cleanUserCache($data['id'], cut_str('score', $key, 'l'));
+                model('Ucenter/Score')->addScoreLog($data['id'], cut_str('score', $key, 'l'), 'to', $val, '', 0, get_nickname(is_login()) . lang('_BACKGROUND_ADJUSTMENT_'));
+                model('Ucenter/Score')->cleanUserCache($data['id'], cut_str('score', $key, 'l'));
             }
             unset($key, $val);
             $rs_score = true;
-
             /* 修改积分 end*/
-            /*身份设置 zzl(郑钟良)*/
-            $data_role = array();
+
+            /*身份设置*/
+            $data_role = [];
             foreach ($data as $key => $val) {
                 if ($key == 'role') {
                     $data_role = explode(',', $val);
@@ -244,6 +255,7 @@ class User extends Admin
                 }
             }
             unset($key, $val);
+            //dump($data_role);exit;
             $rs_role = $this->_resetUserRole($uid, $data_role);
             /*身份设置 end*/
 
@@ -252,7 +264,7 @@ class User extends Admin
             $aNickname = input('post.nickname', '', 'text');
             $this->checkNickname($aNickname, $uid);
             $user['nickname'] = $aNickname;
-            $rs_member = D('Member')->where($map)->save($user);
+            $rs_member = Db::name('Member')->where($map)->update($user);
 
             //用户名、邮箱、手机变成可编辑内容
             $aUsername=input('post.username','','text');
@@ -272,7 +284,7 @@ class User extends Admin
                 }
             }
             $ucenterMemberData=array('id'=>$uid,'username'=>$aUsername,'email'=>$aEmail,'mobile'=>$aMobile);
-            $rs_register = M('UcenterMember')->save($ucenterMemberData);
+            $rs_register = Db::name('UcenterMember')->update($ucenterMemberData);
             //用户名、邮箱、手机变成可编辑内容end
 
             clean_query_user_cache($uid, 'expand_info');
@@ -283,24 +295,27 @@ class User extends Admin
             }
         } else {
             $map['uid'] = $uid;
-            $map['status'] = array('egt', 0);
-            $member = M('Member')->where($map)->find();
+            $map['status'] = ['>=', 0];
+            $member = Db::name('Member')->where($map)->find();
             $member['id'] = $member['uid'];
-            $ucenterMember = D('UcenterMember')->where(array('id' => $uid))->field('username,email,mobile')->find();
+            $ucenterMember = Db::name('UcenterMember')->where(array('id' => $uid))->field('username,email,mobile')->find();
             $member['username']=$ucenterMember['username'];
             $member['email']=$ucenterMember['email'];
             $member['mobile']=$ucenterMember['mobile'];
+
             //扩展信息查询
             $map_profile['status'] = 1;
-            $field_group = D('field_group')->where($map_profile)->select();
+            $field_group = Db::name('field_group')->where($map_profile)->select();
             $field_group_ids = array_column($field_group, 'id');
             $map_profile['profile_group_id'] = array('in', $field_group_ids);
-            $fields_list = D('field_setting')->where($map_profile)->getField('id,field_name,form_type');
+            $fields_list = Db::name('field_setting')->where($map_profile)->field('id,field_name,form_type')->select();
             $fields_list = array_combine(array_column($fields_list, 'field_name'), $fields_list);
             $map_field['uid'] = $member['uid'];
+
+
             foreach ($fields_list as $key => $val) {
                 $map_field['field_id'] = $val['id'];
-                $field_data = D('field')->where($map_field)->getField('field_data');
+                $field_data = Db::name('field')->where($map_field)->field('field_data')->find();
                 if ($field_data == null || $field_data == '') {
                     $member[$key] = '';
                 } else {
@@ -309,11 +324,8 @@ class User extends Admin
                 $member[$key] = $field_data;
             }
 
-            //
-
             $builder = new AdminConfigBuilder();
             $builder->title(lang('_USER_EXPAND_INFO_DETAIL_'));
-            $builder->meta_title = lang('_USER_EXPAND_INFO_DETAIL_');
             $builder->keyId()
                     ->keyText('email','邮箱')
                     ->keyText('mobile','手机号')
@@ -325,26 +337,28 @@ class User extends Admin
                 $field_key[] = $vt['field_name'];
             }
 
-            /* 积分设置 xjw129xjt(肖骏涛)*/
-            $field = model('Ucenter/Score')->getTypeList(array('status' => 1));
-            $score_key = array();
+            /* 积分设置 */
+            $field = model('Ucenter/Score')->getTypeList(['status' => 1]);
+
+            $score_key = [];
             foreach ($field as $vf) {
                 $score_key[] = 'score' . $vf['id'];
                 $builder->keyText('score' . $vf['id'], $vf['title']);
             }
-            $score_data = Db::name('Member')->where(array('uid' => $uid))->field(implode(',', $score_key))->find();
+
+            $score_data = Db::name('Member')->where(['uid' => $uid])->field(implode(',', $score_key))->find();
+
             $member = array_merge($member, $score_data);
             /*积分设置end*/
-            $builder->data($member);
 
             /*身份设置 zzl(郑钟良)*/
-            $already_role = D('UserRole')->where(array('uid' => $uid, 'status' => 1))->field('role_id')->select();
+            $already_role = Db::name('UserRole')->where(['uid' => $uid, 'status' => 1])->field('role_id')->select();
             if (count($already_role)) {
                 $already_role = array_column($already_role, 'role_id');
             }
-            $roleModel = D('Role');
+            $roleModel = Db::name('Role');
             $role_key = array();
-            $no_group_role = $roleModel->where(array('group_id' => 0, 'status' => 1))->select();
+            $no_group_role = $roleModel->where(['group_id' => 0, 'status' => 1])->select();
             if (count($no_group_role)) {
                 $role_key[] = 'role';
                 $no_group_role_options = $already_no_group_role = array();
@@ -356,7 +370,9 @@ class User extends Admin
                 }
                 $builder->keyCheckBox('role', lang('_ROLE_GROUP_NONE_'), lang('_MULTI_OPTIONS_'), $no_group_role_options)->keyDefault('role', implode(',', $already_no_group_role));
             }
-            $role_group = D('RoleGroup')->select();
+
+            $role_group = Db::name('RoleGroup')->select();
+
             foreach ($role_group as $group) {
                 $group_role = $roleModel->where(array('group_id' => $group['id'], 'status' => 1))->select();
                 if (count($group_role)) {
@@ -377,6 +393,9 @@ class User extends Admin
                 }
             }
             /*身份设置 end*/
+
+            $builder->data($member);
+
             $builder
                 ->group(lang('_BASIC_SETTINGS_'), implode(',', $field_key))
                 ->group(lang('_SETTINGS_SCORE_'), implode(',', $score_key))
@@ -405,10 +424,11 @@ class User extends Admin
         if (!$match) {
             $this->error(lang('_ERROR_NICKNAME_LIMIT_').lang('_PERIOD_'));
         }
-
+        //验证唯一性
         $map_nickname['nickname'] = $nickname;
         $map_nickname['uid'] = array('neq', $uid);
         $had_nickname = Db::name('Member')->where($map_nickname)->count();
+
         if ($had_nickname) {
             $this->error(lang('_ERROR_NICKNAME_USED_').lang('_PERIOD_'));
         }
@@ -443,27 +463,27 @@ class User extends Admin
      * @return bool
      * @author 郑钟良<zzl@ourstu.com>
      */
-    private function _resetUserRole($uid = 0, $haveRole = array())
+    private function _resetUserRole($uid = 0, $haveRole = [])
     {
-        $userRoleModel = D('UserRole');
-        $memberModel = D('Common/Member');
+        //$userRoleModel = Db::name('UserRole');
+        $memberModel = model('Common/Member');
         $map['uid'] = $uid;
         foreach ($haveRole as $val) {
             $map['role_id'] = $val;
-            $userRole = $userRoleModel->where($map)->find();
+            $userRole = Db::name('UserRole')->where($map)->find();
             if ($userRole) {
                 if (!$userRole['init']) {
                     $memberModel->initUserRoleInfo($val, $uid);
                 }
                 if ($userRole['status'] != 1) {
-                    $userRoleModel->where($map)->setField('status', 1);
+                    Db::name('UserRole')->where($map)->setField('status', 1);
                 }
             } else {
                 $data = $map;
                 $data['status'] = 1;
                 $data['step'] = 'start';
                 $data['init'] = 1;
-                $res = $userRoleModel->add($data);
+                $res = Db::name('UserRole')->insert($data);
                 if ($res) {
                     $memberModel->initUserRoleInfo($val, $uid);
                 }
@@ -471,31 +491,35 @@ class User extends Admin
         }
         $map_remove['uid'] = $uid;
         $map_remove['role_id'] = array('not in', $haveRole);
-        $userRoleModel->where($map_remove)->setField('status', -1);
-        $user_info = $memberModel->where(array('uid' => $uid))->find();
+        Db::name('UserRole')->where($map_remove)->setField('status', -1);
+        $user_info = Db::name('Member')->where(array('uid' => $uid))->find();
+        $user_data = []; //初始化
+
         if (!in_array($user_info['show_role'], $haveRole)) {
             $user_data['show_role'] = $haveRole[count($haveRole) - 1];
         }
         if (!in_array($user_info['last_login_role'], $haveRole)) {
             $user_data['last_login_role'] = $haveRole[count($haveRole) - 1];
         }
-        $memberModel->where(array('uid' => $uid))->save($user_data);
+        
+        if(empty($user_data)){
+            Db::name('Member')->where(['uid' => $uid])->update($user_data);
+        }
+        
         return true;
     }
 
     /**扩展用户信息分组列表
-     * @author 郑钟良<zzl@ourstu.com>
      */
-    public function profile($page = 1, $r = 20)
+    public function profile()
     {
+        $r = 20;
         $map['status'] = array('egt', 0);
-        $profileList = Db::name('field_group')->where($map)->order("sort asc")->page($page, $r)->paginate($r);
+        $profileList = Db::name('field_group')->where($map)->order("sort asc")->paginate($r);
         $totalCount = Db::name('field_group')->where($map)->count();
         $page = $profileList->render();
 
         $profileList = $profileList->toArray()['data'];
-
-        //dump($profileList);
 
         $builder = new AdminListBuilder();
 
@@ -551,13 +575,15 @@ class User extends Admin
      * @param $id
      * @author 郑钟良<zzl@ourstu.com>
      */
-    public function field($id, $page = 1, $r = 20)
+    public function field($id)
     {
+        $r = 20;
         $profile = Db::name('field_group')->where('id=' . $id)->find();
         $map['status'] = array('egt', 0);
         $map['profile_group_id'] = $id;
-        $field_list = Db::name('field_setting')->where($map)->order("sort asc")->page($page, $r)->select();
+        $field_list = Db::name('field_setting')->where($map)->order("sort asc")->select();
         $totalCount = Db::name('field_setting')->where($map)->count();
+
         $type_default = array(
             'input' => lang('_ONE-WAY_TEXT_BOX_'),
             'radio' => lang('_RADIO_BUTTON_'),
@@ -575,15 +601,39 @@ class User extends Admin
         );
         foreach ($field_list as &$val) {
             $val['form_type'] = $type_default[$val['form_type']];
-            $val['child_form_type'] = $child_type[$val['child_form_type']];
+            if($val['child_form_type']) {
+                $val['child_form_type'] = $child_type[$val['child_form_type']];
+            }
+            
         }
+        unset($val);
+
         $builder = new AdminListBuilder();
         $builder->title('【' . $profile['profile_name'] . '】' .lang('_FIELD_MANAGEMENT_'));
-        $builder->meta_title = $profile['profile_name'] . lang('_FIELD_MANAGEMENT_');
 
-        $builder->buttonNew(Url('editFieldSetting', array('id' => '0', 'profile_group_id' => $id)))->buttonDelete(Url('setFieldSettingStatus', array('status' => '-1')))->setStatusUrl(Url('setFieldSettingStatus'))->buttonSort(Url('sortField', array('id' => $id)))->button(lang('_RETURN_'), array('href' => Url('profile')));
-        $builder->keyId()->keyText('field_name', lang('_FIELD_NAME_'))->keyBool('visiable', lang('_OPEN_YE_OR_NO_'))->keyBool('required', lang('_WHETHER_THE_REQUIRED_'))->keyText('sort', lang('_SORT_'))->keyText('form_type', lang('_FORM_TYPE_'))->keyText('child_form_type', lang('_TWO_FORM_TYPE_'))->keyText('form_default_value', lang('_DEFAULT_'))->keyText('validation', lang('_FORM_VERIFICATION_MODE_'))->keyText('input_tips', lang('_USER_INPUT_PROMPT_'));
-        $builder->keyTime("createTime", lang('_CREATE_TIME_'))->keyStatus()->keyDoAction('User/editFieldSetting?profile_group_id=' . $id . '&id=###', lang('_EDIT_'));
+        $builder
+        ->buttonNew(Url('editFieldSetting', array('id' => '0', 'profile_group_id' => $id)))
+        ->buttonDelete(Url('setFieldSettingStatus', array('status' => '-1')))
+        ->setStatusUrl(Url('setFieldSettingStatus'))
+        ->buttonSort(Url('sortField', array('id' => $id)))
+        ->button(lang('_RETURN_'), array('href' => Url('profile')));
+
+        $builder
+        ->keyId()
+        ->keyText('field_name', lang('_FIELD_NAME_'))
+        ->keyBool('visiable', lang('_OPEN_YE_OR_NO_'))
+        ->keyBool('required', lang('_WHETHER_THE_REQUIRED_'))
+        ->keyText('sort', lang('_SORT_'))
+        ->keyText('form_type', lang('_FORM_TYPE_'))
+        ->keyText('child_form_type', lang('_TWO_FORM_TYPE_'))
+        ->keyText('form_default_value', lang('_DEFAULT_'))
+        ->keyText('validation', lang('_FORM_VERIFICATION_MODE_'))
+        ->keyText('input_tips', lang('_USER_INPUT_PROMPT_'));
+        $builder
+        ->keyTime("createTime", lang('_CREATE_TIME_'))
+        ->keyStatus()
+        ->keyDoAction('User/editFieldSetting?profile_group_id=' . $id . '&id=###', lang('_EDIT_'));
+
         $builder->data($field_list);
         $builder->pagination($totalCount, $r);
         $builder->display();
@@ -591,18 +641,17 @@ class User extends Admin
 
     /**分组排序
      * @param $id
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function sortField($id = '', $ids = null)
     {
-        if (IS_POST) {
+        if (request()->isPost()) {
             $builder = new AdminSortBuilder();
             $builder->doSort('FieldSetting', $ids);
         } else {
-            $profile = D('field_group')->where('id=' . $id)->find();
-            $map['status'] = array('egt', 0);
+            $profile = Db::name('field_group')->where('id=' . $id)->find();
+            $map['status'] = ['egt', 0];
             $map['profile_group_id'] = $id;
-            $list = D('field_setting')->where($map)->order("sort asc")->select();
+            $list = Db::name('field_setting')->where($map)->order("sort asc")->select();
             foreach ($list as $key => $val) {
                 $list[$key]['title'] = $val['field_name'];
             }
@@ -614,7 +663,8 @@ class User extends Admin
         }
     }
 
-    /**添加、编辑字段信息
+    /**
+     * 添加、编辑字段信息
      * @param $id
      * @param $profile_group_id
      * @param $field_name
@@ -625,20 +675,19 @@ class User extends Admin
      * @param $form_default_value
      * @param $validation
      * @param $input_tips
-     * @author 郑钟良<zzl@ourstu.com>
      */
-    public function editFieldSetting($id = 0, $profile_group_id = 0, $field_name = '', $child_form_type = 0, $visiable = 0, $required = 0, $form_type = 0, $form_default_value = '', $validation = 0, $input_tips = '')
+    public function editFieldSetting()
     {
-        if (IS_POST) {
-            $data['field_name'] = $field_name;
+        if (request()->isPost()) {
+
+            $data = input('');
+            //先过滤掉role_ids
+            unset($data['role_ids']);
+            //$data['field_name'] = $data['field_name'];
             if ($data['field_name'] == '') {
                 $this->error(lang('_FIELD_NAME_CANNOT_BE_EMPTY_'));
             }
-            $data['profile_group_id'] = $profile_group_id;
-            $data['visiable'] = $visiable;
-            $data['required'] = $required;
-            $data['form_type'] = $form_type;
-            $data['form_default_value'] = $form_default_value;
+
             //当表单类型为以下三种是默认值不能为空判断@MingYang
             $form_types = array('radio', 'checkbox', 'select');
             if (in_array($data['form_type'], $form_types)) {
@@ -646,32 +695,35 @@ class User extends Admin
                     $this->error($data['form_type'] . lang('_THE_DEFAULT_VALUE_OF_THE_FORM_TYPE_CAN_NOT_BE_EMPTY_'));
                 }
             }
-            $data['input_tips'] = $input_tips;
-            //增加当二级字段类型为join时也提交$child_form_type @MingYang
-            if ($form_type == 'input') {
-                $data['child_form_type'] = $child_form_type;
-            } else {
-                $data['child_form_type'] = '';
-            }
-            $data['validation'] = $validation;
-            if ($id != '') {
-                $res = D('field_setting')->where('id=' . $id)->save($data);
+            
+            if ($data['id'] != '') {
+                Db::name('field_setting')->strict(true)->where(['id'=>$data['id']])->update($data);
+                $res = Db::name('field_setting')->where(['id'=>$data['id']])->value('id');
             } else {
                 $map['field_name'] = $field_name;
                 $map['status'] = array('egt', 0);
                 $map['profile_group_id'] = $profile_group_id;
-                if (D('field_setting')->where($map)->count() > 0) {
+                if (Db::name('field_setting')->where($map)->count() > 0) {
                     $this->error(lang('_THIS_GROUP_ALREADY_HAS_THE_SAME_NAME_FIELD_PLEASE_USE_ANOTHER_NAME_'));
                 }
                 $data['status'] = 1;
                 $data['createTime'] = time();
                 $data['sort'] = 0;
-                $res = D('field_setting')->add($data);
+                $res = Db::name('field_setting')->strict(true)->insertGetId($data);
             }
-            $role_ids = input('post.role_ids', array());
-            $this->_setFieldRole($role_ids, $res, $id);
-            $this->success($id == '' ? lang('_ADD_FIELD_SUCCESS_') : lang('_EDIT_FIELD_SUCCESS_'), Url('field', array('id' => $profile_group_id)));
+            //初始化$role_ids
+            //$data['role_ids'] = [];
+            $data['role_ids'] = input('role_ids/a',array());
+            
+            $this->_setFieldRole($data['role_ids'], $res, $data['id']);
+            
+            
+            $this->success(
+                $data['id'] == '' ? lang('_ADD_FIELD_SUCCESS_') : lang('_EDIT_FIELD_SUCCESS_'), 
+                Url('field', ['id' => $data['profile_group_id']])
+            );
         } else {
+            $id = input('id');
             $roleOptions = model('Role')->selectByMap(array('status' => array('gt', -1)), 'id asc', 'id,title');
 
             $builder = new AdminConfigBuilder();
@@ -689,10 +741,10 @@ class User extends Admin
                 //所属身份 end
 
                 $builder->title(lang('_MODIFY_FIELD_INFORMATION_'));
-                $builder->meta_title = lang('_MODIFY_FIELD_INFORMATION_');
+
             } else {
-                $builder->title(lang('_ADD_FIELD_'));
-                $builder->meta_title = lang('_NEW_FIELD_');
+                $builder->title(lang('_ADD_FIELD_').lang('_NEW_FIELD_'));
+
                 $field_setting['profile_group_id'] = $profile_group_id;
                 $field_setting['visiable'] = 1;
                 $field_setting['required'] = 1;
@@ -713,19 +765,33 @@ class User extends Admin
                 'join' => lang('_RELATED_FIELD_'),
                 'number' => lang('_NUMBER_')
             );
-            $builder->keyReadOnly("id", lang('_LOGO_'))->keyReadOnly('profile_group_id', lang('_GROUP_ID_'))->keyText('field_name', lang('_FIELD_NAME_'))->keyChosen('role_ids', lang('_POSSESSION_OF_THE_FIELD_'), lang('_DETAIL_COME_TO_'), $roleOptions)->keySelect('form_type', lang('_FORM_TYPE_'), '', $type_default)->keySelect('child_form_type', lang('_TWO_FORM_TYPE_'), '', $child_type)->keyTextArea('form_default_value', "多个值用'|'分割开,格式【字符串：男|女，数组：1:男|2:女，关联数据表：字段名|表名】开")
-                ->keyText('validation', lang('_FORM_VALIDATION_RULES_'), '例：min=5&max=10')->keyText('input_tips', lang('_USER_INPUT_PROMPT_'), lang('_PROMPTS_THE_USER_TO_ENTER_THE_FIELD_INFORMATION_'))->keyBool('visiable', lang('_OPEN_YE_OR_NO_'))->keyBool('required', lang('_WHETHER_THE_REQUIRED_'));
+            $builder
+            ->keyReadOnly("id", lang('_LOGO_'))
+            ->keyReadOnly('profile_group_id', lang('_GROUP_ID_'))
+            ->keyText('field_name', lang('_FIELD_NAME_'))
+            ->keyChosen('role_ids', lang('_POSSESSION_OF_THE_FIELD_'), lang('_DETAIL_COME_TO_'), $roleOptions)
+            ->keySelect('form_type', lang('_FORM_TYPE_'), '', $type_default)
+            ->keySelect('child_form_type', lang('_TWO_FORM_TYPE_'), '', $child_type)
+            ->keyTextArea('form_default_value', "多个值用'|'分割开,格式【字符串：男|女，数组：1:男|2:女，关联数据表：字段名|表名】开")
+            ->keyText('validation', lang('_FORM_VALIDATION_RULES_'), '例：min=5&max=10')
+            ->keyText('input_tips', lang('_USER_INPUT_PROMPT_'), lang('_PROMPTS_THE_USER_TO_ENTER_THE_FIELD_INFORMATION_'))
+            ->keyBool('visiable', lang('_OPEN_YE_OR_NO_'))
+            ->keyBool('required', lang('_WHETHER_THE_REQUIRED_'));
+
             $builder->data($field_setting);
-            $builder->buttonSubmit(Url('editFieldSetting'), $id == 0 ? lang('_ADD_') : lang('_MODIFY_'))->buttonBack();
+            $builder
+            ->buttonSubmit(Url('editFieldSetting'), $id == 0 ? lang('_ADD_') : lang('_MODIFY_'))
+            ->buttonBack();
             $builder->display();
         }
 
     }
 
-    /**设置字段状态：删除=-1，禁用=0，启用=1
+    /**
+     * 设置字段状态：删除=-1，禁用=0，启用=1
      * @param $ids
      * @param $status
-     * @author 郑钟良<zzl@ourstu.com>
+     * @author dameng<59262424@qq.com>
      */
     public function setFieldSettingStatus($ids, $status)
     {
@@ -733,9 +799,9 @@ class User extends Admin
         $builder->doSetStatus('field_setting', $ids, $status);
     }
 
-    /**设置分组状态：删除=-1，禁用=0，启用=1
+    /**
+     * 设置分组状态：删除=-1，禁用=0，启用=1
      * @param $status
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function changeProfileStatus($status)
     {
@@ -744,7 +810,7 @@ class User extends Admin
             $this->error(lang('_PLEASE_CHOOSE_TO_OPERATE_THE_DATA_'));
         }
         $id = is_array($id) ? $id : explode(',', $id);
-        D('field_group')->where(array('id' => array('in', $id)))->setField('status', $status);
+        Db::name('field_group')->where(array('id' => array('in', $id)))->setField('status', $status);
         if ($status == -1) {
             $this->success(lang('_DELETE_SUCCESS_'));
         } else if ($status == 0) {
@@ -755,30 +821,31 @@ class User extends Admin
 
     }
 
-    /**添加、编辑分组信息
+    /**
+     * 添加、编辑分组信息
      * @param $id
-     * * @param $profile_name
-     * @author 郑钟良<zzl@ourstu.com>
+     * @param $profile_name
+     * @author dameng <59262424@qq.com>
      */
     public function editProfile($id = 0, $profile_name = '', $visiable = 1)
     {
-        if (IS_POST) {
+        if (request()->isPost()) {
             $data['profile_name'] = $profile_name;
             $data['visiable'] = $visiable;
             if ($data['profile_name'] == '') {
                 $this->error(lang('_GROUP_NAME_CANNOT_BE_EMPTY_'));
             }
             if ($id != '') {
-                $res = D('field_group')->where('id=' . $id)->save($data);
+                $res = Db::name('field_group')->where(['id'=>$id])->update($data);
             } else {
                 $map['profile_name'] = $profile_name;
                 $map['status'] = array('egt', 0);
-                if (D('field_group')->where($map)->count() > 0) {
+                if (Db::name('field_group')->where($map)->count() > 0) {
                     $this->error(lang('_ALREADY_HAS_THE_SAME_NAME_GROUP_PLEASE_USE_THE_OTHER_GROUP_NAME_'));
                 }
                 $data['status'] = 1;
                 $data['createTime'] = time();
-                $res = D('field_group')->add($data);
+                $res = Db::name('field_group')->insert($data);
             }
             if ($res) {
                 $this->success($id == '' ? lang('_ADD_GROUP_SUCCESS_') : lang('_EDIT_GROUP_SUCCESS_'), Url('profile'));
@@ -788,16 +855,22 @@ class User extends Admin
         } else {
             $builder = new AdminConfigBuilder();
             if ($id != 0) {
-                $profile = D('field_group')->where('id=' . $id)->find();
+                $profile = Db::name('field_group')->where(['id'=>$id])->find();
                 $builder->title(lang('_MODIFIED_GROUP_INFORMATION_'));
-                $builder->meta_title = lang('_MODIFIED_GROUP_INFORMATION_');
             } else {
                 $builder->title(lang('_ADD_EXTENDED_INFORMATION_PACKET_'));
                 $builder->meta_title = lang('_NEW_GROUP_');
             }
-            $builder->keyReadOnly("id", lang('_LOGO_'))->keyText('profile_name', lang('_GROUP_NAME_'))->keyBool('visiable', lang('_OPEN_YE_OR_NO_'));
-            $builder->data($profile);
-            $builder->buttonSubmit(Url('editProfile'), $id == 0 ? lang('_ADD_') : lang('_MODIFY_'))->buttonBack();
+            $builder
+                ->keyReadOnly("id", lang('_LOGO_'))
+                ->keyText('profile_name', lang('_GROUP_NAME_'))
+                ->keyBool('visiable', lang('_OPEN_YE_OR_NO_'));
+
+            $builder
+                ->data($profile);
+            $builder
+                ->buttonSubmit(Url('editProfile'), $id == 0 ? lang('_ADD_') : lang('_MODIFY_'))
+            ->buttonBack();
             $builder->display();
         }
 
@@ -818,7 +891,7 @@ class User extends Admin
     /**
      * 修改昵称提交
      * @author huajie <banhuajie@163.com>
-     */
+     *
     public function submitNickname()
     {
         //获取参数
@@ -829,10 +902,10 @@ class User extends Admin
 
         //密码验证
         $User = new UserApi();
-        $uid = $User->login(UID, $password, 4);
+        $uid = $User->login(is_login(), $password, 4);
         ($uid == -2) && $this->error(lang('_INCORRECT_PASSWORD_'));
 
-        $Member = D('Member');
+        $Member = Db::name('Member');
         $data = $Member->create(array('nickname' => $nickname));
         if (!$data) {
             $this->error($Member->getError());
@@ -850,6 +923,7 @@ class User extends Admin
             $this->error(lang('_MODIFY_NICKNAME_FAILURE_'));
         }
     }
+    */
 
     /**
      * 修改密码初始化
@@ -894,7 +968,7 @@ class User extends Admin
      */
     public function action()
     {
-        // $aModule = input('post.module', '-1', 'text');
+        
         $aModule = $this->parseSearchKey('module');
 
         is_null($aModule) && $aModule = -1;
@@ -946,18 +1020,16 @@ class User extends Admin
     }
 
     /**
-     * 新增行为
-     * @author huajie <banhuajie@163.com>
+     * 新增用户行为
+     * @author dameng <59262424@qq.com>
      */
     public function addAction()
     {
-        $this->meta_title = lang('_NEW_BEHAVIOR_');
-
-
-        $module = D('Module')->getAll();
+        $module = model('Module')->getAll();
+        $this->setTitle(lang('_NEW_BEHAVIOR_'));
         $this->assign('module', $module);
         $this->assign('data', null);
-        $this->display('editaction');
+        return $this->fetch('editaction');
     }
 
     /**
@@ -994,7 +1066,6 @@ class User extends Admin
 
     /**
      * 会员状态修改
-     * @author 朱亚杰 <zhuyajie@topthink.net>
      */
     public function changeStatus($method = null)
     {
@@ -1076,12 +1147,15 @@ class User extends Admin
         return $error;
     }
 
-
+    /**
+     * 积分列表
+     * @return [type] [description]
+     */
     public function scoreList()
     {
         //读取数据
         $map = array('status' => array('GT', -1));
-        $model = D('Ucenter/Score');
+        $model = model('Ucenter/Score');
         $list = $model->getTypeList($map);
 
         //显示页面
@@ -1102,8 +1176,11 @@ class User extends Admin
         $uid = input('get.uid', 0, 'intval');
         if ($uid) {
             $user = query_user(null, $uid);
+
             $this->ajaxReturn($user);
+
         } else {
+
             $this->ajaxReturn(null);
         }
 
@@ -1118,7 +1195,7 @@ class User extends Admin
 
     public function delType($ids)
     {
-        $model = D('Ucenter/Score');
+        $model = model('Ucenter/Score');
         $res = $model->delType($ids);
         if ($res) {
             $this->success(lang('_DELETE_SUCCESS_'));
@@ -1130,11 +1207,11 @@ class User extends Admin
     public function editScoreType()
     {
         $aId = input('id', 0, 'intval');
-        $model = D('Ucenter/Score');
-        if (IS_POST) {
-            $data['title'] = input('post.title', '', 'op_t');
+        $model = model('Ucenter/Score');
+        if (request()->isPost()) {
+            $data['title'] = input('post.title', '', 'text');
             $data['status'] = input('post.status', 1, 'intval');
-            $data['unit'] = input('post.unit', '', 'op_t');
+            $data['unit'] = input('post.unit', '', 'text');
 
             if ($aId != 0) {
                 $data['id'] = $aId;
@@ -1154,11 +1231,16 @@ class User extends Admin
             } else {
                 $type = array('status' => 1, 'sort' => 0);
             }
-            $builder->title(($aId == 0 ? lang('_NEW_') : lang('_EDIT_')) . lang('_INTEGRAL_CLASSIFICATION_'))->keyId()->keyText('title', lang('_NAME_'))
+            $builder
+                ->title(($aId == 0 ? lang('_NEW_') : lang('_EDIT_')) . lang('_INTEGRAL_CLASSIFICATION_'))
+                ->keyId()
+                ->keyText('title', lang('_NAME_'))
                 ->keyText('unit', lang('_UNIT_'))
                 ->keySelect('status', lang('_STATUS_'), null, array(-1 => lang('_DELETE_'), 0 => lang('_DISABLE_'), 1 => lang('_ENABLE_')))
                 ->data($type)
-                ->buttonSubmit(Url('editScoreType'))->buttonBack()->display();
+                ->buttonSubmit(Url('editScoreType'))
+                ->buttonBack()
+                ->display();
         }
     }
 
@@ -1168,53 +1250,71 @@ class User extends Admin
      * @param $add_id 新增字段时字段id
      * @param $edit_id 编辑字段时字段id
      * @return bool
-     * @author 郑钟良<zzl@ourstu.com>
      */
     private function _setFieldRole($role_ids, $add_id, $edit_id)
     {
         $type = 'expend_field';
-        $roleConfigModel = D('RoleConfig');
+
+        $roleConfigModel = Db::name('RoleConfig');
+
         $map = getRoleConfigMap($type, 0);
+
+        
         if ($edit_id) {//编辑字段
-            unset($map['role_id']);
+            unset($map['role_id']);//先删除，之后重新设置role_id
             $map['value'] = array('like', array('%,' . $edit_id . ',%', $edit_id . ',%', '%,' . $edit_id, $edit_id), 'or');
             $already_role_id = $roleConfigModel->where($map)->select();
             $already_role_id = array_column($already_role_id, 'role_id');
 
             unset($map['value']);
+
             if (count($role_ids) && count($already_role_id)) {
+
                 $need_add_role_ids = array_diff($role_ids, $already_role_id);
                 $need_del_role_ids = array_diff($already_role_id, $role_ids);
+
             } else if (count($role_ids)) {
                 $need_add_role_ids = $role_ids;
+                $need_del_role_ids = [];
+
             } else {
+                $need_add_role_ids = [];
                 $need_del_role_ids = $already_role_id;
             }
 
-            foreach ($need_add_role_ids as $val) {
-                $map['role_id'] = $val;
-                $oldConfig = $roleConfigModel->where($map)->find();
-                if (count($oldConfig)) {
-                    $oldConfig['value'] = implode(',', array_merge(explode(',', $oldConfig['value']), array($edit_id)));
-                    $roleConfigModel->saveData($map, $oldConfig);
-                } else {
-                    $data = $map;
-                    $data['value'] = $edit_id;
-                    $roleConfigModel->addData($data);
-                }
-            }
+            if(!empty($need_add_role_ids)){
 
-            foreach ($need_del_role_ids as $val) {
-                $map['role_id'] = $val;
-                $oldConfig = $roleConfigModel->where($map)->find();
-                $oldConfig['value'] = array_diff(explode(',', $oldConfig['value']), array($edit_id));
-                if (count($oldConfig['value'])) {
-                    $oldConfig['value'] = implode(',', $oldConfig['value']);
-                    $roleConfigModel->saveData($map, $oldConfig);
-                } else {
-                    $roleConfigModel->deleteData($map);
+                foreach ($need_add_role_ids as $val) {
+                    $map['role_id'] = $val;
+                    $oldConfig = $roleConfigModel->where($map)->find();
+
+                    if (count($oldConfig)) {
+                        $oldConfig['value'] = implode(',', array_merge(explode(',', $oldConfig['value']), [$edit_id]));
+
+                        $data = ['role_id'=>$val,'value' => $oldConfig['value']];
+                        $roleConfigModel->where(['id'=>$oldConfig['id']])->update($data);
+                    } else {
+                        $data = $map;
+                        $data['value'] = $edit_id;
+                        $roleConfigModel->insert($data);
+                    }
                 }
             }
+            if(!empty($need_del_role_ids)){
+                foreach ($need_del_role_ids as $val) {
+                    $map['role_id'] = $val;
+                    $oldConfig = $roleConfigModel->where($map)->find();
+                    $oldConfig['value'] = array_diff(explode(',', $oldConfig['value']), array($edit_id));
+                    if (count($oldConfig['value'])) {
+                        $oldConfig['value'] = implode(',', $oldConfig['value']);
+                        $data = ['role_id'=>$val,'value' => $oldConfig['value']];
+                        $roleConfigModel->where(['id'=>$oldConfig['id']])->update($data);
+                    } else {
+                        $roleConfigModel->where($map)->delete();
+                    }
+                }
+            }
+            
 
         } else {//新增字段
             foreach ($role_ids as $val) {
@@ -1241,9 +1341,9 @@ class User extends Admin
         $session_prefix=C("SESSION_PREFIX");
         $map['session_data']  = array('like', '%uid%');
         $order='session_expire desc';
-        $totalCount=M('session')->where($map)->count();
+        $totalCount=Db::name('session')->where($map)->count();
         if($totalCount){
-            $list=M('session')->where($map)->page($page,$r)->order($order)->select();
+            $list=Db::name('session')->where($map)->page($page,$r)->order($order)->select();
         }
             foreach($list as $k=>$val){
                 $session_data[]=$this->mb_unserialize(str_replace($session_prefix.'|','',$value[session_data]));
@@ -1255,26 +1355,25 @@ class User extends Admin
             }
             unset($val);
         unset($map);
-        $total_num = M('session')->count(); //在线总人数
+        $total_num = Db::name('session')->count(); //在线总人数
 
         $map['session_data'] = '';
         $map['session_data'] = array('notlike','%uid%');
         $map['_logic'] = 'OR';
-        $nouser_num = M('session')->where($map)->count();//未登录用户数
+        $nouser_num = Db::name('session')->where($map)->count();//未登录用户数
         unset($map);
 
         $map['session_data']  = array('like', '%uid%');
-        $user_num = M('session')->where($map)->count();
+        $user_num = Db::name('session')->where($map)->count();
         unset($map);
                 
-            //dump($count);exit;
-        $this->meta_title = '在线用户列表';
+        $this->setTitle('在线用户列表');
         $this->assign('online',$session_data);
         $this->assign('totalCount',$totalCount);
         $this->assign('total_num',$total_num);
         $this->assign('nouser_num',$nouser_num);
         $this->assign('user_num',$user_num);
-        $this->display();
+        return $this->fetch();
     }
 
     private function mb_unserialize($serial_str) 
