@@ -1,17 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 15-3-7
- * Time: 下午1:25
- * @author 郑钟良<zzl@ourstu.com>
- */
+namespace app\admin\controller;
 
-namespace Admin\Controller;
-
-use Admin\Builder\AdminListBuilder;
-use Admin\Builder\AdminSortBuilder;
-use Admin\Builder\AdminConfigBuilder;
+use app\admin\builder\AdminListBuilder;
+use app\admin\builder\AdminSortBuilder;
+use app\admin\builder\AdminConfigBuilder;
+use think\Db;
 
 /**
  * 后台身份控制器
@@ -19,7 +12,7 @@ use Admin\Builder\AdminConfigBuilder;
  * @package Admin\Controller
  * @郑钟良
  */
-class RoleController extends AdminController
+class Role extends Admin
 {
     protected $roleModel;
     protected $userRoleModel;
@@ -29,10 +22,10 @@ class RoleController extends AdminController
     public function _initialize()
     {
         parent::_initialize();
-        $this->roleModel = D("Admin/Role");
-        $this->userRoleModel = D('UserRole');
-        $this->roleConfigModel = D('RoleConfig');
-        $this->roleGroupModel = D('RoleGroup');
+        $this->roleModel = model("Admin/Role");
+        $this->userRoleModel = Db::name('UserRole');
+        $this->roleConfigModel = Db::name('RoleConfig');
+        $this->roleGroupModel = Db::name('RoleGroup');
     }
 
     //身份基本信息及配置 start
@@ -40,14 +33,21 @@ class RoleController extends AdminController
     public function index($page = 1, $r = 20)
     {
         $map['status'] = array('egt', 0);
-        list($roleList,$totalCount) = $this->roleModel->selectPageByMap($map, $page, $r, 'sort asc');
+
+        //list($roleList,$totalCount) = $this->roleModel->selectPageByMap($map, $page, $r, 'sort asc');
+        
+        $roleList = $this->lists('Role', $map);
+        
+        $roleList = $roleList->toArray()['data'];
+
         $map_group['id'] = array('in', array_column($roleList, 'group_id'));
 
         $group = $this->roleGroupModel->where($map_group)->field('id,title')->select();
         $group = array_combine(array_column($group, 'id'), $group);
 
-        $authGroupList = M('AuthGroup')->where(array('status' => 1))->field('id,title')->select();
+        $authGroupList = Db::name('AuthGroup')->where(array('status' => 1))->field('id,title')->select();
         $authGroupList = array_combine(array_column($authGroupList, 'id'), array_column($authGroupList, 'title'));
+
         foreach ($roleList as &$val) {
             $user_groups = explode(',', $val['user_groups']);
             $val['group'] = $group[$val['group_id']]['title'];
@@ -59,23 +59,30 @@ class RoleController extends AdminController
         }
         unset($val);
         $builder = new AdminListBuilder;
-        $builder->meta_title = L('_IDENTITY_LIST_');
-        $builder->title(L('_IDENTITY_LIST_'));
-        $builder->buttonNew(U('Role/editRole'))->setStatusUrl(U('setStatus'))->buttonEnable()->buttonDisable()->button(L('_DELETE_'), array('class' => 'btn ajax-post confirm', 'url' => U('setStatus', array('status' => -1)), 'target-form' => 'ids', 'confirm-info' => "确认删除身份？删除后不可恢复！"))->buttonSort(U('sort'));
+        $builder->meta_title = lang('_IDENTITY_LIST_');
+        $builder->title(lang('_IDENTITY_LIST_'));
+        $builder
+        ->buttonNew(Url('Role/editRole'))
+        ->setStatusUrl(Url('setStatus'))
+        ->buttonEnable()
+        ->buttonDisable()
+        ->button(lang('_DELETE_'), array('class' => 'btn ajax-post confirm', 'url' => Url('setStatus', array('status' => -1)), 'target-form' => 'ids', 'confirm-info' => "确认删除身份？删除后不可恢复！"))
+        ->buttonSort(Url('sort'));
+
         $builder->keyId()
-            ->keyText('title', L('_ROLE_NAME_'))
-            ->keyText('name', L('_ROLE_MARK_'))
-            ->keyText('group', L('_GROUP_'))
-            ->keyText('description', L('_DESCRIPTION_'))
-            ->keyText('user_groups', L('_DEFAULT_USER_GROUP_'))
-            ->keytext('sort', L('_SORT_'))
-            ->keyYesNo('invite', L('_DO_YOU_NEED_AN_INVITATION_TO_REGISTER_'))
-            ->keyYesNo('audit', L('_REGISTRATION_WILL_NEED_TO_AUDIT_'))
+            ->keyText('title', lang('_ROLE_NAME_'))
+            ->keyText('name', lang('_ROLE_MARK_'))
+            ->keyText('group', lang('_GROUP_'))
+            ->keyText('description', lang('_DESCRIPTION_'))
+            ->keyText('user_groups', lang('_DEFAULT_USER_GROUP_'))
+            ->keytext('sort', lang('_SORT_'))
+            ->keyYesNo('invite', lang('_DO_YOU_NEED_AN_INVITATION_TO_REGISTER_'))
+            ->keyYesNo('audit', lang('_REGISTRATION_WILL_NEED_TO_AUDIT_'))
             ->keyStatus()
             ->keyCreateTime()
             ->keyUpdateTime()
             ->keyDoActionEdit('Role/editRole?id=###')
-            ->keyDoAction('Role/configScore?id=###', L('_DEFAULT_INFORMATION_CONFIGURATION_'))
+            ->keyDoAction('Role/configScore?id=###', lang('_DEFAULT_INFORMATION_CONFIGURATION_'))
             ->data($roleList)
             ->pagination($totalCount, $r)
             ->display();
@@ -89,7 +96,7 @@ class RoleController extends AdminController
     {
         $aId = I('id', 0, 'intval');
         $is_edit = $aId ? 1 : 0;
-        $title = $is_edit ? L('_EDIT_IDENTITY_') : L('_NEW_IDENTITY_');
+        $title = $is_edit ? lang('_EDIT_IDENTITY_') : lang('_NEW_IDENTITY_');
         if (IS_POST) {
             $data['name'] = I('post.name', '', 'op_t');
             $data['title'] = I('post.title', '', 'op_t');
@@ -109,10 +116,10 @@ class RoleController extends AdminController
                 $result = $this->roleModel->insert($data);
             }
             if ($result) {
-                $this->success($title . L('_SUCCESS_'), U('Role/index'));
+                $this->success($title . lang('_SUCCESS_'), Url('Role/index'));
             } else {
                 $error_info = $this->roleModel->getError();
-                $this->error($title . L('_FAILURE!__') . $error_info);
+                $this->error($title . lang('_FAILURE!__') . $error_info);
             }
         } else {
             $data['status'] = 1;
@@ -129,24 +136,24 @@ class RoleController extends AdminController
 
             $group = array_combine(array_column($group, 'id'), array_column($group, 'title'));
             if (!$group) {
-                $group = array(0 => L('_NO_GROUP_'));
+                $group = array(0 => lang('_NO_GROUP_'));
             } else {
-                $group = array_merge(array(0 => L('_NO_GROUP_')), $group);
+                $group = array_merge(array(0 => lang('_NO_GROUP_')), $group);
             }
             $builder = new AdminConfigBuilder;
             $builder->meta_title = $title;
             $builder->title($title)
                 ->keyId()
-                ->keyText('title', L('_ROLE_NAME_'), L('_CANT_REPEAT_'))
-                ->keyText('name', L('_ENGLISH_LOGO_'), L('_COMPOSED_BY_ABC_'))
-                ->keyTextArea('description', L('_DESCRIPTION_'))
-                ->keySelect('group_id', L('_GROUP_'), '', $group)
-                ->keyChosen('user_groups', L('_DEFAULT_USER_GROUP_'), L('_THE_DEFAULT_USER_REGISTRATION_WHERE_THE_USER_GROUP_CHOOSE_'), $authGroupList)
-                ->keyRadio('invite', L('_NEED_TO_BE_INVITED_TO_REGISTER_'), L('_DEFAULT_IS_OFF_AFTER_OPENING_THE_USER_CAN_BE_INVITED_TO_REGISTER_'), array(1 => L('_OPEN_'), 0 => L('_OFF_')))
-                ->keyRadio('audit', L('_NEED_TO_EXAMINE_'), L('_DEFAULT_IS_CLOSED_AFTER_THE_USER_AUDIT_TO_HAVE_THE_IDENTITY_OF_THE_'), array(1 => L('_OPEN_'), 0 => L('_OFF_')))
+                ->keyText('title', lang('_ROLE_NAME_'), lang('_CANT_REPEAT_'))
+                ->keyText('name', lang('_ENGLISH_LOGO_'), lang('_COMPOSED_BY_ABC_'))
+                ->keyTextArea('description', lang('_DESCRIPTION_'))
+                ->keySelect('group_id', lang('_GROUP_'), '', $group)
+                ->keyChosen('user_groups', lang('_DEFAULT_USER_GROUP_'), lang('_THE_DEFAULT_USER_REGISTRATION_WHERE_THE_USER_GROUP_CHOOSE_'), $authGroupList)
+                ->keyRadio('invite', lang('_NEED_TO_BE_INVITED_TO_REGISTER_'), lang('_DEFAULT_IS_OFF_AFTER_OPENING_THE_USER_CAN_BE_INVITED_TO_REGISTER_'), array(1 => lang('_OPEN_'), 0 => lang('_OFF_')))
+                ->keyRadio('audit', lang('_NEED_TO_EXAMINE_'), lang('_DEFAULT_IS_CLOSED_AFTER_THE_USER_AUDIT_TO_HAVE_THE_IDENTITY_OF_THE_'), array(1 => lang('_OPEN_'), 0 => lang('_OFF_')))
                 ->keyStatus()
                 ->data($data)
-                ->buttonSubmit(U('editRole'))
+                ->buttonSubmit(Url('editRole'))
                 ->buttonBack()
                 ->display();
         }
@@ -168,9 +175,9 @@ class RoleController extends AdminController
                 $list[$key]['title'] = $val['title'];
             }
             $builder = new AdminSortBuilder;
-            $builder->meta_title = L('_IDENTITY_SORT_');
+            $builder->meta_title = lang('_IDENTITY_SORT_');
             $builder->data($list);
-            $builder->buttonSubmit(U('sort'))->buttonBack();
+            $builder->buttonSubmit(Url('sort'))->buttonBack();
             $builder->display();
         }
     }
@@ -180,12 +187,12 @@ class RoleController extends AdminController
      * @param mixed|string $ids
      * @param $status
      * @author 郑钟良<zzl@ourstu.com>
-     */
+     *
     public function setStatus($ids, $status)
     {
         $ids = is_array($ids) ? $ids : explode(',', $ids);
         if(in_array(1,$ids)){
-            $this->error(L('_ID_1_PRIORITY_'));
+            $this->error(lang('_ID_1_PRIORITY_'));
         }
         if ($status == 1) {
             $builder = new AdminListBuilder;
@@ -196,7 +203,7 @@ class RoleController extends AdminController
                 $builder = new AdminListBuilder;
                 $builder->doSetStatus('Role', $ids, $status);
             } else {
-                $this->error(L('_IDENTITY_') . $result['role']['name'] . '（' . $result["role"]["id"] . '）【' . $result["role"]["title"] . '】中存在单身份用户，移出单身份用户后才能禁用该身份！');
+                $this->error(lang('_IDENTITY_') . $result['role']['name'] . '（' . $result["role"]["id"] . '）【' . $result["role"]["title"] . '】中存在单身份用户，移出单身份用户后才能禁用该身份！');
             }
         } else if ($status == -1) { //（真删除）
             $result = $this->checkSingleRoleUser($ids);
@@ -209,15 +216,16 @@ class RoleController extends AdminController
                     }
                     unset($val);
                     $this->userRoleModel->where(array('role_id'=>array('in',$ids)))->delete();
-                    $this->success(L('_DELETE_SUCCESS_'), U('Role/index'));
+                    $this->success(lang('_DELETE_SUCCESS_'), Url('Role/index'));
                 } else {
-                    $this->error(L('_DELETE_FAILED_'));
+                    $this->error(lang('_DELETE_FAILED_'));
                 }
             } else {
-                $this->error(L('_IDENTITY_') . $result['role']['name'] . '（' . $result["role"]["id"] . '）【' . $result["role"]["title"] . '】中存在单身份用户，移出单身份用户后才能删除该身份！');
+                $this->error(lang('_IDENTITY_') . $result['role']['name'] . '（' . $result["role"]["id"] . '）【' . $result["role"]["title"] . '】中存在单身份用户，移出单身份用户后才能删除该身份！');
             }
         }
     }
+    */
 
     /**
      * 检测要删除的身份中是否存在单身份用户
@@ -279,7 +287,7 @@ class RoleController extends AdminController
         $builder = new AdminConfigBuilder;
         $data = $builder->handleConfig();
 
-        $builder->title(L('_IDENTITY_BASIC_INFORMATION_CONFIGURATION_'))
+        $builder->title(lang('_IDENTITY_BASIC_INFORMATION_CONFIGURATION_'))
             ->data($data)
             ->buttonSubmit()
             ->buttonBack()
@@ -340,33 +348,33 @@ class RoleController extends AdminController
         unset($user, $val);
 
         $statusOptions = array(
-            0 => array('id' => 0, 'value' => L('_ALL_')),
-            1 => array('id' => 1, 'value' => L('_ENABLE_')),
-            2 => array('id' => 2, 'value' => L('_NOT_AUDITED_')),
-            3 => array('id' => 3, 'value' => L('_DISABLE_')),
+            0 => array('id' => 0, 'value' => lang('_ALL_')),
+            1 => array('id' => 1, 'value' => lang('_ENABLE_')),
+            2 => array('id' => 2, 'value' => lang('_NOT_AUDITED_')),
+            3 => array('id' => 3, 'value' => lang('_DISABLE_')),
         );
 
         $singleRoleOptions = array(
-            0 => array('id' => 0, 'value' => L('_ALL_')),
-            1 => array('id' => 1, 'value' => L('_SINGLE_USER_')),
-            2 => array('id' => 2, 'value' => L('_NON_SINGLE_USER_')),
+            0 => array('id' => 0, 'value' => lang('_ALL_')),
+            1 => array('id' => 1, 'value' => lang('_SINGLE_USER_')),
+            2 => array('id' => 2, 'value' => lang('_NON_SINGLE_USER_')),
         );
 
         $builder = new AdminListBuilder();
-        $builder->title(L('_IDENTITY_USER_LIST_'))
-            ->setSelectPostUrl(U('Role/userList'));
+        $builder->title(lang('_IDENTITY_USER_LIST_'))
+            ->setSelectPostUrl(Url('Role/userList'));
         if ($map_user_list['status'] == 2) {
-            $builder->setStatusUrl(U('Role/setUserAudit', array('role_id' => $map_user_list['role_id'])))->buttonEnable('', L('_AUDIT_THROUGH_'))->buttonDelete('', L('_AUDIT_FAILURE_'));
+            $builder->setStatusUrl(Url('Role/setUserAudit', array('role_id' => $map_user_list['role_id'])))->buttonEnable('', lang('_AUDIT_THROUGH_'))->buttonDelete('', lang('_AUDIT_FAILURE_'));
         } else {
-            $builder->setStatusUrl(U('Role/setUserStatus', array('role_id' => $map_user_list['role_id'])))->buttonEnable()->buttonDisable();
+            $builder->setStatusUrl(Url('Role/setUserStatus', array('role_id' => $map_user_list['role_id'])))->buttonEnable()->buttonDisable();
         }
 
-        $builder->buttonModalPopup(U('Role/changeRole',array('role_id'=>$map_user_list['role_id'])), array(), L('_MIGRATING_USER_'),array('data-title'=>L('_MIGRATING_USER_TO_ANOTHER_IDENTITY_'),'target-form'=>'ids'))
-            ->button(L('_INITIALIZE_THE_USER_'), array('href' => U('Role/initUnhaveUser')))
-            ->select(L('_IDENTITY:_'), 'role_id', 'select', '', '', '', $role_list)->select(L('_STATUS:_'), 'user_status', 'select', '', '', '', $statusOptions)->select('', 'single_role', 'select', '', '', '', $singleRoleOptions)
+        $builder->buttonModalPopup(Url('Role/changeRole',array('role_id'=>$map_user_list['role_id'])), array(), lang('_MIGRATING_USER_'),array('data-title'=>lang('_MIGRATING_USER_TO_ANOTHER_IDENTITY_'),'target-form'=>'ids'))
+            ->button(lang('_INITIALIZE_THE_USER_'), array('href' => Url('Role/initUnhaveUser')))
+            ->select(lang('_IDENTITY:_'), 'role_id', 'select', '', '', '', $role_list)->select(lang('_STATUS:_'), 'user_status', 'select', '', '', '', $statusOptions)->select('', 'single_role', 'select', '', '', '', $singleRoleOptions)
             ->keyId()
-            ->keyImage('avatar', L('_AVATAR_'))
-            ->keyLink('nickname', L('_NICKNAME_'), 'ucenter/index/information?uid={$uid}')
+            ->keyImage('avatar', lang('_AVATAR_'))
+            ->keyLink('nickname', lang('_NICKNAME_'), 'ucenter/index/information?uid={$uid}')
             ->keyStatus()
             ->pagination($totalCount, $r)
             ->data($user_list)
@@ -385,12 +393,12 @@ class RoleController extends AdminController
             $aRole=I('post.role',0,'intval');
             $result['status']=0;
             if($aRole_id==$aRole||$aRole==0){
-                $result['info']=L('_ILLEGAL_OPERATION_');
+                $result['info']=lang('_ILLEGAL_OPERATION_');
                 $this->ajaxReturn($result);
             }
             $ids=explode(',',$aIds);
             if(!count($ids)){
-                $result['info']=L('_NO_NEED_TO_TRANSFER_THE_USER_');
+                $result['info']=lang('_NO_NEED_TO_TRANSFER_THE_USER_');
                 $this->ajaxReturn($result);
             }
 
@@ -424,7 +432,7 @@ class RoleController extends AdminController
             if($res){
                 $result['status']=1;
             }else{
-                $result['info']=L('_OPERATION_FAILED_');
+                $result['info']=lang('_OPERATION_FAILED_');
             }
             $this->ajaxReturn($result);
         }else{
@@ -481,7 +489,7 @@ class RoleController extends AdminController
                     $error_ids=$this->userRoleModel->where($map_ids)->field('id')->select();
                     $error_ids=implode(',',array_column($error_ids,'id'));
 
-                    $this->error(L('_ERROR_DISABLE_CANNOT_PARAM_',array('error_ids'=>$error_ids)));
+                    $this->error(lang('_ERROR_DISABLE_CANNOT_PARAM_',array('error_ids'=>$error_ids)));
                 }
                 foreach($uids as $val){
                     $this->setDefaultShowRole($role_id,$val);
@@ -490,10 +498,10 @@ class RoleController extends AdminController
                 $builder = new AdminListBuilder;
                 $builder->doSetStatus('UserRole', $ids, $status);
             } else {
-                $this->info(L('_NO_OPERATIONAL_DATA_'));
+                $this->info(lang('_NO_OPERATIONAL_DATA_'));
             }
         } else {
-            $this->error(L('_ILLEGAL_OPERATION_'));
+            $this->error(lang('_ILLEGAL_OPERATION_'));
         }
     }
 
@@ -524,10 +532,10 @@ class RoleController extends AdminController
                 $builder = new AdminListBuilder;
                 $builder->doSetStatus('UserRole', $ids, $status);
             } else {
-                $this->info(L('_NO_OPERATIONAL_DATA_'));
+                $this->info(lang('_NO_OPERATIONAL_DATA_'));
             }
         } else {
-            $this->error(L('_ILLEGAL_OPERATION_'));
+            $this->error(lang('_ILLEGAL_OPERATION_'));
         }
     }
 
@@ -580,14 +588,14 @@ class RoleController extends AdminController
         }
         unset($roles, $val);
         $builder = new AdminListBuilder;
-        $builder->title(L('_ROLE_GROUP_2_').L('_ROLE_EXCLUSION_ONE_GROUP_'))
-            ->buttonNew(U('Role/editGroup'))
+        $builder->title(lang('_ROLE_GROUP_2_').lang('_ROLE_EXCLUSION_ONE_GROUP_'))
+            ->buttonNew(Url('Role/editGroup'))
             ->keyId()
-            ->keyText('title', L('_TITLE_'))
-            ->keyText('roles', L('_GROUP_IDENTITY_'))
+            ->keyText('title', lang('_TITLE_'))
+            ->keyText('roles', lang('_GROUP_IDENTITY_'))
             ->keyUpdateTime()
             ->keyDoActionEdit('Role/editGroup?id=###')
-            ->keyDoAction('Role/deleteGroup?id=###', L('_DELETE_'))
+            ->keyDoAction('Role/deleteGroup?id=###', lang('_DELETE_'))
             ->data($group)
             ->display();
     }
@@ -600,7 +608,7 @@ class RoleController extends AdminController
     {
         $aGroupId = I('id', 0, 'intval');
         $is_edit = $aGroupId ? 1 : 0;
-        $title = $is_edit ? L('_EDIT_GROUP_') : L('_NEW_GROUP_');
+        $title = $is_edit ? lang('_EDIT_GROUP_') : lang('_NEW_GROUP_');
         if (IS_POST) {
             $data['title'] = I('post.title', '', 'op_t');
             $data['update_time'] = time();
@@ -612,7 +620,7 @@ class RoleController extends AdminController
                 }
             } else {
                 if ($this->roleGroupModel->where(array('title' => $data['title']))->count()) {
-                    $this->error("{$title}".L('_FAIL_GROUP_EXIST_').L('_EXCLAMATION_'));
+                    $this->error("{$title}".lang('_FAIL_GROUP_EXIST_').lang('_EXCLAMATION_'));
                 }
                 $result = $this->roleGroupModel->add($data);
             }
@@ -621,9 +629,9 @@ class RoleController extends AdminController
                 if (!is_null($roles)) {
                     $this->roleModel->where(array('id' => array('in', $roles)))->setField('group_id', $result); //选中的身份全部移入分组
                 }
-                $this->success("{$title}".L('_SUCCESS_').L('_EXCLAMATION_'), U('Role/group'));
+                $this->success("{$title}".lang('_SUCCESS_').lang('_EXCLAMATION_'), Url('Role/group'));
             } else {
-                $this->error("{$title}".L('_FAILURE_').L('_EXCLAMATION_') . $this->roleGroupModel->getError());
+                $this->error("{$title}".lang('_FAILURE_').lang('_EXCLAMATION_') . $this->roleGroupModel->getError());
             }
         } else {
             $data = array();
@@ -635,14 +643,14 @@ class RoleController extends AdminController
             }
             $roles = $this->roleModel->field('id,group_id,title')->select();
             foreach ($roles as &$val) {
-                $val['title'] = $val['group_id'] ? $val['title'] . L('_ID_CURRENT_GROUP_').L('_COLON_')."  {$val['group_id']})" : $val['title'];
+                $val['title'] = $val['group_id'] ? $val['title'] . lang('_ID_CURRENT_GROUP_').lang('_COLON_')."  {$val['group_id']})" : $val['title'];
             }
             unset($val);
             $builder = new AdminConfigBuilder;
-            $builder->title("{$title}".L('_ROLE_EXCLUSION_ONE_GROUP_'));
+            $builder->title("{$title}".lang('_ROLE_EXCLUSION_ONE_GROUP_'));
             $builder->keyId()
-                ->keyText('title', L('_TITLE_'))
-                ->keyChosen('roles', L('_GROUP_IDENTITY_SELECTION_'), L('_AN_IDENTITY_CAN_ONLY_EXIST_IN_ONE_GROUP_AT_THE_SAME_TIME_'), $roles)
+                ->keyText('title', lang('_TITLE_'))
+                ->keyChosen('roles', lang('_GROUP_IDENTITY_SELECTION_'), lang('_AN_IDENTITY_CAN_ONLY_EXIST_IN_ONE_GROUP_AT_THE_SAME_TIME_'), $roles)
                 ->buttonSubmit()
                 ->buttonBack()
                 ->data($data)
@@ -658,14 +666,14 @@ class RoleController extends AdminController
     {
         $aGroupId = I('id', 0, 'intval');
         if (!$aGroupId) {
-            $this->error(L('_PARAMETER_ERROR_'));
+            $this->error(lang('_PARAMETER_ERROR_'));
         }
         $this->roleModel->where(array('group_id' => $aGroupId))->setField('group_id', 0);
         $result = $this->roleGroupModel->where(array('id' => $aGroupId))->delete();
         if ($result) {
-            $this->success(L('_DELETE_SUCCESS_'));
+            $this->success(lang('_DELETE_SUCCESS_'));
         } else {
-            $this->error(L('_DELETE_FAILED_'));
+            $this->error(lang('_DELETE_FAILED_'));
         }
     }
 
@@ -681,7 +689,7 @@ class RoleController extends AdminController
     {
         $aRoleId = I('id', 0, 'intval');
         if (!$aRoleId) {
-            $this->error(L('_PLEASE_CHOOSE_YOUR_IDENTITY_'));
+            $this->error(lang('_PLEASE_CHOOSE_YOUR_IDENTITY_'));
         }
         $map = getRoleConfigMap('score', $aRoleId);
         if (IS_POST) {
@@ -702,9 +710,9 @@ class RoleController extends AdminController
                 $result = $this->roleConfigModel->addData($data);
             }
             if ($result) {
-                $this->success(L('_OPERATION_SUCCESS_'), U('Admin/Role/configScore', array('id' => $aRoleId)));
+                $this->success(lang('_OPERATION_SUCCESS_'), Url('Admin/Role/configScore', array('id' => $aRoleId)));
             } else {
-                $this->error(L('_OPERATION_FAILED_') . $this->roleConfigModel->getError());
+                $this->error(lang('_OPERATION_FAILED_') . $this->roleConfigModel->getError());
             }
         } else {
             $mRole_list = $this->roleModel->field('id,title')->select();
@@ -724,7 +732,7 @@ class RoleController extends AdminController
             }
             unset($val);
 
-            $this->meta_title = L('_IDENTITY_DEFAULT_INTEGRATION_');
+            $this->meta_title = lang('_IDENTITY_DEFAULT_INTEGRATION_');
             $this->assign('score_keys', $score_keys);
             $this->assign('post_key', $post_key);
             $this->assign('role_list', $mRole_list);
@@ -742,7 +750,7 @@ class RoleController extends AdminController
     {
         $aRoleId = I('id', 0, 'intval');
         if (!$aRoleId) {
-            $this->error(L('_PLEASE_CHOOSE_YOUR_IDENTITY_'));
+            $this->error(lang('_PLEASE_CHOOSE_YOUR_IDENTITY_'));
         }
         $map = getRoleConfigMap('avatar', $aRoleId);
         $data['data'] = '';
@@ -751,7 +759,7 @@ class RoleController extends AdminController
             $aSetNull = I('post.set_null', 0, 'intval');
             if (!$aSetNull) {
                 if($data['value']==0){
-                    $this->error(L('_PLEASE_UPLOAD_YOUR_AVATAR_'));
+                    $this->error(lang('_PLEASE_UPLOAD_YOUR_AVATAR_'));
                 }
                 if ($this->roleConfigModel->where($map)->find()) {
                     $result = $this->roleConfigModel->saveData($map, $data);
@@ -763,14 +771,14 @@ class RoleController extends AdminController
                 if ($this->roleConfigModel->where($map)->find()) {
                     $result = $this->roleConfigModel->where($map)->delete();
                 }else{
-                    $this->success(L('_THE_CURRENT_USE_OF_THE_SYSTEM_IS_THE_DEFAULT_AVATAR_'));
+                    $this->success(lang('_THE_CURRENT_USE_OF_THE_SYSTEM_IS_THE_DEFAULT_AVATAR_'));
                 }
             }
             if ($result) {
                 clear_role_cache($aRoleId);
-                $this->success(L('_OPERATION_SUCCESS_'), U('Admin/Role/configAvatar', array('id' => $aRoleId)));
+                $this->success(lang('_OPERATION_SUCCESS_'), Url('Admin/Role/configAvatar', array('id' => $aRoleId)));
             } else {
-                $this->error(L('_OPERATION_FAILED_') . $this->roleConfigModel->getError());
+                $this->error(lang('_OPERATION_FAILED_') . $this->roleConfigModel->getError());
             }
         } else {
             $avatar_id = $this->roleConfigModel->where($map)->getField('value');
@@ -790,7 +798,7 @@ class RoleController extends AdminController
     {
         $aRoleId = I('id', 0, 'intval');
         if (!$aRoleId) {
-            $this->error(L('_PLEASE_CHOOSE_YOUR_IDENTITY_'));
+            $this->error(lang('_PLEASE_CHOOSE_YOUR_IDENTITY_'));
         }
         $map = getRoleConfigMap('rank', $aRoleId);
         if (IS_POST) {
@@ -808,9 +816,9 @@ class RoleController extends AdminController
                 $result = $this->roleConfigModel->addData($data);
             }
             if ($result) {
-                $this->success(L('_OPERATION_SUCCESS_'), U('Admin/Role/configrank', array('id' => $aRoleId)));
+                $this->success(lang('_OPERATION_SUCCESS_'), Url('Admin/Role/configrank', array('id' => $aRoleId)));
             } else {
-                $this->error(L('_OPERATION_FAILED_') . $this->roleConfigModel->getError());
+                $this->error(lang('_OPERATION_FAILED_') . $this->roleConfigModel->getError());
             }
         } else {
             $mRole_list = $this->roleModel->field('id,title')->select();
@@ -821,10 +829,10 @@ class RoleController extends AdminController
             if ($rank) {
                 $rank['data'] = json_decode($rank['data'], true);
                 if (!$rank['data']['reason']) {
-                    $rank['data']['reason'] = "{$mRole_list[$aRoleId]['title']}".L('_TITLE_OWNED_DEFAULT_').L('_EXCLAMATION_');
+                    $rank['data']['reason'] = "{$mRole_list[$aRoleId]['title']}".lang('_TITLE_OWNED_DEFAULT_').lang('_EXCLAMATION_');
                 }
             } else {
-                $rank['data']['reason'] = "{$mRole_list[$aRoleId]['title']}".L('_TITLE_OWNED_DEFAULT_').L('_EXCLAMATION_');
+                $rank['data']['reason'] = "{$mRole_list[$aRoleId]['title']}".lang('_TITLE_OWNED_DEFAULT_').lang('_EXCLAMATION_');
                 $rank['value'] = array();
             }
 
@@ -861,7 +869,7 @@ class RoleController extends AdminController
     {
         $aRoleId = I('id', 0, 'intval');
         if (!$aRoleId) {
-            $this->error(L('_PLEASE_CHOOSE_YOUR_IDENTITY_'));
+            $this->error(lang('_PLEASE_CHOOSE_YOUR_IDENTITY_'));
         }
 
         $map = getRoleConfigMap('user_tag', $aRoleId);
@@ -878,10 +886,10 @@ class RoleController extends AdminController
                 $result = $this->roleConfigModel->addData($data);
             }
             if ($result === false) {
-                $this->error(L('_FAILED_') . $this->roleConfigModel->getError());
+                $this->error(lang('_FAILED_') . $this->roleConfigModel->getError());
             } else {
                 clear_role_cache($aRoleId);
-                $this->success(L('_OPERATION_SUCCESS_'));
+                $this->success(lang('_OPERATION_SUCCESS_'));
             }
         }else{
             $mRole_list = $this->roleModel->field('id,title')->select();
@@ -904,7 +912,7 @@ class RoleController extends AdminController
     {
         $aRoleId = I('id', 0, 'intval');
         if (!$aRoleId) {
-            $this->error(L('_PLEASE_CHOOSE_YOUR_IDENTITY_'));
+            $this->error(lang('_PLEASE_CHOOSE_YOUR_IDENTITY_'));
         }
         $aType = I('get.type', 0, 'intval'); //扩展资料设置类型：1注册时要填写资料配置，0扩展资料字段设置
 
@@ -927,10 +935,10 @@ class RoleController extends AdminController
                 $result = $this->roleConfigModel->addData($data);
             }
             if ($result === false) {
-                $this->error(L('_FAILED_') . $this->roleConfigModel->getError());
+                $this->error(lang('_FAILED_') . $this->roleConfigModel->getError());
             } else {
                 clear_role_cache($aRoleId);
-                $this->success(L('_OPERATION_SUCCESS_'));
+                $this->success(lang('_OPERATION_SUCCESS_'));
             }
         } else {
             $aType = I('get.type', 0, 'intval'); //扩展资料设置类型：1注册时要填写资料配置，0扩展资料字段设置
@@ -943,12 +951,12 @@ class RoleController extends AdminController
                 $map_fields = getRoleConfigMap('expend_field', $aRoleId);
                 $expend_fields = $this->roleConfigModel->where($map_fields)->getField('value');
                 $field_list = $expend_fields ? $this->getExpendField($expend_fields) : array();
-                $this->meta_title = L('_REGISTRATION_TO_FILL_IN_THE_DATA_CONFIGURATION_');
+                $this->meta_title = lang('_REGISTRATION_TO_FILL_IN_THE_DATA_CONFIGURATION_');
                 $tpl = 'fieldregister'; //模板地址
                 $tab = 'fieldRegister';
             } else { //扩展资料字段设置
                 $field_list = $this->getExpendField();
-                $this->meta_title = L('_EXTENDED_DATA_FIELD_SETTINGS_');
+                $this->meta_title = lang('_EXTENDED_DATA_FIELD_SETTINGS_');
                 $tpl = 'field'; //模板地址
                 $tab = 'field';
             }
@@ -979,12 +987,12 @@ class RoleController extends AdminController
 
         $fieldSettingModel = D('field_setting');
         $type_default = array(
-            'input' => L('_ONE-WAY_TEXT_BOX_'),
-            'radio' => L('_RADIO_BUTTON_'),
-            'checkbox' => L('_CHECKBOX_'),
-            'select' => L('_DROP-DOWN_BOX_'),
-            'time' => L('_DATE_'),
-            'textarea' => L('_MULTI_LINE_TEXT_BOX_')
+            'input' => lang('_ONE-WAY_TEXT_BOX_'),
+            'radio' => lang('_RADIO_BUTTON_'),
+            'checkbox' => lang('_CHECKBOX_'),
+            'select' => lang('_DROP-DOWN_BOX_'),
+            'time' => lang('_DATE_'),
+            'textarea' => lang('_MULTI_LINE_TEXT_BOX_')
         );
         $map_field['status'] = array('egt', 0);
         foreach ($profileList as $key => &$val) {
@@ -1014,7 +1022,7 @@ class RoleController extends AdminController
         //TODO: 用户登录检测
 
         /* 返回标准数据 */
-        $return = array('status' => 1, 'info' => L('_UPLOAD_SUCCESS_'), 'data' => '');
+        $return = array('status' => 1, 'info' => lang('_UPLOAD_SUCCESS_'), 'data' => '');
 
         /* 调用文件上传组件上传文件 */
         $Picture = D('Picture');
@@ -1079,6 +1087,6 @@ class RoleController extends AdminController
         }
         unset($val);
         $this->userRoleModel->addAll($dataList);
-        $this->success(L('_OPERATION_SUCCESS_'));
+        $this->success(lang('_OPERATION_SUCCESS_'));
     }
 } 

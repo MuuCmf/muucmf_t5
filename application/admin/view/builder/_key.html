@@ -415,7 +415,10 @@
         </script>
     {/case}
 {case value="chosen"}
-    <select name="{$field.name}[]" class="chosen-select" multiple="multiple">
+    <script src="__ZUI__/lib/chosen/chosen.min.js"></script>
+    <link href="__ZUI__/lib/chosen/chosen.min.css" rel="stylesheet">
+
+    <select data-placeholder="选择身份..." name="{$field.name}[]" class="chosen-select form-control" tabindex="2" multiple="">
         {php}
             if( key($field['opt']) === 0){
         {/php}
@@ -449,6 +452,14 @@
             }
         {/php}
     </select>
+    <script>
+        $('select.chosen-select').chosen({
+            lang:'zh_cn',
+            no_results_text: '没有找到',    // 当检索时没有找到匹配项时显示的提示文本
+            disable_search_threshold: 10, // 10 个以下的选择项则不显示检索框
+            search_contains: true         // 从任意位置开始检索
+        });
+    </script>
 {/case}
 
     {case value="multiInput"}
