@@ -353,7 +353,8 @@ class AdminTreeListBuilder extends AdminBuilder
         }
         //生成翻页HTML代码
         config('VAR_PAGE', 'page');
-        
+        //设置meta标题
+        $this->setTitle($this->_title);
         //显示页面
         $this->assign('title', $this->_title);
         $this->assign('suggest', $this->_suggest);

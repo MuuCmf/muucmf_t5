@@ -48,7 +48,11 @@ str;
         empty($data['OPEN_QUICK_LOGIN']) && $data['OPEN_QUICK_LOGIN'] = 0;
         empty($data['LOGIN_SWITCH']) && $data['LOGIN_SWITCH'] = 'username';
 
-        $admin_config->title(lang('_USER_CONFIGURATION_'))->data($data)
+        
+        $admin_config
+        
+            ->title(lang('_USER_CONFIGURATION_'))
+            ->data($data)
             //注册配置
             ->keyCheckBox('REG_SWITCH', lang('_REGISTRATION_SWITCH_'), lang('_THE_REGISTRATION_OPTION_THAT_ALLOWS_THE_USE_OF_THE_REGISTRATION_IS_CLOSED_'), array('username' => lang('_USER_NAME_'),'email' => lang('_MAILBOX_'), 'mobile' => lang('_MOBILE_PHONE_')))
 

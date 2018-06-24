@@ -726,12 +726,13 @@ class AdminListBuilder extends AdminBuilder
         //生成翻页HTML代码
         config('VAR_PAGE', 'page');
 
+
+        $this->setTitle($this->_title);
         //显示页面
         $this->assign('title', $this->_title);
         $this->assign('suggest', $this->_suggest);
         $this->assign('keyList', $this->_keyList);
         $this->assign('buttonList', $this->_buttonList);
-        //$this->assign('pagination', $paginationHtml);
         $this->assign('page',$this->_page);
         $this->assign('explain', $this->_explain);
         $this->assign('list', $this->_data);

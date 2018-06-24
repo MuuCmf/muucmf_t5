@@ -400,6 +400,8 @@ class AdminConfigBuilder extends AdminBuilder
         foreach ($this->_buttonList as &$button) {
             $button['attr'] = $this->compileHtmlAttr($button['attr']);
         }
+        //设置meta标题
+        $this->setTitle($this->_title);
 
         //显示页面
         $this->assign('group', $this->_group);

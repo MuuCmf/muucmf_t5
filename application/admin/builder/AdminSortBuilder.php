@@ -64,7 +64,8 @@ class AdminSortBuilder extends AdminBuilder {
             $e['attr'] = $this->compileHtmlAttr($e['attr']);
         }
         unset($e);
-
+        //设置meta标题
+        $this->setTitle($this->_title);
         //显示页面
         $this->assign('title', $this->_title);
         $this->assign('list', $this->_list);

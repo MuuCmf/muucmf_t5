@@ -26,6 +26,10 @@
 '_SUCCESS_DELETE_COMPLETELY_' =>' Complete deletion of success',
 '_ERROR_SORT_' =>' Not modified sort or sort error',
 '_SUCCESS_SORT_' =>' Sort of success',
+'_DISABLE_' => 'Disable',
+'_ENABLED_' => 'Enable',
+
+
 '_MUUCMF_BACKSTAGE_MANAGE_' =>' MuuCmf management background',
 '_Q_AND_A_' =>' Q & A',
 '_DOCUMENT_' =>' File',
@@ -236,7 +240,6 @@
 '_ENABLE_SUCCESS_' =>' Enable success',
 '_ENABLE_FAILED_' =>' Enable failure',
 '_DISABLE_SUCCESS_' =>' Disable success',
-'_DISABLE_' =>' Disable',
 '_PLUGIN_NOT_INSTALLED_' =>' Plug ins',
 '_SAVE_' =>' Save success',
 '_SAVE_FAILED_' =>' Save failed',
@@ -1864,7 +1867,9 @@
 '_CHECK_THE_LIMIT_WITH_DOUBLE_' =>' "Check the limit"',
 '_PAGING_' =>' Paging',
 '_CURRENTLY_SELECTED_USERS_' =>' Currently selected users',
-'__ALL_USERS_PLEASE_BE_CAREFUL_' =>' - all users (please be careful!',
+'__ALL_USERS_PLEASE_BE_CAREFUL_' =>' - all users (please be careful!)',
+'__NONE_USERS_PLEASE_BE_CAREFUL_' => '-none users',
+
 '_CHOOSE_THE_USER_GROUP_OF_THESE_USERS_' =>' Choose the user group of these users',
 '_THE_GROUP_THAT_WILL_BE_LOST_TO_THE_USER_GROUP_WHICH_IS_OWNED_BY_THE_USER_ALL_USERS_ARE_USING_THE_NEW_SET_OF_USERS_' =>' (the group that will be lost to the user group, which is owned by the user, all users are using the new set of users).',
 '_SUBMIT_' =>' Submit',

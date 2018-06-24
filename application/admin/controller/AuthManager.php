@@ -85,9 +85,12 @@ class AuthManager extends Admin
     {
         $list = Db::name('AuthGroup')->where(['module' => 'admin'])->order('id asc')->select();
         $list = int_to_string($list);
+
+        $this->setTitle(lang('_PRIVILEGE_MANAGEMENT_'));
         $this->assign('_list', $list);
         $this->assign('_use_tip', true);
-        $this->meta_title = lang('_PRIVILEGE_MANAGEMENT_');
+        
+        
         return $this->fetch();
     }
 

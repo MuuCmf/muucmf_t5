@@ -29,6 +29,8 @@ return array(
     '_SUCCESS_DELETE_COMPLETELY_' => '彻底删除成功',
     '_ERROR_SORT_' => '未修改排序或排序错误',
     '_SUCCESS_SORT_' => '排序成功',
+    '_DISABLE_' => '禁用',
+    '_ENABLED_' => '启用',
 
     /*Controller&View*/
 //    public
@@ -269,7 +271,7 @@ return array(
     '_ENABLE_SUCCESS_' => '启用成功',
     '_ENABLE_FAILED_' => '启用失败',
     '_DISABLE_SUCCESS_' => '禁用成功',
-    '_DISABLE_' => '禁用',
+    
     '_PLUGIN_NOT_INSTALLED_' => '插件未安装',
     '_SAVE_' => '保存',
     '_SAVE_SUCCESS_'=>'保存成功',
@@ -1108,27 +1110,6 @@ return array(
     '_TIP_DELETE_CATEGORY_' => 'id为 1 的分类是基础分类，不能被删除！',
     '_NO_CATEGORY_' => '无分类',
 
-
-    /*People*/
-    '_MAX_SHOW_HEIGHT_' => '标签面板初始最大展示高度',
-    '_DISABLE_' => '禁用',
-    '_ENABLED_' => '启用',
-    '_IDENTITY_TAB_' => '找人界面展示身份tab',
-    '_IDENTITY_TAB_AFFIX_' => '拖拽到右侧以展示这些身份tab，操作的项目对应系统身份',
-    '_ACTIVE_MEMBER_' => '活跃会员',
-    '_REGISTER_TIME_' => '注册时间',
-    '_LAST_LOGIN_TIME_' => '最后登录时间',
-    '_NEW_MEMBER_' => '最新会员',
-    '_BLOCK_TITLE_' => '在首页展示块的标题',
-    '_SHOW_PEOPLE_' => '显示人数',
-    '_TIP_AFTER_ENABLED_' => '只有在网站首页模块中启用了专辑块之后才会显示',
-    '_SORT_NUMBER_' => '排序值',
-    '_SHOW_SORT_STYLE_' => '展示模块的数据排序方式',
-    '_SORT_STYLE_' => '排序方式',
-    '_REVERSE_' => '倒序，从大到小',
-    '_HOME_SHOW_LEFT_' => '首页展示左侧栏',
-    '_HOME_SHOW_RIGHT_' => '首页展示右侧栏',
-
     /*Home*/
 
     '_DISPLAY_BLOCK_' => '展示模块',
@@ -1144,62 +1125,6 @@ return array(
     '_SLIDE1_' => '幻灯片1',
     '_SLIDE2_' => '幻灯片2',
     '_SLIDE3_' => '幻灯片3',
-
-
-
-
-
-
-
-    /*Shop*/
-    '_SHOP_CATEGORY_MANAGE_' => '商城分类管理',
-    '_SHOP_CATEGORY_TRASH_' => '商城分类回收站',
-    '_GOODS_LIST_' => '商品列表',
-    '_GOODS_NAME_' => '商品名称',
-    '_GOODS_CATEGORY_' => '商品分类',
-    '_GOODS_SLOGAN_' => '商品广告语',
-    '_GOODS_PRICE_' => '商品价格',
-    '_GOODS_MARGIN_' => '商品余量',
-    '_GOODS_SOLD_' => '已售出量',
-    '_GOODS_NEW_' => '是否为新品',
-    '_GOODS_STATUS_' => '出售状态',
-    '_GOODS_SELECT_' => '请选择商品',
-    '_ERROR_SETTING_' => '设置失败',
-    '_GOODS_TRASH_' => '商品回收站',
-    '_GOODS_INPUT_NAME_' => '请输入商品名称',
-    '_GOODS_UPLOAD_BRAND_' => '请上传商品图标',
-    '_GOODS_INPUT_SLOGAN_' => '请输入商品广告语',
-    '_GOODS_INPUT_PRICE_' => '请正确输入商品价格',
-    '_GOODS_INPUT_COUNT_' => '请正确输入商品已售量',
-    '_GOODS_INPUT_COUNT_REMIND_' => '请正确输入商品剩余量',
-    '_ERROR_GOODS_SAME_NAME_' => '已存在同名商品',
-    '_GOODS_EDIT_' => '编辑商品',
-    '_GOODS_ADD_' => '添加商品',
-    '_GOODS_BRAND_' => '商品图标',
-    '_GOODS_DETAIL_' => '商品详情',
-    '_SHOP_CONF_' => '商城配置',
-    '_SHOP_EXCHANGE_POINT_' => '商城兑换使用的积分类型',
-    '_SHOP_HOT_SELL_LEVEL_' => '商城热销阀值',
-    '_SHOP_HOT_SELL_LEVEL_VICE_' => '销量超过该值时，商品为热销商品',
-    '_TRADE_ACCOMPLISHED_' => '完成的交易',
-    '_DELIVER_CANCEL_' => '取消发货',
-    '_RECEIVER_NAME_' => '收货人姓名',
-    '_RECEIVER_ADDRESS_' => '收货地址',
-    '_POST_CODE_' => '邮编',
-    '_PHONE_NUMBER_' => '手机号码',
-    '_BUY_TIME_' => '购买时间',
-    '_TRADE_ACCOMPLISH_TIME_' => '交易完成时间',
-    '_GOODS_WAIT_DELIVER_' => '待发货交易',
-    '_DELIVER_' => '发货',
-    '_DELIVER_NOT_' => '未发货',
-    '_DELIVER_ALREADY_' => '已发货',
-    '_MESSAGE_TRADE_ACCOMPLISH_' => '你购买的商品已发货。现在可以在已完成交易列表中查看该交易。',
-    '_MESSAGE_DELIVER_' => '发货通知',
-    '_MESSAGE__at' => '在',
-    '_MESSAGE_DELIVER_USER_' => '发送了用户',
-    '_MESSAGE_GOODS_BOUGHT_' => '购买的商品',
-    '_SHOP_MESSAGE_RECORD_' => '商城信息记录',
-    '_MESSAGE_' => '信息',
 
     /*Forum*/
 
@@ -1305,7 +1230,6 @@ return array(
 
 
     /*Addons*/
-
 
 //admin_LIST_
     '_CONTENT_LIST_' => '内容列表',
@@ -2122,7 +2046,8 @@ return array(
 
 //changegroup
     '_CURRENTLY_SELECTED_USERS_' => '当前选中用户',
-    '__ALL_USERS_PLEASE_BE_CAREFUL_' => '-所有用户(请谨慎操作！',
+    '__ALL_USERS_PLEASE_BE_CAREFUL_' => '-所有用户(请谨慎操作！)',
+    '__NONE_USERS_PLEASE_BE_CAREFUL_' => '-未选择任何用户(请先选择用户后操作！)',
     '_CHOOSE_THE_USER_GROUP_OF_THESE_USERS_' => '请选择这些用户的权限组',
     '_THE_GROUP_THAT_WILL_BE_LOST_TO_THE_USER_GROUP_WHICH_IS_OWNED_BY_THE_USER_ALL_USERS_ARE_USING_THE_NEW_SET_OF_USERS_' => '（将丢失原先用户所属的权限组，全部使用新设置的权限组）',
     '_SUBMIT_' => '提交',

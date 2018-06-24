@@ -12,7 +12,7 @@ use app\admin\Controller\Admin;
  * Class AdminBuilder
  * @package Admin\Builder
  */
-abstract class AdminBuilder extends Controller
+abstract class AdminBuilder extends Admin
 {
 
     public function display($templateFile='',$charset='',$contentType='',$content='',$prefix='') {

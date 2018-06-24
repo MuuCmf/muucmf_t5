@@ -5,7 +5,6 @@
     </style>
 {/block}
 {block name="body"}
-<div class="builder">
     <!-- 标题栏 -->
     <div class="main-title">
         <h2>{:lang('_USER_LIST_')}</h2>
@@ -13,31 +12,23 @@
     <div class="button-box clearfix">
         <div class="row">
         <div class="col-xs-10">
-            <button class="btn btn-success ajax-post" url="{:Url('User/changeStatus',array('method'=>'resumeUser'))}"
+            <button class="btn btn-success ajax-post confirm" url="{:Url('User/changeStatus',array('method'=>'resumeUser'))}"
                     target-form="ids">{:lang('_ENABLED_')}
             </button>
-            <button class="btn btn-warning ajax-post" url="{:Url('User/changeStatus',array('method'=>'forbidUser'))}"
+            <button class="btn btn-warning ajax-post confirm" url="{:Url('User/changeStatus',array('method'=>'forbidUser'))}"
                     target-form="ids">{:lang('_DISABLE_')}
             </button>
             <button class="btn btn-danger ajax-post confirm" url="{:Url('User/changeStatus',array('method'=>'deleteUser'))}"
                     target-form="ids">{:lang('_DELETE_')}
             </button>
-            <button class="btn btn-info" onclick="post_select_form()"
+            <button class="btn btn-info ajax-post" onclick="post_select_form()"
                     target-form="ids">{:lang('_USER_GROUP_SELECT_')}
             </button>
             <button class="btn ajax-post btn-danger confirm" data-confirm="{:lang('_PW_RESET_CONFIRM_')}" url="{:Url('User/initPass')}" target-form="ids">{:lang('_PW_RESET_')}
             </button>
             <span style="font-size: 14px;color: #999898;margin-left: 11px;">{:lang('_PW_RESET_TIP_')}</span>
         </div>
-        <script>
-            function post_select_form(){
-                var ids=$('.ids').serialize();
-                var title="{:lang('_USER_GROUP_SELECT_')}";
-                $.post("{:Url('user/changeGroup')}",ids,function(msg){
-                    (new $.zui.ModalTrigger({custom: msg,title:title})).show();
-                })
-            }
-        </script>
+
 
         <!-- 高级搜索 -->
         <div class="search-form  col-xs-2 text-right">
@@ -110,11 +101,24 @@
             {$page}
         </div>
     </div>
-    
-</div>
 {/block}
 
 {block name="script"}
+
+    <script>
+        function post_select_form(){
+            var ids=$('.ids').serialize();
+
+            if(ids==''){
+                updateAlert('请勾选操作对象!。','danger');
+                return false;
+            }
+            var title="{:lang('_USER_GROUP_SELECT_')}";
+            $.post("{:Url('user/changeGroup')}",ids,function(msg){
+                (new $.zui.ModalTrigger({custom: msg,title:title})).show();
+            })
+        }
+    </script>
     <script type="text/javascript">
         //搜索功能
         $("#search").click(function () {

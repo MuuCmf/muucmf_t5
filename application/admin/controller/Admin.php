@@ -16,14 +16,16 @@ class Admin extends Controller
     /**
      * 后台控制器初始化
      */
-    protected function _initialize()
+
+    public $_seo = ['title' => '','setKeywords' => '', 'description' => ''];
+
+    public $is_root;
+
+    public function _initialize()
     {
-        $this->meta_title = '';
         // 获取当前用户ID
-        define('UID', is_login());
-        if (!UID) {// 还没登录 跳转到登录页面
-            $this->redirect('common/login');
-        }
+        
+        $this->needLogin();
 
         /* 读取数据库中的配置 */
         $config = cache('DB_CONFIG_DATA');
@@ -34,8 +36,9 @@ class Admin extends Controller
         Config::set($config); //动态添加配置
 
         // 是否是超级管理员
-        define('IS_ROOT', is_administrator());
-        if (!IS_ROOT && config('ADMIN_ALLOW_IP')) {
+        $this->is_root = is_administrator();
+        
+        if (!$this->is_root && config('ADMIN_ALLOW_IP')) {
             // 检查IP地址访问
             if (!in_array(get_client_ip(), explode(',', config('ADMIN_ALLOW_IP')))) {
                 $this->error(lang('_FORBID_403_'));
@@ -63,12 +66,39 @@ class Admin extends Controller
         //获取管理员数据
         $auth_user = query_user(['nickname','username','sex','avatar32','title','fans', 'following','signature'],is_login());
 
-        $this->assign('meta_title',$this->meta_title);
+        $this->assign('seo', $this->_seo);
         $this->assign('__AUTH_USER__',$auth_user);
         $this->assign('__MANAGE_COULD__',$this->checkRule('admin/module/lists',array('in','1,2')));
         $this->assign('__MENU__', $this->getTreeMenus());
         $this->assign('version',$version);
         $this->checkUpdate();
+    }
+
+    public function needLogin(){
+
+        $uid = is_login();
+        if (!$uid) {// 还没登录 跳转到登录页面
+            $this->redirect('common/login');
+        }
+        return $uid;
+    }
+
+    public function setTitle($title)
+    {
+        $this->_seo['title'] = $title;
+        $this->assign('seo', $this->_seo);
+    }
+
+    public function setKeywords($keywords)
+    {
+        $this->_seo['keywords'] = $keywords;
+        $this->assign('seo', $this->_seo);
+    }
+
+    public function setDescription($description)
+    {
+        $this->_seo['description'] = $description;
+        $this->assign('seo', $this->_seo);
     }
 
     /**
@@ -79,14 +109,14 @@ class Admin extends Controller
      */
     final protected function checkRule($rule, $type = AuthRule::RULE_URL, $mode = 'url')
     {
-        if (IS_ROOT) {
+        if ($this->is_root) {
             return true;//管理员允许访问任何页面
         }
         static $Auth = null;
         if (!$Auth) {
             $Auth = new \muucmf\Auth();
         }
-        if (!$Auth->check($rule, UID, $type, $mode)) {
+        if (!$Auth->check($rule, $this->needLogin(), $type, $mode)) {
             return false;
         }
         return true;
@@ -103,7 +133,7 @@ class Admin extends Controller
      */
     protected function checkDynamic()
     {
-        if (IS_ROOT) {
+        if ($this->is_root) {
             return true;//管理员允许访问任何页面
         }
         return null;//不明,需checkRule
@@ -121,7 +151,7 @@ class Admin extends Controller
      */
     final protected function accessControl()
     {
-        if (IS_ROOT) {
+        if ($this->is_root) {
             return true;//管理员允许访问任何页面
         }
         $allow = config('ALLOW_VISIT');
@@ -147,10 +177,17 @@ class Admin extends Controller
      */
     final protected function editRow($model, $data, $where, $msg)
     {
-        $id = array_unique((array)input('id', 0));
+        $id = array_unique((array)input('id/a', 0));
         $id = is_array($id) ? implode(',', $id) : $id;
-        $where = array_merge(array('id' => array('in', $id)), (array)$where);
+        
+        if($where) {
+            $where = $where;
+        }else{
+            $where = ['id' => array('in', $id)];
+        }
+        //$where = array_merge([['id' => array('in', $id)], (array)$where);
         $msg = array_merge(array('success' => lang('_OPERATION_SUCCESS_'), 'error' => lang('_OPERATION_FAILED_'), 'url' => '', 'ajax' => request()->isAjax()), (array)$msg);
+
         if (Db::name($model)->where($where)->update($data) !== false) {
             $this->success($msg['success'], $msg['url'], $msg['ajax']);
         } else {
@@ -167,7 +204,7 @@ class Admin extends Controller
      *
      * @author 朱亚杰  <zhuyajie@topthink.net>
      */
-    protected function forbid($model, $where = array(), $msg = array('success' => '状态禁用成功！', 'error' => '状态禁用失败！'))
+    protected function forbid($model, $where = [], $msg = array('success' => '状态禁用成功！', 'error' => '状态禁用失败！'))
     {
         $data = array('status' => 0);
         $this->editRow($model, $data, $where, $msg);
@@ -283,7 +320,7 @@ class Admin extends Controller
                         $item['url'] = request()->module() . '/' . $item['url'];
                     }
                     // 判断主菜单权限
-                    if (!IS_ROOT && !$this->checkRule($item['url'], AuthRuleModel::RULE_MAIN, null)) {
+                    if (!$this->is_root && !$this->checkRule($item['url'], AuthRuleModel::RULE_MAIN, null)) {
                         unset($menus['main'][$key]);
                         continue;//继续循环
                     }
@@ -306,7 +343,7 @@ class Admin extends Controller
                     }
                     $second_urls = Db::name('Menu')->where($where)->field('id,url')->select();
 
-                    if (!IS_ROOT) {
+                    if (!$this->is_root) {
                         // 检测菜单权限
                         $to_check_urls = array();
                         foreach ($second_urls as $key => $to_check_url) {
@@ -382,7 +419,7 @@ class Admin extends Controller
                         $item['url'] = request()->module() . '/' . $item['url'];
                     }
                     // 判断主菜单权限
-                    if (!IS_ROOT && !$this->checkRule($item['url'], AuthRuleModel::RULE_MAIN, null)) {
+                    if (!$this->is_root && !$this->checkRule($item['url'], AuthRuleModel::RULE_MAIN, null)) {
                         unset($menus['main'][$key]);
                         continue;//继续循环
                     }
@@ -409,7 +446,7 @@ class Admin extends Controller
                         }
                         $second_urls = Db::name('Menu')->where($where)->field('id,url')->select();
 
-                        if (!IS_ROOT) {
+                        if (!$this->is_root) {
                             // 检测菜单权限
                             $to_check_urls = array();
                             foreach ($second_urls as $key => $to_check_url) {
