@@ -149,6 +149,7 @@ return array(
     '_AUTH_BG_MANAGER_' => '管理权限',
     '_AUTH_FG_MANAGER_' => '前台权限',
     '_MEMBER_AUTH_' => '成员授权',
+    '_QUERY_DEL_AUTH_NODE_' => '确认删除该节点？（该操作不可逆）',
 
 ///    menu
     '_MENU_MANAGER_' => '菜单管理',

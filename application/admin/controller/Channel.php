@@ -1,20 +1,12 @@
 <?php
-// +----------------------------------------------------------------------
-// | OneThink [ WE CAN DO IT JUST THINK IT ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
-// +----------------------------------------------------------------------
-// | Author: 麦当苗儿 <zuojiazi@vip.qq.com> <http://www.zjzit.cn>
-// +----------------------------------------------------------------------
+namespace app\admin\Controller;
 
-namespace Admin\Controller;
-
+use think\Db;
 /**
  * 后台频道控制器
- * @author 麦当苗儿 <zuojiazi@vip.qq.com>
  */
 
-class ChannelController extends AdminController
+class Channel extends Admin
 {
 
     /**
@@ -23,11 +15,11 @@ class ChannelController extends AdminController
      */
     public function index()
     {
-        $Channel = D('Channel');
-        if (IS_POST) {
+        $Channel = Db::name('Channel');
+        if (request()->isPost()) {
             $one = $_POST['nav'][1];
             if (count($one) > 0) {
-                M()->execute('TRUNCATE TABLE ' . C('DB_PREFIX') . 'channel');
+                Db::execute('TRUNCATE TABLE ' . config('database.prefix') . 'channel');
 
                 for ($i = 0; $i < count(reset($one)); $i++) {
                     $data[$i] = array(
@@ -40,7 +32,7 @@ class ChannelController extends AdminController
                         'band_color' => text($one['band_color'][$i]),
                         'status' => 1
                     );
-                    $pid[$i] = $Channel->add($data[$i]);
+                    $pid[$i] = $Channel->insert($data[$i]);
                 }
                 $two = $_POST['nav'][2];
 
@@ -55,12 +47,12 @@ class ChannelController extends AdminController
                         'band_color' => text($two['band_color'][$j]),
                         'status' => 1
                     );
-                    $res[$j] = $Channel->add($data_two[$j]);
+                    $res[$j] = $Channel->insert($data_two[$j]);
                 }
-                S('common_nav',null);
-                $this->success(L('_CHANGE_'));
+                cache('common_nav',null);
+                $this->success(lang('_CHANGE_'));
             }
-            $this->error(L('_NAVIGATION_AT_LEAST_ONE_'));
+            $this->error(lang('_NAVIGATION_AT_LEAST_ONE_'));
 
 
         } else {
@@ -68,54 +60,54 @@ class ChannelController extends AdminController
             $map = array('status' => array('gt', -1), 'pid' => 0);
             $list = $Channel->where($map)->order('sort asc,id asc')->select();
             foreach ($list as $k => &$v) {
-                $module = D('Module')->where(array('entry' => $v['url']))->find();
+                $module = Db::name('Module')->where(array('entry' => $v['url']))->find();
                 $v['module_name'] = $module['name'];
                 $child = $Channel->where(array('status' => array('gt', -1), 'pid' => $v['id']))->order('sort asc,id asc')->select();
                 foreach ($child as $key => &$val) {
-                    $module = D('Module')->where(array('entry' => $val['url']))->find();
+                    $module = Db::name('Module')->where(array('entry' => $val['url']))->find();
                     $val['module_name'] = $module['name'];
                 }
                 unset($key, $val);
                 $child && $v['child'] = $child;
             }
-
             unset($k, $v);
+
             $this->assign('module', $this->getModules());
             $this->assign('list', $list);
 
-            $this->meta_title = L('_NAVIGATION_MANAGEMENT_');
-            $this->display();
+            $this->setTitle(lang('_NAVIGATION_MANAGEMENT_'));
+            return $this->fetch();
         }
 
     }
 
 
     public function user(){
-        $Channel = D('UserNav');
-        if (IS_POST) {
+        $Channel = Db::name('UserNav');
+        if (request()->isPost()) {
             $one = $_POST['nav'][1];
             if (count($one) > 0) {
-                M()->execute('TRUNCATE TABLE ' . C('DB_PREFIX') . 'user_nav');
+                Db::execute('TRUNCATE TABLE ' . config('database.prefix') . 'user_nav');
 
                 for ($i = 0; $i < count(reset($one)); $i++) {
                     $data[$i] = array(
-                        'title' => op_t($one['title'][$i]),
-                        'url' => op_t($one['url'][$i]),
+                        'title' => text($one['title'][$i]),
+                        'url' => text($one['url'][$i]),
                         'sort' => intval($one['sort'][$i]),
                         'target' => intval($one['target'][$i]),
-                        'color' => op_t($one['color'][$i]),
-                        'band_text' => op_t($one['band_text'][$i]),
-                        'band_color' => op_t($one['band_color'][$i]),
-                        'icon' => op_t(str_replace('icon-', '', $one['icon'][$i])),
+                        'color' => text($one['color'][$i]),
+                        'band_text' => text($one['band_text'][$i]),
+                        'band_color' => text($one['band_color'][$i]),
+                        'icon' => text(str_replace('icon-', '', $one['icon'][$i])),
                         'status' => 1
 
                     );
-                    $pid[$i] = $Channel->add($data[$i]);
+                    $pid[$i] = $Channel->insert($data[$i]);
                 }
-                S('common_user_nav',null);
-                $this->success(L('_CHANGE_'));
+                cache('common_user_nav',null);
+                $this->success(lang('_CHANGE_'));
             }
-            $this->error(L('_NAVIGATION_AT_LEAST_ONE_'));
+            $this->error(lang('_NAVIGATION_AT_LEAST_ONE_'));
 
 
         } else {
@@ -123,7 +115,7 @@ class ChannelController extends AdminController
             $map = array('status' => array('gt', -1));
             $list = $Channel->where($map)->order('sort asc,id asc')->select();
             foreach ($list as $k => &$v) {
-                $module = D('Module')->where(array('entry' => $v['url']))->find();
+                $module = Db::name('Module')->where(array('entry' => $v['url']))->find();
                 $v['module_name'] = $module['name'];
                 unset($key, $val);
             }
@@ -132,8 +124,8 @@ class ChannelController extends AdminController
             $this->assign('module', $this->getModules());
             $this->assign('list', $list);
 
-            $this->meta_title = L('_NAVIGATION_MANAGEMENT_');
-            $this->display();
+            $this->setTitle(lang('_NAVIGATION_MANAGEMENT_'));
+            return $this->fetch();
         }
     }
     public function getModule()
@@ -148,14 +140,14 @@ class ChannelController extends AdminController
      */
     public function index1()
     {
-        $pid = i('get.pid', 0);
+        $pid = input('get.pid', 0);
         /* 获取频道列表 */
         $map = array('status' => array('gt', -1), 'pid' => $pid);
         $list = M('Channel')->where($map)->order('sort asc,id asc')->select();
 
         $this->assign('list', $list);
         $this->assign('pid', $pid);
-        $this->meta_title = L('_NAVIGATION_MANAGEMENT_');
+        $this->meta_title = lang('_NAVIGATION_MANAGEMENT_');
         $this->display();
     }
 
@@ -166,34 +158,34 @@ class ChannelController extends AdminController
      */
     public function add()
     {
-        if (IS_POST) {
-            $Channel = D('Channel');
-            $data = $Channel->create();
+        if (request()->isPost()) {
+            $Channel = Db::name('Channel');
+            $data = input('');
             if ($data) {
-                $id = $Channel->add();
+                $id = $Channel->insert();
                 if ($id) {
-                    $this->success(L('_NEW_SUCCESS_'), U('index'));
+                    $this->success(lang('_NEW_SUCCESS_'), U('index'));
                     //记录行为
                     action_log('update_channel', 'channel', $id, UID);
                 } else {
-                    $this->error(L('_NEW_FAILURE_'));
+                    $this->error(lang('_NEW_FAILURE_'));
                 }
             } else {
                 $this->error($Channel->getError());
             }
         } else {
-            $pid = I('get.pid', 0);
+            $pid = input('get.pid', 0);
             //获取父导航
             if (!empty($pid)) {
-                $parent = M('Channel')->where(array('id' => $pid))->field('title')->find();
+                $parent = Db::name('Channel')->where(array('id' => $pid))->field('title')->find();
                 $this->assign('parent', $parent);
             }
-            $pnav = D('Channel')->where(array('pid' => 0))->select();
+            $pnav = Db::name('Channel')->where(array('pid' => 0))->select();
             $this->assign('pnav', $pnav);
             $this->assign('pid', $pid);
             $this->assign('info', null);
-            $this->meta_title = L('_NEW_NAVIGATION_');
-            $this->display('edit');
+            $this->setTitle(lang('_NEW_NAVIGATION_'));
+            return $this->fetch('edit');
         }
     }
 
@@ -210,9 +202,9 @@ class ChannelController extends AdminController
                 if ($Channel->save()) {
                     //记录行为
                     action_log('update_channel', 'channel', $data['id'], UID);
-                    $this->success(L('_SUCCESS_EDIT_'), U('index'));
+                    $this->success(lang('_SUCCESS_EDIT_'), U('index'));
                 } else {
-                    $this->error(L('_EDIT_FAILED_'));
+                    $this->error(lang('_EDIT_FAILED_'));
                 }
 
             } else {
@@ -224,7 +216,7 @@ class ChannelController extends AdminController
             $info = M('Channel')->find($id);
 
             if (false === $info) {
-                $this->error(L('_GET_CONFIGURATION_INFORMATION_ERROR_'));
+                $this->error(lang('_GET_CONFIGURATION_INFORMATION_ERROR_'));
             }
 
             $pid = i('get.pid', 0);
@@ -238,7 +230,7 @@ class ChannelController extends AdminController
             $this->assign('pnav', $pnav);
             $this->assign('pid', $pid);
             $this->assign('info', $info);
-            $this->meta_title = L('_EDIT_NAVIGATION_');
+            $this->meta_title = lang('_EDIT_NAVIGATION_');
             $this->display();
         }
     }
@@ -252,16 +244,16 @@ class ChannelController extends AdminController
         $id = array_unique((array)I('id', 0));
 
         if (empty($id)) {
-            $this->error(L('_PLEASE_CHOOSE_TO_OPERATE_THE_DATA_'));
+            $this->error(lang('_PLEASE_CHOOSE_TO_OPERATE_THE_DATA_'));
         }
 
         $map = array('id' => array('in', $id));
         if (M('Channel')->where($map)->delete()) {
             //记录行为
             action_log('update_channel', 'channel', $id, UID);
-            $this->success(L('_DELETE_SUCCESS_'));
+            $this->success(lang('_DELETE_SUCCESS_'));
         } else {
-            $this->error(L('_DELETE_FAILED_'));
+            $this->error(lang('_DELETE_FAILED_'));
         }
     }
 
@@ -287,7 +279,7 @@ class ChannelController extends AdminController
             $list = M('Channel')->where($map)->field('id,title')->order('sort asc,id asc')->select();
 
             $this->assign('list', $list);
-            $this->meta_title = L('_NAVIGATION_SORT_');
+            $this->meta_title = lang('_NAVIGATION_SORT_');
             $this->display();
         } elseif (IS_POST) {
             $ids = I('post.ids');
@@ -296,12 +288,12 @@ class ChannelController extends AdminController
                 $res = M('Channel')->where(array('id' => $value))->setField('sort', $key + 1);
             }
             if ($res !== false) {
-                $this->success(L('_SORT_OF_SUCCESS_'));
+                $this->success(lang('_SORT_OF_SUCCESS_'));
             } else {
-                $this->eorror(L('_SORT_OF_FAILURE_'));
+                $this->eorror(lang('_SORT_OF_FAILURE_'));
             }
         } else {
-            $this->error(L('_ILLEGAL_REQUEST_'));
+            $this->error(lang('_ILLEGAL_REQUEST_'));
         }
     }
 }

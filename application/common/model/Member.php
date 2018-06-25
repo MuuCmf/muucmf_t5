@@ -400,19 +400,15 @@ class Member extends Model
      */
     public function initUserRoleInfo($role_id, $uid)
     {
-        //$roleModel = Db::name('Role');
-        //$roleConfigModel = Db::name('RoleConfig');
-        //$authGroupAccessModel = Db::name('AuthGroupAccess');
-
         Db::name('UserRole')->where(array('role_id' => $role_id, 'uid' => $uid))->setField('init', 1);
 
         //默认用户组设置
-        $role = Db::name('Role')->where(array('id' => $role_id))->find();
+        $role = Db::name('Role')->where(['id' => $role_id])->find();
         if ($role['user_groups'] != '') {
             $role = explode(',', $role['user_groups']);
 
             //查询已拥有用户组
-            $have_user_group_ids = Db::name('AuthGroupAccess')->where(array('uid' => $uid))->select();
+            $have_user_group_ids = Db::name('AuthGroupAccess')->where(['uid' => $uid])->select();
             $have_user_group_ids = array_column($have_user_group_ids, 'group_id');
             //查询已拥有用户组 end
 

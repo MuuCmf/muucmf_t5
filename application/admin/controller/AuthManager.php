@@ -58,23 +58,20 @@ class AuthManager extends Admin
         if (count($update)) {
             foreach ($update as $k => $row) {
                 if ($row != $diff[$row['id']]) {
-                    $AuthRule->where(array('id' => $row['id']))->save($row);
+                    $AuthRule->where(['id' => $row['id']])->update($row);
                 }
             }
         }
         if (count($ids)) {
-            $AuthRule->where(array('id' => array('IN', implode(',', $ids))))->save(array('status' => -1));
+            $AuthRule->where(['id' => ['IN', implode(',', $ids)]])->update(['status' => -1]);
             //删除规则是否需要从每个用户组的访问授权表中移除该规则?
         }
         if (count($data)) {
             $AuthRule->insertAll(array_values($data));
         }
-        if ($AuthRule->getDbError()) {
-            trace('[' . __METHOD__ . ']:' . $AuthRule->getDbError());
-            return false;
-        } else {
-            return true;
-        }
+
+        return true;
+        
     }
 
 
@@ -179,7 +176,7 @@ class AuthManager extends Admin
 
     /**
      * 用户组授权用户列表
-     * @author 朱亚杰 <zhuyajie@topthink.net>
+     * @author 大蒙 <59262424@qq.com>
      */
     public function user($group_id)
     {
@@ -188,24 +185,36 @@ class AuthManager extends Admin
         }
 
         $auth_group = Db::name('AuthGroup')->where(array('status' => array('egt', '0'), 'module' => 'admin', 'type' => AuthGroup::TYPE_ADMIN))
-            ->getfield('id,id,title,rules');
+            ->field('id,title,rules')->select();
 
         $prefix = config('database.prefix');
         $l_table = $prefix . (AuthGroup::MEMBER);
         $r_table = $prefix . (AuthGroup::AUTH_GROUP_ACCESS);
+        $where = [
+            'a.group_id'=>$group_id,
+            'status'=>['>=',0]
+        ];
+        $list = Db::table($l_table . ' m')->join($r_table . ' a ',' m.uid=a.uid')->where($where)->order('m.uid desc')
+            ->paginate(20,false,[
+                
+                'query'=> ['group_id'=>$group_id],
 
-        $model = Db::table($l_table . ' m')->join($r_table . ' a ON m.uid=a.uid');
-
-        $_REQUEST = array();
-
-        $list = $this->lists($model, array('a.group_id' => $group_id, 'm.status' => array('egt', 0)), 'm.uid asc', null, 'm.uid,m.nickname,m.last_login_time,m.last_login_ip,m.status');
-
+            ]);
+        // 获取分页显示
+        //dump($list);
+        $page = $list->render();
+        // 转数组
+        $list = $list->toArray()['data'];
         int_to_string($list);
+
+        $this->setTitle(lang('_MEMBER_AUTHORITY_'));
+        
         $this->assign('_list', $list);
+        $this->assign('page', $page);
         $this->assign('auth_group', $auth_group);
-        $this->assign('this_group', $auth_group[(int)$_GET['group_id']]);
-        $this->meta_title = lang('_MEMBER_AUTHORITY_');
-        $this->display();
+        $this->assign('group_id', $group_id);
+        
+        return $this->fetch();
     }
 
 
@@ -274,13 +283,14 @@ class AuthManager extends Admin
     {
         $uid = input('uid');
         $gid = input('group_id');
-        if ($uid == UID) {
+        if ($uid == is_login()) {
             $this->error(lang('_NOT_ALLOWED_TO_RELEASE_ITS_OWN_AUTHORITY_'));
         }
         if (empty($uid) || empty($gid)) {
             $this->error(lang('_PARAMETER_IS_INCORRECT_'));
         }
         $AuthGroup = model('AuthGroup');
+
         if (!$AuthGroup->find($gid)) {
             $this->error(lang('_USER_GROUP_DOES_NOT_EXIST_'));
         }
@@ -345,23 +355,25 @@ class AuthManager extends Admin
         if (empty($this->auth_group)) {
             $this->assign('auth_group', array('title' => null, 'id' => null, 'description' => null, 'rules' => null,));//排除notice信息
         }
+        
         if (request()->isPost()) {
-
-            $data = input('');
-            $Rule = model('AuthRule');
+            
+            $data = input('post.');
+            $Rule = Db::name('AuthRule');
 
             if ($data) {
                 if (intval($data['id']) == 0) {
-                    $id = $Rule->save($data,['id'=>$data['id']]);
+                    unset($data['id']);
+                    $id = Db::name('AuthRule')->insert($data);
                 } else {
-                    $Rule->save($data);
-                    $id = $data['id'];
+
+                    $id = Db::name('AuthRule')->update($data);
                 }
 
                 if ($id) {
                     // S('DB_CONFIG_DATA',null);
                     //记录行为
-                    $this->success(lang('_SUCCESS_EDIT_'));
+                    $this->success(lang('_SUCCESS_EDIT_'),Url('AuthManager/accessUser?group_id='.input('get.group_id')));
                 } else {
                     $this->error(lang('_EDIT_FAILED_'));
                 }
@@ -377,11 +389,11 @@ class AuthManager extends Admin
             }
 
             $this->assign('info', $info);
-            //  $this->assign('info', array('pid' => input('pid')));
+
             $modules = model('Common/Module')->getAll();
             $this->assign('Modules', $modules);
-            $this->meta_title = lang('_NEW_FRONT_DESK_RIGHT_NODE_');
-            $this->display();
+            $this->setTitle(lang('_NEW_FRONT_DESK_RIGHT_NODE_'));
+            return $this->fetch();
         }
 
     }
@@ -404,23 +416,28 @@ class AuthManager extends Admin
      */
     public function access()
     {
-        header("Content-Type: text/html;charset=utf-8"); 
+        $aId = input('get.group_id', 0, 'intval');
         $this->updateRules();
         $auth_group = Db::name('AuthGroup')->where(['status' => ['egt', '0'], 'module' => 'admin', 'type' => AuthGroup::TYPE_ADMIN])
-            ->value('id,id,title,rules');
+            ->field('id,id,title,rules')->select();
         $node_list = $this->returnNodes();
+        //dump($node_list);
 
-        $map = array('module' => 'admin', 'type' => AuthRuleModel::RULE_MAIN, 'status' => 1);
-        $main_rules = Db::name('AuthRule')->where($map)->value('name,id');
+        $map = array('module' => 'admin', 'type' => AuthRule::RULE_MAIN, 'status' => 1);
+        $main_rules = Db::name('AuthRule')->where($map)->field('name,id')->select();
         $map = array('module' => 'admin', 'type' => AuthRule::RULE_URL, 'status' => 1);
-        $child_rules = Db::name('AuthRule')->where($map)->value('name,id');
+        $child_rules = Db::name('AuthRule')->where($map)->field('name,id')->select();
 
+        //dump($node_list);
+        $group = Db::name('AuthGroup')->find($aId);
+
+        $this->setTitle(lang('_ACCESS_AUTHORIZATION_'));
         $this->assign('main_rules', $main_rules);
         $this->assign('auth_rules', $child_rules);
         $this->assign('node_list', $node_list);
         $this->assign('auth_group', $auth_group);
-        $this->assign('this_group', $auth_group[(int)$_GET['group_id']]);
-        $this->meta_title = lang('_ACCESS_AUTHORIZATION_');
+        $this->assign('this_group', $group);
+        
         return $this->fetch('');
     }
 
@@ -431,7 +448,9 @@ class AuthManager extends Admin
         if (request()->isPost()) {
             $aId = input('id', 0, 'intval');
             $aOldRule = input('post.old_rules', '', 'text');
-            $aRules = input('post.rules', array());
+            $aRules = input('post.rules/a', array());
+
+
             $rules = $this->getMergedRules($aOldRule, $aRules);
             $authGroupModel = Db::name('AuthGroup');
             $group = $authGroupModel->find($aId);
@@ -442,8 +461,8 @@ class AuthManager extends Admin
             } else {
                 $this->error(lang('_RIGHT_SAVE_FAILED_'));
             }
-
         }
+
         $this->updateRules();
         $auth_group = Db::name('AuthGroup')->where(array('status' => array('egt', '0'), 'type' => AuthGroup::TYPE_ADMIN))
             ->field('id,id,title,rules')->select();
@@ -451,19 +470,20 @@ class AuthManager extends Admin
         $node_list = $this->getNodeListFromModule(model('Common/Module')->getAll());
 
         $map = array('module' => array('neq', 'admin'), 'type' => AuthRule::RULE_MAIN, 'status' => 1);
-        $main_rules = Db::name('AuthRule')->where($map)->value('name,id');
+        $main_rules = Db::name('AuthRule')->where($map)->field('name,id')->select();
         $map = array('module' => array('neq', 'admin'), 'type' => AuthRule::RULE_URL, 'status' => 1);
-        $child_rules = Db::name('AuthRule')->where($map)->value('name,id');
+        $child_rules = Db::name('AuthRule')->where($map)->field('name,id')->select();
 
         $group = Db::name('AuthGroup')->find($aId);
+
+        $this->setTitle(lang('_USER_FRONT_DESK_AUTHORIZATION_'));
         $this->assign('main_rules', $main_rules);
         $this->assign('auth_rules', $child_rules);
         $this->assign('node_list', $node_list);
         $this->assign('auth_group', $auth_group);
         $this->assign('this_group', $group);
 
-        $this->meta_title = lang('_USER_FRONT_DESK_AUTHORIZATION_');
-        return $this->fetch('');
+        return $this->fetch();
     }
 
     private function getMergedRules($oldRules, $rules, $isAdmin = 'neq')
@@ -496,9 +516,9 @@ class AuthManager extends Admin
             if ($module['is_setup']) {
 
                 $node = array('name' => $module['name'], 'alias' => $module['alias']);
-                $map = array('module' => $module['name'], 'type' => AuthRuleModel::RULE_URL, 'status' => 1);
+                $map = array('module' => $module['name'], 'type' => AuthRule::RULE_URL, 'status' => 1);
 
-                $node['child'] = M('AuthRule')->where($map)->select();
+                $node['child'] = Db::name('AuthRule')->where($map)->select();
                 $node_list[] = $node;
             }
 

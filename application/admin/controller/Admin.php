@@ -116,7 +116,7 @@ class Admin extends Controller
         if (!$Auth) {
             $Auth = new \muucmf\Auth();
         }
-        if (!$Auth->check($rule, $this->needLogin(), $type, $mode)) {
+        if (!$Auth->check($rule, is_login(), $type, $mode)) {
             return false;
         }
         return true;
@@ -155,6 +155,7 @@ class Admin extends Controller
             return true;//管理员允许访问任何页面
         }
         $allow = config('ALLOW_VISIT');
+
         $deny = config('DENY_VISIT');
         $check = strtolower(request()->controller() . '/' . request()->action());
         if (!empty($deny) && in_array($check, $deny)) {
@@ -197,7 +198,7 @@ class Admin extends Controller
 
     /**
      * 禁用条目
-     * @param string $model 模型名称,供D函数使用的参数
+     * @param string $model 模型名称
      * @param array  $where 查询时的 where()方法的参数
      * @param array  $msg 执行正确和错误的消息,可以设置四个元素 array('success'=>'','error'=>'', 'url'=>'','ajax'=>false)
      *                     url为跳转页面,ajax是否ajax方式(数字则为倒数计时秒数)
@@ -212,7 +213,7 @@ class Admin extends Controller
 
     /**
      * 恢复条目
-     * @param string $model 模型名称,供D函数使用的参数
+     * @param string $model 模型名称
      * @param array  $where 查询时的where()方法的参数
      * @param array  $msg 执行正确和错误的消息 array('success'=>'','error'=>'', 'url'=>'','ajax'=>false)
      *                     url为跳转页面,ajax是否ajax方式(数字则为倒数计时秒数)
@@ -226,7 +227,7 @@ class Admin extends Controller
 
     /**
      * 还原条目
-     * @param string $model 模型名称,供D函数使用的参数
+     * @param string $model 模型名称
      * @param array  $where 查询时的where()方法的参数
      * @param array  $msg 执行正确和错误的消息 array('success'=>'','error'=>'', 'url'=>'','ajax'=>false)
      *                     url为跳转页面,ajax是否ajax方式(数字则为倒数计时秒数)
@@ -240,7 +241,7 @@ class Admin extends Controller
 
     /**
      * 条目假删除
-     * @param string $model 模型名称,供D函数使用的参数
+     * @param string $model 模型名称
      * @param array  $where 查询时的where()方法的参数
      * @param array  $msg 执行正确和错误的消息 array('success'=>'','error'=>'', 'url'=>'','ajax'=>false)
      *                     url为跳转页面,ajax是否ajax方式(数字则为倒数计时秒数)
@@ -258,7 +259,7 @@ class Admin extends Controller
     public function setStatus($Model)
     {
         if(empty($Model)) $Model = request()->controller();
-        $ids = input('request.ids');
+        $ids = input('request.ids/a');
         $status = input('request.status');
         if (empty($ids)) {
             $this->error(lang('_PLEASE_CHOOSE_THE_DATA_TO_BE_OPERATED_'));
@@ -508,8 +509,8 @@ class Admin extends Controller
         if ((int)$tree) {
             $list = Db::name('Menu')->field('id,pid,title,url,tip,hide')->order('sort asc')->select();
             foreach ($list as $key => $value) {
-                if (stripos($value['url'], MODULE_NAME) !== 0) {
-                    $list[$key]['url'] = MODULE_NAME . '/' . $value['url'];
+                if (stripos($value['url'], request()->module()) !== 0) {
+                    $list[$key]['url'] = request()->module() . '/' . $value['url'];
                 }
             }
             //由于menu表id更改为字符串格式，root必须设置成字符串0
@@ -524,8 +525,8 @@ class Admin extends Controller
         } else {
             $nodes = Db::name('Menu')->field('title,url,tip,pid')->order('sort asc')->select();
             foreach ($nodes as $key => $value) {
-                if (stripos($value['url'], MODULE_NAME) !== 0) {
-                    $nodes[$key]['url'] = MODULE_NAME . '/' . $value['url'];
+                if (stripos($value['url'], request()->module()) !== 0) {
+                    $nodes[$key]['url'] = request()->module() . '/' . $value['url'];
                 }
             }
         }
@@ -599,7 +600,7 @@ class Admin extends Controller
         // 模板变量赋值
         $this->assign('list', $list);
         $this->assign('page', $page);
-        return $list;
+        return [$list,$page];
     }
 
     public function  _empty(){

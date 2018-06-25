@@ -8,10 +8,8 @@
 
 <div class="tools auth-botton button-box">
     <a id="add-group" class="btn btn-info" href="{:Url('createGroup')}">{:lang('_ADD_WITH_SPACE_')}</a>
-    
     <a class="btn btn-danger" href="{:Url('Admin/menu/index')}">{:lang('_MENU_BG_MANAGER_')}</a>
     <a class="btn btn-success" href="{:Url('Admin/menu/add')}">{:lang('_MENU_NEW_')}</a>
-    <a class="btn btn-warning" href="{:Url('addNode')}">{:lang('_AUTH_FG_NEW_')}</a>
 </div>
 <!-- 数据列表 -->
 <div class="data-table with-padding">
@@ -40,7 +38,7 @@
 			<a class=" btn btn-danger btn-xs" href="{:Url('AuthManager/access?group_name='.$vo['title'].'&group_id='.$vo['id'])}" >			
 				{:lang('_AUTH_BG_MANAGER_')}
 			</a>
-            <a class=" btn btn-success btn-xs" href="{:Url('AuthManager/accessuser?group_name='.$vo['title'].'&group_id='.$vo['id'])}" >
+            <a class=" btn btn-info btn-xs" href="{:Url('AuthManager/accessuser?group_name='.$vo['title'].'&group_id='.$vo['id'])}" >
             	{:lang('_AUTH_FG_MANAGER_')}
             </a>
 			<a class=" btn btn-warning btn-xs" href="{:Url('AuthManager/user?group_name='.$vo['title'].'&group_id='.$vo['id'])}" >

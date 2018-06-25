@@ -25,6 +25,7 @@ class Role extends Model
     }
     
     protected $auto = ['status', 1];
+
     protected $autoWriteTimestamp = true;
     
 
@@ -67,15 +68,14 @@ class Role extends Model
     }
 
     /**
-     * * 通过$map获取单条值
+     * 通过$map获取单条值
      * @param array $map 查询条件
      * @param string $order 排序
      * @param null $fields 查询字段，null表示全部字段
      * @return mixed 结果
-     * @author 郑钟良<zzl@ourstu.com>
      */
-    public function getByMap($map=array(),$order,$fields=null){
-        $order=$order?$order:"id asc";
+    public function getByMap($map=[],$order='id desc',$fields=null){
+        //$order=$order?$order:"id asc";
         if($fields==null){
             $data=$this->where($map)->order($order)->find();
         }else{

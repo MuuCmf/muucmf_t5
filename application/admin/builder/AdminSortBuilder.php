@@ -1,5 +1,5 @@
 <?php
-namespace Admin\Builder;
+namespace app\admin\builder;
 
 use think\Db;
 
@@ -53,7 +53,7 @@ class AdminSortBuilder extends AdminBuilder {
         $this->_savePostUrl = $url;
     }
 
-    public function display() {
+    public function display($templateFile = '', $charset = '', $contentType = '', $content = '', $prefix = '') {
         //编译按钮的属性
         foreach($this->_buttonList as &$e) {
             $e['attr'] = $this->compileHtmlAttr($e['attr']);
@@ -73,8 +73,9 @@ class AdminSortBuilder extends AdminBuilder {
         $ids = explode(',', $ids);
         $res = 0;
         foreach ($ids as $key=>$value){
-            $res += Db::name($table)->where(array('id'=>$value))->setField('sort', $key+1);
+            $res += Db::name($table)->where(['id'=>$value])->setField('sort', $key+1);
         }
+        //dump($res);exit;
         if(!$res) {
             $this->error(lang('_ERROR_SORT_').lang('_PERIOD_'));
         } else {

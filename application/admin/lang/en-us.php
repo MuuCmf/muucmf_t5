@@ -120,6 +120,8 @@
 '_SETTINGS_SCORE_' =>' Integral setting',
 '_SETTINGS_ROLE_' =>' Identity setting',
 '_SELECTION_CANCEL_' =>' Cancel selection',
+
+///    authmanager
 '_AUTH_MANAGER_' =>' Authority management',
 '_ADD_WITH_SPACE_' =>' New growth',
 '_ENABLE_WITH_SPACE_' =>' Kai',
@@ -133,6 +135,7 @@
 '_AUTH_' =>' To grant authorization',
 '_AUTH_BG_MANAGER_' =>' Background management authority',
 '_MEMBER_AUTH_' =>' Member delegation',
+'_QUERY_DEL_AUTH_NODE_' => 'Confirm that the node is deleted',
 
 //menu
 '_MENU_MANAGER_' =>' Menu management',

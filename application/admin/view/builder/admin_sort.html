@@ -6,7 +6,7 @@
            {:lang("_CONFIGURATION_SORTING_")}
         </h2>
     </div>
-    <div class="sort">
+    <div class="sort with-padding">
         <form action="{$savePostUrl}" method="post">
             <!-- <div class="sort_top">
                {:lang("_SEARCH:_")}<input type="text"><button class="btn search" type="button">{:lang("_CHECK_WITH_SPACE_")}</button>
@@ -14,11 +14,11 @@
 
             <div class="clearfix">
 
-                <div class="col-xs-2 with-padding">
+                <div class="col-xs-2">
                     <select value="" size="15" class="form-control" style="width: 100%">
-                        <volist name="list" id="vo">
+                        {volist name="list" id="vo"}
                             <option class="ids" title="{$vo.title}" value="{$vo.id}">{$vo.title}</option>
-                        </volist>
+                        {/volist}
                     </select>
                 </div>
                 <div class="col-xs-1">
@@ -28,11 +28,11 @@
                     <button class="bottom btn btn-block" type="button">{:lang("_AFTER_THE_MOST_WITH_SPACE_")}</button>
                 </div>
             </div>
-            <div class="sort_bottom with-padding">
+            <div class="sort_bottom">
                 <input type="hidden" name="ids">
-                <volist name="buttonList" id="button">
+                {volist name="buttonList" id="button"}
                     <a {$button.attr}>{$button.title}</a>&nbsp;&nbsp;
-                </volist>
+                {/volist}
             </div>
         </form>
     </div>
@@ -90,13 +90,13 @@
                             'ids' :  arr.join(',')
                         },
                         function(data){
-                            if (data.status) {
-                                updateAlert(data.info + {:lang('_THE_PAGE_WILL_AUTOMATICALLY_JUMP_TO_WALK_THE_WALK_TODAY_WITH_SINGLE_')},'alert-success');
+                            if (data.code) {
+                                updateAlert(data.msg + {:lang('_THE_PAGE_WILL_AUTOMATICALLY_JUMP_TO_WALK_THE_WALK_TODAY_WITH_SINGLE_')},'success');
                             }else{
-                                updateAlert(data.info,'alert-error');
+                                updateAlert(data.msg,'error');
                             }
                             setTimeout(function(){
-                                if (data.status) {
+                                if (data.code) {
                                     $('.sort_cancel').click();
                                 }
                             },1500);

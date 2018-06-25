@@ -49,7 +49,7 @@ class User extends Admin
             default:
         }
 
-        $list = $this->lists('Member', $map);
+        list($list,$page) = $this->lists('Member', $map);
         
         $list_arr = $list->toArray()['data'];
         foreach($list_arr as $key=>$v){
@@ -217,13 +217,13 @@ class User extends Admin
 
     /**用户扩展资料详情
      * @param string $uid
-     * @author 郑钟良<zzl@ourstu.com>
      * @author 大蒙<59262424@qq.com>
      * 这里需要重构
      */
     public function expandinfo_details($uid = 0)
     {
         if (request()->isPost()) {
+
             /* 修改积分 */
             $data = input('post.');
             foreach ($data as $key => $val) {
@@ -255,10 +255,9 @@ class User extends Admin
                 }
             }
             unset($key, $val);
-            //dump($data_role);exit;
             $rs_role = $this->_resetUserRole($uid, $data_role);
             /*身份设置 end*/
-
+            
             //基础设置 大蒙
             $map['uid'] = $uid;
             $aNickname = input('post.nickname', '', 'text');
@@ -351,33 +350,38 @@ class User extends Admin
             $member = array_merge($member, $score_data);
             /*积分设置end*/
 
-            /*身份设置 zzl(郑钟良)*/
+            /*身份设置 */
             $already_role = Db::name('UserRole')->where(['uid' => $uid, 'status' => 1])->field('role_id')->select();
             if (count($already_role)) {
                 $already_role = array_column($already_role, 'role_id');
             }
-            $roleModel = Db::name('Role');
-            $role_key = array();
-            $no_group_role = $roleModel->where(['group_id' => 0, 'status' => 1])->select();
+            
+            $role_key = [];
+            $no_group_role = Db::name('Role')->where(['group_id' => 0, 'status' => 1])->select();
+
             if (count($no_group_role)) {
                 $role_key[] = 'role';
-                $no_group_role_options = $already_no_group_role = array();
+                $no_group_role_options = $already_no_group_role = [];
                 foreach ($no_group_role as $val) {
                     if (in_array($val['id'], $already_role)) {
                         $already_no_group_role[] = $val['id'];
                     }
                     $no_group_role_options[$val['id']] = $val['title'];
                 }
-                $builder->keyCheckBox('role', lang('_ROLE_GROUP_NONE_'), lang('_MULTI_OPTIONS_'), $no_group_role_options)->keyDefault('role', implode(',', $already_no_group_role));
+
+                $member['role'] = implode(',', $already_no_group_role);
+                $builder->keyCheckBox('role', lang('_ROLE_GROUP_NONE_'), lang('_MULTI_OPTIONS_'), $no_group_role_options);
             }
 
             $role_group = Db::name('RoleGroup')->select();
 
+
             foreach ($role_group as $group) {
-                $group_role = $roleModel->where(array('group_id' => $group['id'], 'status' => 1))->select();
+                $group_role = Db::name('Role')->where(['group_id' => $group['id'], 'status' => 1])->select();
+
                 if (count($group_role)) {
                     $role_key[] = 'role' . $group['id'];
-                    $group_role_options = $already_group_role = array();
+                    $group_role_options = $already_group_role = [];
                     foreach ($group_role as $val) {
                         if (in_array($val['id'], $already_role)) {
                             $already_group_role = $val['id'];
@@ -388,14 +392,17 @@ class User extends Admin
                     $myJs = $myJs."$('#checkFalse').click(";
                     $myJs = $myJs."function(){ $('input[type=\"radio\"]').attr(\"checked\",false)}";
                     $myJs = $myJs.");";
-
-                    $builder->keyRadio('role' . $group['id'], lang('_ROLE_GROUP_',array('title'=>$group['title'])), lang('_ROLE_GROUP_VICE_'), $group_role_options)->keyDefault('role' . $group['id'], $already_group_role)->addCustomJs($myJs);
+                    
+                    $builder
+                    ->keyRadio('role' . $group['id'], lang('_ROLE_GROUP_',array('title'=>$group['title'])), lang('_ROLE_GROUP_VICE_'), $group_role_options)
+                    ->keyDefault('role' . $group['id'], $already_group_role)
+                    ->addCustomJs($myJs);
                 }
             }
             /*身份设置 end*/
 
             $builder->data($member);
-
+            
             $builder
                 ->group(lang('_BASIC_SETTINGS_'), implode(',', $field_key))
                 ->group(lang('_SETTINGS_SCORE_'), implode(',', $score_key))
@@ -461,15 +468,17 @@ class User extends Admin
      * @param int $uid
      * @param array $haveRole
      * @return bool
-     * @author 郑钟良<zzl@ourstu.com>
      */
     private function _resetUserRole($uid = 0, $haveRole = [])
     {
-        //$userRoleModel = Db::name('UserRole');
         $memberModel = model('Common/Member');
         $map['uid'] = $uid;
+        //先清除原
+        //Db::name('UserRole')->where($map)->delete();
+        
         foreach ($haveRole as $val) {
             $map['role_id'] = $val;
+            
             $userRole = Db::name('UserRole')->where($map)->find();
             if ($userRole) {
                 if (!$userRole['init']) {

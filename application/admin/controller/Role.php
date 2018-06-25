@@ -8,9 +8,6 @@ use think\Db;
 
 /**
  * 后台身份控制器
- * Class RoleController
- * @package Admin\Controller
- * @郑钟良
  */
 class Role extends Admin
 {
@@ -23,26 +20,23 @@ class Role extends Admin
     {
         parent::_initialize();
         $this->roleModel = model("Admin/Role");
-        $this->userRoleModel = Db::name('UserRole');
-        $this->roleConfigModel = Db::name('RoleConfig');
-        $this->roleGroupModel = Db::name('RoleGroup');
+        //$this->userRoleModel = Db::name('UserRole');
+        //$this->roleGroupModel = Db::name('RoleGroup');
     }
 
     //身份基本信息及配置 start
 
-    public function index($page = 1, $r = 20)
+    public function index($r = 20)
     {
         $map['status'] = array('egt', 0);
 
-        //list($roleList,$totalCount) = $this->roleModel->selectPageByMap($map, $page, $r, 'sort asc');
-        
-        $roleList = $this->lists('Role', $map);
+        list($roleList,$page) = $this->lists('Role', $map, 'sort acs');
         
         $roleList = $roleList->toArray()['data'];
 
-        $map_group['id'] = array('in', array_column($roleList, 'group_id'));
+        $map_group['id'] = ['in', array_column($roleList, 'group_id')];
 
-        $group = $this->roleGroupModel->where($map_group)->field('id,title')->select();
+        $group = Db::name('RoleGroup')->where($map_group)->field('id,title')->select();
         $group = array_combine(array_column($group, 'id'), $group);
 
         $authGroupList = Db::name('AuthGroup')->where(array('status' => 1))->field('id,title')->select();
@@ -50,23 +44,30 @@ class Role extends Admin
 
         foreach ($roleList as &$val) {
             $user_groups = explode(',', $val['user_groups']);
-            $val['group'] = $group[$val['group_id']]['title'];
-            foreach ($user_groups as &$vl) {
-                $vl = $authGroupList[$vl];
+            if($val['group_id']){
+                $val['group'] = $group[$val['group_id']]['title'];
             }
-            unset($vl);
+            
+            if(!empty($user_groups)){
+                foreach ($user_groups as &$vl) {
+                    $vl = $authGroupList[$vl];
+                }
+                unset($vl);
+            }
+            
             $val['user_groups'] = implode(',', $user_groups);
         }
         unset($val);
+
+
         $builder = new AdminListBuilder;
-        $builder->meta_title = lang('_IDENTITY_LIST_');
         $builder->title(lang('_IDENTITY_LIST_'));
         $builder
         ->buttonNew(Url('Role/editRole'))
-        ->setStatusUrl(Url('setStatus'))
+        ->setStatusUrl(Url('DoSetStatus'))
         ->buttonEnable()
         ->buttonDisable()
-        ->button(lang('_DELETE_'), array('class' => 'btn ajax-post confirm', 'url' => Url('setStatus', array('status' => -1)), 'target-form' => 'ids', 'confirm-info' => "确认删除身份？删除后不可恢复！"))
+        ->button(lang('_DELETE_'), array('class' => 'btn btn-danger ajax-post confirm', 'url' => Url('doSetStatus', array('status' => -1)), 'target-form' => 'ids', 'confirm-info' => "确认删除身份？删除后不可恢复！"))
         ->buttonSort(Url('sort'));
 
         $builder->keyId()
@@ -82,38 +83,43 @@ class Role extends Admin
             ->keyCreateTime()
             ->keyUpdateTime()
             ->keyDoActionEdit('Role/editRole?id=###')
-            ->keyDoAction('Role/configScore?id=###', lang('_DEFAULT_INFORMATION_CONFIGURATION_'))
+            ->keyDoAction('Role/configScore?role_id=###', lang('_DEFAULT_INFORMATION_CONFIGURATION_'))
             ->data($roleList)
-            ->pagination($totalCount, $r)
+            ->page($page)
             ->display();
     }
 
     /**
      * 编辑身份
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function editRole()
     {
-        $aId = I('id', 0, 'intval');
+        $aId = input('id', 0, 'intval');
         $is_edit = $aId ? 1 : 0;
         $title = $is_edit ? lang('_EDIT_IDENTITY_') : lang('_NEW_IDENTITY_');
-        if (IS_POST) {
-            $data['name'] = I('post.name', '', 'op_t');
-            $data['title'] = I('post.title', '', 'op_t');
-            $data['description'] = I('post.description', '', 'op_t');
-            $data['group_id'] = I('post.group_id', 0, 'intval');
-            $data['invite'] = I('post.invite', 0, 'intval');
-            $data['audit'] = I('post.audit', 0, 'intval');
-            $data['status'] = I('post.status', 1, 'intval');
-            $data['user_groups'] = I('post.user_groups');
-            if ($data['user_groups'] != '') {
+        if (request()->isPost()) {
+            $data = input('');
+
+            if(empty($data['title'])){
+                $this->error('身份名不能为空');
+            }
+
+            if(empty($data['name'])){
+                $this->error('英文标识不能为空');
+            }
+
+            if (!empty($data['user_groups'])) {
                 $data['user_groups'] = implode(',', $data['user_groups']);
+            }else{
+                $this->error('默认权限组不能为空');
             }
             if ($is_edit) {
-                $data['id'] = $aId;
-                $result = $this->roleModel->update($data);
+                //$data['id'] = $aId;
+                $data['update_time'] = time();
+                $result = Db::name('Role')->where(['id'=>$aId])->update($data);
             } else {
-                $result = $this->roleModel->insert($data);
+                $data['create_time'] = $data['update_time'] = time();
+                $result = Db::name('Role')->insert($data);
             }
             if ($result) {
                 $this->success($title . lang('_SUCCESS_'), Url('Role/index'));
@@ -126,13 +132,15 @@ class Role extends Admin
             $data['invite'] = 0;
             $data['audit'] = 0;
             if ($is_edit) {
+
                 $data = $this->roleModel->getByMap(array('id' => $aId));
+
                 $data['user_groups']=explode(',',$data['user_groups']);
             }
 
-            $authGroupList = M('AuthGroup')->where(array('status' => 1))->field('id,title')->select(); //用户组列表
+            $authGroupList = Db::name('AuthGroup')->where(array('status' => 1))->field('id,title')->select(); //用户组列表
 
-            $group = D('RoleGroup')->field('id,title')->select();
+            $group = Db::name('RoleGroup')->field('id,title')->select();
 
             $group = array_combine(array_column($group, 'id'), array_column($group, 'title'));
             if (!$group) {
@@ -141,8 +149,9 @@ class Role extends Admin
                 $group = array_merge(array(0 => lang('_NO_GROUP_')), $group);
             }
             $builder = new AdminConfigBuilder;
-            $builder->meta_title = $title;
-            $builder->title($title)
+
+            $builder
+                ->title($title)
                 ->keyId()
                 ->keyText('title', lang('_ROLE_NAME_'), lang('_CANT_REPEAT_'))
                 ->keyText('name', lang('_ENGLISH_LOGO_'), lang('_COMPOSED_BY_ABC_'))
@@ -161,23 +170,26 @@ class Role extends Admin
 
     /**
      * 对身份进行排序
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function sort($ids = null)
     {
-        if (IS_POST) {
+        if (request()->isPost()) {
+
             $builder = new AdminSortBuilder;
             $builder->doSort('Role', $ids);
         } else {
-            $map['status'] = array('egt', 0);
+            $map['status'] = ['egt', 0];
+
             $list = $this->roleModel->selectByMap($map, 'sort asc', 'id,title,sort');
             foreach ($list as $key => $val) {
                 $list[$key]['title'] = $val['title'];
             }
             $builder = new AdminSortBuilder;
-            $builder->meta_title = lang('_IDENTITY_SORT_');
+            $builder->title(lang('_IDENTITY_SORT_'));
             $builder->data($list);
-            $builder->buttonSubmit(Url('sort'))->buttonBack();
+            $builder
+                ->buttonSubmit(Url('sort'))
+                ->buttonBack();
             $builder->display();
         }
     }
@@ -186,9 +198,8 @@ class Role extends Admin
      * 身份状态设置
      * @param mixed|string $ids
      * @param $status
-     * @author 郑钟良<zzl@ourstu.com>
-     *
-    public function setStatus($ids, $status)
+     */
+    public function doSetStatus($ids, $status)
     {
         $ids = is_array($ids) ? $ids : explode(',', $ids);
         if(in_array(1,$ids)){
@@ -208,14 +219,14 @@ class Role extends Admin
         } else if ($status == -1) { //（真删除）
             $result = $this->checkSingleRoleUser($ids);
             if ($result['status']) {
-                $result = $this->roleModel->where(array('id' => array('in', $ids)))->delete();
+                $result = Db::name('Role')->where(['id' => ['in', $ids]])->delete();
                 if ($result) {
-                    $userRoleList=$this->userRoleModel->where(array('role_id'=>array('in',$ids)))->select();
+                    $userRoleList=Db::name('UserRole')->where(['role_id'=>['in',$ids]])->select();
                     foreach($userRoleList as $val){
                         $this->setDefaultShowRole($val['role_id'],$val['uid']);
                     }
                     unset($val);
-                    $this->userRoleModel->where(array('role_id'=>array('in',$ids)))->delete();
+                    Db::name('UserRole')->where(['role_id'=>['in',$ids]])->delete();
                     $this->success(lang('_DELETE_SUCCESS_'), Url('Role/index'));
                 } else {
                     $this->error(lang('_DELETE_FAILED_'));
@@ -225,25 +236,24 @@ class Role extends Admin
             }
         }
     }
-    */
+    
 
     /**
      * 检测要删除的身份中是否存在单身份用户
      * @param $ids 要删除的身份ids
      * @return mixed
-     * @author 郑钟良<zzl@ourstu.com>
      */
     private function checkSingleRoleUser($ids)
     {
         $ids = is_array($ids) ? $ids : explode(',', $ids);
 
-        $user_ids=D('Member')->where(array('status'=>-1))->field('uid')->select();
+        $user_ids=Db::name('Member')->where(array('status'=>-1))->field('uid')->select();
         $user_ids=array_column($user_ids,'uid');
 
         $error_role_id = 0; //出错的身份id
         foreach ($ids as $role_id) {
             //获取拥有该身份的用户ids
-            $uids = $this->userRoleModel->where(array('role_id' => $role_id))->field('uid')->select();
+            $uids = Db::name('UserRole')->where(['role_id' => $role_id])->field('uid')->select();
             $uids=array_column($uids,'uid');
             if(count($user_ids)){
                 $uids=array_diff($uids,$user_ids);
@@ -251,7 +261,7 @@ class Role extends Admin
             if (count($uids) > 0) { //拥有该身份
                 $uids = array_unique($uids);
                 //获取拥有其他身份的用户ids
-                $have_uids = $this->userRoleModel->where(array('role_id' => array('not in', $ids), 'uid' => array('in', $uids)))->field('uid')->select();
+                $have_uids = Db::name('UserRole')->where(['role_id' => ['not in', $ids], 'uid' => ['in', $uids]])->field('uid')->select();
                 if ($have_uids) {
                     $have_uids=array_column($have_uids,'uid');
                     $have_uids = array_unique($have_uids);
@@ -278,31 +288,15 @@ class Role extends Admin
         return $result;
     }
 
-    /**
-     * 身份基本信息配置
-     * @author 郑钟良<zzl@ourstu.com>
-     */
-    public function config()
-    {
-        $builder = new AdminConfigBuilder;
-        $data = $builder->handleConfig();
-
-        $builder->title(lang('_IDENTITY_BASIC_INFORMATION_CONFIGURATION_'))
-            ->data($data)
-            ->buttonSubmit()
-            ->buttonBack()
-            ->display();
-    }
-
     //身份基本信息及配置 end
 
     //身份用户管理 start
 
     public function userList($page = 1, $r = 20)
     {
-        $aRoleId = I('role_id', 0, 'intval');
-        $aUserStatus = I('user_status', 0, 'intval');
-        $aSingleRole=I('single_role',0,'intval');
+        $aRoleId = input('role_id', 0, 'intval');
+        $aUserStatus = input('user_status', 0, 'intval');
+        $aSingleRole=input('single_role',0,'intval');
         $role_list = $this->roleModel->field('id,title as value')->order('sort asc')->select();
         $role_id_list = array_column($role_list, 'id');
         if ($aRoleId && in_array($aRoleId, $role_id_list)) {//筛选身份
@@ -388,9 +382,9 @@ class Role extends Admin
     public function changeRole()
     {
         if(IS_POST){
-            $aIds=I('post.ids');
-            $aRole_id=I('post.role_id',0,'intval');
-            $aRole=I('post.role',0,'intval');
+            $aIds=input('post.ids');
+            $aRole_id=input('post.role_id',0,'intval');
+            $aRole=input('post.role',0,'intval');
             $result['status']=0;
             if($aRole_id==$aRole||$aRole==0){
                 $result['info']=lang('_ILLEGAL_OPERATION_');
@@ -436,8 +430,8 @@ class Role extends Admin
             }
             $this->ajaxReturn($result);
         }else{
-            $aIds=I('get.ids');
-            $aRole_id=I('get.role_id',0,'intval');
+            $aIds=input('get.ids');
+            $aRole_id=input('get.role_id',0,'intval');
             $ids=implode(',',$aIds);
             $map['id']=array('neq',$aRole_id);
             $map['status']=1;
@@ -606,13 +600,13 @@ class Role extends Admin
      */
     public function editGroup()
     {
-        $aGroupId = I('id', 0, 'intval');
+        $aGroupId = input('id', 0, 'intval');
         $is_edit = $aGroupId ? 1 : 0;
         $title = $is_edit ? lang('_EDIT_GROUP_') : lang('_NEW_GROUP_');
         if (IS_POST) {
-            $data['title'] = I('post.title', '', 'op_t');
+            $data['title'] = input('post.title', '', 'op_t');
             $data['update_time'] = time();
-            $roles = I('post.roles');
+            $roles = input('post.roles');
             if ($is_edit) {
                 $result = $this->roleGroupModel->where(array('id' => $aGroupId))->save($data);
                 if ($result) {
@@ -664,7 +658,7 @@ class Role extends Admin
      */
     public function deleteGroup()
     {
-        $aGroupId = I('id', 0, 'intval');
+        $aGroupId = input('id', 0, 'intval');
         if (!$aGroupId) {
             $this->error(lang('_PARAMETER_ERROR_'));
         }
@@ -683,62 +677,69 @@ class Role extends Admin
 
     /**
      * 身份默认积分配置
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function configScore()
     {
-        $aRoleId = I('id', 0, 'intval');
+        $aRoleId = input('role_id', 0, 'intval');
         if (!$aRoleId) {
             $this->error(lang('_PLEASE_CHOOSE_YOUR_IDENTITY_'));
         }
+
         $map = getRoleConfigMap('score', $aRoleId);
-        if (IS_POST) {
-            $aPostKey = I('post.post_key', '', 'op_t');
+
+        if (request()->isPost()) {
+            $aPostKey = input('post.post_key', '', 'text');
             $post_key = explode(',', $aPostKey);
-            $config_value = array();
+            $config_value = [];
             foreach ($post_key as $val) {
                 if ($val != '') {
-                    $config_value[$val] = I('post.' . $val, 0, 'intval');
+                    $config_value[$val] = input('post.' . $val, 0, 'intval');
                 }
             }
             unset($val);
             $data['value'] = json_encode($config_value, true);
-            if ($this->roleConfigModel->where($map)->find()) {
-                $result = $this->roleConfigModel->saveData($map, $data);
+
+            $old = Db::name('RoleConfig')->where($map)->find();
+            if ($old) {
+                $map['id'] = $old['id'];
+                $result = Db::name('RoleConfig')->where($map)->update($data);
             } else {
                 $data = array_merge($map, $data);
-                $result = $this->roleConfigModel->addData($data);
+
+                $result = Db::name('RoleConfig')->insert($data);
             }
             if ($result) {
-                $this->success(lang('_OPERATION_SUCCESS_'), Url('Admin/Role/configScore', array('id' => $aRoleId)));
+                $this->success(lang('_OPERATION_SUCCESS_'), Url('Admin/Role/configScore', array('role_id' => $aRoleId)));
             } else {
-                $this->error(lang('_OPERATION_FAILED_') . $this->roleConfigModel->getError());
+                $this->error(lang('_OPERATION_FAILED_'));
             }
         } else {
-            $mRole_list = $this->roleModel->field('id,title')->select();
-
+            $mRole_list = Db::name('Role')->field('id,title')->select();
             //获取默认配置值
-            $score = $this->roleConfigModel->where($map)->getField('value');
-            $score = json_decode($score, true);
-
+            $score = Db::name('RoleConfig')->where($map)->find();
+            $score['value'] = json_decode($score['value'],true);
             //获取member表中积分字段$score_keys
-            $model = D('Ucenter/Score');
-            $score_keys = $model->getTypeList(array('status' => array('GT', -1)));
+            $score_keys = model('Ucenter/Score')->getTypeList(['status' => ['GT', -1]]);
 
             $post_key = '';
             foreach ($score_keys as &$val) {
                 $post_key .= ',score' . $val['id'];
-                $val['value'] = $score['score' . $val['id']]?$score['score' . $val['id']]:0; //写入默认值
+
+                if(!empty($score['value']['score' . $val['id']])){
+                    $val['value'] = $score['value']['score' . $val['id']];
+                }else{
+                    $val['value'] = 0;
+                }
             }
             unset($val);
-
-            $this->meta_title = lang('_IDENTITY_DEFAULT_INTEGRATION_');
+            
+            $this->setTitle(lang('_IDENTITY_DEFAULT_INTEGRATION_'));
             $this->assign('score_keys', $score_keys);
             $this->assign('post_key', $post_key);
             $this->assign('role_list', $mRole_list);
-            $this->assign('this_role', array('id' => $aRoleId));
+            $this->assign('this_role', array('role_id' => $aRoleId));
             $this->assign('tab', 'score');
-            $this->display('score');
+            return $this->fetch('score');
         }
     }
 
@@ -748,15 +749,15 @@ class Role extends Admin
      */
     public function configAvatar()
     {
-        $aRoleId = I('id', 0, 'intval');
+        $aRoleId = input('id', 0, 'intval');
         if (!$aRoleId) {
             $this->error(lang('_PLEASE_CHOOSE_YOUR_IDENTITY_'));
         }
         $map = getRoleConfigMap('avatar', $aRoleId);
         $data['data'] = '';
         if (IS_POST) {
-            $data['value'] = I('post.avatar_id', 0, 'intval');
-            $aSetNull = I('post.set_null', 0, 'intval');
+            $data['value'] = input('post.avatar_id', 0, 'intval');
+            $aSetNull = input('post.set_null', 0, 'intval');
             if (!$aSetNull) {
                 if($data['value']==0){
                     $this->error(lang('_PLEASE_UPLOAD_YOUR_AVATAR_'));
@@ -796,7 +797,7 @@ class Role extends Admin
      */
     public function configRank()
     {
-        $aRoleId = I('id', 0, 'intval');
+        $aRoleId = input('id', 0, 'intval');
         if (!$aRoleId) {
             $this->error(lang('_PLEASE_CHOOSE_YOUR_IDENTITY_'));
         }
@@ -807,7 +808,7 @@ class Role extends Admin
                 sort($_POST['ranks']);
                 $data['value'] = implode(',', array_unique($_POST['ranks']));
             }
-            $aReason['reason'] = I('post.reason', '', 'op_t');
+            $aReason['reason'] = input('post.reason', '', 'op_t');
             $data['data'] = json_encode($aReason, true);
             if ($this->roleConfigModel->where($map)->find()) {
                 $result = $this->roleConfigModel->saveData($map, $data);
@@ -867,13 +868,13 @@ class Role extends Admin
      */
     public function configUserTag()
     {
-        $aRoleId = I('id', 0, 'intval');
+        $aRoleId = input('id', 0, 'intval');
         if (!$aRoleId) {
             $this->error(lang('_PLEASE_CHOOSE_YOUR_IDENTITY_'));
         }
 
         $map = getRoleConfigMap('user_tag', $aRoleId);
-        if(IS_POST){
+        if(request()->isPost()){
             $data['value'] = '';
             if (isset($_POST['tags'])) {
                 sort($_POST['tags']);
@@ -910,11 +911,11 @@ class Role extends Admin
      */
     public function configField()
     {
-        $aRoleId = I('id', 0, 'intval');
+        $aRoleId = input('id', 0, 'intval');
         if (!$aRoleId) {
             $this->error(lang('_PLEASE_CHOOSE_YOUR_IDENTITY_'));
         }
-        $aType = I('get.type', 0, 'intval'); //扩展资料设置类型：1注册时要填写资料配置，0扩展资料字段设置
+        $aType = input('get.type', 0, 'intval'); //扩展资料设置类型：1注册时要填写资料配置，0扩展资料字段设置
 
         if ($aType) { //注册时要填写资料配置
             $type = 'register_expend_field';
@@ -941,7 +942,7 @@ class Role extends Admin
                 $this->success(lang('_OPERATION_SUCCESS_'));
             }
         } else {
-            $aType = I('get.type', 0, 'intval'); //扩展资料设置类型：1注册时要填写资料配置，0扩展资料字段设置
+            $aType = input('get.type', 0, 'intval'); //扩展资料设置类型：1注册时要填写资料配置，0扩展资料字段设置
 
             $mRole_list = $this->roleModel->field('id,title')->select();
 

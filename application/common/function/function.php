@@ -318,11 +318,11 @@ function addons_url($url, $param = array(),$suffix = true, $domain = false)
  * 时间戳格式化
  * @param int $time
  * @return string 完整的时间显示
- * @author huajie <banhuajie@163.com>
+ * @author dameng <59262424@qq.com>
  */
 function time_format($time = NULL, $format = 'Y-m-d H:i')
 {
-    $time = $time === NULL ? NOW_TIME : intval($time);
+    $time = $time === NULL ? time() : intval($time);
     return date($format, $time);
 }
 
