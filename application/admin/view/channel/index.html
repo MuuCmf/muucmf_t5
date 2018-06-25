@@ -8,7 +8,7 @@
 
 <div class="with-padding">
     <div class="">
-        <a href="javascript:" class="btn btn-success add-new">新增导航</a>
+        <a href="javascript:" class="btn btn-info add-new">新增导航</a>
     </div>
     <form action="{:Url()}" method="post" class="form-horizontal" >
     <ul class="channel-ul">
@@ -16,8 +16,8 @@
         {include file="channel/_li"/}
     {/volist}
     </ul>
-    <div class="form-item with-padding">
-        <button class="btn submit-btn ajax-post no-refresh" id="submit" type="submit" target-form="form-horizontal">{:lang("_SURE_WITH_SPACE_")}</button>
+    <div class="form-item">
+        <button class="btn btn-warning submit-btn ajax-post no-refresh" id="submit" type="submit" target-form="form-horizontal">{:lang("_SURE_WITH_SPACE_")}</button>
         <button class="btn btn-return" onclick="javascript:history.back(-1);return false;">{:lang("_RETURN_WITH_SPACE_")}</button>
     </div>
     </form>
@@ -123,7 +123,6 @@
 {/block}
 
 {block name="script"}
-    <script src="__JS__/jquery.simple-color.js"></script>
-    <script src="__JS__/channel.js"></script>
+    <script src="__LIB__/jquery.simple-color/jquery.simple-color.js"></script>
     <script src="__ZUI__/lib/sortable/zui.sortable.min.js"></script>
 {/block}

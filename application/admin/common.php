@@ -56,12 +56,6 @@ function get_list_field($data, $grid, $model)
     return $value;
 }
 
-// 获取模型名称
-function get_model_by_id($id)
-{
-    return $model = M('Model')->getFieldById($id, 'title');
-}
-
 // 获取属性类型信息
 function get_attribute_type($type = '')
 {
@@ -132,40 +126,13 @@ function show_status_op($status)
 }
 
 /**
- * 获取文档的类型文字
- * @param string $type
- * @return string 状态文字 ，false 未获取到
- * @author huajie <banhuajie@163.com>
- */
-function get_document_type($type = null)
-{
-    if (!isset($type)) {
-        return false;
-    }
-    switch ($type) {
-        case 1  :
-            return lang('_DIRECTORY_');
-            break;
-        case 2  :
-            return lang('_THEME_');
-            break;
-        case 3  :
-            return lang('_PARAGRAPH_');
-            break;
-        default :
-            return false;
-            break;
-    }
-}
-
-/**
  * 获取配置的类型
  * @param string $type 配置类型
  * @return string
  */
 function get_config_type($type = 0)
 {
-    $list = C('CONFIG_TYPE_LIST');
+    $list = config('CONFIG_TYPE_LIST');
     return $list[$type];
 }
 
@@ -176,7 +143,7 @@ function get_config_type($type = 0)
  */
 function get_config_group($group = 0)
 {
-    $list = C('CONFIG_GROUP_LIST');
+    $list = config('CONFIG_GROUP_LIST');
     return $group ? $list[$group] : '';
 }
 
@@ -215,14 +182,14 @@ function int_to_string(&$data, $map = ['status' => [1 => '启用', -1 => '删除
 
 function lists_plus(&$data)
 {
-    $alias = M('module')->select();
+    $alias = Db::name('module')->select();
     foreach ($alias as $value) {
         $alias_set[$value['name']] = $value['alias'];
     }
     foreach ($data as $key => $value) {
         $data[$key]['alias'] = $alias_set[$data[$key]['module']];
 
-        $mid = M('action_log')->field("max(create_time),remark")->where('action_id=' . $data[$key]['id'])->select();
+        $mid = Db::name('action_log')->field("max(create_time),remark")->where('action_id=' . $data[$key]['id'])->select();
         $mid_s = $mid[0]['remark'];
         if( isset($mid_s) && strpos($mid_s , lang('_INTEGRAL_')) !== false)
         {
@@ -249,36 +216,6 @@ function extra_menu($extra_menu, &$base_menu)
 }
 
 /**
- * 获取参数的所有父级分类
- * @param int $cid 分类id
- * @return array 参数分类和父类的信息集合
- * @author huajie <banhuajie@163.com>
- */
-function get_parent_category($cid)
-{
-    if (empty($cid)) {
-        return false;
-    }
-    $cates = M('Category')->where(array('status' => 1))->field('id,title,pid')->order('sort')->select();
-    $child = get_category($cid);    //获取参数分类的信息
-    $pid = $child['pid'];
-    $temp = array();
-    $res[] = $child;
-    while (true) {
-        foreach ($cates as $key => $cate) {
-            if ($cate['id'] == $pid) {
-                $pid = $cate['pid'];
-                array_unshift($res, $cate);    //将父分类插入到数组第一个元素前
-            }
-        }
-        if ($pid == 0) {
-            break;
-        }
-    }
-    return $res;
-}
-
-/**
  * 检测验证码
  * @param  integer $id 验证码ID
  * @return boolean     检测结果
@@ -288,43 +225,6 @@ function check_verify($code, $id = 1)
 {
     $verify = new \Think\Verify();
     return $verify->check($code, $id);
-}
-
-/**
- * 获取当前分类的文档类型
- * @param int $id
- * @return array 文档类型数组
- * @author huajie <banhuajie@163.com>
- */
-function get_type_bycate($id = null)
-{
-    if (empty($id)) {
-        return false;
-    }
-    $type_list = C('DOCUMENT_MODEL_TYPE');
-    $model_type = M('Category')->getFieldById($id, 'type');
-    $model_type = explode(',', $model_type);
-    foreach ($type_list as $key => $value) {
-        if (!in_array($key, $model_type)) {
-            unset($type_list[$key]);
-        }
-    }
-    return $type_list;
-}
-
-/**
- * 获取当前文档的分类
- * @param int $id
- * @return array 文档类型数组
- * @author huajie <banhuajie@163.com>
- */
-function get_cate($cate_id = null)
-{
-    if (empty($cate_id)) {
-        return false;
-    }
-    $cate = M('Category')->where('id=' . $cate_id)->getField('title');
-    return $cate;
 }
 
 // 分析枚举类型配置值 格式 a:名称1,b:名称2
@@ -342,13 +242,6 @@ function parse_config_attr($string)
     }
     return $value;
 }
-
-// 获取子文档数目
-function get_subdocument_count($id = 0)
-{
-    return M('Document')->where('pid=' . $id)->count();
-}
-
 
 // 分析枚举类型字段值 格式 a:名称1,b:名称2
 // 暂时和 parse_config_attr功能相同
@@ -383,37 +276,14 @@ function get_action($id = null, $field = null)
     if (empty($id) && !is_numeric($id)) {
         return false;
     }
-    $list = S('action_list');
+    $list = cache('action_list');
     if (empty($list[$id])) {
         $map = array('status' => array('gt', -1), 'id' => $id);
-        $list[$id] = M('Action')->where($map)->field(true)->find();
+        $list[$id] = Db::name('Action')->where($map)->field(true)->find();
     }
     return empty($field) ? $list[$id] : $list[$id][$field];
 }
 
-/**
- * 根据条件字段获取数据
- * @param mixed $value 条件，可用常量或者数组
- * @param string $condition 条件字段
- * @param string $field 需要返回的字段，不传则返回整个数据
- * @author huajie <banhuajie@163.com>
- */
-function get_document_field($value = null, $condition = 'id', $field = null)
-{
-    if (empty($value)) {
-        return false;
-    }
-
-    //拼接参数
-    $map[$condition] = $value;
-    $info = M('Model')->where($map);
-    if (empty($field)) {
-        $info = $info->field(true)->find();
-    } else {
-        $info = $info->getField($field);
-    }
-    return $info;
-}
 
 /**
  * 获取行为类型
@@ -442,7 +312,7 @@ function cloudU($url, $p = array())
 
 function appstoreU($url, $p = array())
 {
-    return C('__CLOUD__') . cloudU($url, $p);
+    return config('__CLOUD__') . cloudU($url, $p);
 }
 
 function formatLog($log)
@@ -473,7 +343,7 @@ function adminU($url = '', $vars = '', $suffix = true, $domain = false)
         $domain = $host . (strpos($host, '.') ? '' : strstr($_SERVER['HTTP_HOST'], '.'));
     } elseif ($domain === true) {
         $domain = $_SERVER['HTTP_HOST'];
-        if (C('APP_SUB_DOMAIN_DEPLOY')) { // 开启子域名部署
+        if (config('APP_SUB_DOMAIN_DEPLOY')) { // 开启子域名部署
             $domain = $domain == 'localhost' ? 'localhost' : 'www' . strstr($_SERVER['HTTP_HOST'], '.');
             // '子域名'=>array('模块[/控制器]');
             foreach (C('APP_SUB_DOMAIN_RULES') as $key => $rule) {
@@ -499,8 +369,8 @@ function adminU($url = '', $vars = '', $suffix = true, $domain = false)
     }
 
     // URL组装
-    $depr = C('URL_PATHINFO_DEPR');
-    $urlCase = C('URL_CASE_INSENSITIVE');
+    $depr = config('URL_PATHINFO_DEPR');
+    $urlCase = config('URL_CASE_INSENSITIVE');
     if ($url) {
         if (0 === strpos($url, '/')) { // 定义路由
             $route = true;

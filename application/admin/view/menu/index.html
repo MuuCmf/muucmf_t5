@@ -1,37 +1,40 @@
-<extend name="Public/base"/>
+{extend name="common/main"/}
 
-<block name="body">
+{block name="body"}
     <div class="main-title">
         <h2>
-            <present name="data">[ {$data.title} ] 子</present>
-            {:L('_MENU_MANAGER_')}
+            {present name="data"}[ {$data.title} ] 子{/present}
+            {:lang('_MENU_MANAGER_')}
         </h2>
     </div>
 
-    <div class="clearfix row with-padding">
-        <div class="col-xs-10">
-            <a class="btn btn-success" href="{:U('add',array('pid'=>I('get.pid',0)))}">{:L('_ADD_WITH_SPACE_')}</a>
-            <button class="btn btn-danger ajax-post confirm" url="{:U('del')}" target-form="ids">{:L('_DELETE_WITH_SPACE_')}</button>
-            <a class="btn btn-warning" href="{:U('import',array('pid'=>I('get.pid',0)))}">{:L('_IMPORT_')}</a>
-            <button class="btn list_sort" url="{:U('sort',array('pid'=>I('get.pid',0)),'')}">{:L('_SORT_')}</button>
-        </div>
-        <!-- 高级搜索 -->
-        <div class="col-xs-2">
-            <div class="search-form fr cf">
-                <div class="sleft">
-                    <div class="input-group">
-                        <input type="text" name="title" class="form-control" value="{:I('title')}"
-                               placeholder="{:L('_MENU_NAME_INPUT_')}">
-                               <span class="input-group-btn">
-                    <a class="btn btn-default" href="javascript:;" id="search" url="__SELF__"><i
-                            class="icon-search"></i></a></span>
+
+
+    <div class="with-padding">
+
+        <div class="button-box row clearfix ">
+            <div class="col-xs-10">
+                <a class="btn btn-success" href="{:Url('add',array('pid'=>input('get.pid',0)))}">{:lang('_ADD_WITH_SPACE_')}</a>
+                <button class="btn btn-danger ajax-post confirm" url="{:Url('del')}" target-form="ids">{:lang('_DELETE_WITH_SPACE_')}</button>
+                <a class="btn btn-warning" href="{:Url('import',array('pid'=>input('get.pid',0)))}">{:lang('_IMPORT_')}</a>
+                <button class="btn list_sort" url="{:Url('sort',array('pid'=>input('get.pid',0)),'')}">{:lang('_SORT_')}</button>
+            </div>
+            <!-- 高级搜索 -->
+            <div class="col-xs-2">
+                <div class="search-form fr cf">
+                    <div class="sleft">
+                        <div class="input-group">
+                            <input type="text" name="title" class="form-control" value="{:input('title')}"
+                                   placeholder="{:lang('_MENU_NAME_INPUT_')}">
+                                   <span class="input-group-btn">
+                        <a class="btn btn-default" href="javascript:;" id="search" url="__SELF__">
+                            <i class="icon-search"></i>
+                        </a></span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="with-padding">
 
         <form class="ids">
             <table class="table table-bordered table-striped table-hover">
@@ -40,51 +43,51 @@
                     <th class="row-selected">
                         <input class="checkbox check-all" type="checkbox">
                     </th>
-                    <th class="hidden">{:L('_ID_')}</th>
-                    <th>{:L('_NAME_')}</th>
-                    <th>{:L('_MENU_SUPERIOR_')}</th>
-                    <th>{:L('_GROUP_')}</th>
-                    <th>{:L('_URL_')}</th>
-                    <th>{:L('_SORT_')}</th>
-                    <th>{:L('_DEV_MODE_ONLY_')}</th>
-                    <th>{:L('_HIDE_')}</th>
-                    <th>{:L('_OPERATE_')}</th>
+                    <th class="hidden">{:lang('_ID_')}</th>
+                    <th>{:lang('_NAME_')}</th>
+                    <th>{:lang('_MENU_SUPERIOR_')}</th>
+                    <th>{:lang('_GROUP_')}</th>
+                    <th>{:lang('_URL_')}</th>
+                    <th>{:lang('_SORT_')}</th>
+                    <th>{:lang('_DEV_MODE_ONLY_')}</th>
+                    <th>{:lang('_HIDE_')}</th>
+                    <th>{:lang('_OPERATE_')}</th>
                 </tr>
                 </thead>
                 <tbody>
-                <notempty name="list">
-                    <volist name="list" id="menu">
+                {notempty name="list"}
+                    {volist name="list" id="menu"}
                         <tr>
                             <td><input class="ids row-selected" type="checkbox" name="id[]" value="{$menu.id}"></td>
                             <td class="hidden">{$menu.id}</td>
                             <td>
-                                <a href="{:U('index?pid='.$menu['id'])}">{$menu.title}</a>
+                                <a href="{:Url('index?pid='.$menu['id'])}">{$menu.title}</a>
                             </td>
-                            <td>{$menu.up_title|default=L('_NONE_')}</td>
+                            <td>{$menu.up_title|default=lang('_NONE_')}</td>
                             <td>{$menu.group}</td>
                             <td>{$menu.url}</td>
                             <td>{$menu.sort}</td>
                             <td>
-                                <a href="{:U('toogleDev',array('id'=>$menu['id'],'value'=>abs($menu['is_dev']-1)))}"
+                                <a href="{:Url('toogleDev',array('id'=>$menu['id'],'value'=>abs($menu['is_dev']-1)))}"
                                    class="ajax-get">
                                     {$menu.is_dev_text}
                                 </a>
                             </td>
                             <td>
-                                <a href="{:U('toogleHide',array('id'=>$menu['id'],'value'=>abs($menu['hide']-1)))}"
+                                <a href="{:Url('toogleHide',array('id'=>$menu['id'],'value'=>abs($menu['hide']-1)))}"
                                    class="ajax-get">
                                     {$menu.hide_text}
                                 </a>
                             </td>
                             <td>
-                                <a title="{:L('_EDIT_')}" href="{:U('edit?id='.$menu['id'])}">{:L('_EDIT_')}</a>
-                                <a class="confirm ajax-get" title="{:L('_DELETE_')}" href="{:U('del?id='.$menu['id'])}">{:L('_DELETE_')}</a>
+                                <a title="{:lang('_EDIT_')}" href="{:Url('edit?id='.$menu['id'])}">{:lang('_EDIT_')}</a>
+                                <a class="confirm ajax-get" title="{:lang('_DELETE_')}" href="{:Url('del?id='.$menu['id'])}">{:lang('_DELETE_')}</a>
                             </td>
                         </tr>
-                    </volist>
-                    <else/>
-                    <td colspan="10" class="text-center">{:L('_ADMIN_USER_EMPTY_')}</td>
-                </notempty>
+                    {/volist}
+                    {else/}
+                    <td colspan="10" class="text-center">{:lang('_ADMIN_USER_EMPTY_')}</td>
+                {/notempty}
                 </tbody>
             </table>
         </form>
@@ -93,10 +96,12 @@
 
         </div>
     </div>
-</block>
+{/block}
 
-<block name="script">
+{block name="script"}
+    <script src="__ZUI__/lib/sortable/zui.sortable.min.js"></script>
     <script type="text/javascript">
+
         $(function () {
             //搜索功能
             $("#search").click(function () {
@@ -139,4 +144,4 @@
             });
         });
     </script>
-</block>
+{/block}
