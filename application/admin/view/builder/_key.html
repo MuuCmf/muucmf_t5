@@ -1,6 +1,6 @@
 <label class="item-label">{$field.title|htmlspecialchars}
     {if condition="$field['subtitle']"}
-        <span class="check-tips">（{$field.subtitle}）</span>
+        <span class="suggest check-tips">（{$field.subtitle}）</span>
     {/if}
 </label>
 {if condition="$field['name'] == 'action'"}
@@ -43,7 +43,7 @@
                />
     {/case}
     {case value="select"}
-        <select name="{$field.name}" class="form-control" style="width:auto;">
+        <select name="{$field.name}" class="form-control">
             {volist name="field.opt" id="option"}
                 {php}
                     $selected = $field['value']==$key ? 'selected' : '';
@@ -73,7 +73,7 @@
         {/volist}
     {/case}
     {case value="icon"}
-        <div class='icon-chose' title={:lang("_SELECT_ICON_WITH_DOUBLE_")} style="width: 400px;">
+        <div class='icon-chose' title={:lang("_SELECT_ICON_WITH_DOUBLE_")}>
             <select name="{$field.name}" title={:lang("_SELECT_ICON_WITH_DOUBLE_")} class="chosen-icons" data-value="{$field.value|default='icon-star'}"></select>
         </div>
         {php}
@@ -127,7 +127,7 @@
                     // swf文件路径
                     swf: 'Uploader.swf',
                     // 文件接收服务端。
-                    server: "{:U('File/uploadPicture',array('session_id'=>session_id()))}",
+                    server: "{:Url('File/uploadPicture',array('session_id'=>session_id()))}",
                     // 选择文件的按钮。可选。
                     // 内部根据当前运行是创建，可能是input元素，也可能是flash.
                     pick: '#upload_single_image_{$field.name}',
@@ -196,7 +196,7 @@
                       // sw{:lang("_F_FILE_PATH_")}
                     swf: 'Uploader.swf',
                     // 文件接收服务端。
-                    server: "{:U('File/uploadPicture',array('session_id'=>session_id()))}",
+                    server: "{:Url('File/uploadPicture',array('session_id'=>session_id()))}",
                     // 选择文件的按钮。可选。
                     // 内部根据当前运行是创建，可能是input元素，{:lang("_AND_IT_COULD_BE_FLASH_")}.
                     //pick: '#upload_multi_image_{$field.name}',
@@ -418,7 +418,7 @@
     <script src="__ZUI__/lib/chosen/chosen.min.js"></script>
     <link href="__ZUI__/lib/chosen/chosen.min.css" rel="stylesheet">
 
-    <select data-placeholder="选择身份..." name="{$field.name}[]" class="chosen-select form-control" tabindex="2" multiple="">
+    <select data-placeholder="" name="{$field.name}[]" class="chosen-select form-control" tabindex="2" multiple="">
         {php}
             if( key($field['opt']) === 0){
         {/php}

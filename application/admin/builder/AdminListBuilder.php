@@ -133,7 +133,7 @@ class AdminListBuilder extends AdminBuilder
     public function buttonNew($href, $title = '新增', $attr = array())
     {
         $attr['href'] = $href;
-        $attr['class']='btn btn-ajax btn-success';
+        $attr['class']='btn btn-ajax btn-info';
         return $this->button($title, $attr);
     }
 
@@ -179,7 +179,7 @@ class AdminListBuilder extends AdminBuilder
     public function buttonEnable($url = null, $title = '启用', $attr = array())
     {
         if (!$url) $url = $this->_setStatusUrl;
-        $attr['class']='btn ajax-post btn-info';
+        $attr['class']='btn ajax-post btn-success';
         return $this->buttonSetStatus($url, 1, $title, $attr);
     }
 

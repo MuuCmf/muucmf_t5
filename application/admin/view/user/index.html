@@ -68,21 +68,19 @@
                         <td>{$vo.ext.email}</td>
                         <td>{$vo.ext.mobile}</td>
                         <td>
-                            <eq name="vo.status" value="1">
+                            {eq name="vo.status" value="1"}
                                 <a href="{:Url('User/changeStatus?method=forbidUser&id='.$vo['uid'])}"
                                    class="ajax-get">{:lang('_DISABLE_')}</a>
-                                <else/>
+                            {else/}
                                 <a href="{:Url('User/changeStatus?method=resumeUser&id='.$vo['uid'])}"
                                    class="ajax-get">{:lang('_ENABLE_')}</a>
-                            </eq>
+                            {/eq}
                             <a href="{:Url('AuthManager/group?uid='.$vo['uid'])}" class="authorize">{:lang('_ACCREDIT_')}</a>
                             <a href="{:Url('User/changeStatus?method=deleteUser&id='.$vo['uid'])}"
                                class="confirm ajax-get">{:lang('_DELETE_')}</a>
                             <a href="{:Url('User/initPass?id='.$vo['uid'])}"
                                class="confirm ajax-get">{:lang('_PW_RESET_')}</a>
                         </td>
-
-
 
                         <td>{$vo.login}</td>
                         <td><span>{$vo.last_login_time|time_format}</span></td>

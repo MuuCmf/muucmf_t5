@@ -6,10 +6,10 @@
 namespace app\common\model;
 
 use think\Model;
+use think\Db;
 
 class Module extends Model
 {
-    protected $tokenFile = '/info/token.ini';
     protected $moduleName = '';
 
     /**获取全部的模块信息
@@ -20,24 +20,22 @@ class Module extends Model
         $module = cache('module_all'.$is_installed);
         if ($module === false) {
             
-            $dir = $this->getFile(APP_PATH);
-            
+            $dir = $this->getDir(APP_PATH);
+
             foreach ($dir as $subdir) {
                 if (file_exists(APP_PATH . '/' . $subdir . '/info/info.php') && $subdir != '.' && $subdir != '..') {
+
                     $info = $this->getModule($subdir);
+
                     if ($is_installed == 1 && $info['is_setup'] == 0) {
                         continue;
                     }
                     $this->moduleName = $info['name'];
                     //如果icon图片存在
-                    if(file_exists(APP_PATH . '/' . $subdir . '/static/images/icon.png')){
-                        $info['icon_photo'] = APP_PATH . '/' . $subdir.'/static/images/icon.png';
+                    if(file_exists('/static/'. $subdir .'images/icon.png')){
+                        $info['icon_photo'] = '/static/'. $subdir .'images/icon.png';
                     }else{
-                        $info['icon_photo'] = APP_PATH . '/Admin/static/images/module_default_icon.png';
-                    }
-                    //如果token存在的话
-                    if (file_exists($this->getRelativePath($this->tokenFile))) {
-                        $info['token'] = file_get_contents($this->getRelativePath($this->tokenFile));
+                        $info['icon_photo'] = '/static/admin/images/module_default_icon.png';
                     }
                     
                     $module[] = $info;
@@ -46,22 +44,45 @@ class Module extends Model
 
             cache('module_all'.$is_installed, $module);
         }
+
         return $module;
     }
 
+    function getDir($dir) {
+        $dirArray[]=NULL;
+        if (false != ($handle = opendir ( $dir ))) {
+            $i=0;
+            while ( false !== ($file = readdir ( $handle )) ) {
+                //去掉"“.”、“..”以及带“.xxx”后缀的文件
+                if ($file != "." && $file != ".."&&!strpos($file,".")) {
+                    $dirArray[$i]=$file;
+                    $i++;
+                }
+            }
+            //关闭句柄
+            closedir ( $handle );
+        }
+        return $dirArray;
+    }
 
     /**
      * 重新通过文件来同步模块
      */
     public function reload()
     {
-        $modules = $this->select();
+        $modules = collection($this->select())->toArray();
+        $info = [];
         foreach ($modules as $m) {
             if (file_exists(APP_PATH . '/' . $m['name'] . '/Info/info.php')) {
-                $info = array_merge($m, $this->getInfo($m['name']));
-                $this->save($info);
-            }
+                $info[] = array_merge($m, $this->getInfo($m['name']));
+                
+                //$this->save($info);
+            } 
         }
+        //$db_prefix = config('database.prefix');
+        //Db::execute("TRUNCATE TABLE {$db_prefix}module");
+        $this->saveAll($info);
+
         $this->cleanModulesCache();
     }
 
@@ -72,7 +93,7 @@ class Module extends Model
     {
         $module = $this->where(array('name' => $name))->find();
         if (empty($module)) {
-            $this->error = L('_MODULE_INFORMATION_DOES_NOT_EXIST_WITH_PERIOD_');
+            $this->error = lang('_MODULE_INFORMATION_DOES_NOT_EXIST_WITH_PERIOD_');
             return false;
         } else {
             if (file_exists(APP_PATH . '/' . $module['name'] . '/Info/info.php')) {
@@ -127,7 +148,6 @@ class Module extends Model
             $this->cleanModuleCache($m['name']);
         }
         cache('module_all', null);
-        cache('module_all1', null);
         cache('admin_modules', null);
         cache('ALL_MESSAGE_SESSION',null);
         cache('ALL_MESSAGE_TPLS',null);
@@ -151,7 +171,7 @@ class Module extends Model
     {
         $module = $this->find($id);
         if (!$module || $module['is_setup'] == 0) {
-            $this->error = L('_MODULE_DOES_NOT_EXIST_OR_IS_NOT_INSTALLED_WITH_PERIOD_');
+            $this->error = lang('_MODULE_DOES_NOT_EXIST_OR_IS_NOT_INSTALLED_WITH_PERIOD_');
             return false;
         }
         $this->cleanMenus($module['name']);
@@ -162,18 +182,18 @@ class Module extends Model
             //如果不保留数据
             if (file_exists(APP_PATH . '/' . $module['name'] . '/Info/cleanData.sql')) {
                 $uninstallSql = APP_PATH . '/' . $module['name'] . '/Info/cleanData.sql';
-                $res = D()->executeSqlFile($uninstallSql);
+                $res = Db::executeSqlFile($uninstallSql);
                 if ($res === false) {
-                    $this->error = L('_CLEAN_UP_THE_MODULE_DATA_AND_ERROR_MESSAGE_WITH_COLON_') . $res['error_code'];
+                    $this->error = lang('_CLEAN_UP_THE_MODULE_DATA_AND_ERROR_MESSAGE_WITH_COLON_') . $res['error_code'];
                     return false;
                 }
             }
             //兼容老的卸载方式，执行一边uninstall.sql
             if (file_exists(APP_PATH . '/' . $module['name'] . '/Info/uninstall.sql')) {
                 $uninstallSql = APP_PATH . '/' . $module['name'] . '/Info/uninstall.sql';
-                $res = D()->executeSqlFile($uninstallSql);
+                $res = Db::executeSqlFile($uninstallSql);
                 if ($res === false) {
-                    $this->error = L('_CLEAN_UP_THE_MODULE_DATA_AND_ERROR_MESSAGE_WITH_COLON_') . $res['error_code'];
+                    $this->error = lang('_CLEAN_UP_THE_MODULE_DATA_AND_ERROR_MESSAGE_WITH_COLON_') . $res['error_code'];
                     return false;
                 }
             }
@@ -192,21 +212,27 @@ class Module extends Model
     public function getModule($name)
     {
         $module = $this->where(['name'=>$name])->find();
+        
+
         if ($module === false || $module == null) {
             $m = $this->getInfo($name);
-            if ($m != array()) {
-                if (intval($m['can_uninstall']) == 1) {
-                    $m['is_setup'] = 0;//默认设为已安装，防止已安装的模块反复安装。
-                } else {
-                    $m['is_setup'] = 1;
+
+            if(empty($m['can_uninstall'])){
+
+                if($m['is_com']==1){
+                    $m['can_uninstall'] = 1;
+                }else{
+                    $m['can_uninstall'] = 0;
                 }
-                $m['id'] = $this->save($m);
-                $m['token'] = $this->getToken($m['name']);
-                return $m;
             }
 
+            $m['is_setup'] = 0;
+            $res = $this->save($m);
+            $m['id'] = $this->id;
+   
+            return $m;
         } else {
-            $module['token'] = $this->getToken($module['name']);
+            $module = $module->toArray();
             return $module;
         }
     }
@@ -400,7 +426,7 @@ class Module extends Model
     {
         foreach ($action as $v) {
             unset($v['id']);
-            M('Action')->add($v);
+            Db::name('Action')->insert($v);
         }
         return true;
     }
@@ -409,7 +435,7 @@ class Module extends Model
     {
         foreach ($action as $v) {
             unset($v['id']);
-            M('ActionLimit')->add($v);
+            Db::name('ActionLimit')->insert($v);
         }
         return true;
     }
@@ -418,37 +444,37 @@ class Module extends Model
     {
         foreach ($auth_rule as $v) {
             unset($v['id']);
-            M('AuthRule')->add($v);
+            Db::name('AuthRule')->insert($v);
         }
         return true;
     }
 
     private function cleanActionLimit($module_name)
     {
-        $db_prefix = C('DB_PREFIX');
+        $db_prefix = config('database.prefix');
         $sql = "DELETE FROM `{$db_prefix}action_limit` where `module` = '" . $module_name . "'";
         D()->execute($sql);
     }
 
     private function cleanAction($module_name)
     {
-        $db_prefix = C('DB_PREFIX');
+        $db_prefix = config('database.prefix');
         $sql = "DELETE FROM `{$db_prefix}action` where `module` = '" . $module_name . "'";
         D()->execute($sql);
     }
 
     private function cleanAuthRules($module_name)
     {
-        $db_prefix = C('DB_PREFIX');
+        $db_prefix = config('database.prefix');
         $sql = "DELETE FROM `{$db_prefix}auth_rule` where `module` = '" . $module_name . "'";
-        D()->execute($sql);
+        Db::execute($sql);
     }
 
     private function cleanMenus($module_name)
     {
-        $db_prefix = C('DB_PREFIX');
+        $db_prefix = config('database.prefix');
         $sql = "DELETE FROM `{$db_prefix}menu` where `url` like '" . $module_name . "/%'";
-        D()->execute($sql);
+        Db::execute($sql);
     }
 
     private function addMenus($menu)
@@ -463,7 +489,11 @@ class Module extends Model
         return true;
     }
 
-
+    /**
+     * 获取模块信息
+     * @param  [type] $name [description]
+     * @return [type]       [description]
+     */
     private function getInfo($name)
     {
         if (file_exists(APP_PATH . '/' . $name . '/info/info.php')) {

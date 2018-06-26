@@ -1,20 +1,13 @@
 <?php
-// +----------------------------------------------------------------------
-// | OneThink [ WE CAN DO IT JUST THINK IT ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
-// +----------------------------------------------------------------------
-// | Author: huajie <banhuajie@163.com>
-// +----------------------------------------------------------------------
+namespace app\admin\controller;
 
-namespace Admin\Controller;
-use Admin\Model\AuthGroupModel;
+use app\admin\model\AuthGroupModel;
 
 /**
  * 模型管理控制器
  * @author huajie <banhuajie@163.com>
  */
-class ModelController extends AdminController {
+class Model extends Admin {
 
     public function _initialize(){
         parent::_initialize();

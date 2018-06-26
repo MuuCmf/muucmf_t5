@@ -821,7 +821,7 @@ return array(
     '_DATE_' => '日期',
     '_MULTI_LINE_TEXT_BOX_' => '多行文本框',
     '_TITLE_OWNED_DEFAULT_' => '(身份)默认拥有该头衔',
-    '_ROLE_EXCLUSION_ONE_GROUP_' => '（同组身份互斥，即同一分组下的身份不能同时被用户拥有；同一身份同时只能存在于一个分组中）',
+    '_ROLE_EXCLUSION_ONE_GROUP_' => '同组身份互斥，即同一分组下的身份不能同时被用户拥有；同一身份同时只能存在于一个分组中',
     '_ID_CURRENT_GROUP_' => '(当前分组id',
     '_FAIL_GROUP_EXIST_' => '失败！该分组已存在',
     '_ROLE_GROUP_2_' => '身份分组',

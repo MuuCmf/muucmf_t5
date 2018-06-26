@@ -25,14 +25,15 @@ class Config extends Admin
             $map['name'] = array('like', '%' . (string)input('name') . '%');
         }
         //   $map=
-        $list = $this->lists('Config', $map, 'sort,id');
+        list($list,$page) = $this->lists('Config', $map, 'sort,id');
         // 记录当前列表页的cookie
         Cookie('__forward__', $_SERVER['REQUEST_URI']);
-
+        $list = $list->toArray()['data'];
+        
         $this->assign('group', config('CONFIG_GROUP_LIST'));
         $this->assign('group_id', input('get.group', 0));
         $this->assign('list', $list);
-        $this->meta_title = lang('_CONFIG_MANAGER_');
+        $this->setTitle(lang('_CONFIG_MANAGER_'));
         return $this->fetch();
     }
 
@@ -63,7 +64,6 @@ class Config extends Admin
 
     /**
      * 编辑配置
-     * @author 麦当苗儿 <zuojiazi@vip.qq.com>
      */
     public function edit($id = 0)
     {
@@ -74,7 +74,7 @@ class Config extends Admin
                 if ($Config->update($data)) {
                     cache('DB_CONFIG_DATA', null);
                     //记录行为
-                    action_log('update_config', 'config', $data['id'], UID);
+                    action_log('update_config', 'config', $data['id'], is_login());
                     $this->success(lang('_SUCCESS_UPDATE_'), Cookie('__forward__'));
                 } else {
                     $this->error(lang('_FAIL_UPDATE_'));
@@ -83,7 +83,7 @@ class Config extends Admin
                 $this->error($Config->getError());
             }
         } else {
-            $info = array();
+            $info = [];
             /* 获取数据 */
             $info = Db::name('Config')->field(true)->find($id);
 

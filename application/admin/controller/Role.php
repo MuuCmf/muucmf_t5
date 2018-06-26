@@ -20,8 +20,6 @@ class Role extends Admin
     {
         parent::_initialize();
         $this->roleModel = model("Admin/Role");
-        //$this->userRoleModel = Db::name('UserRole');
-        //$this->roleGroupModel = Db::name('RoleGroup');
     }
 
     //身份基本信息及配置 start
@@ -515,13 +513,13 @@ class Role extends Admin
                 $map_role['id'] = $val;
                 $user_role=$this->userRoleModel->where($map_role)->find();
                 if($user_role['init']==0){
-                    D('Common/Member')->initUserRoleInfo($role_id,$user_role['uid']);
+                    model('Common/Member')->initUserRoleInfo($role_id,$user_role['uid']);
                 }
             }
             $builder = new AdminListBuilder;
             $builder->doSetStatus('UserRole', $ids, $status);
         } else if ($status == 0) {
-            $uids = $this->userRoleModel->where(array('id' => array('in', $ids)))->field('uid')->select();
+            $uids = $this->userRoleModel->where(array('id' => ['in', $ids]))->field('uid')->select();
             if (count($uids)) {
                 $builder = new AdminListBuilder;
                 $builder->doSetStatus('UserRole', $ids, $status);
@@ -567,61 +565,65 @@ class Role extends Admin
     //身份用户管理 end
 
     //身份分组 start
-
     /**
      * 分组列表
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function group()
     {
-        $group = $this->roleGroupModel->field('id,title,update_time')->select();
+        $group = Db::name('RoleGroup')->field('id,title,update_time')->select();
+
         foreach ($group as &$val) {
             $map['group_id'] = $val['id'];
             $roles = $this->roleModel->selectByMap($map, 'id asc', 'title');
             $val['roles'] = implode(',', array_column($roles, 'title'));
         }
         unset($roles, $val);
+
         $builder = new AdminListBuilder;
-        $builder->title(lang('_ROLE_GROUP_2_').lang('_ROLE_EXCLUSION_ONE_GROUP_'))
+        $builder
+            ->title(lang('_ROLE_GROUP_2_'))
+            ->suggest(lang('_ROLE_EXCLUSION_ONE_GROUP_'))
             ->buttonNew(Url('Role/editGroup'))
+            ->buttonDeleteTrue(Url('Role/deleteGroup'))
             ->keyId()
             ->keyText('title', lang('_TITLE_'))
             ->keyText('roles', lang('_GROUP_IDENTITY_'))
             ->keyUpdateTime()
             ->keyDoActionEdit('Role/editGroup?id=###')
-            ->keyDoAction('Role/deleteGroup?id=###', lang('_DELETE_'))
+            ->keyDoAction('Role/deleteGroup?ids=###', lang('_DELETE_'))
             ->data($group)
             ->display();
     }
 
     /**
      * 编辑分组
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function editGroup()
     {
         $aGroupId = input('id', 0, 'intval');
         $is_edit = $aGroupId ? 1 : 0;
         $title = $is_edit ? lang('_EDIT_GROUP_') : lang('_NEW_GROUP_');
-        if (IS_POST) {
-            $data['title'] = input('post.title', '', 'op_t');
+
+        if (request()->isPost()) {
+            $data['title'] = input('post.title', '', 'text');
             $data['update_time'] = time();
-            $roles = input('post.roles');
+            $roles = input('post.roles/a');
             if ($is_edit) {
-                $result = $this->roleGroupModel->where(array('id' => $aGroupId))->save($data);
+                $result = Db::name('RoleGroup')->where(['id' => $aGroupId])->update($data);
                 if ($result) {
                     $result = $aGroupId;
                 }
             } else {
-                if ($this->roleGroupModel->where(array('title' => $data['title']))->count()) {
+                if (Db::name('RoleGroup')->where(['title' => $data['title']])->count()) {
                     $this->error("{$title}".lang('_FAIL_GROUP_EXIST_').lang('_EXCLAMATION_'));
                 }
-                $result = $this->roleGroupModel->add($data);
+                $result = Db::name('RoleGroup')->insert($data);
             }
             if ($result) {
-                $this->roleModel->where(array('group_id' => $result))->setField('group_id', 0); //所有该分组下的身份全部移出
+
+                Db::name('Role')->where(['group_id' => $result])->setField('group_id', 0); //所有该分组下的身份全部移出
                 if (!is_null($roles)) {
-                    $this->roleModel->where(array('id' => array('in', $roles)))->setField('group_id', $result); //选中的身份全部移入分组
+                    Db::name('Role')->where(['id' => ['in', $roles]])->setField('group_id', $result); //选中的身份全部移入分组
                 }
                 $this->success("{$title}".lang('_SUCCESS_').lang('_EXCLAMATION_'), Url('Role/group'));
             } else {
@@ -630,21 +632,31 @@ class Role extends Admin
         } else {
             $data = array();
             if ($is_edit) {
-                $data = $this->roleGroupModel->where(array('id' => $aGroupId))->find();
+                $data = Db::name('RoleGroup')->where(['id' => $aGroupId])->find();
                 $map['group_id'] = $aGroupId;
                 $roles = $this->roleModel->selectByMap($map, 'id asc', 'id');
                 $data['roles'] = array_column($roles, 'id');
             }
-            $roles = $this->roleModel->field('id,group_id,title')->select();
+
+            $roles = Db::name('Role')->field('id,group_id,title')->select();
             foreach ($roles as &$val) {
                 $val['title'] = $val['group_id'] ? $val['title'] . lang('_ID_CURRENT_GROUP_').lang('_COLON_')."  {$val['group_id']})" : $val['title'];
             }
             unset($val);
+
+            $selectArr = [];
+            foreach ($roles as $val){
+                $selectArr[$val['id']] = $val['title'];
+            };
+
             $builder = new AdminConfigBuilder;
-            $builder->title("{$title}".lang('_ROLE_EXCLUSION_ONE_GROUP_'));
-            $builder->keyId()
+            $builder->title("{$title}");
+            $builder->suggest(lang('_ROLE_EXCLUSION_ONE_GROUP_'));
+            $builder
+                ->keyId()
                 ->keyText('title', lang('_TITLE_'))
-                ->keyChosen('roles', lang('_GROUP_IDENTITY_SELECTION_'), lang('_AN_IDENTITY_CAN_ONLY_EXIST_IN_ONE_GROUP_AT_THE_SAME_TIME_'), $roles)
+                ->keyChosen('roles', lang('_GROUP_IDENTITY_SELECTION_'), lang('_AN_IDENTITY_CAN_ONLY_EXIST_IN_ONE_GROUP_AT_THE_SAME_TIME_'), 
+                    $roles)
                 ->buttonSubmit()
                 ->buttonBack()
                 ->data($data)
@@ -658,12 +670,18 @@ class Role extends Admin
      */
     public function deleteGroup()
     {
-        $aGroupId = input('id', 0, 'intval');
-        if (!$aGroupId) {
+        $aGroupId = input('ids/a', 0, 'intval');
+        if(!is_array($aGroupId)){
+            $aGroupId= explode(',',$aGroupId);
+        } 
+
+        if (empty($aGroupId)) {
             $this->error(lang('_PARAMETER_ERROR_'));
         }
-        $this->roleModel->where(array('group_id' => $aGroupId))->setField('group_id', 0);
-        $result = $this->roleGroupModel->where(array('id' => $aGroupId))->delete();
+        $this->roleModel->where(['group_id' => ['in',$aGroupId]])->setField('group_id', 0);
+
+        $result = Db::name('RoleGroup')->where(['id' => ['in',$aGroupId]])->delete();
+
         if ($result) {
             $this->success(lang('_DELETE_SUCCESS_'));
         } else {

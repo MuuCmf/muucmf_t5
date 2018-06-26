@@ -90,11 +90,9 @@
             <{$button.tag} {$button.attr}>{$button.title|htmlspecialchars}</{$button.tag}>&nbsp;
         {/volist}
 
-
-
         {php}
             foreach($selects as $select){
-            if($_REQUEST[$select['name']])
+            if(empty($_REQUEST[$select['name']]))
                 {
                     $show=1;
                 }

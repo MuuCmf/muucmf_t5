@@ -421,7 +421,6 @@ class AdminConfigBuilder extends AdminBuilder
      * @param null $subtitle
      * @param $options
      * @return $this
-     * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
      */
     public function keyChosen($name, $title, $subtitle = null, $options)
     {
