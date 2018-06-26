@@ -29,7 +29,7 @@ $langSet == 'en' && $lang = array_combine(array_keys($lang), array_keys($lang));
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-    <title><?=$lang['An error occurred']?></title>
+    <title>An error occurred</title>
     <meta name="robots" content="noindex,nofollow" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <style>

@@ -1,13 +1,10 @@
 <?php
 return array(
+
     '_MUUCMF_' => 'MuuCmf开源内容管理框架',
     '_HOOMUU_WANTS_TO_DAY_MDT_INFOTECH_LTD_' => '北京火木科技有限公司',
     '_BUILT_IN_MUUCMF_' => 'MuuCmf开源内容管理框架',
-    '_FOLLOWERS_' => '关注',
-    '_SELF_' => '自己',
-    '_FOLLOWED_' => '已关注',
-    /*举报*/
-    '_REPORT_' => '举报',
+
     /*:Public*/
     '_SAVE_' => '保存',
     '_CANCEL_' => '取消',
@@ -70,7 +67,6 @@ return array(
     '_BRACKETS_RIGHT_' => '】',
     '_SLASH_' => '/',
 
-
     /*header*/
     '_TIP_BROWSER_DEPRECATED_1_' => '您正在使用',
     '_TIP_BROWSER_DEPRECATED_2_' => '过时的',
@@ -108,7 +104,6 @@ return array(
     /*controller*/
     '_TEMPLATE_NOT_EXIST_' => '模板不存在:',
 
-
     /*wid_GE_t*/
     '_FILE_SELECT_' => '选择文件',
     '_SHARE_TO_QQ_' => '分享到QQ空间',
@@ -125,27 +120,12 @@ return array(
     '_FAIL_UPLOAD_' => '上传失败',
     '_ERROR_UPLOAD_' => '上传出错',
 
-
-    /*SubMenu*/
-//    ''=>'顶级菜单A',
-//    ''=>'顶级菜单B',
-//    ''=>'顶级菜单C',
-//    ''=>'子菜单1',
-//    ''=>'子菜单2',
-//    ''=>'用户',
-//    ''=>'个人中心',
-//    ''=>'注销',
-//    ''=>'我的财富:20',
-//    ''=>'我的订单',
-
     /*core*/
     '_SUCCESS_UPLOAD_' => '上传成功',
     '_ERROR_PARAM_' => '参数错误',
     '_DOCUMENT_ID_INEXISTENT_' => '不存在的文档ID',
 
-    /*wid_GE_t*/
-
-//    group
+    //group
     '_GROUP_HOT_TOPIC_' => '热门群组话题',
     '_PEER_' => '人',
     '_NEED_' => '需',
@@ -173,7 +153,7 @@ return array(
     '_PEER_VIEW_' => '人浏览',
     '_PEER_REPLY_' => '人回复',
 
-//    weibo
+    //WEIBO
     '_NEWEST_WEIBO_' => '最新微博',
     '_FROM_' => '来自',
     '_WEBSITE_SIDE_' => '网站端',
@@ -189,7 +169,11 @@ return array(
     '_REPOST_' => '转发',
     '_COMMENT_' => '评论',
 
-//    ucenter
+    //ucenter
+    '_FOLLOWERS_' => '关注',
+    '_SELF_' => '自己',
+    '_FOLLOWED_' => '已关注',
+    '_REPORT_' => '举报',
     '_SELECT_NOT_' => '还未选择',
     '_NONE_' => '无',
     '_USERNAME_' => '用户名',

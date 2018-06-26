@@ -1,13 +1,10 @@
 <?php
 return array(
+
     '_MUUCMF_' => ' MuuCmf Content Management Framework',
     '_HOOMUU_WANTS_TO_DAY_MDT_INFOTECH_LTD_' => 'Beijing HooMuu technology Co., Ltd. ',
     '_BUILT_IN_MUUCMF_' => 'MuuCmf Content Management Framework',
-    '_FOLLOWERS_' => ' Pay attention to',
-    '_SELF_' => ' Own',
-    '_FOLLOWED_' => ' Has been concerned',
-    /*举报*/
-    '_REPORT_' => ' Report',
+
     /*:Public*/
     '_SAVE_' => ' Preservation',
     '_CANCEL_' => ' Cancel',
@@ -69,6 +66,8 @@ return array(
     '_BRACKETS_LEFT_' => ' [',
     '_BRACKETS_RIGHT_' => ' ]',
     '_SLASH_' => ' /',
+
+    /*header*/
     '_TIP_BROWSER_DEPRECATED_1_' => ' You are using',
     '_TIP_BROWSER_DEPRECATED_2_' => ' Out of date',
     '_TIP_BROWSER_DEPRECATED_3_' => ' Browser.',
@@ -94,12 +93,18 @@ return array(
     '_LOGIN_' => ' Sign in',
     '_REGISTER_' => ' Registered',
     '_ERROR_NEED_LOGIN_' => 'Need login',
+
+    /*footer*/
     '_ABOUT_US_' => ' About us',
     '_NOT_SET_NOW_' => ' Not set',
     '_FOLLOW_US_' => ' Pay attention to us',
     '_FRIENDLY_LINK_' => ' Link',
     '_RECORD_N_' => ' Filing number:',
+
+    /*controller*/
     '_TEMPLATE_NOT_EXIST_' => ' Template does not exist:',
+
+    /*wid_GE_t*/
     '_FILE_SELECT_' => ' Select file',
     '_SHARE_TO_QQ_' => ' Share to QQ space',
     '_SHARE_TO_SINA_' => ' Sharing to Sina Weibo',
@@ -114,10 +119,13 @@ return array(
     '_PIC_CLICK_TO_VIEW_BIGGER_' => ' Click to see the big picture.',
     '_FAIL_UPLOAD_' => ' Upload failed',
     '_ERROR_UPLOAD_' => ' Upload error',
-    '' => ' ',
+
+    /*core*/
     '_SUCCESS_UPLOAD_' => ' Upload success',
     '_ERROR_PARAM_' => ' Parameter error',
     '_DOCUMENT_ID_INEXISTENT_' => ' There is no document ID',
+
+    //group
     '_GROUP_HOT_TOPIC_' => ' Hot group topic',
     '_PEER_' => ' People',
     '_NEED_' => ' Required',
@@ -130,8 +138,10 @@ return array(
     '_REPLY_' => ' Reply',
     '_READ_' => ' Read',
     '_REPLY_LAST_TIME_' => ' Final reply time',
+    '_PUBLISH_' => '发布',
     '_GROUP_RECOMMEND_' => ' Recommended group',
     '_MEMBER_' => ' Members',
+    '_PLUS_' => '+',
     '_GE_' => ' A',
     '_GROUP_MANAGED_' => ' My management group',
     '_LZ_' => ' The landlord',
@@ -142,9 +152,10 @@ return array(
     '_AUTHOR_' => ' Author',
     '_PEER_VIEW_' => ' People browse',
     '_PEER_REPLY_' => ' Reply',
+
+    //WEIBO
     '_NEWEST_WEIBO_' => ' The latest micro Bo',
     '_REPOST_' => ' Forward',
-
     '_COMMENT_' => ' Comment',
     '_FROM_' => ' Come from',
     '_WEBSITE_SIDE_' => ' Website',
@@ -157,6 +168,12 @@ return array(
     '_PLACE_HOLDER_SAY_SOMETHING_' => ' Say something.',
     '_COMMENTS_CTRL_ENTER_' => ' Comment Ctrl+Enter',
     '_REPLY_VIEW_MORE_' => ' See more replies',
+
+    //ucenter
+    '_FOLLOWERS_' => ' Pay attention to',
+    '_SELF_' => ' Own',
+    '_FOLLOWED_' => ' Has been concerned',
+    '_REPORT_' => ' Report',
     '_SELECT_NOT_' => ' Still not chosen',
     '_NONE_' => ' No',
     '_USERNAME_' => ' User name',

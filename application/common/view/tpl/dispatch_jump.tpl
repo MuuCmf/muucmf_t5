@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>{:__('Warning')}</title>
+        <title>Warning</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style type="text/css">
             *{box-sizing:border-box;margin:0;padding:0;font-family:Lantinghei SC,Open Sans,Arial,Hiragino Sans GB,Microsoft YaHei,"微软雅黑",STHeiti,WenQuanYi Micro Hei,SimSun,sans-serif;-webkit-font-smoothing:antialiased}
@@ -33,11 +33,11 @@
             </div>
             <h1>{$msg}</h1>
             <p class="jump">
-                {:__('This page will be re-directed in %s seconds', '<span id="wait">' . $wait . '</span>')}
+                This page will be re-directed in <span id="wait"><?php echo($wait);?></span>
             </p>
             <p class="clearfix">
-                <a href="javascript:history.go(-1);" class="btn btn-grey">{:__('Go back')}</a>
-                <a href="{$url}" class="btn btn-primary">{:__('Jump now')}</a>
+                <a href="javascript:history.go(-1);" class="btn btn-grey">{:lang('Go back')}</a>
+                <a href="{$url}" class="btn btn-primary">{:lang('Jump now')}</a>
             </p>
         </div>
         <div class="copyright">
