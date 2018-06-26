@@ -41,8 +41,9 @@ class Role extends Admin
         $authGroupList = array_combine(array_column($authGroupList, 'id'), array_column($authGroupList, 'title'));
 
         foreach ($roleList as &$val) {
+
             $user_groups = explode(',', $val['user_groups']);
-            if($val['group_id']){
+            if($val['group_id'] && !empty($group)){
                 $val['group'] = $group[$val['group_id']]['title'];
             }
             
@@ -678,7 +679,7 @@ class Role extends Admin
         if (empty($aGroupId)) {
             $this->error(lang('_PARAMETER_ERROR_'));
         }
-        $this->roleModel->where(['group_id' => ['in',$aGroupId]])->setField('group_id', 0);
+        Db::name('Role')->where(['group_id' => ['in',$aGroupId]])->setField('group_id', 0);
 
         $result = Db::name('RoleGroup')->where(['id' => ['in',$aGroupId]])->delete();
 
