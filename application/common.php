@@ -2,29 +2,6 @@
 
 // 公共助手函数
 
-if (!function_exists('__')) {
-
-    /**
-     * 获取语言变量值
-     * @param string $name 语言变量名
-     * @param array $vars 动态变量值
-     * @param string $lang 语言
-     * @return mixed
-     */
-    function __($name, $vars = [], $lang = '')
-    {
-        if (is_numeric($name) || !$name)
-            return $name;
-        if (!is_array($vars)) {
-            $vars = func_get_args();
-            array_shift($vars);
-            $lang = '';
-        }
-        return \think\Lang::get($name, $vars, $lang);
-    }
-
-}
-
 if (!function_exists('format_bytes')) {
 
     /**
@@ -42,65 +19,6 @@ if (!function_exists('format_bytes')) {
     }
 
 }
-
-if (!function_exists('datetime')) {
-
-    /**
-     * 将时间戳转换为日期时间
-     * @param int $time 时间戳
-     * @param string $format 日期时间格式
-     * @return string
-     */
-    function datetime($time, $format = 'Y-m-d H:i:s')
-    {
-        $time = is_numeric($time) ? $time : strtotime($time);
-        return date($format, $time);
-    }
-
-}
-
-if (!function_exists('human_date')) {
-
-    /**
-     * 获取语义化时间
-     * @param int $time 时间
-     * @param int $local 本地时间
-     * @return string
-     */
-    function human_date($time, $local = null)
-    {
-        return \fast\Date::human($time, $local);
-    }
-
-}
-
-if (!function_exists('cdnurl')) {
-
-    /**
-     * 获取上传资源的CDN的地址
-     * @param string $url 资源相对地址
-     * @param boolean $domain 是否显示域名 或者直接传入域名
-     * @return string
-     */
-    function cdnurl($url, $domain = false)
-    {
-        $url = preg_match("/^https?:\/\/(.*)/i", $url) ? $url : \think\Config::get('upload.cdnurl') . $url;
-        if ($domain && !preg_match("/^(http:\/\/|https:\/\/)/i", $url)) {
-            if (is_bool($domain)) {
-                $public = \think\Config::get('view_replace_str.__PUBLIC__');
-                $url = rtrim($public, '/') . $url;
-                if (!preg_match("/^(http:\/\/|https:\/\/)/i", $url)) {
-                    $url = request()->domain() . $url;
-                }
-            } else {
-                $url = $domain . $url;
-            }
-        }
-        return $url;
-    }
-
-}
-
 
 if (!function_exists('is_really_writable')) {
 
@@ -198,77 +116,6 @@ if (!function_exists('mb_ucfirst')) {
 
 }
 
-if (!function_exists('addtion')) {
-
-    /**
-     * 附加关联字段数据
-     * @param array $items 数据列表
-     * @param mixed $fields 渲染的来源字段
-     * @return array
-     */
-    function addtion($items, $fields)
-    {
-        if (!$items || !$fields)
-            return $items;
-        $fieldsArr = [];
-        if (!is_array($fields)) {
-            $arr = explode(',', $fields);
-            foreach ($arr as $k => $v) {
-                $fieldsArr[$v] = ['field' => $v];
-            }
-        } else {
-            foreach ($fields as $k => $v) {
-                if (is_array($v)) {
-                    $v['field'] = isset($v['field']) ? $v['field'] : $k;
-                } else {
-                    $v = ['field' => $v];
-                }
-                $fieldsArr[$v['field']] = $v;
-            }
-        }
-        foreach ($fieldsArr as $k => &$v) {
-            $v = is_array($v) ? $v : ['field' => $v];
-            $v['display'] = isset($v['display']) ? $v['display'] : str_replace(['_ids', '_id'], ['_names', '_name'], $v['field']);
-            $v['primary'] = isset($v['primary']) ? $v['primary'] : '';
-            $v['column'] = isset($v['column']) ? $v['column'] : 'name';
-            $v['model'] = isset($v['model']) ? $v['model'] : '';
-            $v['table'] = isset($v['table']) ? $v['table'] : '';
-            $v['name'] = isset($v['name']) ? $v['name'] : str_replace(['_ids', '_id'], '', $v['field']);
-        }
-        unset($v);
-        $ids = [];
-        $fields = array_keys($fieldsArr);
-        foreach ($items as $k => $v) {
-            foreach ($fields as $m => $n) {
-                if (isset($v[$n])) {
-                    $ids[$n] = array_merge(isset($ids[$n]) && is_array($ids[$n]) ? $ids[$n] : [], explode(',', $v[$n]));
-                }
-            }
-        }
-        $result = [];
-        foreach ($fieldsArr as $k => $v) {
-            if ($v['model']) {
-                $model = new $v['model'];
-            } else {
-                $model = $v['name'] ? \think\Db::name($v['name']) : \think\Db::table($v['table']);
-            }
-            $primary = $v['primary'] ? $v['primary'] : $model->getPk();
-            $result[$v['field']] = $model->where($primary, 'in', $ids[$v['field']])->column("{$primary},{$v['column']}");
-        }
-
-        foreach ($items as $k => &$v) {
-            foreach ($fields as $m => $n) {
-                if (isset($v[$n])) {
-                    $curr = array_flip(explode(',', $v[$n]));
-
-                    $v[$fieldsArr[$n]['display']] = implode(',', array_intersect_key($result[$n], $curr));
-                }
-            }
-        }
-        return $items;
-    }
-
-}
 
 if (!function_exists('var_export_short')) {
 
@@ -310,8 +157,6 @@ if (!function_exists('var_export_short')) {
 function get_client_ip($type = 0, $adv = false)
 {
     $type = $type ? 1 : 0;
-    //static $ip  =   NULL;
-    // if ($ip !== NULL) return $ip[$type];
     if ($adv) {
         if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $arr = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);

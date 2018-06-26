@@ -1,6 +1,6 @@
 <?php
 
-namespace fast;
+namespace muucmf;
 
 /**
  * RSA签名类

@@ -1,6 +1,6 @@
 <?php
 
-namespace fast;
+namespace muucmf;
 
 /**
  * 中文转拼音类
