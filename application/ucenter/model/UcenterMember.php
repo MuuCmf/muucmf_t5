@@ -344,7 +344,7 @@ class UcenterMember extends Model
         $data = array(
             'id' => $uid,
             'last_login_time' => time(),
-            'last_login_ip' => get_client_ip(1),
+            'last_login_ip' => request()->ip(1),
         );
         $this->update($data);
     }

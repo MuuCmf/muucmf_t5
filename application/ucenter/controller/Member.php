@@ -80,7 +80,7 @@ class Member extends Controller
 
             /* 注册用户 */
 
-            $ucenterMemberModel = new UCenterMember;
+            $ucenterMemberModel = new UcenterMember;
             $uid =$ucenterMemberModel->register($aUsername, $aNickname, $aPassword, $email, $mobile, $aUnType);
             if (0 < $uid) { //注册成功
                 //echo $uid;exit;

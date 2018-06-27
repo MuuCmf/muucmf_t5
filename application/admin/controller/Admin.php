@@ -40,7 +40,7 @@ class Admin extends Controller
         
         if (!$this->is_root && config('ADMIN_ALLOW_IP')) {
             // 检查IP地址访问
-            if (!in_array(get_client_ip(), explode(',', config('ADMIN_ALLOW_IP')))) {
+            if (!in_array(request()->ip(), explode(',', config('ADMIN_ALLOW_IP')))) {
                 $this->error(lang('_FORBID_403_'));
             }
         }

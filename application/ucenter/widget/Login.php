@@ -57,6 +57,7 @@ class Login extends Controller
 
             if ($Member->login($uid, $aRemember == 1)) { //登录用户
                 //TODO:跳转到登录前页面
+                
                 $res['status']=1;
                 $res['info']=lang('_WELCOME_RETURN_');
                 $res['uid']=$uid;

@@ -89,7 +89,7 @@ class ActionLimit extends Model
 
     public function checkOne($item)
     {
-        $item['action_ip'] = $item['action_ip'] ? get_client_ip(1) : null;
+        $item['action_ip'] = $item['action_ip'] ? request()->ip(1) : null;
         foreach ($item as $k => $v) {
             if (empty($v)) {
                 unset($item[$k]);

@@ -1,19 +1,18 @@
 <?php
+namespace app\common\model;
 
-namespace Common\Model;
+use think\Model;
 
-use Think\Model;
-
-class AdvPosModel extends Model
+class AdvPos extends Model
 {
     protected $tableName = 'adv_pos';
 
     public function getInfo($name, $path)
     {
-        $adv_pos = S('adv_pos_by_pos_' .$path. $name);
+        $adv_pos = cache('adv_pos_by_pos_' .$path. $name);
         if ($adv_pos === false) {
             $adv_pos = $this->where(array('name' => $name, 'path' => $path, 'status' => 1))->find();
-            S('adv_pos_by_pos_'  .$path. $name,$adv_pos);
+            cache('adv_pos_by_pos_'  .$path. $name,$adv_pos);
         }
         return $adv_pos;
     }

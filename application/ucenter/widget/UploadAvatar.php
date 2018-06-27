@@ -1,8 +1,6 @@
 <?php
-
 namespace app\ucenter\widget;
 
-require_once(VENDOR_PATH.'PHPImageWorkshop/ImageWorkshop.php');
 use think\Controller;
 use think\Db;
 use PHPImageWorkshop\Core\ImageWorkshopLayer;

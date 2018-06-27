@@ -237,7 +237,7 @@ sql;
     $password = user_md5($admin['password'], $auth);
     $sql = str_replace(
         array('[PREFIX]', '[NAME]', '[PASS]', '[EMAIL]', '[TIME]', '[IP]', '[UID]'),
-        array($prefix, $admin['username'], $password, $admin['email'], time(), get_client_ip(1), $uid),
+        array($prefix, $admin['username'], $password, $admin['email'], time(), request()->ip(1), $uid),
         $sql);
     //执行sql
     $db->execute($sql);

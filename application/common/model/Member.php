@@ -29,7 +29,7 @@ class Member extends Model
     //修改器
     protected function setRegIpAttr()
     {
-        return request()->ip();
+        return request()->ip(1);
     }
     protected function setRegTimeAttr()
     {
@@ -178,12 +178,12 @@ class Member extends Model
         /* 更新登录信息 */
         $data = array(
             'uid' => $user['uid'],
-            'login' => array('exp', '`login`+1'),
             'last_login_time' => time(),
-            'last_login_ip' => get_client_ip(1),
+            'last_login_ip' => request()->ip(1),
             'last_login_role' => $user['last_login_role'],
         );
-        $this->update($data);
+        $this->save($data,['uid'=>$user['uid']]);
+        $this->where(['uid'=>$user['uid']])->setInc('login');
         //判断角色用户是否审核
         $map['uid'] = $user['uid'];
         $map['role_id'] = $user['last_login_role'];
