@@ -1,5 +1,4 @@
 <?php
-
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
@@ -16,7 +15,6 @@ use think\Session;
 
 class Captcha
 {
-
     protected $config = [
         'seKey'    => 'ThinkPHP.CN',
         // 验证码加密密钥
@@ -47,8 +45,9 @@ class Captcha
         'bg'       => [243, 251, 254],
         // 背景颜色
         'reset'    => true,
-            // 验证成功后是否重置
+        // 验证成功后是否重置
     ];
+
     private $_image = null; // 验证码图片实例
     private $_color = null; // 验证码字体颜色
 
@@ -57,7 +56,6 @@ class Captcha
      * @access public
      * @param  array $config 配置参数
      */
-
     public function __construct($config = [])
     {
         $this->config = array_merge($this->config, $config);
@@ -83,8 +81,7 @@ class Captcha
      */
     public function __set($name, $value)
     {
-        if (isset($this->config[$name]))
-        {
+        if (isset($this->config[$name])) {
             $this->config[$name] = $value;
         }
     }
@@ -112,19 +109,16 @@ class Captcha
         $key = $this->authcode($this->seKey) . $id;
         // 验证码不能为空
         $secode = Session::get($key, '');
-        if (empty($code) || empty($secode))
-        {
+        if (empty($code) || empty($secode)) {
             return false;
         }
         // session 过期
-        if (time() - $secode['verify_time'] > $this->expire)
-        {
+        if (time() - $secode['verify_time'] > $this->expire) {
             Session::delete($key, '');
             return false;
         }
 
-        if ($this->authcode(strtoupper($code)) == $secode['verify_code'])
-        {
+        if ($this->authcode(strtoupper($code)) == $secode['verify_code']) {
             $this->reset && Session::delete($key, '');
             return true;
         }
@@ -155,14 +149,11 @@ class Captcha
         // 验证码使用随机字体
         $ttfPath = __DIR__ . '/../assets/' . ($this->useZh ? 'zhttfs' : 'ttfs') . '/';
 
-        if (empty($this->fontttf))
-        {
-            $dir = dir($ttfPath);
+        if (empty($this->fontttf)) {
+            $dir  = dir($ttfPath);
             $ttfs = [];
-            while (false !== ($file = $dir->read()))
-            {
-                if ('.' != $file[0] && substr($file, -4) == '.ttf')
-                {
+            while (false !== ($file = $dir->read())) {
+                if ('.' != $file[0] && substr($file, -4) == '.ttf') {
                     $ttfs[] = $file;
                 }
             }
@@ -171,47 +162,40 @@ class Captcha
         }
         $this->fontttf = $ttfPath . $this->fontttf;
 
-        if ($this->useImgBg)
-        {
+        if ($this->useImgBg) {
             $this->_background();
         }
 
-        if ($this->useNoise)
-        {
+        if ($this->useNoise) {
             // 绘杂点
             $this->_writeNoise();
         }
-        if ($this->useCurve)
-        {
+        if ($this->useCurve) {
             // 绘干扰线
             $this->_writeCurve();
         }
 
         // 绘验证码
-        $code = []; // 验证码
+        $code   = []; // 验证码
         $codeNX = 0; // 验证码第N个字符的左边距
-        if ($this->useZh)
-        {
+        if ($this->useZh) {
             // 中文验证码
-            for ($i = 0; $i < $this->length; $i++)
-            {
+            for ($i = 0; $i < $this->length; $i++) {
                 $code[$i] = iconv_substr($this->zhSet, floor(mt_rand(0, mb_strlen($this->zhSet, 'utf-8') - 1)), 1, 'utf-8');
                 imagettftext($this->_image, $this->fontSize, mt_rand(-40, 40), $this->fontSize * ($i + 1) * 1.5, $this->fontSize + mt_rand(10, 20), $this->_color, $this->fontttf, $code[$i]);
             }
-        }
-        else
-        {
-            for ($i = 0; $i < $this->length; $i++)
-            {
+        } else {
+            for ($i = 0; $i < $this->length; $i++) {
                 $code[$i] = $this->codeSet[mt_rand(0, strlen($this->codeSet) - 1)];
                 $codeNX += mt_rand($this->fontSize * 1.2, $this->fontSize * 1.6);
                 imagettftext($this->_image, $this->fontSize, mt_rand(-40, 40), $codeNX, $this->fontSize * 1.6, $this->_color, $this->fontttf, $code[$i]);
             }
         }
+
         // 保存验证码
-        $key = $this->authcode($this->seKey);
-        $code = $this->authcode(strtoupper(implode('', $code)));
-        $secode = [];
+        $key                   = $this->authcode($this->seKey);
+        $code                  = $this->authcode(strtoupper(implode('', $code)));
+        $secode                = [];
         $secode['verify_code'] = $code; // 把校验码保存到session
         $secode['verify_time'] = time(); // 验证码创建时间
         Session::set($key . $id, $secode, '');
@@ -251,14 +235,11 @@ class Captcha
         $px1 = 0; // 曲线横坐标起始位置
         $px2 = mt_rand($this->imageW / 2, $this->imageW * 0.8); // 曲线横坐标结束位置
 
-        for ($px = $px1; $px <= $px2; $px = $px + 1)
-        {
-            if (0 != $w)
-            {
+        for ($px = $px1; $px <= $px2; $px = $px + 1) {
+            if (0 != $w) {
                 $py = $A * sin($w * $px + $f) + $b + $this->imageH / 2; // y = Asin(ωx+φ) + b
-                $i = (int) ($this->fontSize / 5);
-                while ($i > 0)
-                {
+                $i  = (int)($this->fontSize / 5);
+                while ($i > 0) {
                     imagesetpixel($this->_image, $px + $i, $py + $i, $this->_color); // 这里(while)循环画像素点比imagettftext和imagestring用字体大小一次画出（不用这while循环）性能要好很多
                     $i--;
                 }
@@ -266,22 +247,19 @@ class Captcha
         }
 
         // 曲线后部分
-        $A = mt_rand(1, $this->imageH / 2); // 振幅
-        $f = mt_rand(-$this->imageH / 4, $this->imageH / 4); // X轴方向偏移量
-        $T = mt_rand($this->imageH, $this->imageW * 2); // 周期
-        $w = (2 * M_PI) / $T;
-        $b = $py - $A * sin($w * $px + $f) - $this->imageH / 2;
+        $A   = mt_rand(1, $this->imageH / 2); // 振幅
+        $f   = mt_rand(-$this->imageH / 4, $this->imageH / 4); // X轴方向偏移量
+        $T   = mt_rand($this->imageH, $this->imageW * 2); // 周期
+        $w   = (2 * M_PI) / $T;
+        $b   = $py - $A * sin($w * $px + $f) - $this->imageH / 2;
         $px1 = $px2;
         $px2 = $this->imageW;
 
-        for ($px = $px1; $px <= $px2; $px = $px + 1)
-        {
-            if (0 != $w)
-            {
+        for ($px = $px1; $px <= $px2; $px = $px + 1) {
+            if (0 != $w) {
                 $py = $A * sin($w * $px + $f) + $b + $this->imageH / 2; // y = Asin(ωx+φ) + b
-                $i = (int) ($this->fontSize / 5);
-                while ($i > 0)
-                {
+                $i  = (int)($this->fontSize / 5);
+                while ($i > 0) {
                     imagesetpixel($this->_image, $px + $i, $py + $i, $this->_color);
                     $i--;
                 }
@@ -296,12 +274,10 @@ class Captcha
     private function _writeNoise()
     {
         $codeSet = '2345678abcdefhijkmnpqrstuvwxyz';
-        for ($i = 0; $i < 10; $i++)
-        {
+        for ($i = 0; $i < 10; $i++) {
             //杂点颜色
             $noiseColor = imagecolorallocate($this->_image, mt_rand(150, 225), mt_rand(150, 225), mt_rand(150, 225));
-            for ($j = 0; $j < 5; $j++)
-            {
+            for ($j = 0; $j < 5; $j++) {
                 // 绘杂点
                 imagestring($this->_image, 5, mt_rand(-10, $this->imageW), mt_rand(-10, $this->imageH), $codeSet[mt_rand(0, 29)], $noiseColor);
             }
@@ -315,13 +291,11 @@ class Captcha
     private function _background()
     {
         $path = dirname(__FILE__) . '/verify/bgs/';
-        $dir = dir($path);
+        $dir  = dir($path);
 
         $bgs = [];
-        while (false !== ($file = $dir->read()))
-        {
-            if ('.' != $file[0] && substr($file, -4) == '.jpg')
-            {
+        while (false !== ($file = $dir->read())) {
+            if ('.' != $file[0] && substr($file, -4) == '.jpg') {
                 $bgs[] = $path . $file;
             }
         }
@@ -337,12 +311,10 @@ class Captcha
     }
 
     /* 加密验证码 */
-
     private function authcode($str)
     {
         $key = substr(md5($this->seKey), 5, 8);
         $str = substr(md5($str), 8, 10);
         return md5($key . $str);
     }
-
 }
