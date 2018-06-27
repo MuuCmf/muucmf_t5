@@ -30,19 +30,23 @@ class Action extends Admin {
         }
 
         $map['status']    =   array('gt', -1);
-        $list   =   $this->lists('ActionLog', $map);
+        list($list,$page)   =   $this->lists('ActionLog', $map);
+        
+        $list = $list->toArray()['data'];
         int_to_string($list);
+        //dump($list);
         foreach ($list as $key=>$value){
-            $model_id                  =   get_document_field($value['model'],"name","id");
-            $list[$key]['model_id']    =   $model_id ? $model_id : 0;
+            //$model_id                  =   get_document_field($value['model'],"name","id");
+            //$list[$key]['model_id']    =   $model_id ? $model_id : 0;
             $list[$key]['ip']=long2ip($value['action_ip']);
         }
+
 
         $actionList = Db::name('Action')->select();
         $this->assign('action_list', $actionList);
 
         $this->assign('_list', $list);
-        $this->meta_title = lang('_BEHAVIOR_LOG_');
+        $this->setTitle(lang('_BEHAVIOR_LOG_'));
         return $this->fetch();
     }
 
@@ -55,7 +59,7 @@ class Action extends Admin {
     public function scoreLog($r=20,$p=1){
 
         if(input('type')=='clear'){
-            Db::name('ScoreLog')->where(array('id>0'))->delete();
+            Db::name('ScoreLog')->where(['id'=>['>',0]])->delete();
             $this->success('清空成功。',Url('scoreLog'));
             exit;
         }else{
@@ -95,12 +99,9 @@ class Action extends Admin {
 
             $listBuilder->search(lang('_SEARCH_'),'uid','text','输入UID');
 
-            $listBuilder->button('清空日志',array('url'=>Url('scoreLog',array('type'=>'clear')),'class'=>'btn ajax-get confirm'));
+            $listBuilder->button('清空日志',['url'=>Url('scoreLog',['type'=>'clear']),'class'=>'btn btn-danger ajax-get confirm']);
             $listBuilder->display();
         }
-
-
-
     }
 
     /**
@@ -110,11 +111,11 @@ class Action extends Admin {
     public function edit($id = 0){
         empty($id) && $this->error(lang('_PARAMETER_ERROR_'));
 
-        $info = M('ActionLog')->field(true)->find($id);
+        $info = Db::name('ActionLog')->field(true)->find($id);
 
         $this->assign('info', $info);
-        $this->meta_title = lang('_CHECK_THE_BEHAVIOR_LOG_');
-        $this->display();
+        $this->setTitle(lang('_CHECK_THE_BEHAVIOR_LOG_'));
+        return $this->fetch();
     }
 
     /**
@@ -129,7 +130,7 @@ class Action extends Admin {
         }elseif (is_numeric($ids)){
             $map['id'] = $ids;
         }
-        $res = M('ActionLog')->where($map)->delete();
+        $res = Db::name('ActionLog')->where($map)->delete();
         if($res !== false){
             $this->success(lang('_DELETE_SUCCESS_'));
         }else {
@@ -141,7 +142,7 @@ class Action extends Admin {
      * 清空日志
      */
     public function clear(){
-        $res = M('ActionLog')->where('1=1')->delete();
+        $res = Db::name('ActionLog')->where('1=1')->delete();
         if($res !== false){
             $this->success(lang('_LOG_EMPTY_SUCCESSFULLY_'));
         }else {
@@ -149,22 +150,25 @@ class Action extends Admin {
         }
     }
 
-        /**
+    /**
      * 导出csv
-     * @author 路飞<lf@ourstu.com>
      */
     public function csv()
     {
-        $aIds = input('ids', array());
+        $aIds = input('ids','','text');
 
+        if($aIds){
+            $aIds = explode(',',$aIds);
+        }
         if(count($aIds)) {
             $map['id'] = array('in', $aIds);
         } else {
             $map['status'] = 1;
         }
 
-        $list = M('ActionLog')->where($map)->order('create_time asc')->select();
-
+        $list = collection(Db::name('ActionLog')->where($map)->order('create_time asc')->select())->toArray();
+        //dump($list);exit;
+        
         $data = lang('_DATA_MORE_')."\n";
         foreach ($list as $val) {
             $val['create_time'] = time_format($val['create_time']);
@@ -184,6 +188,115 @@ class Action extends Admin {
         header('Pragma:public');
         header("Content-type:application/vnd.ms-excel;charset=utf-8");
         echo $data;
+    }
+
+
+    /**
+     * 用户行为列表
+     */
+    public function action()
+    {
+        
+        $aModule = $this->parseSearchKey('module');
+
+        is_null($aModule) && $aModule = -1;
+        if ($aModule != -1) {
+            $map['module'] = $aModule;
+        }
+        unset($_REQUEST['module']);
+        $this->assign('current_module', $aModule);
+        $map['status'] = array('gt', -1);
+        //获取列表数据
+        $Action = Db::name('Action')->where(['status' => ['gt', -1]]);
+
+        list($list,$page) = $this->lists($Action, $map);
+        
+        $list = $list->toArray()['data'];
+
+        lists_plus($list);
+
+        int_to_string($list);
+
+        // 记录当前列表页的cookie
+        Cookie('__forward__', $_SERVER['REQUEST_URI']);
+
+        $this->assign('_list', $list);
+
+        $module = model('Common/Module')->getAll();
+        foreach ($module as $key => $v) {
+            if ($v['is_setup'] == 0) {
+                unset($module[$key]);
+            }
+        }
+        $module = array_merge([array('name' => '', 'alias' => lang('_SYSTEM_'))], $module);
+
+        $this->assign('module', $module);
+
+        $this->setTitle(lang('_USER_BEHAVIOR_'));
+        return $this->fetch();
+    }
+
+    protected function parseSearchKey($key = null)
+    {
+        $action = request()->module() . '_' . request()->controller() . '_' . request()->action();
+        $post = input('post.');
+        if (empty($post)) {
+            $keywords = cookie($action);
+        } else {
+            $keywords = $post;
+            cookie($action, $post);
+            $_GET['page'] = 1;
+        }
+
+        if (empty($_GET['page'])) {
+            cookie($action, null);
+            $keywords = null;
+        }
+        return $key ? $keywords[$key] : $keywords;
+    }
+
+    /**
+     * 新增、编辑行为
+     * @author dameng <59262424@qq.com>
+     */
+    public function editAction()
+    {
+        $id = input('get.id');
+        //empty($id) && $this->error(lang('_PARAMETERS_CANT_BE_EMPTY_'));
+        if($id){
+            $data = Db::name('Action')->field(true)->find($id);
+        }else{
+            $data = [
+                'name'=>'',
+                'title'=>'',
+                'log'=>'',
+                'module'=>'',
+                'remark'=>'',
+                'rule'=>'',
+                'id'=>''
+                ];
+        }
+
+        $this->assign('data', $data);
+        $module = model('Module')->getAll();
+        $this->assign('module', $module);
+
+        $this->setTitle(lang('_EDITING_BEHAVIOR_'));
+        return $this->fetch();
+    }
+
+    /**
+     * 更新行为
+     * @author dameng <59262424@qq.com>
+     */
+    public function saveAction()
+    {
+        $res = model('Action')->updateAction();
+        if (!$res) {
+            $this->error(model('Action')->getError());
+        } else {
+            $this->success($res['id'] ? lang('_UPDATE_SUCCESS_') : lang('_NEW_SUCCESS_'), Cookie('__forward__'));
+        }
     }
 
 }

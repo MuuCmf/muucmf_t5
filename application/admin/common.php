@@ -186,18 +186,28 @@ function int_to_string(&$data, $map = ['status' => [1 => '启用', -1 => '删除
 
 function lists_plus(&$data)
 {
-    $alias = Db::name('module')->select();
+
+    $alias = db('module')->select();
+
     foreach ($alias as $value) {
         $alias_set[$value['name']] = $value['alias'];
     }
+    //dump($data);
+    
     foreach ($data as $key => $value) {
-        $data[$key]['alias'] = $alias_set[$data[$key]['module']];
-
-        $mid = Db::name('action_log')->field("max(create_time),remark")->where('action_id=' . $data[$key]['id'])->select();
+        if(empty($data[$key]['module'])){
+            $data[$key]['alias'] = '';
+        }else{
+            $data[$key]['alias'] = $alias_set[$data[$key]['module']];
+        }
+        
+        $mid = db('action_log')->field("max(create_time),remark")->where('action_id=' . $data[$key]['id'])->select();
         $mid_s = $mid[0]['remark'];
         if( isset($mid_s) && strpos($mid_s , lang('_INTEGRAL_')) !== false)
         {
-        $data[$key]['vary'] = $mid_s;
+            $data[$key]['vary'] = $mid_s;
+        }else{
+            $data[$key]['vary'] = '';
         }
 
     }
@@ -283,7 +293,7 @@ function get_action($id = null, $field = null)
     $list = cache('action_list');
     if (empty($list[$id])) {
         $map = array('status' => array('gt', -1), 'id' => $id);
-        $list[$id] = Db::name('Action')->where($map)->field(true)->find();
+        $list[$id] = db('Action')->where($map)->field(true)->find();
     }
     return empty($field) ? $list[$id] : $list[$id][$field];
 }

@@ -2,7 +2,7 @@
 
 namespace app\admin\controller;
 
-
+use think\Db;
 use app\admin\builder\AdminConfigBuilder;
 use app\admin\builder\AdminListBuilder;
 
@@ -13,37 +13,40 @@ class ActionLimit extends Admin
 {
     public function limitList()
     {
-        $action_name = I('get.action','','op_t') ;
-        !empty($action_name) && $map['action_list'] = array(array('like', '%[' . $action_name . ']%'),'','or');
+        $action_name = input('get.action','','text') ;
+        !empty($action_name) && $map['action_list'] = ['like', '%[' . $action_name . ']%','','or'];
         //读取规则列表
-        $map['status'] = array('EGT', 0);
-        $model = M('action_limit');
-        $List = $model->where($map)->order('id asc')->select();
+        $map['status'] = ['EGT', 0];
+        
+        $List = Db::name('action_limit')->where($map)->order('id asc')->select();
+
         $timeUnit = $this->getTimeUnit();
         foreach($List as &$val){
             $val['time'] =$val['time_number']. $timeUnit[$val['time_unit']];
             $val['action_list'] = get_action_name($val['action_list']);
-            empty( $val['action_list']) &&  $val['action_list'] = L('_ALL_ACTS_');
+            empty( $val['action_list']) &&  $val['action_list'] = lang('_ALL_ACTS_');
 
             $val['punish'] = get_punish_name($val['punish']);
-
-
         }
         unset($val);
         //显示页面
         $builder = new AdminListBuilder();
-        $builder->title(L('_ACTION_LIST_'))
-            ->buttonNew(U('editLimit'))
-            ->setStatusUrl(U('setLimitStatus'))->buttonEnable()->buttonDisable()->buttonDelete()
+        $builder
+            ->title(lang('_ACTION_LIST_'))
+            ->buttonNew(Url('editLimit'))
+            ->setStatusUrl(Url('setLimitStatus'))
+            ->buttonEnable()
+            ->buttonDisable()
+            ->buttonDelete()
             ->keyId()
             ->keyTitle()
-            ->keyText('name', L('_NAME_'))
-            ->keyText('frequency', L('_FREQUENCY_'))
-            ->keyText('time', L('_TIME_UNIT_'))
-            ->keyText('punish', L('_PUNISHMENT_'))
-            ->keyBool('if_message', L('_SEND_REMINDER_'))
-            ->keyText('message_content', L('_MESSAGE_PROMPT_CONTENT_'))
-            ->keyText('action_list', L('_ACT_'))
+            ->keyText('name', lang('_NAME_'))
+            ->keyText('frequency', lang('_FREQUENCY_'))
+            ->keyText('time', lang('_TIME_UNIT_'))
+            ->keyText('punish', lang('_PUNISHMENT_'))
+            ->keyBool('if_message', lang('_SEND_REMINDER_'))
+            ->keyText('message_content', lang('_MESSAGE_PROMPT_CONTENT_'))
+            ->keyText('action_list', lang('_ACT_'))
             ->keyStatus()
             ->keyDoActionEdit('editLimit?id=###')
             ->data($List)
@@ -52,76 +55,96 @@ class ActionLimit extends Admin
 
     public function editLimit()
     {
-        $aId = I('id', 0, 'intval');
-        $model = D('ActionLimit');
-        if (IS_POST) {
+        $aId = input('id', 0, 'intval');
+        $model = model('ActionLimit');
+        if (request()->isPost()) {
 
-            $data['title'] = I('post.title', '', 'op_t');
-            $data['name'] = I('post.name', '', 'op_t');
-            $data['frequency'] = I('post.frequency', 1, 'intval');
-            $data['time_number'] = I('post.time_number', 1, 'intval');
-            $data['time_unit'] = I('post.time_unit', '', 'op_t');
-            $data['punish'] = I('post.punish', '', 'op_t');
-            $data['if_message'] = I('post.if_message', '', 'op_t');
-            $data['message_content'] = I('post.message_content', '', 'op_t');
-            $data['action_list'] = I('post.action_list', '', 'op_t');
-            $data['status'] = I('post.status', 1, 'intval');
-            $data['module'] = I('post.module', '', 'op_t');
+            $data['title'] = input('post.title', '', 'text');
+            $data['name'] = input('post.name', '', 'text');
+            $data['frequency'] = input('post.frequency', 1, 'intval');
+            $data['time_number'] = input('post.time_number', 1, 'intval');
+            $data['time_unit'] = input('post.time_unit', '', 'text');
+            $data['punish'] = input('post.punish/a', array());
+            $data['if_message'] = input('post.if_message', '', 'text');
+            $data['message_content'] = input('post.message_content', '', 'text');
+            $data['action_list'] = input('post.action_list', '', 'text');
+            $data['status'] = input('post.status', 1, 'intval');
+            $data['module'] = input('post.module', '', 'text');
+            $data['id'] = $aId;
 
             $data['punish'] = implode(',', $data['punish']);
+            if($data['action_list']){
+                foreach($data['action_list'] as &$v){
+                    $v = '['.$v.']';
+                }
+                unset($v);
+                $data['action_list'] = implode(',', $data['action_list']);
+            }
 
-            foreach($data['action_list'] as &$v){
-                $v = '['.$v.']';
-            }
-            unset($v);
-            $data['action_list'] = implode(',', $data['action_list']);
-            if ($aId != 0) {
-                $data['id'] = $aId;
-                $res = $model->editActionLimit($data);
-            } else {
-                $res = $model->addActionLimit($data);
-            }
-            if($res){
-                $this->success(($aId == 0 ? L('_ADD_') : L('_EDIT_')) . L('_SUCCESS_'), $aId == 0 ? U('', array('id' => $res)) : '');
+            if($data['id']){
+                $res = Db::name('actionLimit')->where(['id'=>$data['id']])->update($data);
             }else{
-                $this->error($aId == 0 ? L('_THE_OPERATION_FAILED_') : L('_THE_OPERATION_FAILED_VICE_'));
+                unset($data['id']);
+                $res = Db::name('actionLimit')->insert($data);
+            }
+            
+            if($res){
+                $this->success(($aId == 0 ? lang('_ADD_') : lang('_EDIT_')) . lang('_SUCCESS_'), $aId == 0 ? Url('') : '');
+            }else{
+                $this->error($aId == 0 ? lang('_THE_OPERATION_FAILED_') : lang('_THE_OPERATION_FAILED_VICE_'));
             }
         } else {
             $builder = new AdminConfigBuilder();
 
-            $modules = D('Module')->getAll();
-            $module['all'] = L('_TOTAL_STATION_');
+            $modules = model('Module')->getAll();
+            $module['all'] = lang('_TOTAL_STATION_');
             foreach($modules as $k=>$v){
                 $module[$v['name']] = $v['alias'];
             }
 
             if ($aId != 0) {
-                $limit = $model->getActionLimit(array('id' => $aId));
+                $limit = Db::name('ActionLimit')->where(['id' => $aId])->find();
                 $limit['punish'] = explode(',', $limit['punish']);
                 $limit['action_list'] = str_replace('[','',$limit['action_list']);
                 $limit['action_list'] = str_replace(']','',$limit['action_list']);
                 $limit['action_list'] = explode(',', $limit['action_list']);
 
             } else {
-                $limit = array('status' => 1,'time_number'=>1);
+                $limit = [
+                    'status' => 1,
+                    'time_number'=>1,
+                    'time_unit'=>[],
+                    ];
             }
-            $opt_punish = $this->getPunish();
-            $opt = D('Action')->getActionOpt();
-            $builder->title(($aId == 0 ? L('_NEW_') : L('_EDIT_')) . L('_ACT_RESTRICTION_'))->keyId()
-                ->keyTitle()
-                ->keyText('name', L('_NAME_'))
-                ->keySelect('module', L('_MODULE_'),'',$module)
-                ->keyText('frequency', L('_FREQUENCY_'))
-                // ->keySelect('time_unit', L('_TIME_UNIT_'), '', $this->getTimeUnit())
-                ->keyMultiInput('time_number|time_unit',L('_TIME_UNIT_'),L('_TIME_UNIT_'),array(array('type'=>'text','style'=>'width:295px;margin-right:5px'),array('type'=>'select','opt'=>$this->getTimeUnit(),'style'=>'width:100px')))
 
-                ->keyChosen('punish', L('_PUNISHMENT_'), L('_MULTI_SELECT_'), $opt_punish)
-                ->keyBool('if_message', L('_SEND_REMINDER_'))
-                ->keyTextArea('message_content', L('_MESSAGE_PROMPT_CONTENT_'))
-                ->keyChosen('action_list', L('_ACT_'), L('_MULTI_SELECT_DEFAULT_'), $opt)
+            $opt_punish = $this->getPunish();
+
+            $opt = model('Action')->getActionOpt();
+            
+            $builder->title(($aId == 0 ? lang('_NEW_') : lang('_EDIT_')) . lang('_ACT_RESTRICTION_'))->keyId()
+                ->keyTitle()
+                ->keyText('name', lang('_NAME_'))
+                ->keySelect('module', lang('_MODULE_'),'',$module)
+                ->keyText('frequency', lang('_FREQUENCY_'))
+                ->keyMultiInput(
+                    'time_number|time_unit',
+                    lang('_TIME_UNIT_'),
+                    lang('_TIME_UNIT_'),
+                    [
+                        ['type'=>'text','placeholder'=>'时间单位','style'=>'width:295px;margin-right:5px'],
+                        ['type'=>'select','opt'=>get_time_unit(),'style'=>'width:100px']
+                    ]
+                )
+
+                ->keyChosen('punish', lang('_PUNISHMENT_'), lang('_MULTI_SELECT_'), $opt_punish)
+                ->keyBool('if_message', lang('_SEND_REMINDER_'))
+                ->keyTextArea('message_content', lang('_MESSAGE_PROMPT_CONTENT_'))
+                ->keyChosen('action_list', lang('_ACT_'), lang('_MULTI_SELECT_DEFAULT_'), $opt)
                 ->keyStatus()
                 ->data($limit)
-                ->buttonSubmit(U('editLimit'))->buttonBack()->display();
+                ->buttonSubmit(Url('editLimit'))
+                ->buttonBack()
+                ->display();
         }
     }
 
@@ -140,10 +163,8 @@ class ActionLimit extends Admin
 
     private function getPunish()
     {
-        $obj = new \ActionLimit();
+        $obj = model('ActionLimit');
         return $obj->punish;
 
     }
-
-
 }

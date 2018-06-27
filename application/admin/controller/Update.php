@@ -1,15 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: caipeichao
- * Date: 14-3-14
- * Time: AM10:59
- */
+namespace app\admin\controller;
 
-namespace Admin\Controller;
-
-use Admin\Builder\AdminConfigBuilder;
-use Admin\Builder\AdminListBuilder;
 use OT\Database;
 use OT\File;
 
@@ -19,12 +10,12 @@ use OT\File;
  * 升级文件命名规则：将升级文件压缩至update.zip
  * 数据库文件路径：./sql/update.sql
  */
-class UpdateController extends AdminController
+class Update extends Admin
 {
     protected $cloud;
     public function _initialize()
     {
-        $this->cloud = C('__CLOUD__').'/index.php?s=muucmf/sysupdate';
+        $this->cloud = config('__CLOUD__').'/index.php?s=muucmf/sysupdate';
         parent::_initialize();
     }
 
@@ -33,7 +24,7 @@ class UpdateController extends AdminController
     */
     private function localVersion()
     {
-        return File::read_file('./Data/version.ini');
+        return config('muucmf.version');
     }
     /*
     *获取云端最新系统版本

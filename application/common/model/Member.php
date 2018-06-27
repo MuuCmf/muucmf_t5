@@ -545,11 +545,9 @@ class Member extends Model
         }
         
         //调用接口获取用户信息
-        $info = Db::name('Member')->field('nickname')->find($uid);
-        if ($info !== false && $info['nickname']) {
-            $nickname = $info['nickname'];
-        }
-        return $nickname;
+        $info = db('Member')->where('uid','=',$uid)->value('nickname');
+
+        return $info;
     }
     /**
      * 获取用户初始化后积分值

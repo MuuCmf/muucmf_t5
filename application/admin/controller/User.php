@@ -558,31 +558,33 @@ class User extends Admin
         $builder->display();
     }
 
-    /**扩展分组排序
-     * @author 郑钟良<zzl@ourstu.com>
+    /**
+     * 扩展分组排序
      */
     public function sortProfile($ids = null)
     {
-        if (IS_POST) {
+        if (request()->isPost()) {
             $builder = new AdminSortBuilder();
             $builder->doSort('Field_group', $ids);
         } else {
             $map['status'] = array('egt', 0);
-            $list = D('field_group')->where($map)->order("sort asc")->select();
+            $list = Db::name('field_group')->where($map)->order("sort asc")->select();
             foreach ($list as $key => $val) {
                 $list[$key]['title'] = $val['profile_name'];
             }
             $builder = new AdminSortBuilder();
-            $builder->meta_title = lang('_GROUPS_SORT_');
+            $builder->title(lang('_GROUPS_SORT_'));
             $builder->data($list);
-            $builder->buttonSubmit(Url('sortProfile'))->buttonBack();
+            $builder
+                    ->buttonSubmit(Url('sortProfile'))
+                    ->buttonBack();
             $builder->display();
         }
     }
 
-    /**扩展字段列表
+    /**
+     * 扩展字段列表
      * @param $id
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function field($id)
     {
@@ -648,7 +650,8 @@ class User extends Admin
         $builder->display();
     }
 
-    /**分组排序
+    /**
+     * 分组排序
      * @param $id
      */
     public function sortField($id = '', $ids = null)
@@ -879,199 +882,13 @@ class User extends Admin
                 ->data($profile);
             $builder
                 ->buttonSubmit(Url('editProfile'), $id == 0 ? lang('_ADD_') : lang('_MODIFY_'))
-            ->buttonBack();
+                ->buttonBack();
             $builder->display();
         }
 
     }
 
-    /**
-     * 修改昵称初始化
-     * @author huajie <banhuajie@163.com>
-     */
-    public function updateNickname()
-    {
-        $nickname = model('Member')->getFieldByUid(UID, 'nickname');
-        $this->assign('nickname', $nickname);
-        $this->setTitle(lang('_MODIFY_NICKNAME_'));
-        return $this->fetch();
-    }
-
-    /**
-     * 修改昵称提交
-     * @author huajie <banhuajie@163.com>
-     *
-    public function submitNickname()
-    {
-        //获取参数
-        $nickname = input('post.nickname');
-        $password = input('post.password');
-        empty($nickname) && $this->error(lang('_PLEASE_ENTER_A_NICKNAME_'));
-        empty($password) && $this->error(lang('_PLEASE_ENTER_THE_PASSWORD_'));
-
-        //密码验证
-        $User = new UserApi();
-        $uid = $User->login(is_login(), $password, 4);
-        ($uid == -2) && $this->error(lang('_INCORRECT_PASSWORD_'));
-
-        $Member = Db::name('Member');
-        $data = $Member->create(array('nickname' => $nickname));
-        if (!$data) {
-            $this->error($Member->getError());
-        }
-
-        $res = $Member->where(array('uid' => $uid))->save($data);
-
-        if ($res) {
-            $user = session('user_auth');
-            $user['username'] = $data['nickname'];
-            session('user_auth', $user);
-            session('user_auth_sign', data_auth_sign($user));
-            $this->success(lang('_MODIFY_NICKNAME_SUCCESS_'));
-        } else {
-            $this->error(lang('_MODIFY_NICKNAME_FAILURE_'));
-        }
-    }
-    */
-
-    /**
-     * 修改密码初始化
-     * @author huajie <banhuajie@163.com>
-     */
-    public function updatePassword()
-    {
-        $this->setTitle(lang('_CHANGE_PASSWORD_'));
-        return $this->fetch();
-    }
-
-    /**
-     * 修改密码提交
-     * @author huajie <banhuajie@163.com>
-     */
-    public function submitPassword()
-    {
-        //获取参数
-        $password = input('post.old');
-        empty($password) && $this->error(lang('_PLEASE_ENTER_THE_ORIGINAL_PASSWORD_'));
-        $data['password'] = input('post.password');
-        empty($data['password']) && $this->error(lang('_PLEASE_ENTER_A_NEW_PASSWORD_'));
-        $repassword = input('post.repassword');
-        empty($repassword) && $this->error(lang('_PLEASE_ENTER_THE_CONFIRMATION_PASSWORD_'));
-
-        if ($data['password'] !== $repassword) {
-            $this->error(lang('_YOUR_NEW_PASSWORD_IS_NOT_CONSISTENT_WITH_THE_CONFIRMATION_PASSWORD_'));
-        }
-
-        $Api = new UserApi();
-        $res = $Api->updateInfo(UID, $password, $data);
-        if ($res['status']) {
-            $this->success(lang('_CHANGE_PASSWORD_SUCCESS_'));
-        } else {
-            $this->error(UCenterMember()->getErrorMessage($res['info']));
-        }
-    }
-
-    /**
-     * 用户行为列表
-     * @author huajie <banhuajie@163.com>
-     */
-    public function action()
-    {
-        
-        $aModule = $this->parseSearchKey('module');
-
-        is_null($aModule) && $aModule = -1;
-        if ($aModule != -1) {
-            $map['module'] = $aModule;
-        }
-        unset($_REQUEST['module']);
-        $this->assign('current_module', $aModule);
-        $map['status'] = array('gt', -1);
-        //获取列表数据
-        $Action = M('Action')->where(array('status' => array('gt', -1)));
-
-        $list = $this->lists($Action, $map);
-        lists_plus($list);
-        int_to_string($list);
-        // 记录当前列表页的cookie
-        Cookie('__forward__', $_SERVER['REQUEST_URI']);
-        $this->assign('_list', $list);
-        $module = D('Common/Module')->getAll();
-        foreach ($module as $key => $v) {
-            if ($v['is_setup'] == false) {
-                unset($module[$key]);
-            }
-        }
-        $module = array_merge(array(array('name' => '', 'alias' => lang('_SYSTEM_'))), $module);
-        $this->assign('module', $module);
-
-        $this->meta_title = lang('_USER_BEHAVIOR_');
-        $this->display();
-    }
-
-    protected function parseSearchKey($key = null)
-    {
-        $action = MODULE_NAME . '_' . CONTROLLER_NAME . '_' . ACTION_NAME;
-        $post = input('post.');
-        if (empty($post)) {
-            $keywords = cookie($action);
-        } else {
-            $keywords = $post;
-            cookie($action, $post);
-            $_GET['page'] = 1;
-        }
-
-        if (!$_GET['page']) {
-            cookie($action, null);
-            $keywords = null;
-        }
-        return $key ? $keywords[$key] : $keywords;
-    }
-
-    /**
-     * 新增用户行为
-     * @author dameng <59262424@qq.com>
-     */
-    public function addAction()
-    {
-        $module = model('Module')->getAll();
-        $this->setTitle(lang('_NEW_BEHAVIOR_'));
-        $this->assign('module', $module);
-        $this->assign('data', null);
-        return $this->fetch('editaction');
-    }
-
-    /**
-     * 编辑行为
-     */
-    public function editAction()
-    {
-        $id = input('get.id');
-        empty($id) && $this->error(lang('_PARAMETERS_CANT_BE_EMPTY_'));
-        $data = Db::name('Action')->field(true)->find($id);
-
-        $module = Db::name('Module')->getAll();
-
-        $this->assign('module', $module);
-        $this->assign('data', $data);
-
-        $this->setTitle(lang('_EDITING_BEHAVIOR_'));
-        return $this->fetch();
-    }
-
-    /**
-     * 更新行为
-     * @author dameng <59262424@qq.com>
-     */
-    public function saveAction()
-    {
-        $res = Db::name('Action')->update();
-        if (!$res) {
-            $this->error(Db::name('Action')->getError());
-        } else {
-            $this->success($res['id'] ? lang('_UPDATE_SUCCESS_') : lang('_NEW_SUCCESS_'), Cookie('__forward__'));
-        }
-    }
+    
 
     /**
      * 会员状态修改

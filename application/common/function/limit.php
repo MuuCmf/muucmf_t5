@@ -63,7 +63,16 @@ function get_time_ago($type = 'second', $some = 1, $time = null)
 }
 
 function get_time_unit($key = null){
-    $array = array('second' => lang('_TIME_SECOND_'), 'minute' => lang('_TIME_MINUTE_'), 'hour' => lang('_HOUR_'), 'day' => lang('_TIME_DAY_'), 'week' => lang('_TIME_WEEK_'), 'month' => lang('_TIME_MONTH_'), 'year' => lang('_TIME_YEAR_'));
+
+    $array = array(
+        'second' => lang('_TIME_SECOND_'), 
+        'minute' => lang('_TIME_MINUTE_'), 
+        'hour' => lang('_HOUR_'), 
+        'day' => lang('_TIME_DAY_'), 
+        'week' => lang('_TIME_WEEK_'), 
+        'month' => lang('_TIME_MONTH_'), 
+        'year' => lang('_TIME_YEAR_')
+    );
     return empty($key)?$array:$array[$key];
 }
 
@@ -138,7 +147,7 @@ function unitTime_to_showUnitTime($str='1 day')
 
 function get_punish_name($key){
     !is_array($key) && $key = explode(',',$key);
-    $obj =new \ActionLimit();
+    $obj =model('ActionLimit');
     $punish = $obj->punish;
     $return = array();
     foreach($key as $val){
@@ -155,7 +164,7 @@ function get_action_name($key){
     !is_array($key) && $key = explode(',',str_replace(array('[',']'),'',$key));
     $return = array();
     foreach($key as $val){
-        $return[] = D('Action')->where(array('name'=>$val))->getField('title');
+        $return[] = db('Action')->where(['name'=>$val])->value('title');
     }
     return implode(',',$return);
 }

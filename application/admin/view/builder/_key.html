@@ -462,12 +462,13 @@
     </script>
 {/case}
 
-    {case value="multiInput"}
-        <div class="clearfix" style="{$field['style']}">
-        {php}
-            $field['name'] = is_array($field['name'])?$field['name']:explode('|',$field['name']);
-            foreach($field['name'] as $key=>$val){
-        {/php}
+{case value="multiInput"}
+    <div class="clearfix" style="{$field['style']}">
+    {php}
+        $field['name'] = is_array($field['name'])?$field['name']:explode('|',$field['name']);
+        foreach($field['name'] as $key=>$val){
+
+    {/php}
         {switch name="field['config'][$key]['type']"}
             {case value="text"}
                 <input type="text" name="{$val}" value="{$field['value'][$key]|htmlspecialchars}"
@@ -479,19 +480,19 @@
                     {php}
                         $selected = $field['value'][$key]==$key_opt ? 'selected' : '';
                     {/php}
-                    <option value="{$key_opt}"{$selected}>{$option|htmlspecialchars}</option>
+                    <option value="{$key_opt}" {$selected}>{$option|htmlspecialchars}</option>
                     {php}}{/php}
                 </select>
             {/case}
         {/switch}
-        {php}
-            }
-        {/php}
-        </div>
-    {/case}
-    {case value="userDefined"}
-        {$field.definedHtml}
-    {/case}
+    {php}
+        }
+    {/php}
+    </div>
+{/case}
+{case value="userDefined"}
+    {$field.definedHtml}
+{/case}
 
     {default/}
     <span>{:lang("_ERROR_")}{:lang("_COLON_")}{:lang("_UNKNOWN_FIELD_TYPE_")}{$field.type}</span>

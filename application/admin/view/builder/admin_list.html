@@ -156,6 +156,7 @@
 
             <!-- 列表 -->
             <tbody>
+            {notempty name="list"}
             {volist name="list" id="e"}
                 <tr>
                     <td><input class="ids" type="checkbox" value="{$e['id']}" name="ids[]"></td>
@@ -165,6 +166,9 @@
                     {/volist}
                 </tr>
             {/volist}
+            {else /}
+                
+            {/notempty}
             </tbody>
         </table>
         <div class="page">

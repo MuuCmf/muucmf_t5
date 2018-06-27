@@ -6,6 +6,7 @@ use think\Db;
 
 class ActionLimit extends Model
 {
+
     var $item = array();
     var $state = true;
     var $url;
@@ -47,28 +48,9 @@ class ActionLimit extends Model
         $this->url = Url('index/index/index');
     }
 
-
-    public function addActionLimit($data)
-    {
-        $res = $this->add($data);
-        return $res;
-    }
-
-    public function getActionLimit($where){
-        $limit = $this->where($where)->find();
-        return $limit;
-    }
-
     public function getList($where){
         $list = collection($this->where($where)->select())->toArray();
         return $list;
-    }
-
-
-    public function editActionLimit($data)
-    {
-        $res = $this->save($data);
-        return $res;
     }
 
     public function addCheckItem($action = null, $model = null, $record_id = null, $user_id = null, $ip = false)

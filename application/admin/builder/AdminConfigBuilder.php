@@ -381,6 +381,7 @@ class AdminConfigBuilder extends AdminBuilder
 
             //修正在编辑信息时无法正常显示已经保存的地区信息/***修改的代码****/
             if (is_array($e['name'])) {
+
                 $i = 0;
                 $n = count($e['name']);
                 while ($n > 0) {
