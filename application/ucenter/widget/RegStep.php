@@ -17,12 +17,14 @@ class RegStep extends Controller
 
     public function view()
     {
-        $aStep = I('get.step','','op_t');
+        $aStep = input('get.step','','text');
         //调用方法输出参数
         if(method_exists($this,$aStep)){
+
             $this->$aStep();
         }
-        $this->display(T('Ucenter@Step/'.$aStep));
+
+        echo $this->fetch('Ucenter@Step/'.$aStep);
     }
 
     private function change_avatar()
@@ -31,7 +33,7 @@ class RegStep extends Controller
         if(empty($aUid)){
             $this->error(lang('_ERROR_PARAM_'));
         }
-        $this->assign('user',query_user(array('avatar128')));
+        $this->assign('user',query_user(array('avatar128'),$aUid));
         $this->assign('uid',$aUid);
     }
 
@@ -47,31 +49,31 @@ class RegStep extends Controller
 
     private function set_tag()
     {
-        $userTagLinkModel=D('Ucenter/UserTagLink');
         $aUid = get_uid();
         $aRole = get_role_id($aUid);
-        $userTagModel=D('Ucenter/UserTag');
+
         $map=getRoleConfigMap('user_tag',$aRole);
-        $ids=M('RoleConfig')->where($map)->getField('value');
+        $ids=Db::name('RoleConfig')->where($map)->value('value');
         if($ids){
             $ids=explode(',',$ids);
-            $tag_list=$userTagModel->getTreeListByIds($ids);
+            $tag_list=model('Ucenter/UserTag')->getTreeListByIds($ids);
             $this->assign('tag_list',$tag_list);
         }
         if(!count($tag_list)){
-            redirect(U('Ucenter/member/step', array('step' => get_next_step('set_tag'))));
+            redirect(Url('Ucenter/member/step', array('step' => get_next_step('set_tag'))));
         }
-        $myTags=$userTagLinkModel->getUserTag($aUid);
+        $myTags=model('Ucenter/UserTagLink')->getUserTag($aUid);
         $this->assign('my_tag',$myTags);
         $my_tag_ids=array_column($myTags,'id');
         $my_tag_ids=implode(',',$my_tag_ids);
         $this->assign('my_tag_ids',$my_tag_ids);
     }
+
     public function do_set_tag()
     {
-        $userTagLinkModel=D('Ucenter/UserTagLink');
-        $aTagIds=I('post.tag_ids','','op_t');
-        $result=$userTagLinkModel->editData($aTagIds);
+        
+        $aTagIds=input('post.tag_ids','','text');
+        $result=model('Ucenter/UserTagLink')->editData($aTagIds);
         if($result){
             $res['status']=1;
         }else{
@@ -83,13 +85,12 @@ class RegStep extends Controller
 
     /**获取用户扩展信息
      * @param null $uid
-     * @author 郑钟良<zzl@ourstu.com>
      */
     private function getExpandInfo($uid = null)
     {
         $profile_group_list = $this->_profile_group_list($uid);
         if(!count($profile_group_list)){
-            redirect(U('Ucenter/member/step', array('step' => get_next_step('expand_info'))));
+            redirect(Url('Ucenter/member/step', ['step' => get_next_step('expand_info')]));
         }
         foreach ($profile_group_list as &$v) {
             $v['fields']=$this->_info_list($v['id']);;
@@ -99,19 +100,18 @@ class RegStep extends Controller
 
     /**扩展信息分组列表获取
      * @return mixed
-     * @author 郑钟良<zzl@ourstu.com>
      */
     private function _profile_group_list($uid = null)
     {
-        $profile_group_list=array();
+        $profile_group_list=[];
         $fields_list=$this->getRoleFieldIds($uid);
         if($fields_list){
-            $fields_group_ids=D('FieldSetting')->where(array('id'=>array('in',$fields_list), 'status' => '1'))->field('profile_group_id')->select();
+            $fields_group_ids=Db::name('FieldSetting')->where(['id'=>['in',$fields_list], 'status' => '1'])->field('profile_group_id')->select();
             if(count($fields_group_ids)){
                 $fields_group_ids=array_unique(array_column($fields_group_ids,'profile_group_id'));
                 $map['id']=array('in',$fields_group_ids);
                 $map['status'] = 1;
-                $profile_group_list = D('field_group')->where($map)->order('sort asc')->select();
+                $profile_group_list = Db::name('field_group')->where($map)->order('sort asc')->select();
             }
         }
         return $profile_group_list;
@@ -119,13 +119,13 @@ class RegStep extends Controller
 
     private function getRoleFieldIds($uid=null){
         $role_id=get_role_id($uid);
-        $fields_list=S('Role_Register_Expend_Info_'.$role_id);
+        $fields_list=cache('Role_Register_Expend_Info_'.$role_id);
         if(!$fields_list){
             $map_role_config=getRoleConfigMap('register_expend_field',$role_id);
-            $fields_list=D('RoleConfig')->where($map_role_config)->getField('value');
+            $fields_list=Db::name('RoleConfig')->where($map_role_config)->value('value');
             if($fields_list){
                 $fields_list=explode(',',$fields_list);
-                S('Role_Register_Expend_Info_'.$role_id,$fields_list,600);
+                cache('Role_Register_Expend_Info_'.$role_id,$fields_list,600);
             }
         }
         return $fields_list;
@@ -134,12 +134,11 @@ class RegStep extends Controller
     /**分组下的字段信息及相应内容
      * @param null $id 扩展分组id
      * @param null $uid
-     * @author 郑钟良<zzl@ourstu.com>
      */
     private function _info_list($id = null, $uid = null)
     {
         $fields_list=$this->getRoleFieldIds($uid);
-        $field_setting_list = D('field_setting')->where(array('profile_group_id' => $id, 'status' => '1','id'=>array('in',$fields_list)))->order('sort asc')->select();
+        $field_setting_list = Db::name('field_setting')->where(['profile_group_id' => $id, 'status' => '1','id'=>['in',$fields_list]])->order('sort asc')->select();
         if (!$field_setting_list) {
             return null;
         }
@@ -229,19 +228,19 @@ class RegStep extends Controller
         }
         return $data;
     }
-    /**修改用户扩展信息
-     * @author 郑钟良<zzl@ourstu.com>
+    /**
+     * 修改用户扩展信息
      */
     public function edit_expandinfo()
     {
         $field_list=$this->getRoleFieldIds();
         if($field_list){
-            $map_field['id']=array('in',$field_list);
+            $map_field['id']=['in',$field_list];
         }else{
             $this->error(lang('_ERROR_INFO_SAVE_NONE_').lang('_EXCLAMATION_'));
         }
         $map_field['status']=1;
-        $field_setting_list = D('field_setting')->where($map_field)->order('sort asc')->select();
+        $field_setting_list = Db::name('field_setting')->where($map_field)->order('sort asc')->select();
 
         if (!$field_setting_list) {
             $this->error(lang('_ERROR_INFO_MODIFY_NONE_').lang('_EXCLAMATION_'));
@@ -253,7 +252,7 @@ class RegStep extends Controller
             $data[$key]['field_id'] = $val['id'];
             switch ($val['form_type']) {
                 case 'input':
-                    $val['value'] = op_t($_POST['expand_' . $val['id']]);
+                    $val['value'] = text($_POST['expand_' . $val['id']]);
                     if (!$val['value'] || $val['value'] == '') {
                         if ($val['required'] == 1) {
                             $this->error($val['field_name'] . lang('_ERROR_CONTENT_CANNOT_EMPTY_').lang('_EXCLAMATION_'));
@@ -267,7 +266,7 @@ class RegStep extends Controller
                     $data[$key]['field_data'] = $val['value'];
                     break;
                 case 'radio':
-                    $val['value'] = op_t($_POST['expand_' . $val['id']]);
+                    $val['value'] = text($_POST['expand_' . $val['id']]);
                     $data[$key]['field_data'] = $val['value'];
                     break;
                 case 'checkbox':
@@ -278,16 +277,16 @@ class RegStep extends Controller
                     $data[$key]['field_data'] = is_array($val['value']) ? implode('|', $val['value']) : '';
                     break;
                 case 'select':
-                    $val['value'] = op_t($_POST['expand_' . $val['id']]);
+                    $val['value'] = text($_POST['expand_' . $val['id']]);
                     $data[$key]['field_data'] = $val['value'];
                     break;
                 case 'time':
-                    $val['value'] = op_t($_POST['expand_' . $val['id']]);
+                    $val['value'] = text($_POST['expand_' . $val['id']]);
                     $val['value'] = strtotime($val['value']);
                     $data[$key]['field_data'] = $val['value'];
                     break;
                 case 'textarea':
-                    $val['value'] = op_t($_POST['expand_' . $val['id']]);
+                    $val['value'] = text($_POST['expand_' . $val['id']]);
                     if (!$val['value'] || $val['value'] == '') {
                         if ($val['required'] == 1) {
                             $this->error($val['field_name'] .lang('_ERROR_CONTENT_CANNOT_EMPTY_').lang('_EXCLAMATION_'));
@@ -313,18 +312,18 @@ class RegStep extends Controller
             $dl['role_id']=$map['role_id'];
 
             $map['field_id'] = $dl['field_id'];
-            $res = D('field')->where($map)->find();
+            $res = Db::name('field')->where($map)->find();
             if (!$res) {
                 if ($dl['field_data'] != '' && $dl['field_data'] != null) {
                     $dl['createTime'] = $dl['changeTime'] = time();
-                    if (!D('field')->add($dl)) {
+                    if (!Db::name('field')->insert($dl)) {
                         $result['info']=lang('_ERROR_INFO_ADD_').lang('_EXCLAMATION_');
                         $result['status']=0;
                     }
                 }
             } else {
                 $dl['changeTime'] = time();
-                if (!D('field')->where('id=' . $res['id'])->save($dl)) {
+                if (!Db::name('field')->where('id=' . $res['id'])->update($dl)) {
                     $result['info']=lang('_ERROR_INFO_MODIFY_').lang('_EXCLAMATION_');
                     $result['status']=0;
                 }

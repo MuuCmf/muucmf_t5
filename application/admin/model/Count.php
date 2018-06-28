@@ -235,16 +235,12 @@ class Count extends Model
     /**
      * 获取分页流失率统计
      * @param $map
-     * @param int $page
-     * @param int $r
      * @return array
-     * @author 郑钟良<zzl@ourstu.com>
      */
-    public function getLostListPage($map,$page=1,$r=20)
+    public function getLostListPage($map)
     {
-        $totalCount=Db::name('CountLost')->where($map)->count();
-        $list=Db::name('CountLost')->where($map)->page($page,$r)->order('id desc')->select();
-        return array($list,$totalCount);
+        $list=Db::name('CountLost')->where($map)->order('id desc')->paginate(20);
+        return $list;
     }
 
     /**

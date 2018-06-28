@@ -426,22 +426,22 @@ class Member extends Model
         //默认用户组设置 end
 
         $map['role_id'] = $role_id;
-        $map['name'] = array('in', array('score', 'rank'));
+        $map['name'] = ['in', array('score', 'rank')];
         $config = Db::name('RoleConfig')->where($map)->select();
         $config = array_combine(array_column($config, 'name'), $config);
 
-
+        
         //默认积分设置
         if (isset($config['score']['value'])) {
             $value = json_decode($config['score']['value'], true);
-            $data = $this->getUserScore($role_id, $uid, $value);
-            $user = $this->where(array('uid' => $uid))->find();
-            foreach ($data as $key => $val) {
+
+            $user = $this->where(['uid' => $uid])->find();
+            foreach ($value as $key => $val) {
                 if ($val > 0) {
                     if (isset($user[$key])) {
-                        $this->where(array('uid' => $uid))->setInc($key, $val);
+                        $this->where(['uid' => $uid])->setInc($key, $val);
                     } else {
-                        $this->where(array('uid' => $uid))->setField($key, $val);
+                        $this->where(['uid' => $uid])->setField($key, $val);
                     }
                 }
             }
@@ -549,42 +549,7 @@ class Member extends Model
 
         return $info;
     }
-    /**
-     * 获取用户初始化后积分值
-     * @param $role_id 当前初始化角色
-     * @param $uid 初始化用户
-     * @param $value 初始化角色积分配置值
-     * @return array
-     */
-    private function getUserScore($role_id, $uid, $value)
-    {
-        $roleConfigModel = model('RoleConfig');
-        $userRoleModel = model('UserRole');
-
-        $map['role_id'] = array('neq', $role_id);
-        $map['uid'] = $uid;
-        $map['init'] = 1;
-        $role_list = $userRoleModel->where($map)->select();
-        $role_ids = array_column($role_list, 'role_id');
-        $map_config['role_id'] = array('in', $role_ids);
-        $map_config['name'] = 'score';
-        $config_list = $roleConfigModel->where($map_config)->field('value')->select();
-        $change = array();
-        foreach ($config_list as &$val) {
-            $val = json_decode($val['value'], true);
-        }
-        unset($val);
-        unset($config_list[0]['score1']);
-        foreach ($value as $key => $val) {
-            $config_list = list_sort_by($config_list, $key, 'desc');
-            if ($val > $config_list[0][$key]) {
-                $change[$key] = $val - $config_list[0][$key];
-            } else {
-                $change[$key] = 0;
-            }
-        }
-        return $change;
-    }
+    
     /**
      * 初始关注用户
      * @param  integer $uid [description]

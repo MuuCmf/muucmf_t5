@@ -1,23 +1,17 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 16-7-22
- * Time: 上午9:46
- * @author 郑钟良<zzl@ourstu.com>
- */
+namespace app\admin\controller;
 
-namespace Admin\Controller;
+use think\Db;
 
-class CountController extends AdminController{
+class Count extends Admin{
 
     protected $countModel;
 
     public function _initialize()
     {
         parent::_initialize();
-        $this->assign('now_table',ACTION_NAME);
-        $this->countModel=D('Count');
+        $this->assign('now_table',request()->action());
+        $this->countModel=model('Count');
     }
 
     /**
@@ -26,25 +20,25 @@ class CountController extends AdminController{
      */
     public function index()
     {
-        if(IS_POST){
-            $count_day=I('post.count_day', C('COUNT_DAY'),'intval',7);
+        if(request()->isPost()){
+            $count_day=input('post.count_day', C('COUNT_DAY'),'intval',7);
             if(M('Config')->where(array('name'=>'COUNT_DAY'))->setField('value',$count_day)===false){
                 $this->error("设置失败！");
             }else{
-                S('DB_CONFIG_DATA',null);
+                cache('DB_CONFIG_DATA',null);
                 $this->success("设置成功！",'refresh');
             }
 
         }else{
-            $this->meta_title = L('_INDEX_MANAGE_');
+            $this->meta_title = lang('_INDEX_MANAGE_');
             $today = date('Y-m-d', time());
             $today = strtotime($today);
-            $count_day = C('COUNT_DAY',null,7);
+            $count_day = config('COUNT_DAY',null,7);
             $count['count_day']=$count_day;
             for ($i = $count_day; $i--; $i >= 0) {
                 $day = $today - $i * 86400;
                 $day_after = $today - ($i - 1) * 86400;
-                $week_map=array('Mon'=>L('_MON_'),'Tue'=>L('_TUES_'),'Wed'=>L('_WEDNES_'),'Thu'=>L('_THURS_'),'Fri'=>L('_FRI_'),'Sat'=>'<strong>'.L('_SATUR_').'</strong>','Sun'=>'<strong>'.L('_SUN_').'</strong>');
+                $week_map=array('Mon'=>lang('_MON_'),'Tue'=>lang('_TUES_'),'Wed'=>lang('_WEDNES_'),'Thu'=>lang('_THURS_'),'Fri'=>lang('_FRI_'),'Sat'=>'<strong>'.lang('_SATUR_').'</strong>','Sun'=>'<strong>'.lang('_SUN_').'</strong>');
                 $week[] = date('m月d日 ', $day). $week_map[date('D',$day)];
                 $user = UCenterMember()->where('status=1 and reg_time >=' . $day . ' and reg_time < ' . $day_after)->count() * 1;
                 $registeredMemeberCount[] = $user;
@@ -71,40 +65,35 @@ class CountController extends AdminController{
 
     /**
      * 流失率统计
-     * @author 郑钟良<zzl@ourstu.com>
      */
-    public function lost($page=1,$r=10)
+    public function lost($r=10)
     {
-        if(IS_POST){
-            $aLostLong=I('post.lost_long',30,'intval');
+        if(request()->isPost()){
+            $aLostLong=input('post.lost_long',30,'intval');
             if($aLostLong>=1){
-                if(M('Config')->where(array('name'=>'LOST_LONG'))->setField('value',$aLostLong)===false){
+                if(Db::name('Config')->where(array('name'=>'LOST_LONG'))->setField('value',$aLostLong)===false){
                     $this->error("设置失败！");
                 }else{
-                    S('DB_CONFIG_DATA',null);
+                    cache('DB_CONFIG_DATA',null);
                     $this->success("设置成功！");
                 }
             }
         }else{
-            $day=C('LOST_LONG',null,30);
+            $day=config('LOST_LONG',null,30);
             $this->assign('lost_long',$day);
-            list($lostList,$totalCount)=$this->countModel->getLostListPage($map=1,$page,$r);
+            $lostList=$this->countModel->getLostListPage([]);
+
+            $page = $lostList->render();
+            
             foreach($lostList as &$val){
                 $val['date']=time_format($val['date'],'Y-m-d');
                 $val['rate']=($val['rate']*100)."%";
             }
             unset($val);
             $this->assign('lostList',$lostList);
-
-            //生成翻页HTML代码
-            C('VAR_PAGE', 'page');
-            $pager = new \Think\Page($totalCount,$r, $_REQUEST);
-            $pager->setConfig('theme', '%UP_PAGE% %LINK_PAGE% %DOWN_PAGE% %HEADER%');
-            $paginationHtml = $pager->show();
-
-            $this->assign('pagination', $paginationHtml);
-            $this->meta_title = '流失率统计';
-            $this->display();
+            $this->assign('page', $page);
+            $this->setTitle('流失率统计');
+            return $this->fetch();
         }
     }
 
@@ -114,9 +103,9 @@ class CountController extends AdminController{
      */
     public function remain()
     {
-        if(IS_POST){
-            $aStartTime=I('post.startDate','','text');
-            $aEndTime=I('post.endDate','','text');
+        if(request()->isPost()){
+            $aStartTime=input('post.startDate','','text');
+            $aEndTime=input('post.endDate','','text');
             if($aStartTime==''||$aEndTime==''){
                 $this->error('请选择时间段!');
             }
@@ -124,7 +113,7 @@ class CountController extends AdminController{
             $endTime=strtotime($aEndTime);
             $remainList=$this->countModel->getRemainList($startTime,$endTime);
             $this->assign('remainList',$remainList);
-            $html=$this->fetch(T('Application://Admin@Count/_remain_data'));
+            $html=$this->fetch('Count/_remain_data');
             $this->show($html);
         }else{
             $today=date('Y-m-d 00:00',time());
@@ -134,8 +123,8 @@ class CountController extends AdminController{
             $options=array('startDate'=>time_format(strtotime($today." - 9 day"),"Y-m-d"),'endDate'=>time_format(strtotime($today." - 2 day"),"Y-m-d"));
             $this->assign('options',$options);
             $this->assign('remainList',$remainList);
-            $this->meta_title = '留存率统计';
-            $this->display();
+            $this->setTitle('留存率统计');
+            return $this->fetch();
         }
     }
 
@@ -145,10 +134,10 @@ class CountController extends AdminController{
      */
     public function active()
     {
-        if(IS_POST){
-            $aType=I('post.type','day','text');
-            $aStartTime=I('post.startDate','','text');
-            $aEndTime=I('post.endDate','','text');
+        if(request()->isPost()){
+            $aType=input('post.type','day','text');
+            $aStartTime=input('post.startDate','','text');
+            $aEndTime=input('post.endDate','','text');
             if($aStartTime==''||$aEndTime==''){
                 $this->error('请选择时间段!');
             }
@@ -161,7 +150,7 @@ class CountController extends AdminController{
             $activeList['status']=1;
             $this->ajaxReturn($activeList);
         }else{
-            $aType=I('get.type','day','text');
+            $aType=input('get.type','day','text');
             switch($aType){
                 case 'week':
                     $startTime=strtotime(date('Y-m-d').' - '.date('w').' day - 91 day');
@@ -180,8 +169,8 @@ class CountController extends AdminController{
             $activeList=$this->countModel->getActiveList($startTime,time(),$aType);
             $this->assign('activeList',json_encode($activeList));
             //dump($activeList);exit;
-            $this->meta_title = '活跃用户统计';
-            $this->display();
+            $this->setTitle('活跃用户统计');
+            return $this->fetch();
         }
     }
 
@@ -191,22 +180,22 @@ class CountController extends AdminController{
      */
     public function setActiveAction()
     {
-        if(IS_POST){
-            $aActiveAction=I('post.active_action',3,'intval');
-            if(M('Config')->where(array('name'=>'COUNT_ACTIVE_ACTION'))->setField('value',$aActiveAction)===false){
+        if(request()->isPost()){
+            $aActiveAction=input('post.active_action',3,'intval');
+            if(Db::name('Config')->where(['name'=>'COUNT_ACTIVE_ACTION'])->setField('value',$aActiveAction)===false){
                 $this->error("设置失败！");
             }else{
-                S('DB_CONFIG_DATA',null);
+                cache('DB_CONFIG_DATA',null);
                 $this->success("设置成功！");
             }
         }else{
             $map['status']=1;
-            $actionList=D('Action')->getAction($map);
+            $actionList=model('Action')->getAction($map);
             $this->assign('action_list',$actionList);
-            $nowAction=C('COUNT_ACTIVE_ACTION',null,3);
+            $nowAction=config('COUNT_ACTIVE_ACTION',null,3);
             $this->assign('now_active_action',$nowAction);
             $this->meta_title = '设置活跃度绑定的行为';
-            $this->display('set_active_action');
+            return $this->fetch('set_active_action');
         }
     }
 
@@ -214,18 +203,18 @@ class CountController extends AdminController{
      * 在线用户列表
      * @author:zzl(郑钟良) zzl@ourstu.com
      */
-    public function nowUserList($page=1,$r=20)
+    public function nowUserList($r=20)
     {
-        if(C('SESSION_TYPE')!='db'){
+        if(config('SESSION_TYPE')!='db'){
             $this->error('当前只支持session存入数据库的情况下进行在线用户列表统计！');
         }
-        $sessionModel=M('Session');
+        $sessionModel=Db::name('Session');
         $map['session_expire']=array('gt',time());
         $totalCount=$sessionModel->where($map)->count()*1;
         $map['session_data']=array('neq','');
         $loginCount=$sessionModel->where($map)->count()*1;
         $userList=$sessionModel->where($map)->page($page,$r)->field('session_id,session_expire')->select();
-        $memberModel=M('Member');
+        $memberModel=Db::name('Member');
         foreach ($userList as &$val){
             $user=$memberModel->where(array('session_id'=>$val['session_id']))->find();
             if(!$user){

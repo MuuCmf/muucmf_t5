@@ -31,7 +31,7 @@ function get_city_by_ip($ip)
     $ip = $ipinfo->data->ip; //IP地址
     $ips = $ipinfo->data->isp; //运营商
     $guo = $ipinfo->data->country; //国家
-    if ($guo == L('_CHINA_')) {
+    if ($guo == lang('_CHINA_')) {
         $guo = '';
     }
     return $guo . $city . $ips . '[' . $ip . ']';
@@ -49,11 +49,11 @@ function get_city_by_ip($ip)
  */
 function send_mail($to = '', $subject = '', $body = '', $name = '', $attachment = null)
 {
-    $host = C('MAIL_SMTP_HOST');
-    $user = C('MAIL_SMTP_USER');
-    $pass = C('MAIL_SMTP_PASS');
+    $host = config('MAIL_SMTP_HOST');
+    $user = config('MAIL_SMTP_USER');
+    $pass = config('MAIL_SMTP_PASS');
     if (empty($host) || empty($user) || empty($pass)) {
-        return L('_THE_ADMINISTRATOR_HAS_NOT_YET_CONFIGURED_THE_MESSAGE_INFORMATION_PLEASE_CONTACT_THE_ADMINISTRATOR_CONFIGURATION_');
+        return lang('_THE_ADMINISTRATOR_HAS_NOT_YET_CONFIGURED_THE_MESSAGE_INFORMATION_PLEASE_CONTACT_THE_ADMINISTRATOR_CONFIGURATION_');
     }
 
     if (is_sae()) {
@@ -74,9 +74,9 @@ function send_mail($to = '', $subject = '', $body = '', $name = '', $attachment 
  */
 function sae_mail($to = '', $subject = '', $body = '', $name = '')
 {
-    $site_name = modC('WEB_SITE_NAME', L('_MUUCMF_'), 'Config');
+    $site_name = modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config');
     if ($to == '') {
-        $to = C('MAIL_SMTP_CE'); //邮件地址为空时，默认使用后台默认邮件测试地址
+        $to = config('MAIL_SMTP_CE'); //邮件地址为空时，默认使用后台默认邮件测试地址
     }
     if ($name == '') {
         $name = $site_name; //发送者名称为空时，默认使用网站名称
@@ -118,12 +118,11 @@ function is_local()
  */
 function send_mail_local($to = '', $subject = '', $body = '', $name = '', $attachment = null)
 {
-    $from_email = C('MAIL_SMTP_USER');
-    $from_name = modC('WEB_SITE_NAME', L('_MUUCMF_'), 'Config');
+    $from_email = config('MAIL_SMTP_USER');
+    $from_name = modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config');
     $reply_email = '';
     $reply_name = '';
 
-    //require_once('./ThinkPHP/Library/Vendor/PHPMailer/phpmailer.class.php');增加命名空间，可以注释掉此行
     $mail = new PHPMailer(); //实例化PHPMailer
     $mail->CharSet = 'UTF-8'; //设定邮件编码，默认ISO-8859-1，如果发中文此项必须设置，否则乱码
     $mail->IsSMTP(); // 设定使用SMTP服务
@@ -133,28 +132,28 @@ function send_mail_local($to = '', $subject = '', $body = '', $name = '', $attac
     $mail->SMTPAuth = true; // 启用 SMTP 验证功能
 
     $mail->SMTPSecure = ''; // 使用安全协议
-    $mail->Host = Config('MAIL_SMTP_HOST'); // SMTP 服务器
-    $mail->Port = Config('MAIL_SMTP_PORT'); // SMTP服务器的端口号
-    $mail->Username = Config('MAIL_SMTP_USER'); // SMTP服务器用户名
-    $mail->Password = Config('MAIL_SMTP_PASS'); // SMTP服务器密码
+    $mail->Host = config('MAIL_SMTP_HOST'); // SMTP 服务器
+    $mail->Port = config('MAIL_SMTP_PORT'); // SMTP服务器的端口号
+    $mail->Username = config('MAIL_SMTP_USER'); // SMTP服务器用户名
+    $mail->Password = config('MAIL_SMTP_PASS'); // SMTP服务器密码
     $mail->SetFrom($from_email, $from_name);
     $replyEmail = $reply_email ? $reply_email : $from_email;
     $replyName = $reply_name ? $reply_name : $from_name;
     if ($to == '') {
-        $to = Config('MAIL_SMTP_CE'); //邮件地址为空时，默认使用后台默认邮件测试地址
+        $to = config('MAIL_SMTP_CE'); //邮件地址为空时，默认使用后台默认邮件测试地址
     }
     if ($name == '') {
-        $name = modC('WEB_SITE_NAME', L('_MUUCMF_'), 'Config'); //发送者名称为空时，默认使用网站名称
+        $name = modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config'); //发送者名称为空时，默认使用网站名称
     }
     if ($subject == '') {
-        $subject = modC('WEB_SITE_NAME', L('_MUUCMF_'), 'Config'); //邮件主题为空时，默认使用网站标题
+        $subject = modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config'); //邮件主题为空时，默认使用网站标题
     }
     if ($body == '') {
-        $body = modC('WEB_SITE_NAME', L('_MUUCMF_'), 'Config'); //邮件内容为空时，默认使用网站描述
+        $body = modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config'); //邮件内容为空时，默认使用网站描述
     }
     $mail->AddReplyTo($replyEmail, $replyName);
     $mail->Subject = $subject;
-    $mail->MsgHTML($body); //解析
+    $mail->MsgHTMlang($body); //解析
     $mail->AddAddress($to, $name);
     if (is_array($attachment)) { // 添加附件
         foreach ($attachment as $file) {
@@ -215,7 +214,7 @@ function sendSMS($mobile, $content)
     $sms_hook = modC('SMS_HOOK','none','CONFIG');
     $sms_hook =  check_sms_hook_is_exist($sms_hook);
     if($sms_hook == 'none'){
-        return L('_THE_ADMINISTRATOR_HAS_NOT_CONFIGURED_THE_SMS_SERVICE_PROVIDER_INFORMATION_PLEASE_CONTACT_THE_ADMINISTRATOR_');
+        return lang('_THE_ADMINISTRATOR_HAS_NOT_CONFIGURED_THE_SMS_SERVICE_PROVIDER_INFORMATION_PLEASE_CONTACT_THE_ADMINISTRATOR_');
     }
     //根据电信基础运营商的规定，每条短信必须附加短信签名，否则将无法正常发送。这里将后台设置的短信签名与内容拼接成发送内容
     $sms_sign = modC('SMS_SIGN','','CONFIG');
@@ -245,15 +244,13 @@ function get_kanban_config($key, $kanban, $default = '', $module = '')
     } else {
         $config = json_decode($config, true);
         foreach ($config as $v) {
-            if ($v['data-id'] == $kanban) {
+            if ($v['id'] == $kanban) {
                 $res = $v['items'];
                 break;
             }
         }
-        return getSubByKey($res, 'data-id');
+        return getSubByKey($res, 'id');
     }
-
-
 }
 
 /**
@@ -290,7 +287,7 @@ function qrcode($data,$filename,$picPath=false,$logo=false,$size='4',$level='L',
     }else { //包含LOGO
         if ($filename==false){
             //$filename=tempnam('','').'.png';//生成临时文件
-            die(L('_PARAMETER_ERROR_'));
+            die(lang('_PARAMETER_ERROR_'));
         }else {
             //生成二维码,保存到文件
             $filename = $path . '\\' . $filename; //合成路径

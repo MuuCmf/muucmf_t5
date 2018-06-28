@@ -384,39 +384,40 @@
           </div>
           {php}}{/php}
         </div>
+
         <script type="text/javascript">
            $(function(){
                 var flag = "{$field.name}"
                 $('#{$field.name}').boards({
                     drop: function(e){
-                        var kanban =new Array();
+                        var v =new Array();
                         $('.boards .board').each(function (index, element) {
                             if ($(element).data('id')) {
-                                kanban[index] =  new Object();
-                                kanban[index]['id'] =  $(element).data('id');
-                                kanban[index]['title'] =  $(element).data('title');
-                                kanban[index]['items'] =  new Array();
-                                var obj = $(element).find('.board-item');
+                                v[index] =  new Object();
+                                v[index]['id'] =  $(element).data('id');
+                                v[index]['title'] =  $(element).data('title');
+                                v[index]['items'] =  new Array();
+                                var obj = $(element).find('.board-item[data-id]');
                                 if(obj){
                                     for (var i = 0; i < obj.length; i++) {
-                                        kanban[index]['items'][i] = new Object();
-                                        kanban[index]['items'][i]['id'] = $(obj[i]).data('id');
-                                        kanban[index]['items'][i]['title'] = $(obj[i]).data('title');
+                                        v[index]['items'][i] = new Object();
+                                        v[index]['items'][i]['id'] = $(obj[i]).data('id');
+                                        v[index]['items'][i]['title'] = $(obj[i]).data('title');
                                     };
                                 }
                             }
                         })
-                        var kanban_str = JSON.stringify(kanban);
+                        var kanban_str = JSON.stringify(v);
                         $('[name="'+flag+'"]').val(kanban_str);
-                        //console.log(kanban_str);
+                        console.log(kanban_str);
                     }
                 });
            }) 
         </script>
     {/case}
 {case value="chosen"}
-    <script src="__ZUI__/lib/chosen/chosen.min.js"></script>
-    <link href="__ZUI__/lib/chosen/chosen.min.css" rel="stylesheet">
+
+    
 
     <select data-placeholder="" name="{$field.name}[]" class="chosen-select form-control" tabindex="2" multiple="">
         {php}
@@ -453,12 +454,14 @@
         {/php}
     </select>
     <script>
+    $(function(){
         $('select.chosen-select').chosen({
             lang:'zh_cn',
             no_results_text: '没有找到',    // 当检索时没有找到匹配项时显示的提示文本
             disable_search_threshold: 10, // 10 个以下的选择项则不显示检索框
             search_contains: true         // 从任意位置开始检索
         });
+    });
     </script>
 {/case}
 

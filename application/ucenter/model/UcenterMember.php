@@ -55,21 +55,6 @@ class UcenterMember extends Model
     }
 
     /**
-     * 验证用户名长度
-     * @param $username
-     * @return bool
-     * @author 郑钟良<zzl@ourstu.com>
-     */
-    protected function checkUsernameLength($username)
-    {
-        $length = mb_strlen($username, 'utf-8'); // 当前数据长度
-        if ($length < modC('USERNAME_MIN_LENGTH',2,'USERCONFIG') || $length > modC('USERNAME_MAX_LENGTH',32,'USERCONFIG')) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
      * 检测手机是不是被禁止注册
      * @param  string $mobile 手机
      * @return boolean        ture - 未禁用，false - 禁止注册
@@ -98,13 +83,19 @@ class UcenterMember extends Model
             'type' => $type,
         );
 
-        //验证手机
+        //验证
         if (empty($data['mobile'])) unset($data['mobile']);
         if (empty($data['username'])) unset($data['username']);
         if (empty($data['email'])) unset($data['email']);
 
+        //验证器验证数据
+        $validate = new \app\ucenter\validate\UcenterMember;
+       
+        if(!$validate->scene('reg')->check($data)){
+            return $validate->getError();
+        }
+
         /* 添加用户 */
-        
         if ($uid = model('Member')->registerMember($nickname)) {//返回UID
             
             if ($uid > 0) {
@@ -113,7 +104,8 @@ class UcenterMember extends Model
                 $usercenter_member['id'] = $uid;
                 $usercenter_member['status'] = 1;
                 //写ucenter_member表
-                $this->save($usercenter_member);
+                $result = $this->save($usercenter_member);
+                
                 $ucenter_id = $this->id;
                 
                 if ($ucenter_id === false) {
@@ -457,20 +449,20 @@ class UcenterMember extends Model
         }
         
     }
-
+        /*
     public function getErrorMessage($error_code = null)
     {
 
         $error = $error_code == null ? $this->error : $error_code;
         switch ($error) {
             case -1:
-                $error = lang('_USER_NAME_MUST_BE_IN_LENGTH_').modC('USERNAME_MIN_LENGTH',2,'USERCONFIG').'-'.modC('USERNAME_MAX_LENGTH',32,'USERCONFIG').lang('_BETWEEN_CHARACTERS_WITH_EXCLAMATION_');
+                $error = lang('_USER_NAME_MUST_BE_IN_LENGTH_').modC('USERNAME_MIN_LENGTH',2,'USERCONFIG').'-'.modC('USERNAME_MAX_LENGTH',32,'USERCONFIG').lang('_BETWEEN_CHARACTERS_WITH_EXCLAMATION_');//用户名长度不符
                 break;
             case -2:
-                $error = lang('_USER_NAME_IS_FORBIDDEN_TO_REGISTER_WITH_EXCLAMATION_');
+                $error = lang('_USER_NAME_IS_FORBIDDEN_TO_REGISTER_WITH_EXCLAMATION_');//用户名被禁止注册
                 break;
             case -3:
-                $error = lang('_USER_NAME_IS_OCCUPIED_WITH_EXCLAMATION_');
+                $error = lang('_USER_NAME_IS_OCCUPIED_WITH_EXCLAMATION_');//用户名被占用
                 break;
             case -4:
                 $error = lang('_PW_LENGTH_6_30_');
@@ -500,7 +492,7 @@ class UcenterMember extends Model
                 $error = lang('_PHONE_NUMBER_IS_OCCUPIED_WITH_EXCLAMATION_');
                 break;
             case -12:
-                $error = lang('_UN_LIMIT_SOME_');
+                $error = lang('_UN_LIMIT_SOME_');//用户名必须以中文或字母开始，只能包含拼音数字，字母，汉字
                 break;
             case -31:
                 $error = lang('_THE_NICKNAME_IS_PROHIBITED_');
@@ -520,7 +512,7 @@ class UcenterMember extends Model
         }
         return $error;
     }
-
+        
 
     /**向ucenter_member表中写入数据并返回uid
      * @param string $prefix 数据前缀

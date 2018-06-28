@@ -5,24 +5,18 @@ use Think\Model;
 
 class Invite extends Model
 {
-    protected $_auto = array(
-        array('already_num', '0', self::MODEL_INSERT),
-        array('create_time', NOW_TIME, self::MODEL_INSERT),
-        array('status', '1', self::MODEL_BOTH),
-    );
 
     /**
      * 管理员后台生成邀请码
      * @param array $data
      * @param int $num
      * @return bool|string
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function createCodeAdmin($data = array(), $num = 1)
     {
         $map['status'] = 1;
         $map['id'] = $data['invite_type'];
-        $invite_type = D('Ucenter/InviteType')->getSimpleList($map, 'length,time');
+        $invite_type = model('Ucenter/InviteType')->getSimpleList($map, 'length,time');
         $data['end_time'] = unitTime_to_time($invite_type[0]['time'], '+');
         $data['uid'] = -is_login(); //管理员后台生成，以负数uid标记
 
@@ -33,10 +27,10 @@ class Invite extends Model
         $res = $this->addAll($dataList);
         if ($res) {
             $result['status'] = 1;
-            $result['url'] = U('Admin/Invite/invite', array('status' => 1, 'buyer' => -1));
+            $result['url'] = Url('Admin/Invite/invite', array('status' => 1, 'buyer' => -1));
         } else {
             $result['status'] = 0;
-            $result['info'] = L('_FAILED_TO_GENERATE_AN_INVITATION_CODE_WITH_EXCLAMATION_') . $this->getError();
+            $result['info'] = lang('_FAILED_TO_GENERATE_AN_INVITATION_CODE_WITH_EXCLAMATION_') . $this->getError();
         }
         return $result;
     }
@@ -46,13 +40,12 @@ class Invite extends Model
      * @param array $data
      * @param int $num
      * @return mixed
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function createCodeUser($data = array(), $num = 1)
     {
         $map['status'] = 1;
         $map['id'] = $data['invite_type'];
-        $invite_type = D('Ucenter/InviteType')->getSimpleList($map, 'length,time');
+        $invite_type = model('Ucenter/InviteType')->getSimpleList($map, 'length,time');
         $data['end_time'] = unitTime_to_time($invite_type[0]['time'], '+');
         $data['uid'] = is_login(); //用户前台生成，以正数uid标记
 
@@ -63,10 +56,10 @@ class Invite extends Model
         $res = $this->addAll($dataList);
         if ($res) {
             $result['status'] = 1;
-            $result['url'] = U('Ucenter/Invite/invite');
+            $result['url'] = Url('Ucenter/Invite/invite');
         } else {
             $result['status'] = 0;
-            $result['info'] = L('_FAILED_TO_GENERATE_AN_INVITATION_CODE_WITH_EXCLAMATION_') . $this->getError();
+            $result['info'] = lang('_FAILED_TO_GENERATE_AN_INVITATION_CODE_WITH_EXCLAMATION_') . $this->getError();
         }
         return $result;
     }
@@ -75,14 +68,14 @@ class Invite extends Model
      * 获取简易结构的邀请码列表
      * @param array $ids
      * @return mixed
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function getSimpleListByIds($ids = array())
     {
         $map['id'] = array('in', $ids);
         $dataList = $this->where($map)->field('code')->select();
+
         foreach ($dataList as &$val) {
-            $val['code_url'] = U('Ucenter/Member/register', array('code' => $val['code']), true, true);
+            $val['code_url'] = Url('Ucenter/Member/register', ['code' => $val['code']], true, true);
         }
         unset($val);
         return $dataList;
@@ -124,7 +117,6 @@ class Invite extends Model
      * 退还邀请码
      * @param int $id
      * @return bool
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function backCode($id = 0)
     {
@@ -135,8 +127,8 @@ class Invite extends Model
             if ($num > 0) {
                 $map['invite_type'] = $invite['invite_type'];
                 $map['uid'] = $invite['uid'];
-                D('InviteUserInfo')->where($map)->setDec('already_num', $num);
-                D('InviteUserInfo')->where($map)->setInc('num', $num);
+                Db::name('InviteUserInfo')->where($map)->setDec('already_num', $num);
+                Db::name('InviteUserInfo')->where($map)->setInc('num', $num);
             }
         }
         return $result;
@@ -170,15 +162,15 @@ class Invite extends Model
     {
         $invite_type_id = array_column($dataList, 'invite_type');
         $map['id'] = array('in', $invite_type_id);
-        $invite_types = D('Ucenter/InviteType')->getSimpleList($map);
+        $invite_types = model('Ucenter/InviteType')->getSimpleList($map);
         $invite_types = array_combine(array_column($invite_types, 'id'), $invite_types);
         foreach ($dataList as &$val) {
             $val['invite'] = $invite_types[$val['invite_type']]['title'];
-            $val['code_url'] = U('Ucenter/Member/register', array('code' => $val['code']), true, true);
+            $val['code_url'] = Url('Ucenter/Member/register', array('code' => $val['code']), true, true);
             if ($val['uid'] > 0) {
                 $val['buyer'] = query_user('nickname', $val['uid']);
             } else {
-                $val['buyer'] = query_user('nickname', -$val['uid']) . L('_BACKGROUND_GENERATION_');
+                $val['buyer'] = query_user('nickname', -$val['uid']) . lang('_BACKGROUND_GENERATION_');
             }
         }
         unset($val);

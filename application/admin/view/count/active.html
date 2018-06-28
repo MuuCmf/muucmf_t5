@@ -1,14 +1,16 @@
-<extend name="Public/base"/>
-<block name="style">
-    <link rel="stylesheet" href="__JS__/daterangepicker/daterangepicker-bs3.css">
-</block>
-<block name="script">
+{extend name="common/main"/}
+
+
+{block name="style"}
+    <link rel="stylesheet" href="__LIB__/datetimepicker/datetimepicker.min.css">
+{/block}
+{block name="script"}
     <!-- ChartJS 1.0.1 -->
     <script src="__ZUI__/lib/chart/zui.chart.min.js"></script>
     <!-- daterange picker -->
     
-    <script src="__JS__/daterangepicker/moment.min.js"></script>
-    <script src="__JS__/daterangepicker/daterangepicker.js"></script>
+    <script src="__ZUI__/daterangepicker/moment.min.js"></script>
+    <script src="__ZUI__/daterangepicker/daterangepicker.js"></script>
 
     <script>
         $(function () {
@@ -156,8 +158,8 @@
             });
         });
     </script>
-</block>
-<block name="body">
+{/block}
+{block name="body"}
     <include file="_top_nav"/>
     <!-- /.col (LEFT) -->
     <div class="clearfix with-padding">
@@ -167,7 +169,7 @@
                 <h3 class="box-title">活跃用户统计</h3>
 
                 <div class="box-tools pull-right">
-                    <button type="button" class="btn" data-remote="{:U('Count/setActiveAction')}" data-toggle="modal">
+                    <button type="button" class="btn" data-remote="{:Url('Count/setActiveAction')}" data-toggle="modal">
                         <i class="icon icon-cog"></i> 设置
                         <!--设置-->
                     </button>
@@ -195,38 +197,6 @@
         <!-- /.box -->
     </div>
     <!-- /.col (RIGHT) -->
-</block>
-<block name="modal">
-    <div class="modal fade" id="settingCount">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span
-                            class="sr-only">{:L('_CLOSE_')}</span></button>
-                    <h4 class="modal-title">{:L('_STATISTICS_SET_')}</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="with-padding">
-                        <label>{:L('_DISPLAY_DAYS_DEFAULT_')} </label>
-                        <input class="form-control" name="count_day" value="{$count.count_day}">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn " data-role="saveCountSetting">
-                        <i class="icon-ok"></i> {:L('_SAVE_')}
-                    </button>
-                    <button class="btn " data-dismiss="modal">
-                        <i class="icon-remove"></i> {:L('_CANCEL_')}
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script>
-        $('[data-role=saveCountSetting]').click(function () {
-            $.post("__SELF__", {count_day: $('[name=count_day]').val()}, function (msg) {
-                handleAjax(msg);
-            });
-        })
-    </script>
-</block>
+{/block}
+
+

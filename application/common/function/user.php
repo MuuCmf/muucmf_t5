@@ -297,7 +297,6 @@ function check_login_type($type){
  * get_next_step  获取注册流程下一步
  * @param string $now_step
  * @return string
- * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
  */
 function get_next_step($now_step =''){
 
@@ -305,10 +304,17 @@ function get_next_step($now_step =''){
     if(empty($now_step) || $now_step == 'start'){
         $return = $step[0];
     }else{
+        $count = count($step);
+
         $now_key = array_search($now_step,$step);
-        $return = $step[$now_key+1];
+        if(empty($step[$now_key+1])){
+            $return = 'finish';
+        }else{
+            $return = $step[$now_key+1];
+        }
     }
-    if(!in_array($return,array_keys(A('Ucenter/RegStep','Widget')->mStep)) || empty($return)){
+
+    if(!in_array($return,array_keys(controller('Ucenter/RegStep','Widget')->mStep)) || empty($return)){
         $return = 'finish';
     }
     return $return;
@@ -337,11 +343,11 @@ function check_step($now_step=''){
  * @param $uid
  * @param $status
  * @return bool
- * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
  */
 function set_user_status($uid,$status){
-    model('Member')->where(array('uid'=>$uid))->setField('status',$status);
-    UCenterMember()->where(array('id'=>$uid))->setField('status',$status);
+    Db::name('Member')->where(['uid'=>$uid])->setField('status',$status);
+    Db::name('UCenterMember')->where(['id'=>$uid])->setField('status',$status);
+
     return true;
 }
 
@@ -350,11 +356,10 @@ function set_user_status($uid,$status){
  * @param $map
  * @param $status
  * @return bool
- * @author 郑钟良<zzl@ourstu.com>
  */
 function set_users_status($map,$status){
-    model('Member')->where($map)->setField('status',$status);
-    UCenterMember()->where($map)->setField('status',$status);
+    Db::name('Member')->where($map)->setField('status',$status);
+    Db::name('UCenterMember')->where($map)->setField('status',$status);
     return true;
 }
 
@@ -372,9 +377,8 @@ function check_step_can_skip($step){
 }
 
 
-
 function check_and_add($args){
-    $Member = model('Member');
+    $Member = Db::name('Member');
     $uid = $args['uid'];
 
     $check = $Member->find($uid);

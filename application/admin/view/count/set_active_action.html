@@ -10,14 +10,14 @@
             font-size: 16px;
         }
     </style>
-    <form id="migration" action="__SELF__" method="post" class="ajax-form">
+    <form id="migration" action="{:Url()}" method="post" class="ajax-form">
         <div class="select_box_this">
             <span>行为：</span>
             <span>
                 <select name="active_action" style="width: 200px;">
-                    <volist name="action_list" id="action">
+                    {volist name="action_list" id="action"}
                         <option value="{$action.id}">{$action.title}</option>
-                    </volist>
+                    {/volist}
                 </select>
             </span>
         </div>

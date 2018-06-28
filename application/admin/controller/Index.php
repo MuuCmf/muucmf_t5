@@ -1,7 +1,6 @@
 <?php
 namespace app\admin\Controller;
 
-use app\admin\controller\Admin;
 use think\Db;
 
 class Index extends Admin
@@ -24,7 +23,7 @@ class Index extends Admin
         
         if(request()->isPost()){
             $count_day=input('post.count_day', config('COUNT_DAY'),'intval',7);
-            if(Db::name('Config')->where(array('name'=>'COUNT_DAY'))->setField('value',$count_day)===false){
+            if(Db::name('Config')->where(['name'=>'COUNT_DAY'])->setField('value',$count_day)===false){
                 $this->error(lang('_ERROR_SETTING_').lang('_PERIOD_'));
             }else{
                cache('DB_CONFIG_DATA',null);
@@ -33,9 +32,8 @@ class Index extends Admin
 
         }else{
             
-            $this->meta_title = lang('_INDEX_MANAGE_');
+            $this->setTitle(lang('_INDEX_MANAGE_'));
             $this->getUserCount();
-            $this->assign('meta_title',$this->meta_title);
             $this->getOtherCount();
             return $this->fetch();
         }
@@ -44,12 +42,15 @@ class Index extends Admin
     }
     private function getOtherCount(){
         $countModel=model('Count');
-        list($lostList,$totalCount)=$countModel->getLostListPage($map=1,1,5);
+
+        $lostList=$countModel->getLostListPage($map=1,1,5);
+
         foreach($lostList as &$val){
             $val['date']=time_format($val['date'],'Y-m-d');
             $val['rate']=($val['rate']*100)."%";
         }
         unset($val);
+        
         $this->assign('lostList',$lostList);
 
         $today=date('Y-m-d 00:00',time());
@@ -83,26 +84,30 @@ class Index extends Admin
         $week = [];
         $registeredMemeberCount = [];
         $count['today_user'] = 0;
+        
         for ($i = $count_day; $i--; $i >= 0) {
             $day = $today - $i * 86400;
             $day_after = $today - ($i - 1) * 86400;
             $week_map = array('Mon' => lang('_MON_'), 'Tue' => lang('_TUES_'), 'Wed' => lang('_WEDNES_'), 'Thu' => lang('_THURS_'), 'Fri' => lang('_FRI_'), 'Sat' => '<strong>' . lang('_SATUR_') . '</strong>', 'Sun' => '<strong>' . lang('_SUN_') . '</strong>');
             $week[] = date('m月d日 ', $day) . $week_map[date('D', $day)];
+
             $user = Db::name('UcenterMember')->where('status=1 and reg_time >=' . $day . ' and reg_time < ' . $day_after)->count() * 1;
             $registeredMemeberCount[] = $user;
             if ($i == 0) {
                 $count['today_user'] = $user;
             }
         }
+
         $week = json_encode($week);
         $this->assign('week', $week);
-        $count['total_user'] = $userCount = Db::name('UcenterMember')->where(array('status' => 1))->count();
+
+        $count['total_user'] = $userCount = Db::name('UcenterMember')->where(['status' => 1])->count();
         $count['today_action_log'] = Db::name('ActionLog')->where('status=1 and create_time>=' . $today)->count();
         $count['last_day']['days'] = $week;
         $count['last_day']['data'] = json_encode($registeredMemeberCount);
-        $count['now_inline']=Db::name('Session')->where(1)->count()*1;
+        $count['now_inline']=Db::name('Session')->count()*1;
+
         $this->assign('count', $count);
-        //dump($count);exit;
     }
 
     /**
