@@ -48,6 +48,7 @@
                 <th class="row-selected row-selected"><input class="check-all" type="checkbox"/></th>
                 <th class="">{:lang('_UID_')}</th>
                 <th class="">{:lang('_NICKNAME_')}</th>
+                <th class="">{:lang('_USERNAME_')}</th>
                 <th class="">{:lang('_MAILBOX_')}</th>
                 <th class="">{:lang('_CELL_PHONE_NUMBER_')}</th>
                 <th class="">{:lang('_OPERATE_')}</th>
@@ -65,8 +66,9 @@
                         <td><input class="ids" type="checkbox" name="id[]" value="{$vo.uid}"/></td>
                         <td>{$vo.uid}</td>
                         <td><a href="{:Url('Admin/User/expandinfo_details',array('uid'=>$vo['uid']))}" >{$vo.nickname|text}</a></td>
-                        <td>{$vo.ext.email}</td>
-                        <td>{$vo.ext.mobile}</td>
+                        <td>{$vo.username}</td>
+                        <td>{$vo.email}</td>
+                        <td>{$vo.mobile}</td>
                         <td>
                             {eq name="vo.status" value="1"}
                                 <a href="{:Url('User/changeStatus?method=forbidUser&id='.$vo['uid'])}"
@@ -90,7 +92,7 @@
                     </tr>
                 {/volist}
                 {else/}
-                <td colspan="9" class="text-center">{:lang('_ADMIN_USER_EMPTY_')}</td>
+                <td colspan="11" class="text-center">{:lang('_ADMIN_USER_EMPTY_')}</td>
             {/notempty}
             </tbody>
         </table>

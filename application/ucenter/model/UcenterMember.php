@@ -36,10 +36,10 @@ class UcenterMember extends Model
 
         //验证器验证数据
         $validate = new \app\ucenter\validate\UcenterMember;
-        //测试数据 暂时禁用验证
-        //if(!$validate->scene('reg')->check($data)){
-        //    return $validate->getError();
-        //}
+        //测试数据时可暂时禁用验证
+        if(!$validate->scene('reg')->check($data)){
+            return $validate->getError();
+        }
 
         /* 添加用户 */
         if ($uid = model('Member')->registerMember($nickname)) {//返回UID

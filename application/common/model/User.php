@@ -28,7 +28,6 @@ class User Extends Model
     public function query_user($pFields = null, $uid = 0)
     {
         $fields = $this->getFields($pFields);//需要检索的字段
-
         $uid = (intval($uid) != 0 ? $uid : get_uid());//用户UID
         //获取缓存过的字段，尽可能在此处命中全部数据
 
@@ -37,6 +36,7 @@ class User Extends Model
         $user_data = $cacheResult;//用缓存初始用户数据
         //从数据库获取需要检索的数据，消耗较大，尽可能在此代码之前就命中全部数据
         list($user_data, $fields) = $this->getNeedQueryData($user_data, $fields, $uid);
+
         //必须强制处理昵称备注
         if (in_array('nickname', (array)$pFields))
             
@@ -84,7 +84,6 @@ class User Extends Model
             $user_data['is_followed'] = $follow ? true : false;
             $this->write_query_user_cache($uid, 'is_followed', $user_data['is_following']);
         }
- 
         return $user_data;
 
 

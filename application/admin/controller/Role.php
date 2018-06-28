@@ -738,7 +738,7 @@ class Role extends Admin
             $score = Db::name('RoleConfig')->where($map)->find();
             $score['value'] = json_decode($score['value'],true);
             //获取member表中积分字段$score_keys
-            $score_keys = model('Ucenter/Score')->getTypeList(['status' => ['GT', -1]]);
+            $score_keys = model('Ucenter/Score')->getTypeList(['status' => ['GT', 0]]);
 
             $post_key = '';
             foreach ($score_keys as &$val) {

@@ -52,17 +52,22 @@ class User extends Admin
         list($list,$page) = $this->lists('Member', $map);
         
         $list_arr = $list->toArray()['data'];
+
         foreach($list_arr as $key=>$v){
-            $list_arr[$key]['ext']=query_user(['username','mobile','email'],$v['uid']);
+            //初始化ext键，避免报错
+            $list_arr[$key]['username']='';
+            $list_arr[$key]['email']='';
+            $list_arr[$key]['mobile']='';
+
+            $ext_info = query_user(['nickname','username','mobile','email'],$v['uid']);
+            $list_arr[$key] = array_merge($list_arr[$key],$ext_info);
         }
         int_to_string($list_arr);
-
         $this->setTitle(lang('_USER_INFO_'));
 
         $this->assign('title','用户列表');
         $this->assign('_list', $list_arr);
         $this->assign('seek', $aSeek);
-        dump($list_arr);
         return $this->fetch();
     }
 
