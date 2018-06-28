@@ -374,6 +374,7 @@ return array(
     '_ERROR_USERNAME_FORBIDDEN_' => '用户名被禁止注册',
     '_ERROR_USERNAME_USED_' => '用户名被占用',
     '_ERROR_LENGTH_PASSWORD_' => '密码长度必须在6-30个字符之间',
+    '_ERROR_LENGTH_NEW_PASSWORD_' => '新密码长度必须在6-30个字符之间',
     '_ERROR_EMAIL_FORMAT_2_' => '邮箱格式不正确',
     '_ERROR_EMAIL_LENGTH_' => '邮箱长度必须在4-32个字符之间',
     '_ERROR_EMAIL_FORBIDDEN_' => '邮箱被禁止注册',

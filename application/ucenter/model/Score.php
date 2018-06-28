@@ -145,7 +145,16 @@ class Score extends Model
         return $res;
     }
 
-
+    /**
+     * 添加积分日志
+     * @param [type]  $uid       [description]
+     * @param [type]  $type      [description]
+     * @param string  $action    [description]
+     * @param integer $value     [description]
+     * @param string  $model     [description]
+     * @param integer $record_id [description]
+     * @param string  $remark    [description]
+     */
     public function addScoreLog($uid, $type, $action='inc',$value=0, $model='',$record_id=0,$remark='')
     {
         $uid = is_array($uid) ? $uid : explode(',',$uid);
@@ -153,7 +162,7 @@ class Score extends Model
             $score =  Db::name('Member')->where(['uid'=>$v])->value('score'.$type);
 
             $data['uid'] = $v;
-            $data['ip'] = ip2long(get_client_ip());
+            $data['ip'] = request()->ip(1);
             $data['type'] = $type;
             $data['action'] = $action;
             $data['value'] = $value;
@@ -162,7 +171,6 @@ class Score extends Model
             $data['finally_value'] = $score;
             $data['remark'] = $remark;
             $data['create_time'] = time();
-            //echo $score;exit;
             Db::name('score_log')->insert($data);
         }
 

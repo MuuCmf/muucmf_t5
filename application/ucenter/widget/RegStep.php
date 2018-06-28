@@ -16,8 +16,8 @@ class RegStep extends Controller
     );
 
     public function view()
-    {
-        $aStep = input('get.step','','text');
+    {   
+        $aStep = input('step','','text');
         //调用方法输出参数
         if(method_exists($this,$aStep)){
 

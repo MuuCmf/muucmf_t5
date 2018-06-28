@@ -88,10 +88,12 @@ class Member extends Controller
             $code_id = $uid=$ucenterMemberModel->register($aUsername, $aNickname, $aPassword, $email, $mobile, $aUnType);
             if (0 < $code_id) { //注册成功
 
+                //初始化邀请用户数据
                 $this->initInviteUser($uid, $aCode, $aRole);
-
+                
+                //初始角色用户数据
                 model('Member')->initRoleUser($aRole, $uid); //初始化角色用户
-
+                //邮箱激活验证
                 if (modC('EMAIL_VERIFY_TYPE', 0, 'USERCONFIG') == 1 && $aUnType == 2) {
                     set_user_status($uid, 3);
                     $verify = model('Verify')->addVerify($email, 'email', $uid);
@@ -111,7 +113,7 @@ class Member extends Controller
                 
                 if(empty($step_config[1]['items']) || $step_config[1]['items']=0){
                     //跳过注册步骤直接跳转首页
-                    Db::name('UserRole')->where(array('uid' => $uid))->setField('step', 'finish');
+                    Db::name('UserRole')->where(['uid' => $uid])->setField('step', 'finish');
                     $step_url = Url('index/Index/index');
                 }else{
                     //构建注册步骤URL
@@ -119,7 +121,7 @@ class Member extends Controller
                 }
                 $this->success('注册成功', $step_url);
             } else { //注册失败，显示错误信息
-                $this->error($this->showRegError($code_id));
+                $this->error(model('member')->showRegError($code_id));
             }
         } else {
             //显示注册表单
@@ -157,7 +159,7 @@ class Member extends Controller
 
         if (get_next_step($step) != $aStep) {
             $aStep = check_step($step);
-            $_GET['step'] = $aStep;
+            
             Db::name('UserRole')->where($map)->setField('step', $aStep);
         }else{
             Db::name('UserRole')->where($map)->setField('step', $aStep);
@@ -165,6 +167,7 @@ class Member extends Controller
         
         if ($aStep == 'finish') {
             model('Member')->login($aUid, false, $aRoleId);
+
         }
         //取得站点LOGO
         $logo = get_cover(modC('LOGO',0,'Config'),'path');
@@ -172,19 +175,21 @@ class Member extends Controller
         //取得用户资料
         $user_info =  query_user(array('uid', 'nickname', 'email','avatar64'), $aUid);
 
-
         $this->assign('user_info',$user_info);
         $this->assign('logo',$logo);
         $this->assign('step', $aStep);
 
         return $this->fetch('register');
     }
-
+    /**
+     * 邀请码
+     * @return [type] [description]
+     */
     public function inCode()
     {
         if (request()->isPost()) {
-            $aType = input('get.type', '', 'op_t');
-            $aCode = input('post.code', '', 'op_t');
+            $aType = input('get.type', '', 'text');
+            $aCode = input('post.code', '', 'text');
             $result['status'] = 0;
             if (!mb_strlen($aCode)) {
                 $result['info'] = lang('_INFO_PLEASE_INPUT_').lang('_EXCLAMATION_');
@@ -277,7 +282,7 @@ class Member extends Controller
 
 
     /**
-     * 快捷登录登录页面
+     * 快捷登录页面
      * @return [type] [description]
      */
     public function quickLogin()
@@ -374,67 +379,7 @@ class Member extends Controller
         return $verify;
     }
 
-    /**
-     * 获取用户注册错误信息
-     * @param  integer $code 错误编码
-     * @return string        错误信息
-     */
-    public function showRegError($code = 0)
-    {
-        switch ($code) {
-            case -1:
-                $error = lang('_USER_NAME_MUST_BE_IN_LENGTH_').modC('USERNAME_MIN_LENGTH',2,'USERCONFIG').'-'.modC('USERNAME_MAX_LENGTH',32,'USERCONFIG').lang('_ERROR_LENGTH_2_').lang('_EXCLAMATION_');
-                break;
-            case -2:
-                $error = lang('_ERROR_USERNAME_FORBIDDEN_').lang('_EXCLAMATION_');
-                break;
-            case -3:
-                $error = lang('_ERROR_USERNAME_USED_').lang('_EXCLAMATION_');
-                break;
-            case -4:
-                $error = lang('_ERROR_LENGTH_PASSWORD_').lang('_EXCLAMATION_');
-                break;
-            case -5:
-                $error = lang('_ERROR_EMAIL_FORMAT_2_').lang('_EXCLAMATION_');
-                break;
-            case -6:
-                $error = lang('_ERROR_EMAIL_LENGTH_').lang('_EXCLAMATION_');
-                break;
-            case -7:
-                $error = lang('_ERROR_EMAIL_FORBIDDEN_').lang('_EXCLAMATION_');
-                break;
-            case -8:
-                $error = lang('_ERROR_EMAIL_USED_2_').lang('_EXCLAMATION_');
-                break;
-            case -9:
-                $error = lang('_ERROR_PHONE_FORMAT_2_').lang('_EXCLAMATION_');
-                break;
-            case -10:
-                $error = lang('_ERROR_FORBIDDEN_').lang('_EXCLAMATION_');
-                break;
-            case -11:
-                $error = lang('_ERROR_PHONE_USED_').lang('_EXCLAMATION_');
-                break;
-            case -20:
-                $error = lang('_ERROR_USERNAME_FORM_').lang('_EXCLAMATION_');
-                break;
-            case -30:
-                $error = lang('_ERROR_NICKNAME_USED_').lang('_EXCLAMATION_');
-                break;
-            case -31:
-                $error = lang('_ERROR_NICKNAME_FORBIDDEN_2_').lang('_EXCLAMATION_');
-                break;
-            case -32:
-                $error =lang('_ERROR_NICKNAME_FORM_').lang('_EXCLAMATION_');
-                break;
-            case -33:
-                $error = lang('_ERROR_LENGTH_NICKNAME_1_').modC('NICKNAME_MIN_LENGTH',2,'USERCONFIG').'-'.modC('NICKNAME_MAX_LENGTH',32,'USERCONFIG').lang('_ERROR_LENGTH_2_').lang('_EXCLAMATION_');;
-                break;
-            default:
-                $error = lang('_ERROR_UNKNOWN_');
-        }
-        return $error;
-    }
+    
 
     /**
      * 发送验证码

@@ -351,6 +351,7 @@
 '_ERROR_USERNAME_FORBIDDEN_' =>' User name is forbidden to register',
 '_ERROR_USERNAME_USED_' =>' User name is occupied',
 '_ERROR_LENGTH_PASSWORD_' =>' Password length must be between 6-30 characters',
+'_ERROR_LENGTH_NEW_PASSWORD_' => 'The length of the new password must be between 6-30 characters',
 '_ERROR_EMAIL_FORMAT_2_' =>' Mailbox format is not correct',
 '_ERROR_EMAIL_LENGTH_' =>' Mailbox length must be between 4-32 characters',
 '_ERROR_EMAIL_FORBIDDEN_' =>' Mail is prohibited to register',

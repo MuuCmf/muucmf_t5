@@ -2,30 +2,31 @@
 namespace app\ucenter\validate;
 
 use think\Validate;
+use think\Db;
 
 class UcenterMember extends Validate
 {
     //需要验证的键值
     protected $rule =   [
-        'email'              => "email|unique:ucenter_member",  //验证邮箱|验证邮箱在表中唯一性
-        'username'           => "unique:ucenter_member",
-        'username'           => 'checkUsername|checkUsernameLength',
-        'mobile'             => "mobile|unique:ucenter_member",
+        'email'              => "email|checkDenyEmail|unique:ucenter_member",  //验证邮箱|验证邮箱在表中唯一性
+        'username'           => "checkUsername|checkUsernameLength|checkDenyMember|unique:ucenter_member",
+        'mobile'             => "regex:/^(1[3|4|5|8])[0-9]{9}$/|checkDenyMobile|unique:ucenter_member",
         'password'           => 'require|length:6,30',
         'confirm_password'   => 'require|length:6,30|confirm:password',
     ];
 
     //验证不符返回msg
     protected $message  =   [
-        'email.email'               => '请输入正确邮箱地址！',
-        'email.unique'              => '邮箱地址已存在',
+        'email.email'               => -5,
+        'email.unique'              => -8,
         'username.unique'           => -3,//'用户名已存在',
-        'mobile.unique'             => '手机号码已经存在',
-        'password.require'          => '密码不能为空',
-        'password.length'           => '密码应在6-30之间',
-        'confirm_password.require'  => '确认密码不能为空',
-        'confirm_password.length'   => '确认密码应在6-30之间',
-        'confirm_password.confirm'  => '确认密码与密码内容不一致',  
+        'mobile.unique'             => -11,
+        'mobile.regex'              => -9,//手机格式错误
+        'password.require'          => -4,
+        'password.length'           => -4,
+        'confirm_password.require'  => -41,
+        'confirm_password.length'   => -42,
+        'confirm_password.confirm'  => -43,  
     ];
     //验证场景
     protected $scene = [
@@ -34,6 +35,11 @@ class UcenterMember extends Validate
     ];
 
     // 自定义验证规则
+    /**
+     * 验证用户名长度
+     * @param  [type] $value [description]
+     * @return [type]        [description]
+     */
     protected function checkUsernameLength($value)
     {
         $length = mb_strlen($value, 'utf-8'); // 当前数据长度
@@ -42,7 +48,11 @@ class UcenterMember extends Validate
         }
         return true;
     }
-
+    /**
+     * 检查用户名格式
+     * @param  [type] $value [description]
+     * @return [type]        [description]
+     */
     protected function checkUsername($value)
     {
 
@@ -57,4 +67,43 @@ class UcenterMember extends Validate
         }
         return true;
     }
-}
+
+    /**
+     * 检测用户名是不是被禁止注册(保留用户名)
+     * @param  string $username 用户名
+     * @return boolean          ture - 未禁用，false - 禁止注册
+     */
+    protected function checkDenyMember($value)
+    {
+        $denyName=Db::name("Config")->where(['name' => 'USER_NAME_BAOLIU'])->value('value');
+        if($denyName!=''){
+            $denyName=explode(',',$denyName);
+            foreach($denyName as $val){
+                if(!is_bool(strpos($value,$val))){
+                    return -2;
+                }
+            }
+        }
+        return true;
+    }
+    /**
+     * 检测邮箱是不是被禁止注册
+     * @param  string $email 邮箱
+     * @return boolean       ture - 未禁用，false - 禁止注册
+     */
+    protected function checkDenyEmail($value)
+    {
+        return true; //TODO: 暂不限制，下一个版本完善
+    }
+
+    /**
+     * 检测手机是不是被禁止注册
+     * @param  string $mobile 手机
+     * @return boolean        ture - 未禁用，false - 禁止注册
+     */
+    protected function checkDenyMobile($value)
+    {
+        return true; //TODO: 暂不限制，下一个版本完善
+    }
+
+ }   

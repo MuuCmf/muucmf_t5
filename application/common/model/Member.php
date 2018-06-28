@@ -162,7 +162,6 @@ class Member extends Model
         //挂载登录成功后钩子
         hook('Login_after');
         //记录行为
-        
         action_log('user_login', 'member', $uid, $uid);
         return true;
     }
@@ -372,13 +371,12 @@ class Member extends Model
      * @param $role_id
      * @param $uid
      * @return bool
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public  function initRoleUser($role_id = 0, $uid)
     {
 
-        $role = Db::name('role')->where(array('id' => $role_id))->find();
-        $user_role = array('uid' => $uid, 'role_id' => $role_id, 'step' => "start");
+        $role = Db::name('role')->where(['id' => $role_id])->find();
+        $user_role = ['uid' => $uid, 'role_id' => $role_id, 'step' => "start"];
         if ($role['audit']) { //该角色需要审核
             $user_role['status'] = 2; //未审核
         } else {
@@ -400,7 +398,7 @@ class Member extends Model
      */
     public function initUserRoleInfo($role_id, $uid)
     {
-        Db::name('UserRole')->where(array('role_id' => $role_id, 'uid' => $uid))->setField('init', 1);
+        Db::name('UserRole')->where(['role_id' => $role_id, 'uid' => $uid])->setField('init', 1);
 
         //默认用户组设置
         $role = Db::name('Role')->where(['id' => $role_id])->find();
@@ -479,17 +477,19 @@ class Member extends Model
         //默认头衔设置 end
     }
 
-    //默认显示哪一个角色的个人主页设置
+    /**
+     * 默认显示哪一个角色的个人主页设置
+     * @param  [type] $role_id [description]
+     * @param  [type] $uid     [description]
+     * @return [type]          [description]
+     */
     public function initDefaultShowRole($role_id, $uid)
     {
-        $roles = Db::name('UserRole')->where(array('uid' => $uid, 'status' => 1, 'role_id' => array('neq', $role_id)))->select();
-        if (!count($roles)) {
-            $data['show_role'] = $role_id;
-            //执行member表默认值设置
-            $this->where(array('uid' => $uid))->update($data);
-        }
+        $data['show_role'] = $role_id;
+        //执行member表默认值设置
+        $this->where(['uid' => $uid])->update($data);
+
     }
-    //默认显示哪一个角色的个人主页设置 end
 
     /**
      * 根据用户ID获取用户名
@@ -636,6 +636,83 @@ class Member extends Model
         } else {
             return $nickname;
         }
+    }
+
+    /**
+     * 获取用户注册及更改信息的错误信息
+     * @param  integer $code 错误编码
+     * @return string        错误信息
+     */
+    public function showRegError($code = 0)
+    {
+        switch ($code) {
+            case -1:
+                $error = lang('_USER_NAME_MUST_BE_IN_LENGTH_').modC('USERNAME_MIN_LENGTH',2,'USERCONFIG').'-'.modC('USERNAME_MAX_LENGTH',32,'USERCONFIG').lang('_ERROR_LENGTH_2_').lang('_EXCLAMATION_'); //用户名长度不符
+                break;
+            case -2:
+                $error = lang('_ERROR_USERNAME_FORBIDDEN_').lang('_EXCLAMATION_'); //用户名被禁止注册
+                break;
+            case -3:
+                $error = lang('_ERROR_USERNAME_USED_').lang('_EXCLAMATION_'); //用户名被占用
+                break;
+            case -4:
+                $error = lang('_ERROR_LENGTH_PASSWORD_').lang('_EXCLAMATION_');//密码长度必须在6-30个字符之间
+                break;
+            case -5:
+                $error = lang('_ERROR_EMAIL_FORMAT_2_').lang('_EXCLAMATION_');//邮箱格式不正确
+                break;
+            case -6:
+                $error = lang('_ERROR_EMAIL_LENGTH_').lang('_EXCLAMATION_');//邮箱长度不符
+                break;
+            case -7:
+                $error = lang('_ERROR_EMAIL_FORBIDDEN_').lang('_EXCLAMATION_');//邮箱被禁止注册
+                break;
+            case -8:
+                $error = lang('_ERROR_EMAIL_USED_2_').lang('_EXCLAMATION_');//邮箱被占用
+                break;
+            case -9:
+                $error = lang('_ERROR_PHONE_FORMAT_2_').lang('_EXCLAMATION_');//手机格式不正确
+                break;
+            case -10:
+                $error = lang('_ERROR_FORBIDDEN_').lang('_EXCLAMATION_');//手机被禁止注册
+                break;
+            case -11:
+                $error = lang('_ERROR_PHONE_USED_').lang('_EXCLAMATION_');//手机号被占用
+                break;
+            case -12:
+                $error = lang('_ERROR_USERNAME_FORMAT_').lang('_EXCLAMATION_');//用户名格式错误
+                break;
+            case -20:
+                $error = lang('_ERROR_USERNAME_FORM_').lang('_EXCLAMATION_');//用户名只能由数字、字母和"_"组成
+                break;
+            case -30:
+                $error = lang('_ERROR_NICKNAME_USED_').lang('_EXCLAMATION_');//昵称被占用
+                break;
+            case -31:
+                $error = lang('_ERROR_NICKNAME_FORBIDDEN_2_').lang('_EXCLAMATION_');//昵称被禁止注册
+                break;
+            case -32:
+                $error =lang('_ERROR_NICKNAME_FORM_').lang('_EXCLAMATION_');//昵称只能由数字、字母、汉字和"_"组成
+                break;
+            case -33:
+                $error = lang('_ERROR_LENGTH_NICKNAME_1_').modC('NICKNAME_MIN_LENGTH',2,'USERCONFIG').'-'.modC('NICKNAME_MAX_LENGTH',32,'USERCONFIG').lang('_ERROR_LENGTH_2_').lang('_EXCLAMATION_');//昵称长度必须在x-x 个字符之间
+                break;
+            case -40:
+                $error = lang('_OLD_PW_').lang('_ERROR_');//原密码验证错误
+                break;
+            case -41:
+                $error = lang('_ERROR_CONFIRM_PASSWORD_');//确认密码不能为空
+                break;
+            case -42:
+                $error = lang('_ERROR_LENGTH_NEW_PASSWORD_');//确认密码不能为空
+                break;
+            case -43:
+                $error = lang('_ERROR_NOT_SAME_PASSWORD_');//新密码与确认密码不一致
+                break;
+            default:
+                $error = lang('_ERROR_UNKNOWN_');
+        }
+        return $error;
     }
 
 

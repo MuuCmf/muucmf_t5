@@ -62,7 +62,7 @@ class User extends Admin
         $this->assign('title','用户列表');
         $this->assign('_list', $list_arr);
         $this->assign('seek', $aSeek);
-
+        dump($list_arr);
         return $this->fetch();
     }
 

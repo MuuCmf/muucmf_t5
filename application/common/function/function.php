@@ -530,7 +530,7 @@ function action_log($action = null, $model = null, $record_id = null, $user_id =
     }
 
 
-    $log_id = Db::name('ActionLog')->insert($data);
+    $log_id = Db::name('ActionLog')->insertGetId($data);
 
     if (!empty($action_info['rule'])) {
         //解析行为
@@ -629,7 +629,7 @@ function execute_action($rules = false, $action_id = null, $user_id = null, $log
     }
     $return = true;
 
-    $action_log = Db::name('ActionLog')->where(array('id' => $log_id))->find();
+    $action_log = Db::name('ActionLog')->where(['id' => $log_id])->find();
     foreach ($rules as $rule) {
         //检查执行周期
         $map = array('action_id' => $action_id, 'user_id' => $user_id);
@@ -641,31 +641,38 @@ function execute_action($rules = false, $action_id = null, $user_id = null, $log
         //执行数据库操作
         $Model = Db::name(ucfirst($rule['table']));
         $field = 'score' . $rule['field'];
+        //获取现在的积分数量
+        $nowScore = $Model->where(['uid' => is_login()])->value($field);
 
-
+        $newScore = $nowScore.$rule['rule'];
         $rule['rule'] = (is_bool(strpos($rule['rule'], '+')) ? '+' : '') . $rule['rule'];
         $rule['rule'] = is_bool(strpos($rule['rule'], '-')) ?  $rule['rule'] : substr($rule['rule'],1) ;
-        $res = $Model->where(array('uid' => is_login(), 'status' => 1))->setField($field, array('exp', $field  . $rule['rule']));
+        $newScore = intval($nowScore.$rule['rule']);
+        //设置积分
+        $res = $Model->where(['uid' => is_login(), 'status' => 1])->setField($field, $newScore);
 
-        $scoreModel= model('Ucenter/Score') ;
+        $scoreModel= model('Ucenter/Score');
 
         $scoreModel->cleanUserCache(is_login(),$rule['field']);
 
 
-        $sType = Db::name('ucenter_score_type')->where(array('id' => $rule['field']))->find();
+        $sType = Db::name('ucenter_score_type')->where(['id' => $rule['field']])->find();
         $log_score .= '【' . $sType['title'] . '：' . $rule['rule'] . $sType['unit'] . '】';
 
         $action = strpos($rule['rule'], '-')?'dec':'inc';
+
         $scoreModel->addScoreLog(is_login(),$rule['field'],$action , substr($rule['rule'],1,strlen($rule['rule'])-1),$action_log['model'],$action_log['record_id'],$action_log['remark'].'【' . $sType['title'] . '：' . $rule['rule'] . $sType['unit'] . '】');
 
         if (!$res) {
             $return = false;
         }
     }
+    /* php7不支持exp表达式 暂取消
     if ($log_score) {
         cookie('score_tip', $log_score, 30);
-        Db::name('ActionLog')->where(array('id' => $log_id))->setField('remark', ['exp', "CONCAT(remark,'" . $log_score . "')"]);
+        Db::name('ActionLog')->where(['id' => $log_id])->setField('remark', ['exp', "CONCAT(remark,'" . $log_score . "')"]);
     }
+    */
     return $return;
 }
 

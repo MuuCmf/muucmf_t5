@@ -37,7 +37,6 @@ return array(
     '_EDIT_' => '编辑',
     '_ADD_' => '新增',
     '_ADD__2' => '添加',
-    '_SUCCESS_' => '成功！',
     '_FAIL_' => '失败！',
     '_SORT_' => '排序',
     '_RECOMMEND_' => '推荐',
@@ -66,6 +65,8 @@ return array(
     '_BRACKETS_LEFT_' => '【',
     '_BRACKETS_RIGHT_' => '】',
     '_SLASH_' => '/',
+    '_ERROR_'=> '错误',
+    '_SUCCESS_'=>'成功',
 
     /*header*/
     '_TIP_BROWSER_DEPRECATED_1_' => '您正在使用',
@@ -262,9 +263,6 @@ return array(
     '_TIME_WEEK_'=>'周',
     '_TIME_MONTH_'=>'月',
     '_TIME_YEAR_'=>'年',
-
-    //weibno/WeiboProtocolModel
-    '_MICRO_BLOG_' => '微博',
 
     //User/UcenterMemberModel
     '_USER_DOES_NOT_EXIST_OR_PASSWORD_ERROR_' => '用户不存在或密码错误',

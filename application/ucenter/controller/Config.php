@@ -76,14 +76,14 @@ class Config extends Base
             $new_password = input('post.new_password','','text');
             $confirm_password = input('post.confirm_password','','text');
             //调用接口
-            $memberModel = model('UcenterMember');
-            $res = $memberModel->changePassword($old_password, $new_password, $confirm_password);
+            $UcenterMemberModel = model('UcenterMember');
+            $resCode = $UcenterMemberModel->changePassword($old_password, $new_password, $confirm_password);
 
-            if ($res) {
+            if ($resCode>0) {
 
                 $this->success(lang('_SUCCESS_PASSWORD_ALTER_').lang('_PERIOD_'), Url('password'));
             } else {
-                $this->error($memberModel->getError());
+                $this->error(model('member')->showRegError($resCode));
             }
         }else{
             $this->_setTab('password');
@@ -748,10 +748,6 @@ class Config extends Base
         exit;
     }
 
-
-
-
-    
 
     /**
      * accountInfo   账户信息

@@ -37,7 +37,6 @@ return array(
     '_EDIT_' => ' Edit',
     '_ADD_' => ' Newly added',
     '_ADD__2' => ' Add to',
-    '_SUCCESS_' => ' Success',
     '_FAIL_' => ' Failure!',
     '_SORT_' => ' Sort',
     '_RECOMMEND_' => ' Recommend',
@@ -66,6 +65,8 @@ return array(
     '_BRACKETS_LEFT_' => ' [',
     '_BRACKETS_RIGHT_' => ' ]',
     '_SLASH_' => ' /',
+    '_ERROR_'=> 'error',
+    '_SUCCESS_'=>'success',
 
     /*header*/
     '_TIP_BROWSER_DEPRECATED_1_' => ' You are using',
@@ -225,6 +226,8 @@ return array(
     '_TIME_SELECT_' => ' Please choose time',
     '_SETTINGS_NOT_YET_' => ' Still not set',
     '_NEWS_HAS_NOT_'=>'No news~',
+
+    //function
     '_PARAMETERS_CANT_BE_EMPTY_' => ' Parameters can not be empty',
     '_THE_ACT_IS_DISABLED_OR_DELETED_' => ' The act is disabled or deleted',
     '_SOFA_' => ' Sofa',
@@ -252,7 +255,16 @@ return array(
     '_THE_ADMINISTRATOR_HAS_NOT_YET_CONFIGURED_THE_MESSAGE_INFORMATION_PLEASE_CONTACT_THE_ADMINISTRATOR_CONFIGURATION_' => ' Administrators have not configured the message information, please contact the administrator configuration',
     '_THE_ADMINISTRATOR_HAS_NOT_CONFIGURED_THE_SMS_SERVICE_PROVIDER_INFORMATION_PLEASE_CONTACT_THE_ADMINISTRATOR_' => ' Administrators have not configured the SMS service provider information, please contact the administrator',
     '_PARAMETER_ERROR_' => ' Parameter error',
-    '_MICRO_BLOG_' => ' Micro-blog',
+
+    //limit
+    '_TIME_SECOND_'=>'秒',
+    '_TIME_MINUTE_'=>'分',
+    '_TIME_DAY_'=>'天',
+    '_TIME_WEEK_'=>'周',
+    '_TIME_MONTH_'=>'月',
+    '_TIME_YEAR_'=>'年',
+
+    //User/UcenterMemberModel
     '_USER_DOES_NOT_EXIST_OR_PASSWORD_ERROR_' => ' User does not exist or password error',
     '_UC_ACCOUNT_REGISTRATION_FAILED_PLEASE_CONTACT_THE_ADMINISTRATOR_' => ' UC account registration failed, please contact the administrator',
     '_USERS_DO_NOT_EXIST_' => ' Users do not exist',

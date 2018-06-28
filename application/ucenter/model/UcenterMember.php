@@ -11,60 +11,6 @@ use app\common\model\Member;
 class UcenterMember extends Model
 {
     /**
-     * 检测用户名是不是被禁止注册(保留用户名)
-     * @param  string $username 用户名
-     * @return boolean          ture - 未禁用，false - 禁止注册
-     */
-    protected function checkDenyMember($username)
-    {
-        $denyName=Db::name("Config")->where(array('name' => 'USER_NAME_BAOLIU'))->field('value');
-        if($denyName!=''){
-            $denyName=explode(',',$denyName);
-            foreach($denyName as $val){
-                if(!is_bool(strpos($username,$val))){
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    /**
-     * 检测邮箱是不是被禁止注册
-     * @param  string $email 邮箱
-     * @return boolean       ture - 未禁用，false - 禁止注册
-     */
-    protected function checkDenyEmail($email)
-    {
-        return true; //TODO: 暂不限制，下一个版本完善
-    }
-
-    protected function checkUsername($username)
-    {
-
-        //如果用户名中有空格，不允许注册
-        if (strpos($username, ' ') !== false) {
-            return false;
-        }
-        preg_match("/^[a-zA-Z0-9_]{0,64}$/", $username, $result);
-
-        if (!$result) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * 检测手机是不是被禁止注册
-     * @param  string $mobile 手机
-     * @return boolean        ture - 未禁用，false - 禁止注册
-     */
-    protected function checkDenyMobile($mobile)
-    {
-        return true; //TODO: 暂不限制，下一个版本完善
-    }
-
-    /**
      * 注册一个新用户
      * @param  string $username 用户名
      * @param  string $nickname 昵称
@@ -90,10 +36,10 @@ class UcenterMember extends Model
 
         //验证器验证数据
         $validate = new \app\ucenter\validate\UcenterMember;
-       
-        if(!$validate->scene('reg')->check($data)){
-            return $validate->getError();
-        }
+        //测试数据 暂时禁用验证
+        //if(!$validate->scene('reg')->check($data)){
+        //    return $validate->getError();
+        //}
 
         /* 添加用户 */
         if ($uid = model('Member')->registerMember($nickname)) {//返回UID
@@ -150,7 +96,6 @@ class UcenterMember extends Model
                 return 0; //参数错误
         }
         /* 获取用户数据 */
-        //$user = $this->where($map)->find();
         $user = $this->get($map);
 
         $return = check_action_limit('input_password','ucenter_member',$user['id'],$user['id']);
@@ -158,8 +103,7 @@ class UcenterMember extends Model
         if($return && !$return['state']){
             return $return['info'];
         }
-        //echo $user['id'].'<br>'.$user->status;
-        //dump($user);exit;
+
         if ($user['id'] && $user['status']) {
             /* 验证用户密码 */
             if (user_md5($password, Config('database.auth_key')) === $user['password']) {
@@ -171,44 +115,6 @@ class UcenterMember extends Model
             }
         } else {
             return -1; //用户不存在或被禁用
-        }
-    }
-
-    public function getLocal($username, $password)
-    {
-        $aUsername = $username;
-        check_username($aUsername, $email, $mobile, $type);
-
-        $map = array();
-        switch ($type) {
-            case 1:
-                $map['username'] = $username;
-                break;
-            case 2:
-                $map['email'] = $username;
-                break;
-            case 3:
-                $map['mobile'] = $username;
-                break;
-            case 4:
-                $map['id'] = $username;
-                break;
-            default:
-                return 0; //参数错误
-        }
-
-        /* 获取用户数据 */
-        $user = $this->where($map)->find();
-
-        if (is_array($user) && $user['status']) {
-            /* 验证用户密码 */
-            if (think_ucenter_md5($password, UC_AUTH_KEY) === $user['password']) {
-                return $user; //登录成功，返回用户ID
-            } else {
-                return false; //密码错误
-            }
-        } else {
-            return false; //用户不存在或被禁用
         }
     }
 
@@ -302,32 +208,6 @@ class UcenterMember extends Model
     }
 
     /**
-     * 检测用户信息
-     * @param  string  $field 用户名
-     * @param  integer $type 用户名类型 1-用户名，2-用户邮箱，3-用户电话
-     * @return integer         错误编号
-     */
-    public function checkField($field, $type = 1)
-    {
-        $data = array();
-        switch ($type) {
-            case 1:
-                $data['username'] = $field;
-                break;
-            case 2:
-                $data['email'] = $field;
-                break;
-            case 3:
-                $data['mobile'] = $field;
-                break;
-            default:
-                return 0; //参数错误
-        }
-
-        return $this->create($data) ? 1 : $this->getError();
-    }
-
-    /**
      * 更新用户登录信息
      * @param  integer $uid 用户ID
      */
@@ -341,72 +221,6 @@ class UcenterMember extends Model
         $this->update($data);
     }
 
-    /**
-     * 更新用户信息
-     * @param int    $uid 用户id
-     * @param string $password 密码，用来验证
-     * @param array  $data 修改的字段数组
-     * @return true 修改成功，false 修改失败
-     * @author huajie <banhuajie@163.com>
-     */
-    public function updateUserFields($uid, $password, $data)
-    {
-        if (empty($uid) || empty($password) || empty($data)) {
-            $this->error = lang('_PARAM_ERROR_25_');
-            return false;
-        }
-
-        //更新前检查用户密码
-        if (!$this->verifyUser($uid, $password)) {
-            $this->error = lang('_VERIFY_ERROR_PW_WRONG_');
-            return false;
-        }
-
-        //更新用户信息
-        $data = $this->create($data, 2); //指定此处为更新数据
-        if ($data) {
-            return $this->where(array('id' => $uid))->save($data);
-        }
-        return false;
-    }
-
-    /**
-     * 重置用户密码
-     * @param int    $uid 用户id
-     * @param string $password 密码，用来验证
-     * @param array  $data 修改的字段数组
-     * @return true 修改成功，false 修改失败
-     * @author huajie <banhuajie@163.com>
-     */
-    public function updateUserFieldss($uid, $data)
-    {
-        if (empty($uid) || empty($data)) {
-            $this->error = lang('_PARAM_ERROR_25_');
-            return false;
-        }
-        //更新用户信息
-        $data = $this->create($data, 2);
-        if ($data) {
-            return $this->where(array('id' => $uid))->save($data);
-        }
-        return false;
-    }
-
-    /**
-     * 验证用户密码
-     * @param int    $uid 用户id
-     * @param string $password_in 密码
-     * @return true 验证成功，false 验证失败
-     */
-    public function verifyUser($uid, $password_in)
-    {
-        $password = $this->getFieldById($uid, 'password');
-        if (user_md5($password_in, Config('database.auth_key')) === $password) {
-            return true;
-        }
-        return false;
-    }
-
     /**修改密码
      * @param $old_password
      * @param $new_password
@@ -416,8 +230,8 @@ class UcenterMember extends Model
     {
         //检查旧密码是否正确
         if (!$this->verifyUser(get_uid(), $old_password)) {
-            $this->error = $this->getErrorMessage(-41);
-            return false;
+            //'旧密码错误';
+            return -40;
         }
 
         $data = [
@@ -428,7 +242,7 @@ class UcenterMember extends Model
         $validate = new \app\ucenter\validate\UcenterMember;
         $result = $validate->scene('password')->check($data);;
         if(false === $result){
-            $this->error = $validate->getError();
+            return $validate->getError();
             return false;
         }
         //移除数组中无用值
@@ -449,76 +263,27 @@ class UcenterMember extends Model
         }
         
     }
-        /*
-    public function getErrorMessage($error_code = null)
+    
+    /**
+     * 验证用户密码
+     * @param int    $uid 用户id
+     * @param string $password_in 密码
+     * @return true 验证成功，false 验证失败
+     * @author huajie <banhuajie@163.com>
+     */
+    public function verifyUser($uid, $password_in)
     {
-
-        $error = $error_code == null ? $this->error : $error_code;
-        switch ($error) {
-            case -1:
-                $error = lang('_USER_NAME_MUST_BE_IN_LENGTH_').modC('USERNAME_MIN_LENGTH',2,'USERCONFIG').'-'.modC('USERNAME_MAX_LENGTH',32,'USERCONFIG').lang('_BETWEEN_CHARACTERS_WITH_EXCLAMATION_');//用户名长度不符
-                break;
-            case -2:
-                $error = lang('_USER_NAME_IS_FORBIDDEN_TO_REGISTER_WITH_EXCLAMATION_');//用户名被禁止注册
-                break;
-            case -3:
-                $error = lang('_USER_NAME_IS_OCCUPIED_WITH_EXCLAMATION_');//用户名被占用
-                break;
-            case -4:
-                $error = lang('_PW_LENGTH_6_30_');
-                break;
-            case -41:
-                $error = lang('_USERS_OLD_PASSWORD_IS_INCORRECT_');
-                break;
-            case -5:
-                $error = lang('_MAILBOX_FORMAT_IS_NOT_CORRECT_WITH_EXCLAMATION_');
-                break;
-            case -6:
-                $error = lang('_EMAIL_LENGTH_4_32_');
-                break;
-            case -7:
-                $error = lang('_MAILBOX_IS_PROHIBITED_TO_REGISTER_WITH_EXCLAMATION_');
-                break;
-            case -8:
-                $error = lang('_MAILBOX_IS_OCCUPIED_WITH_EXCLAMATION_');
-                break;
-            case -9:
-                $error = lang('_MOBILE_PHONE_FORMAT_IS_NOT_CORRECT_WITH_EXCLAMATION_');
-                break;
-            case -10:
-                $error = lang('_MOBILE_PHONES_ARE_PROHIBITED_FROM_REGISTERING_WITH_EXCLAMATION_');
-                break;
-            case -11:
-                $error = lang('_PHONE_NUMBER_IS_OCCUPIED_WITH_EXCLAMATION_');
-                break;
-            case -12:
-                $error = lang('_UN_LIMIT_SOME_');//用户名必须以中文或字母开始，只能包含拼音数字，字母，汉字
-                break;
-            case -31:
-                $error = lang('_THE_NICKNAME_IS_PROHIBITED_');
-                break;
-            case -33:
-                $error = lang('_NICKNAME_LENGTH_MUST_BE_IN_').modC('NICKNAME_MIN_LENGTH',2,'USERCONFIG').'-'.modC('NICKNAME_MAX_LENGTH',32,'USERCONFIG').lang('_BETWEEN_CHARACTERS_WITH_EXCLAMATION_');
-                break;
-            case -32:
-                $error = lang('_THE_NICKNAME_IS_NOT_LEGAL_');
-                break;
-            case -30:
-                $error = lang('_THE_NICKNAME_HAS_BEEN_OCCUPIED_');
-                break;
-
-            default:
-                $error = lang('_UNKNOWN_ERROR_');
+        $password = $this->getFieldById($uid, 'password');
+        if (user_md5($password_in, config('database.auth_key')) === $password) {
+            return true;
         }
-        return $error;
+        return false;
     }
-        
 
     /**向ucenter_member表中写入数据并返回uid
      * @param string $prefix 数据前缀
      * @return mixed
      */
-
     public function addSyncData($prefix='')
     {
         $data['username'] = $this->rand_username($prefix);
