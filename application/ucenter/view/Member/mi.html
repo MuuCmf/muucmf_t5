@@ -15,20 +15,20 @@
               <li class="active"><a href="#mobile" data-target="#tabContent1" data-toggle="tab" data-value="mobile">手机找回</a></li>
               <li><a href="#email" data-target="#tabContent2" data-toggle="tab" data-value="email">邮箱找回</a></li>
             </ul>
-            <form class="form_box" action="{:U('Member/mi')}" method="post">
+            <form class="form_box" action="{:Url('Member/mi')}" method="post">
                 <input type="hidden" value="" name="type">
                 <div class="tab-content" style="margin-top: 15px;">
                     <div class="tab-pane active" id="tabContent1">
                         <div class="form-group">
 
-                            <input type="text" class="form-control input-lg" placeholder="{:L('_MI_MOBILE_')}" value="" name="account">
+                            <input type="text" class="form-control input-lg" placeholder="{:lang('_MI_MOBILE_')}" value="" name="account">
                             
                         </div>
                     </div>
                     <div class="tab-pane" id="tabContent2">
                         <div class="form-group">
 
-                            <input type="text" class="form-control input-lg" placeholder="{:L('_MI_EMAIL_')}" value="" name="account">
+                            <input type="text" class="form-control input-lg" placeholder="{:lang('_MI_EMAIL_')}" value="" name="account">
 
                         </div>
                     </div>
@@ -36,7 +36,7 @@
                 </div>
                 <div class="form-group">
                     <div class="input-group">
-                        <input type="text" id="inputVerify" class="form-control input-lg" placeholder="{:L('_MI_CODE_')}" name="verify">
+                        <input type="text" id="inputVerify" class="form-control input-lg" placeholder="{:lang('_MI_CODE_')}" name="verify">
                           <span class="input-group-btn">
                             <button class="btn btn-danger btn-lg " data-role='getVerify' type="button">获取验证码</button>
                           </span>
@@ -44,12 +44,12 @@
                 </div>
                 <div class="form-group">
                     <div class="input-group inputPassword">
-                            <input type="password" id="inputPassword" class="form-control input-lg" placeholder="{:L('_MI_NEW_PASSWORD_')}" name="password">
+                            <input type="password" id="inputPassword" class="form-control input-lg" placeholder="{:lang('_MI_NEW_PASSWORD_')}" name="password">
                             <span class="input-group-addon"><a data-value="hide" href="javascript:void(0);" onclick="change_show(this)"><i class="icon icon-eye-close"></i></a></span>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-info btn-lg btn-block">{:L('_MI_FOUND_')}</button>
-                <a class="btn btn-warning btn-lg btn-block" href="{:U('Member/login')}">{:L('_MI_RE_LOGIN_')}</a>
+                <button type="submit" class="btn btn-info btn-lg btn-block">{:lang('_MI_FOUND_')}</button>
+                <a class="btn btn-warning btn-lg btn-block" href="{:Url('Member/login')}">{:lang('_MI_RE_LOGIN_')}</a>
             </form>
         </div>
     </section>
@@ -128,7 +128,7 @@
                 this.obj.text(this.time--+'S')
                 setTimeout("DecTime.dec_time()",1000)
             }else{
-                this.obj.text("{:L('_PHONE_VERIFY_')}")
+                this.obj.text("{:lang('_PHONE_VERIFY_')}")
                 this.obj.attr('disabled',false)
             }
 

@@ -3,7 +3,7 @@
 <block name="body">
 <script type="text/javascript" src="__PUBLIC__/lib/uploadify/jquery.uploadify.min.js"></script>
     <div class="main-title cf">
-        <h2>{:L("_EDIT_")}[{$model['title']}]</h2>
+        <h2>{:lang("_EDIT_")}[{$model['title']}]</h2>
     </div>
     <!-- 标签页导航 -->
 <div class="tab-wrap">
@@ -14,7 +14,7 @@
     </ul>
     <div class="tab-content">
     <!-- 表单 -->
-    <form id="form" action="{:U('edit?model='.$model['id'])}" method="post" class="form-horizontal">
+    <form id="form" action="{:Url('edit?model='.$model['id'])}" method="post" class="form-horizontal">
         <!-- 基础文档模型 -->
 		<volist name=":parse_config_attr($model['field_group'])" id="group">
 		<div id="tab{$key}" class="tab-pane <eq name="key" value="1">in</eq> tab{$key}">
@@ -36,7 +36,7 @@
                                 </label>
                             </case>
                             <case value="datetime">
-                                <input type="text" name="{$field.name}" class="text input-large time" value="{$data[$field['name']]|date='Y-m-d H:i',###}" placeholder={:L("_PLEASE_CHOOSE_TIME_WITH_DOUBLE_")} />
+                                <input type="text" name="{$field.name}" class="text input-large time" value="{$data[$field['name']]|date='Y-m-d H:i',###}" placeholder={:lang("_PLEASE_CHOOSE_TIME_WITH_DOUBLE_")} />
                             </case>
                             <case value="bool">
                                 <select name="{$field.name}">
@@ -86,14 +86,14 @@
 							        "height"          : 30,
 							        "swf"             : "__PUBLIC__/lib/uploadify/uploadify.swf",
 							        "fileObjName"     : "download",
-							        "buttonText"      : {:L("_UPLOAD_PICTURES_WITH_DOUBLE_")},
-							        "uploader"        : "{:U('File/uploadPicture',array('session_id'=>session_id()))}",
+							        "buttonText"      : {:lang("_UPLOAD_PICTURES_WITH_DOUBLE_")},
+							        "uploader"        : "{:Url('File/uploadPicture',array('session_id'=>session_id()))}",
 							        "width"           : 120,
 							        'removeTimeout'	  : 1,
 							        'fileTypeExts'	  : '*.jpg; *.png; *.gif;',
 							        "onUploadSuccess" : uploadPicture{$field.name},
                                     'onFallback' : function() {
-                                        alert('{:L("_AN_INCOMPATIBLE_VERSION_OF_THE_FLASH_IS_NOT_DETECTED_")}.');
+                                        alert('{:lang("_AN_INCOMPATIBLE_VERSION_OF_THE_FLASH_IS_NOT_DETECTED_")}.');
                                     }
 							    });
 								function uploadPicture{$field.name}(file, data){
@@ -132,13 +132,13 @@
 							        "height"          : 30,
 							        "swf"             : "__PUBLIC__/lib/uploadify/uploadify.swf",
 							        "fileObjName"     : "download",
-							        "buttonText"      : {:L("_UPLOAD_ATTACHMENTS_WITH_DOUBLE_")},
-							        "uploader"        : "{:U('File/upload',array('session_id'=>session_id()))}",
+							        "buttonText"      : {:lang("_UPLOAD_ATTACHMENTS_WITH_DOUBLE_")},
+							        "uploader"        : "{:Url('File/upload',array('session_id'=>session_id()))}",
 							        "width"           : 120,
 							        'removeTimeout'	  : 1,
 							        "onUploadSuccess" : uploadFile{$field.name},
                                     'onFallback' : function() {
-                                        alert('{:L("_AN_INCOMPATIBLE_VERSION_OF_THE_FLASH_IS_NOT_DETECTED_")}.');
+                                        alert('{:lang("_AN_INCOMPATIBLE_VERSION_OF_THE_FLASH_IS_NOT_DETECTED_")}.');
                                     }
 							    });
 								function uploadFile{$field.name}(file, data){
@@ -172,8 +172,8 @@
 
         <div class="form-item cf">
             <input type="hidden" name="id" value="{$data.id}">
-            <button class="btn submit-btn ajax-post hidden" id="submit" type="submit" target-form="form-horizontal">{:L("_SURE_WITH_SPACE_")}</button>
-            <a class="btn btn-return" onclick="javascript:history.back(-1);return false;">{:L("_RETURN_WITH_SPACE_")}</a>
+            <button class="btn submit-btn ajax-post hidden" id="submit" type="submit" target-form="form-horizontal">{:lang("_SURE_WITH_SPACE_")}</button>
+            <a class="btn btn-return" onclick="javascript:history.back(-1);return false;">{:lang("_RETURN_WITH_SPACE_")}</a>
         </div>
     </form>
     </div>

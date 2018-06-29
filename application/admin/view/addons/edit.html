@@ -9,7 +9,7 @@
 <div class="tab-wrap">
     <div class="tab-content">
     <!-- 表单 -->
-    <form id="form" action="{:U('edit?name='.trim($_GET['name']))}" method="POST" class="form-horizontal">
+    <form id="form" action="{:Url('edit?name='.trim($_GET['name']))}" method="POST" class="form-horizontal">
         <!-- 基础文档模型 -->
 		<div id="tab" class="tab-pane in tab1">
             <volist name="fields" id="field">
@@ -30,7 +30,7 @@
                                 </label>
                             </case>
                             <case value="datetime">
-                                <input type="text" name="{$field.name}" class="text input-large time" value="{$data[$field['name']]|date='Y-m-d H:i',###}" placeholder={:L("_PLEASE_CHOOSE_TIME_WITH_DOUBLE_")} />
+                                <input type="text" name="{$field.name}" class="text input-large time" value="{$data[$field['name']]|date='Y-m-d H:i',###}" placeholder={:lang("_PLEASE_CHOOSE_TIME_WITH_DOUBLE_")} />
                             </case>
                             <case value="bool">
                                 <select name="{$field.name}">
@@ -80,13 +80,13 @@
 							        "height"          : 30,
 							        "swf"             : "__PUBLIC__/lib/uploadify/uploadify.swf",
 							        "fileObjName"     : "download",
-							        "buttonText"      : {:L("_UPLOAD_PICTURES_WITH_DOUBLE_")},
-							        "uploader"        : "{:U('File/uploadPicture',array('session_id'=>session_id()))}",
+							        "buttonText"      : {:lang("_UPLOAD_PICTURES_WITH_DOUBLE_")},
+							        "uploader"        : "{:Url('File/uploadPicture',array('session_id'=>session_id()))}",
 							        "width"           : 120,
 							        'removeTimeout'	  : 1,
 							        'fileTypeExts'	  : '*.jpg; *.png; *.gif;',
                                     'onFallback' : function() {
-                                        alert('{:L("_AN_INCOMPATIBLE_VERSION_OF_THE_FLASH_IS_NOT_DETECTED_")}.');
+                                        alert('{:lang("_AN_INCOMPATIBLE_VERSION_OF_THE_FLASH_IS_NOT_DETECTED_")}.');
                                     },
 							        "onUploadSuccess" : uploadPicture{$field.name}
 							    });
@@ -126,12 +126,12 @@
 							        "height"          : 30,
 							        "swf"             : "__PUBLIC__/lib/uploadify/uploadify.swf",
 							        "fileObjName"     : "download",
-							        "buttonText"      : {:L("_UPLOAD_ATTACHMENTS_WITH_DOUBLE_")},
-							        "uploader"        : "{:U('File/upload',array('session_id'=>session_id()))}",
+							        "buttonText"      : {:lang("_UPLOAD_ATTACHMENTS_WITH_DOUBLE_")},
+							        "uploader"        : "{:Url('File/upload',array('session_id'=>session_id()))}",
 							        "width"           : 120,
 							        'removeTimeout'	  : 1,
                                     'onFallback' : function() {
-                                        alert('{:L("_AN_INCOMPATIBLE_VERSION_OF_THE_FLASH_IS_NOT_DETECTED_")}.');
+                                        alert('{:lang("_AN_INCOMPATIBLE_VERSION_OF_THE_FLASH_IS_NOT_DETECTED_")}.');
                                     },
 							        "onUploadSuccess" : uploadFile{$field.name}
 							    });
@@ -163,8 +163,8 @@
             <input type="hidden" name="id" value="{$data.id|default=0}">
         </div>
         <div class="form-item cf">
-            <button class="btn submit-btn ajax-post hidden" id="submit" type="submit" target-form="form-horizontal">{:L("_SURE_WITH_SPACE_")}</button>
-            <a class="btn btn-return" onclick="javascript:history.back(-1);return false;">{:L("_RETURN_WITH_SPACE_")}</a>
+            <button class="btn submit-btn ajax-post hidden" id="submit" type="submit" target-form="form-horizontal">{:lang("_SURE_WITH_SPACE_")}</button>
+            <a class="btn btn-return" onclick="javascript:history.back(-1);return false;">{:lang("_RETURN_WITH_SPACE_")}</a>
         </div>
     </form>
     </div>

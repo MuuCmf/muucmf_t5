@@ -33,7 +33,7 @@
     <div class="select-option">
         <button class="btn btn-primary" data-role="set-tag">{:lang('_SAVE_')}</button>
         {php}if(check_step_can_skip('set_tag')){{/php}
-        <a href="{:U('Ucenter/member/step', array('step' => get_next_step('set_tag')))}"
+        <a href="{:Url('Ucenter/member/step', array('step' => get_next_step('set_tag')))}"
            style="margin-left: 30px;line-height: 18px;display: inline-block;margin-top: 6px;">{:lang('_STEP_')}</a>
         {php}}{/php}
     </div>

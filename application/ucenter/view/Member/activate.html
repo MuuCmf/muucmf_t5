@@ -8,16 +8,16 @@
         <i class="icon-info-sign"></i>
 
         <div class="content">
-            {:L('_ACCOUNT__DEAR_NOT_ACTIVE_1_')}{$nickname}
-            {:L('_COLON_')}
-            {:L('_ACCOUNT__DEAR_NOT_ACTIVE_2_')}“{$email}”
-            {:L('_ACCOUNT__DEAR_NOT_ACTIVE_3_')}
-            {:L('_PERIOD_')}<a href="javascript:"
+            {:lang('_ACCOUNT__DEAR_NOT_ACTIVE_1_')}{$nickname}
+            {:lang('_COLON_')}
+            {:lang('_ACCOUNT__DEAR_NOT_ACTIVE_2_')}“{$email}”
+            {:lang('_ACCOUNT__DEAR_NOT_ACTIVE_3_')}
+            {:lang('_PERIOD_')}<a href="javascript:"
                                                                            data-role="reSend">
-            {:L('_ACCOUNT__DEAR_NOT_ACTIVE_4_')}</a>
-            {:L('_ACCOUNT__DEAR_NOT_ACTIVE_5_')}<a
+            {:lang('_ACCOUNT__DEAR_NOT_ACTIVE_4_')}</a>
+            {:lang('_ACCOUNT__DEAR_NOT_ACTIVE_5_')}<a
                   data-toggle="modal" data-target="#changeEmail">
-            {:L('_ACCOUNT__DEAR_NOT_ACTIVE_6_')}</a>
+            {:lang('_ACCOUNT__DEAR_NOT_ACTIVE_6_')}</a>
 
         </div>
     </div>
@@ -27,15 +27,15 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">{:L('_CLOSE_')}</span></button>
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">{:lang('_CLOSE_')}</span></button>
                     <h4 class="modal-title">
-                        {:L('_ACCOUNT__DEAR_NOT_ACTIVE_6_')}</h4>
+                        {:lang('_ACCOUNT__DEAR_NOT_ACTIVE_6_')}</h4>
                 </div>
                 <div class="modal-body">
 
                     <div class="form-horizontal  center_info ">
                         <div class="form-group">
-                            <label for="account" class="col-xs-2 control-label">{:L('_PLACEHOLDER_EMAIL_INPUT_')}</label>
+                            <label for="account" class="col-xs-2 control-label">{:lang('_PLACEHOLDER_EMAIL_INPUT_')}</label>
 
                             <div class="col-xs-10">
                                 <input type="text" class="form-control pull-left" id="account" name="account"  placeholder="">
@@ -47,7 +47,7 @@
 
                 </div>
                 <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-role="changeEmail">{:L('_SAVE_')}</button>
+                        <button type="button" class="btn btn-primary" data-role="changeEmail">{:lang('_SAVE_')}</button>
                 </div>
             </div>
         </div>
@@ -61,7 +61,7 @@
         $(function () {
             $('[data-role="reSend"]').click(function () {
                 toast.showLoading();
-                $.post("{:U('ucenter/member/reSend')}", {}, function (res) {
+                $.post("{:Url('ucenter/member/reSend')}", {}, function (res) {
                         if(res.status){
                             toast.success(res.info);
                         }else{
@@ -74,7 +74,7 @@
             $('[data-role="changeEmail"]').click(function () {
                 toast.showLoading();
                 var email = $(this).parents('#changeEmail').find('#account').val();
-                $.post("{:U('ucenter/member/changeEmail')}", {email:email}, function (res) {
+                $.post("{:Url('ucenter/member/changeEmail')}", {email:email}, function (res) {
                    handleAjax(res)
                     toast.hideLoading();
                 })

@@ -1,5 +1,5 @@
 <div class="tab-pane">
-    <form action="{:U('Ucenter/Member/edit_expandinfo')}" method="post" class="ajax-form">
+    <form action="{:Url('Ucenter/Member/edit_expandinfo')}" method="post" class="ajax-form">
 
         <div class="with-padding">
             <div class="row">
@@ -17,12 +17,12 @@
                         </div>
                     </volist>
                     <if condition="count($vo['fields']) neq 0">
-                        <input type="submit" value="{:L('_SAVE_')}" id="submit_btn"
+                        <input type="submit" value="{:lang('_SAVE_')}" id="submit_btn"
                                class="btn btn-primary expandinfo-sumbit">
                     </if>
                     <php> if(check_step_can_skip('expand_info')){</php>
-                    <a href="{:U('Ucenter/member/step', array('step' => get_next_step('expand_info')))}"
-                       style="margin-left: 30px;line-height: 18px;display: inline-block;margin-top: 6px;">{:L('_STEP_')}</a>
+                    <a href="{:Url('Ucenter/member/step', array('step' => get_next_step('expand_info')))}"
+                       style="margin-left: 30px;line-height: 18px;display: inline-block;margin-top: 6px;">{:lang('_STEP_')}</a>
                     <php>}</php>
                 </div>
             </div>

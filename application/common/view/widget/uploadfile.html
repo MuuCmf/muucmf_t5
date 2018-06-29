@@ -12,7 +12,7 @@
 
 <div id="uploader_{$id}">
     <div class="btns">
-        <div id="picker">{:L('_FILE_SELECT_')}</div>
+        <div id="picker">{:lang('_FILE_SELECT_')}</div>
     </div>
 
 </div>
@@ -26,7 +26,7 @@
         swf: 'Uploader.swf',
 
         // 文件接收服务端。
-        server: "{:U('Home/File/uploadFile')}",
+        server: "{:Url('Home/File/uploadFile')}",
 
         // 选择文件的按钮。可选。
         // 内部根据当前运行是创建，可能是input元素，也可能是flash.
@@ -44,11 +44,11 @@
     uploader_{$id}.on( 'uploadSuccess', function( file ,ret ) {
 
         if(ret.status==1){
-            toast.success("{:L('_SUCCESS_UPLOAD_')}{:L('_PERIOD_')}");
+            toast.success("{:lang('_SUCCESS_UPLOAD_')}{:lang('_PERIOD_')}");
             $list_{$id}.html('<div>'+ret.data.file.name+' <a onclick="remove_file_{$id}'+'(this,'+ret.data.file.id+')"><i class="icon-trash"></i></a></div>');
            $('#file_upload_{$id}').val(ret.data.file.id);
         }else{
-            toast.error("{:L('_FAIL_UPLOAD_')}{:L('_PERIOD_')}"+ret.info);
+            toast.error("{:lang('_FAIL_UPLOAD_')}{:lang('_PERIOD_')}"+ret.info);
         }
         console.log(ret)
 
@@ -56,7 +56,7 @@
     });
 
     uploader_{$id}.on( 'uploadError', function( file ) {
-        toast.error("{:L('_ERROR_UPLOAD_')}{:L('_PERIOD_')}")
+        toast.error("{:lang('_ERROR_UPLOAD_')}{:lang('_PERIOD_')}")
     });
 
     uploader_{$id}.on( 'uploadComplete', function( file ) {

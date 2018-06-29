@@ -1,8 +1,9 @@
+
 <extend name="Public/base"/>
 
 <block name="body">
     <div class="main-title">
-        <h2>{:L("_DEFAULT_AVATAR_CONFIGURATION_")}</h2>
+        <h2>{:lang("_DEFAULT_AVATAR_CONFIGURATION_")}</h2>
     </div>
     <div class="clearfix">
         <div class="col-xs-10">
@@ -11,7 +12,7 @@
         <div class="col-xs-2 text-right">
             <select name="role" class="form-control">
                 <volist name="role_list" id="vo">
-                    <option value="{:U('Role/configavatar',array('id'=>$vo['id']))}" <eq name="vo['id']" value="$this_role['id']">selected</eq>>{$vo.title}</option>
+                    <option value="{:Url('Role/configavatar',array('id'=>$vo['id']))}" <eq name="vo['id']" value="$this_role['id']">selected</eq>>{$vo.title}</option>
                 </volist>
             </select>
         </div>
@@ -21,32 +22,32 @@
             <input type="hidden" name="id" value="{$this_role.id}"/>
             <input class="attach" type="hidden" name="avatar_id" value="{$this_role.avatar}"/>
             <input class="attach" type="hidden" name="set_null" value="0"/>
-            <label class="item-label" style="font-size: 15px;font-weight: 400;">{:L("_UPLOAD_DEFAULT_AVATAR_")}<span style="font-size: 12px;margin-left: 20px;color: rgb(253, 67, 67);">{:L("_PLEASE_UPLOAD_256PX_")}*256px的pn{:L("_G_AVATAR_")}</span></label>
+            <label class="item-label" style="font-size: 15px;font-weight: 400;">{:lang("_UPLOAD_DEFAULT_AVATAR_")}<span style="font-size: 12px;margin-left: 20px;color: rgb(253, 67, 67);">{:lang("_PLEASE_UPLOAD_256PX_")}*256px的pn{:lang("_G_AVATAR_")}</span></label>
             <div class="controls">
-                <div id="upload_single_image" style="padding-bottom: 5px;">{:L("_SELECT_PICTURES_")}</div>
+                <div id="upload_single_image" style="padding-bottom: 5px;">{:lang("_SELECT_PICTURES_")}</div>
                 <if condition="!isset($this_role['avatar'])">
                     <div data-role="avatar-block" style="display:none;">
 
                         <div class="avatar">
-                            <a href="{$this_role.avatar|getThumbImageById='256','256'}" data-role="avatar256" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+                            <a href="{$this_role.avatar|getThumbImageById='256','256'}" data-role="avatar256" title={:lang("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
                                 <img src="{$this_role.avatar|getThumbImageById='256','256'}">
                             </a>
                             <div class="img_tips">256px*256px</div>
                         </div>
                         <div class="avatar">
-                            <a href="{$this_role.avatar|getThumbImageById='128','128'}" data-role="avatar128" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+                            <a href="{$this_role.avatar|getThumbImageById='128','128'}" data-role="avatar128" title={:lang("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
                                 <img src="{$this_role.avatar|getThumbImageById='128','128'}">
                             </a>
                             <div class="img_tips">128px*128px</div>
                         </div>
                         <div class="avatar">
-                            <a href="{$this_role.avatar|getThumbImageById='64','64'}" data-role="avatar64" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+                            <a href="{$this_role.avatar|getThumbImageById='64','64'}" data-role="avatar64" title={:lang("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
                                 <img src="{$this_role.avatar|getThumbImageById='64','64'}">
                             </a>
                             <div class="img_tips">64px*64px</div>
                         </div>
                         <div class="avatar">
-                            <a href="{$this_role.avatar|getThumbImageById='32','32'}" data-role="avatar32" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+                            <a href="{$this_role.avatar|getThumbImageById='32','32'}" data-role="avatar32" title={:lang("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
                                 <img src="{$this_role.avatar|getThumbImageById='32','32'}">
                             </a>
                             <div class="img_tips">32px*32px</div>
@@ -56,25 +57,25 @@
                     <else/>
                     <div data-role="avatar-block">
                         <div class="avatar">
-                            <a href="{$this_role.avatar|getThumbImageById='256','256'}" data-role="avatar256" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+                            <a href="{$this_role.avatar|getThumbImageById='256','256'}" data-role="avatar256" title={:lang("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
                                 <img src="{$this_role.avatar|getThumbImageById='256','256'}">
                             </a>
                             <div class="img_tips">256px*256px</div>
                         </div>
                         <div class="avatar" style="margin-top: 20px;">
-                            <a href="{$this_role.avatar|getThumbImageById='128','128'}" data-role="avatar128" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+                            <a href="{$this_role.avatar|getThumbImageById='128','128'}" data-role="avatar128" title={:lang("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
                                 <img src="{$this_role.avatar|getThumbImageById='128','128'}">
                             </a>
                             <div class="img_tips">128px*128px</div>
                         </div>
                         <div class="avatar" style="margin-top: 40px;">
-                            <a href="{$this_role.avatar|getThumbImageById='64','64'}" data-role="avatar64" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+                            <a href="{$this_role.avatar|getThumbImageById='64','64'}" data-role="avatar64" title={:lang("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
                                 <img src="{$this_role.avatar|getThumbImageById='64','64'}">
                             </a>
                             <div class="img_tips">64px*64px</div>
                         </div>
                         <div class="avatar" style="margin-top: 52px;">
-                            <a href="{$this_role.avatar|getThumbImageById='32','32'}" data-role="avatar32" title={:L("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+                            <a href="{$this_role.avatar|getThumbImageById='32','32'}" data-role="avatar32" title={:lang("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
                                 <img src="{$this_role.avatar|getThumbImageById='32','32'}">
                             </a>
                             <div class="img_tips">32px*32px</div>
@@ -102,12 +103,12 @@
             <div class="form-item">
                 <div style="margin-top: 20px;"></div>
 
-                <button type="submit" class="btn submit-btn ajax-post" target-form="avatar-form" data-role="submit_button" style="display: none;">{:L("_SURE_WITH_SPACE_")}</button>
+                <button type="submit" class="btn submit-btn ajax-post" target-form="avatar-form" data-role="submit_button" style="display: none;">{:lang("_SURE_WITH_SPACE_")}</button>
 
-                <button class="btn submit-btn" data-role="do_submit">{:L("_SURE_WITH_SPACE_")}</button>
-                <button class="btn btn-return" onclick="javascript:history.back(-1);return false;">{:L("_RETURN_WITH_SPACE_")}</button>
-                <button class="btn submit-btn" data-role="set_null">{:L("_USE_SYSTEM_DEFAULT_AVATAR_")}</button>
-                <span style="color: #BABABA;margin: 11px;">{:L("_PLEASE_SAVE_THE_ABOVE_CONFIGURATION_AND_THEN_SWITCH_TO_ANOTHER_INTERFACE_")}</span>
+                <button class="btn submit-btn" data-role="do_submit">{:lang("_SURE_WITH_SPACE_")}</button>
+                <button class="btn btn-return" onclick="javascript:history.back(-1);return false;">{:lang("_RETURN_WITH_SPACE_")}</button>
+                <button class="btn submit-btn" data-role="set_null">{:lang("_USE_SYSTEM_DEFAULT_AVATAR_")}</button>
+                <span style="color: #BABABA;margin: 11px;">{:lang("_PLEASE_SAVE_THE_ABOVE_CONFIGURATION_AND_THEN_SWITCH_TO_ANOTHER_INTERFACE_")}</span>
             </div>
         </form>
 
@@ -137,7 +138,7 @@
                 // swf文件路径
                 swf: 'Uploader.swf',
                 // 文件接收服务端。
-                server: "{:U('Role/uploadPicture',array('session_id'=>session_id()))}",
+                server: "{:Url('Role/uploadPicture',array('session_id'=>session_id()))}",
                 // 选择文件的按钮。可选。
                 // 内部根据当前运行是创建，可能是input元素，也可能是flash.
                 pick: '#upload_single_image',
@@ -190,7 +191,7 @@
                 $(this).magnificPopup({
                     delegate: 'a',
                     type: 'image',
-                    tLoading: '{:L("_LOADING_")}#%curr%...',
+                    tLoading: '{:lang("_LOADING_")}#%curr%...',
                     mainClass: 'mfp-img-mobile',
                     gallery: {
                         enabled: true,
@@ -199,7 +200,7 @@
 
                     },
                     image: {
-                        tError: '<a href="%url%">{:L("_PICTURE_")}#%curr%</a>{:L("_COULD_NOT_BE_LOADED_")}',
+                        tError: '<a href="%url%">{:lang("_PICTURE_")}#%curr%</a>{:lang("_COULD_NOT_BE_LOADED_")}',
                         titleSrc: function (item) {
                             /*           return item.el.attr('title') + '<small>by Marsel Van Oosten</small>';*/
                             return '';

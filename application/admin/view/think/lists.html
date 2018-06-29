@@ -3,22 +3,22 @@
 <block name="body">
     <!-- 标题栏 -->
     <div class="main-title">
-        <h2>[{$model['title']}]{:L("_LIST_")}</h2>
+        <h2>[{$model['title']}]{:lang("_LIST_")}</h2>
     </div>
 	<div class="cf">
 		<div class="fl">
 		<empty name="model.extend">
 			<div class="tools">
-				<a class="btn" href="{:U('add?model='.$model['id'])}">{:L("_NEW_GROWTH_WITH_SPACE_")}</a>
-				<button class="btn ajax-post confirm" target-form="ids" url="{:U('del?model='.$model['id'])}">{:L("_DELETE_WITH_SPACE_")}</button>
+				<a class="btn" href="{:Url('add?model='.$model['id'])}">{:lang("_NEW_GROWTH_WITH_SPACE_")}</a>
+				<button class="btn ajax-post confirm" target-form="ids" url="{:Url('del?model='.$model['id'])}">{:lang("_DELETE_WITH_SPACE_")}</button>
 			</div>
 		</empty>
 		</div>
 		<!-- 高级搜索 -->
 		<div class="search-form fr cf">
 			<div class="sleft">
-				<input type="text" name="{$model['search_key']|default='title'}" class="search-input" value="{:I('title')}" placeholder={:L("_PLEASE_ENTER_THE_KEYWORD_WITH_DOUBLE_")}>
-				<a class="sch-btn" href="javascript:;" id="search" url="{:U('Think/lists','model='.$model['name'],false)}"><i class="btn-search"></i></a>
+				<input type="text" name="{$model['search_key']|default='title'}" class="search-input" value="{:I('title')}" placeholder={:lang("_PLEASE_ENTER_THE_KEYWORD_WITH_DOUBLE_")}>
+				<a class="sch-btn" href="javascript:;" id="search" url="{:Url('Think/lists','model='.$model['name'],false)}"><i class="btn-search"></i></a>
 			</div>
 
 		</div>

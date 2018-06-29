@@ -57,7 +57,7 @@ class Member extends Model {
             'last_login_ip'   => request()->ip(1),
         );
         $this->save($data,['uid'=>$user['uid']]);
-        $this->where(['uid'=>$user['uid'])->setInc('login');
+        $this->where(['uid'=>$user['uid']])->setInc('login');
         /* 记录登录SESSION和COOKIES */
         $auth = array(
             'uid'             => $user['uid'],

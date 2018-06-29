@@ -16,7 +16,7 @@
 
         <div class="select_box_this">
             <notempty name="role_list">
-                <span>{:L("_SELECTED_USERS_TO_MIGRATE_TO_THE_IDENTITY_")}{:L("_COLON_")}</span>
+                <span>{:lang("_SELECTED_USERS_TO_MIGRATE_TO_THE_IDENTITY_")}{:lang("_COLON_")}</span>
                 <span>
                     <select name="role" style="width: 200px;">
                         <volist name="role_list" id="role">
@@ -25,13 +25,13 @@
                     </select>
                 </span>
                 <else/>
-               {:L("_NO_IDENTITY_CAN_BE_MOVED_")}
+               {:lang("_NO_IDENTITY_CAN_BE_MOVED_")}
             </notempty>
 
         </div>
         <div style="width: 100%;text-align: center;">
-            <a class="btn btn-primary" data-role="submit">{:L("_MOBILE_")}</a>
-            <a onclick="$('.close').click();" class="btn btn-default">{:L("_CANCEL_")}</a>
+            <a class="btn btn-primary" data-role="submit">{:lang("_MOBILE_")}</a>
+            <a onclick="$('.close').click();" class="btn btn-default">{:lang("_CANCEL_")}</a>
         </div>
     </form>
 </div>
@@ -42,7 +42,7 @@
                    var url=$('#migration').attr('action');
                    $.post(url,query,function(msg){
                        if(msg.status){
-                           toast.success({:L('_MIGRATION_SUCCESS_WITH_SINGLE_')});
+                           toast.success({:lang('_MIGRATION_SUCCESS_WITH_SINGLE_')});
                            setTimeout(function(){
                                window.location.reload();
                            },1500);

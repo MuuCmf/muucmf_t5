@@ -9,8 +9,8 @@
         </div>
         <div class="clearfix" style="margin:10px auto">
             <div class="pull-left">
-                <button class="btn btn-default ajax-post btn btn-default" url="{:U('Admin/Count/downUser')}" target-form="ids">下线选中用户</button>&nbsp;
-                <button hide-data="true" class="btn btn-default ajax-post btn btn-default" url="{:U('Admin/Count/downUser',array('all'=>1))}" target-form="ids">下线全部用户</button>&nbsp;
+                <button class="btn btn-default ajax-post btn btn-default" url="{:Url('Admin/Count/downUser')}" target-form="ids">下线选中用户</button>&nbsp;
+                <button hide-data="true" class="btn btn-default ajax-post btn btn-default" url="{:Url('Admin/Count/downUser',array('all'=>1))}" target-form="ids">下线全部用户</button>&nbsp;
             </div>
             <div class="pull-right">当前有 {$loginCount} 会员在线，{:($totalCount-$loginCount)} 游客，总共 {$totalCount} 人在线</div>
         </div>
@@ -34,14 +34,14 @@
                     <tr>
                         <td><input class="ids" type="checkbox" value="{$oneUser['id']}" name="ids[]"></td>
                         <td style="width:auto;max-width: 150px;" class="text-ellipsis">
-                            <a href="{:U('Ucenter/Index/index',array('uid'=>$oneUser['uid']))}" target="_blank">
+                            <a href="{:Url('Ucenter/Index/index',array('uid'=>$oneUser['uid']))}" target="_blank">
                                 [{$oneUser['uid']}]{$oneUser['nickname']}
                             </a>
                         </td>
                         <td style="width:auto;max-width: 150px;" class="text-ellipsis">{$oneUser['last_login_time']|time_format}</td>
                         <td style="width:auto;max-width: 150px;" class="text-ellipsis">{$oneUser['session_id']}</td>
                         <td style="width:auto;max-width: 150px;" class="text-ellipsis">
-                            <a href="{:U('Admin/Count/downUser',array('ids'=>$oneUser['session_id']))}">下线该用户</a>
+                            <a href="{:Url('Admin/Count/downUser',array('ids'=>$oneUser['session_id']))}">下线该用户</a>
                         </td>
                     </tr>
                 </volist>

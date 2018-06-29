@@ -3,14 +3,14 @@
 <block name="body">
 	<!-- 标题栏 -->
 	<div class="main-title">
-		<h2>{:L("_USER_LIST_")}</h2>
+		<h2>{:lang("_USER_LIST_")}</h2>
 	</div>
 	<div class="clearfix with-padding">
         <!-- 高级搜索 -->
 		<div class="search-form col-md-offset-10 col-xs-2 ">
 			<div class="input-group">
-				<input type="text" name="nickname" class="search-input form-control" value="{:I('nickname')}" placeholder={:L("_PLEASE_ENTER_A_USER_NAME_OR_ID_WITH_DOUBLE_")}>
-				                   <span class="input-group-btn"><a class="btn" href="javascript:;" id="search" url="{:U('userList')}"><i class="icon-search"></i></a></span>
+				<input type="text" name="nickname" class="search-input form-control" value="{:I('nickname')}" placeholder={:lang("_PLEASE_ENTER_A_USER_NAME_OR_ID_WITH_DOUBLE_")}>
+				                   <span class="input-group-btn"><a class="btn" href="javascript:;" id="search" url="{:Url('userList')}"><i class="icon-search"></i></a></span>
 			</div>
 		</div>
     </div>
@@ -21,9 +21,9 @@
         <tr>
 		<th class="row-selected row-selected"><input class="check-all" type="checkbox"/></th>
 		<th class="">UID</th>
-		<th class="">{:L("_NICKNAME_")}</th>
-		<th class="">{:L("_STATE_")}</th>
-		<th class="">{:L("_OPERATION_")}</th>
+		<th class="">{:lang("_NICKNAME_")}</th>
+		<th class="">{:lang("_STATE_")}</th>
+		<th class="">{:lang("_OPERATION_")}</th>
 		</tr>
     </thead>
     <tbody>
@@ -35,13 +35,13 @@
 			<td>{$vo.nickname}</td>
 			<td>{$vo.status_text}</td>
 			<td>
-                <a href="{:U('Rank/userRankList?id='.$vo['uid'])}">{:L("_USER_TITLE_LIST_")}</a>
-                <a href="{:U('Rank/userAddRank?id='.$vo['uid'])}">{:L("_ASSOCIATED_NEW_TITLE_")}</a>
+                <a href="{:Url('Rank/userRankList?id='.$vo['uid'])}">{:lang("_USER_TITLE_LIST_")}</a>
+                <a href="{:Url('Rank/userAddRank?id='.$vo['uid'])}">{:lang("_ASSOCIATED_NEW_TITLE_")}</a>
             </td>
 		</tr>
 		</volist>
 		<else/>
-		<td colspan="9" class="text-center"> aOh!{:L("_THERE_IS_NO_CONTENT_")} </td>
+		<td colspan="9" class="text-center"> aOh!{:lang("_THERE_IS_NO_CONTENT_")} </td>
 		</notempty>
 	</tbody>
     </table>

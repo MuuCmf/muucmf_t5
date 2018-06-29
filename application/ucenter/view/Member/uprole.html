@@ -9,7 +9,7 @@
         <input type="hidden" name="role_id" value="{$role_id}">
         <div class="form-group clearfix">
             <label class="col-xs-4 control-label" style="text-align: right;">
-                {:L('_INV_CODE_')}{:L('_COLON_')}
+                {:lang('_INV_CODE_')}{:lang('_COLON_')}
             </label>
 
             <div class="col-xs-8">
@@ -18,8 +18,8 @@
             </div>
         </div>
         <div style="width: 100%;text-align: center;">
-            <a class="btn btn-primary" data-role="submit">{:L('_SUBMIT_')}</a>
-            <a onclick="$('.close').click();" class="btn btn-default">{:L('_CANCEL_')}</a>
+            <a class="btn btn-primary" data-role="submit">{:lang('_SUBMIT_')}</a>
+            <a onclick="$('.close').click();" class="btn btn-default">{:lang('_CANCEL_')}</a>
         </div>
     </form>
 </div>
@@ -30,7 +30,7 @@
             var url = $('#set_code').attr('action');
             $.post(url, query, function (msg) {
                 if (msg.status) {
-                    toast.success("{:L('_ROLE_UPGRADE_')}{:L('_EXCLAMATION_')}");
+                    toast.success("{:lang('_ROLE_UPGRADE_')}{:lang('_EXCLAMATION_')}");
                     setTimeout(function () {
                         window.location.href=msg.url;
                     }, 1500);

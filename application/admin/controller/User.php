@@ -61,8 +61,32 @@ class User extends Admin
 
             $ext_info = query_user(['nickname','username','mobile','email'],$v['uid']);
             $list_arr[$key] = array_merge($list_arr[$key],$ext_info);
+            //获取权限组
+            $auth_g_id = collection(Db::name('auth_group_access')->where(['uid'=>$v['uid']])->select())->toArray();
+            foreach($auth_g_id as $k=>$val){
+                $auth_group = Db::name('auth_group')->where(['id'=>$val['group_id']])->value('title');
+                $list_arr[$key]['auth_group'][$k]['title'] = $auth_group;
+            }
+            unset($k);
+            unset($val);
+            //获取身份
+            $role = collection(Db::name('user_role')->where(['uid'=>$v['uid']])->select())->toArray();
+            foreach($role as $k=>$val){
+                $role_name = Db::name('role')->where(['id'=>$val['role_id']])->find();
+                if(!empty($role_name)){
+                    $list_arr[$key]['role'][$k]['title'] = $role_name['title'];
+                        $list_arr[$key]['role'][$k]['status'] = $val['status'];
+                }
+            }
+            unset($k);
+            unset($val);
+
+            int_to_string($list_arr[$key]['role']); 
         }
+
         int_to_string($list_arr);
+
+        //dump($list_arr);
         $this->setTitle(lang('_USER_INFO_'));
 
         $this->assign('title','用户列表');
@@ -103,49 +127,6 @@ class User extends Admin
         } else {
             $this->error(lang('_ERROR_PW_RESET_'));
         }
-    }
-
-    public function changeGroup()
-    {
-        if (input('do') == 1) {
-            
-            $aAll = input('post.all', 0, 'intval');
-            $aUids = input('post.uid/a', array(), 'intval');
-            $aGids = input('post.gid/a', array(), 'intval');
-
-            if(empty($aUids)){
-
-                $this->error(lang('_ERROR_'));
-
-            }else{
-                //清空group
-                Db::name('AuthGroupAccess')->where(['uid' => ['in', implode(',', $aUids)]])->delete();
-            }
-            
-            foreach ($aUids as $uid) {
-                foreach ($aGids as $gid) {
-                    Db::name('AuthGroupAccess')->insert(['uid' => $uid, 'group_id' => $gid]);
-                }
-            }
-            $this->success(lang('_SUCCESS_'));
-
-        } else {
-            $aId = input('post.id/a', array(), 'intval');
-
-            if(empty($aId)){
-                $user = [];
-            }else{
-                foreach ($aId as $uid) {
-                    $user[] = query_user(['nickname','space_link', 'uid'], $uid);
-                }
-            }
-
-            $groups = Db::name('AuthGroup')->where(array('status' => 1))->select();
-            $this->assign('groups', $groups);
-            $this->assign('users', $user);
-            return $this->fetch();
-        }
-
     }
 
     /**用户扩展资料信息页
@@ -220,15 +201,13 @@ class User extends Admin
     }
 
 
-    /**用户扩展资料详情
+    /**用户资料详情修改
      * @param string $uid
      * @author 大蒙<59262424@qq.com>
-     * 这里需要重构
      */
     public function expandinfo_details($uid = 0)
     {
         if (request()->isPost()) {
-
             /* 修改积分 */
             $data = input('post.');
             foreach ($data as $key => $val) {
@@ -250,6 +229,9 @@ class User extends Admin
             $rs_score = true;
             /* 修改积分 end*/
 
+            /*用户组设置*/
+            model('AuthGroup')->addToGroup($data['id'], $data['auth_group']);
+            /*用户组END*/
             /*身份设置*/
             $data_role = [];
             foreach ($data as $key => $val) {
@@ -328,6 +310,15 @@ class User extends Admin
                 $member[$key] = $field_data;
             }
 
+
+            $auth = Db::name('auth_group_access')->where(['uid'=>$uid])->select();
+            $auth_group = [];
+            foreach($auth as $key=>$val){
+                $auth_group[] = $val['group_id'];
+            }
+            $member['auth_group'] = implode(',',$auth_group);
+            /**/
+
             $builder = new AdminConfigBuilder();
             $builder->title(lang('_USER_EXPAND_INFO_DETAIL_'));
             $builder->keyId()
@@ -354,6 +345,16 @@ class User extends Admin
 
             $member = array_merge($member, $score_data);
             /*积分设置end*/
+
+            /*权限组*/
+            $auth_group = collection(Db::name('auth_group')->where(['status'=>1])->select())->toArray();
+            $auth_group_options = [];
+            foreach ($auth_group as $val) {
+               $auth_group_options[$val['id']] = $val['title'];
+            }
+            $builder->keyCheckBox('auth_group', lang('_USER_GROUP_'), lang('_MULTI_OPTIONS_'), $auth_group_options);
+
+            /*权限组end*/
 
             /*身份设置 */
             $already_role = Db::name('UserRole')->where(['uid' => $uid, 'status' => 1])->field('role_id')->select();
@@ -405,12 +406,12 @@ class User extends Admin
                 }
             }
             /*身份设置 end*/
-
             $builder->data($member);
             
             $builder
                 ->group(lang('_BASIC_SETTINGS_'), implode(',', $field_key))
                 ->group(lang('_SETTINGS_SCORE_'), implode(',', $score_key))
+                ->group(lang('_USER_GROUP_'),'auth_group')
                 ->group(lang('_SETTINGS_ROLE_'), implode(',', $role_key))
                 ->buttonSubmit('', lang('_SAVE_'))
                 ->buttonBack()
@@ -1163,49 +1164,7 @@ class User extends Admin
         }
         return true;
     }
-    /*
-    **在线用户列表
-    */
-    public function online($page=1,$r=20)
-    {
 
-        $session_prefix=C("SESSION_PREFIX");
-        $map['session_data']  = array('like', '%uid%');
-        $order='session_expire desc';
-        $totalCount=Db::name('session')->where($map)->count();
-        if($totalCount){
-            $list=Db::name('session')->where($map)->page($page,$r)->order($order)->select();
-        }
-            foreach($list as $k=>$val){
-                $session_data[]=$this->mb_unserialize(str_replace($session_prefix.'|','',$value[session_data]));
-            }
-            unset($val);
-
-            foreach($session_data as &$val){
-                $val['user']=query_user(array('space_url','avatar64','nickname'),$val['user_auth']['uid']);
-            }
-            unset($val);
-        unset($map);
-        $total_num = Db::name('session')->count(); //在线总人数
-
-        $map['session_data'] = '';
-        $map['session_data'] = array('notlike','%uid%');
-        $map['_logic'] = 'OR';
-        $nouser_num = Db::name('session')->where($map)->count();//未登录用户数
-        unset($map);
-
-        $map['session_data']  = array('like', '%uid%');
-        $user_num = Db::name('session')->where($map)->count();
-        unset($map);
-                
-        $this->setTitle('在线用户列表');
-        $this->assign('online',$session_data);
-        $this->assign('totalCount',$totalCount);
-        $this->assign('total_num',$total_num);
-        $this->assign('nouser_num',$nouser_num);
-        $this->assign('user_num',$user_num);
-        return $this->fetch();
-    }
 
     private function mb_unserialize($serial_str) 
     { 

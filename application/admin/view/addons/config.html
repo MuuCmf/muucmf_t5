@@ -3,10 +3,10 @@
 <block name="body">
 	<script type="text/javascript" src="__PUBLIC__/lib/uploadify/jquery.uploadify.min.js"></script>
 	<div class="main-title cf">
-		<h2>{:L("_PLUGIN_CONFIGURATION_")}[ {$data.title} ]</h2>
+		<h2>{:lang("_PLUGIN_CONFIGURATION_")}[ {$data.title} ]</h2>
 	</div>
     <div class="with-padding">
-    <form action="{:U('saveConfig')}" class="form-horizontal" method="post">
+    <form action="{:Url('saveConfig')}" class="form-horizontal" method="post">
     <empty name="custom_config">
     <foreach name="data['config']" item="form" key="o_key">
     <div class="form-item cf">
@@ -89,14 +89,14 @@
                 "height"          : 30,
                 "swf"             : "__PUBLIC__/lib/uploadify/uploadify.swf",
                 "fileObjName"     : "download",
-                "buttonText"      : {:L("_UPLOAD_PICTURES_WITH_DOUBLE_")},
-                "uploader"        : "{:U('File/uploadPicture',array('session_id'=>session_id()))}",
+                "buttonText"      : {:lang("_UPLOAD_PICTURES_WITH_DOUBLE_")},
+                "uploader"        : "{:Url('File/uploadPicture',array('session_id'=>session_id()))}",
                 "width"           : 120,
                 'removeTimeout'   : 1,
                 'fileTypeExts'    : '*.jpg; *.png; *.gif;',
                 "onUploadSuccess" : uploadPicture{$o_key},
             'onFallback' : function() {
-                alert('{:L("_AN_INCOMPATIBLE_VERSION_OF_THE_FLASH_IS_NOT_DETECTED_")}.');
+                alert('{:lang("_AN_INCOMPATIBLE_VERSION_OF_THE_FLASH_IS_NOT_DETECTED_")}.');
             }
             });
 
@@ -212,14 +212,14 @@
                                         "height"          : 30,
                                         "swf"             : "__PUBLIC__/lib//uploadify/uploadify.swf",
                                         "fileObjName"     : "download",
-                                        "buttonText"      : {:L("_UPLOAD_PICTURES_WITH_DOUBLE_")},
-                                        "uploader"        : "{:U('File/uploadPicture',array('session_id'=>session_id()))}",
+                                        "buttonText"      : {:lang("_UPLOAD_PICTURES_WITH_DOUBLE_")},
+                                        "uploader"        : "{:Url('File/uploadPicture',array('session_id'=>session_id()))}",
                                         "width"           : 120,
                                         'removeTimeout'   : 1,
                                         'fileTypeExts'    : '*.jpg; *.png; *.gif;',
                                         "onUploadSuccess" : uploadPicture{$o_tab_key},
                                     'onFallback' : function() {
-                                        alert('{:L("_AN_INCOMPATIBLE_VERSION_OF_THE_FLASH_IS_NOT_DETECTED_")}.');
+                                        alert('{:lang("_AN_INCOMPATIBLE_VERSION_OF_THE_FLASH_IS_NOT_DETECTED_")}.');
                                     }
                                     });
 
@@ -277,8 +277,8 @@
     <div style="margin-top: 10px">
 
         <input type="hidden" name="id" value="{:I('id')}" readonly>
-        <button type="submit" class="btn submit-btn ajax-post" target-form="form-horizontal">{:L("_SURE_WITH_SPACE_")}</button>
-        <button class="btn btn-return" onclick="javascript:history.back(-1);return false;">{:L("_RETURN_WITH_SPACE_")}</button>
+        <button type="submit" class="btn submit-btn ajax-post" target-form="form-horizontal">{:lang("_SURE_WITH_SPACE_")}</button>
+        <button class="btn btn-return" onclick="javascript:history.back(-1);return false;">{:lang("_RETURN_WITH_SPACE_")}</button>
         </div>
     </div>
 

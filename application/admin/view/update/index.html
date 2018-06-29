@@ -14,12 +14,12 @@
 
             <div class="alert alert-danger-inverse with-icon">
                 <i class="icon-info-sign"></i> 
-                <div class="content">在线系统升级需要在系统设置中关闭网站，<a class="alert-link" href="{:U('admin/config/group')}">点击这里关闭网站</a>！</div>
+                <div class="content">在线系统升级需要在系统设置中关闭网站，<a class="alert-link" href="{:Url('admin/config/group')}">点击这里关闭网站</a>！</div>
             </div>
 
             <if condition="$result['status'] neq 0">
                
-            <form id="migration" class="form-horizontal" role="form" action="{:U('Update/startUpdate')}" method="post">
+            <form id="migration" class="form-horizontal" role="form" action="{:Url('Update/startUpdate')}" method="post">
                 <legend>系统检测到有可升级的版本</legend>
                     <div class="form-group">
                       <label class="col-md-2 control-label">版本</label>
@@ -147,7 +147,7 @@
         });
         $('#checkVersion').click(function(){
             $('#checkVersion').html('检测中...页面即将跳转');
-            window.location.href='{:U(Admin/update/index)}'; 
+            window.location.href='{:Url(Admin/update/index)}'; 
         });
     });
 </script>

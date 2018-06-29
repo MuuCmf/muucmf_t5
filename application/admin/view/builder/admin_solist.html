@@ -65,14 +65,14 @@
 			 	{$search.title}：<input style="float: none;width:80px;display:inline;margin-bottom:5px;" type="text" name="{$search['name']}" class="form-control" value="{$_GET[$search['name']]}">
 			 </if>
     	 </volist>
-    	<input type="submit" class="btn" style="margin-bottom:5px" value={:L("_SEARCH_WITH_DOUBLE_")}/>
+    	<input type="submit" class="btn" style="margin-bottom:5px" value={:lang("_SEARCH_WITH_DOUBLE_")}/>
 		</form>
 		</div> 
 		</if>
         <div class="fl">
         	<!--
 <if condition="count($searches) gt 0">
-    <button class="btn submit-btn" url="?status=-1" target-form="ids" style="padding: 6px 16px;" onclick="toggle_search()">{:L("_SEARCH_")}</button>
+    <button class="btn submit-btn" url="?status=-1" target-form="ids" style="padding: 6px 16px;" onclick="toggle_search()">{:lang("_SEARCH_")}</button>
 </if>.
 -->
 
@@ -115,8 +115,8 @@
         </table>
     </div>
 	<div class="with-padding">
-   {:L("_SELECT_ID_")}：<input type="text" name="txt" id="txt">
-	</form><input type="button" value={:L("_DETERMINATION_WITH_DOUBLE_")} onclick="foo();"> 
+   {:lang("_SELECT_ID_")}：<input type="text" name="txt" id="txt">
+	</form><input type="button" value={:lang("_DETERMINATION_WITH_DOUBLE_")} onclick="foo();"> 
 
     </div>
     <!-- 分页 -->
@@ -211,7 +211,7 @@
                 $(this).magnificPopup({
                     delegate: 'a',
                     type: 'image',
-                    tLoading: '{:L("_LOADING_")}#%curr%...',
+                    tLoading: '{:lang("_LOADING_")}#%curr%...',
                     mainClass: 'mfp-img-mobile',
                     gallery: {
                         enabled: true,
@@ -220,7 +220,7 @@
 
                     },
                     image: {
-                        tError: '<a href="%url%">{:L("_PICTURE_")}#%curr%</a>{:L("_COULD_NOT_BE_LOADED_")}',
+                        tError: '<a href="%url%">{:lang("_PICTURE_")}#%curr%</a>{:lang("_COULD_NOT_BE_LOADED_")}',
                         titleSrc: function (item) {
                             /*           return item.el.attr('title') + '<small>by Marsel Van Oosten</small>';*/
                             return '';

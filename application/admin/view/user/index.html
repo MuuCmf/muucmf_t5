@@ -21,9 +21,6 @@
             <button class="btn btn-danger ajax-post confirm" url="{:Url('User/changeStatus',array('method'=>'deleteUser'))}"
                     target-form="ids">{:lang('_DELETE_')}
             </button>
-            <button class="btn btn-info ajax-post" onclick="post_select_form()"
-                    target-form="ids">{:lang('_USER_GROUP_SELECT_')}
-            </button>
             <button class="btn ajax-post btn-danger confirm" data-confirm="{:lang('_PW_RESET_CONFIRM_')}" url="{:Url('User/initPass')}" target-form="ids">{:lang('_PW_RESET_')}
             </button>
             <span style="font-size: 14px;color: #999898;margin-left: 11px;">{:lang('_PW_RESET_TIP_')}</span>
@@ -51,11 +48,13 @@
                 <th class="">{:lang('_USERNAME_')}</th>
                 <th class="">{:lang('_MAILBOX_')}</th>
                 <th class="">{:lang('_CELL_PHONE_NUMBER_')}</th>
-                <th class="">{:lang('_OPERATE_')}</th>
+                <th class="">{:lang('_USER_GROUP_')}</th>
+                <th class="">{:lang('_ROLE_NAME_')}</th>
                 <th class="">{:lang('_LOGIN_COUNT_')}</th>
                 <th class="">{:lang('_LAST_LOGIN_TIME_')}</th>
                 <th class="">{:lang('_LOGIN_IP_LAST_TIME_')}</th>
                 <th class="">{:lang('_STATUS_')}</th>
+                <th class="">{:lang('_EDIT_')}</th>
 
             </tr>
             </thead>
@@ -70,18 +69,20 @@
                         <td>{$vo.email}</td>
                         <td>{$vo.mobile}</td>
                         <td>
-                            {eq name="vo.status" value="1"}
-                                <a href="{:Url('User/changeStatus?method=forbidUser&id='.$vo['uid'])}"
-                                   class="ajax-get">{:lang('_DISABLE_')}</a>
-                            {else/}
-                                <a href="{:Url('User/changeStatus?method=resumeUser&id='.$vo['uid'])}"
-                                   class="ajax-get">{:lang('_ENABLE_')}</a>
-                            {/eq}
-                            <a href="{:Url('AuthManager/group?uid='.$vo['uid'])}" class="authorize">{:lang('_ACCREDIT_')}</a>
-                            <a href="{:Url('User/changeStatus?method=deleteUser&id='.$vo['uid'])}"
-                               class="confirm ajax-get">{:lang('_DELETE_')}</a>
-                            <a href="{:Url('User/initPass?id='.$vo['uid'])}"
-                               class="confirm ajax-get">{:lang('_PW_RESET_')}</a>
+                            {notempty name="vo.auth_group"}
+                            {volist name="vo.auth_group" id="role"}
+                            <div>
+                                <span>{$role.title}</span> 
+                            </div>  
+                            {/volist}
+                            {/notempty}
+                        </td>
+                        <td>
+                            {volist name="vo.role" id="role"}
+                            <div>
+                                <span>{$role.title}</span> <span class="label label-badge label-info">{$role.status_text}</span>
+                            </div>  
+                            {/volist}
                         </td>
 
                         <td>{$vo.login}</td>
@@ -89,6 +90,7 @@
                         <td><a href="http://ip138.com/ips138.asp?ip={$vo['last_login_ip']|long2ip}">{$vo['last_login_ip']|long2ip}</a>
                         </td>
                         <td>{$vo.status_text}</td>
+                        <td><a href="{:Url('Admin/User/expandinfo_details',array('uid'=>$vo['uid']))}" >{:lang('_EDIT_')}</a></td>
                     </tr>
                 {/volist}
                 {else/}

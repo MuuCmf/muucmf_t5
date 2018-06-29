@@ -83,7 +83,7 @@ class InviteController extends AdminController
     {
         $aId=I('id',0,'intval');
         $is_edit=$aId?1:0;
-        $title=$is_edit?L('_EDIT_'):L('_NEW_');
+        $title=$is_edit?L('_EDIT_'):lang('_NEW_');
         if(IS_POST){
             $data['title']=I('post.title','','op_t');
             $data['length']=I('post.length',0,'intval');

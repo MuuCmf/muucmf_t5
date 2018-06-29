@@ -39,8 +39,9 @@ class UploadAvatar extends Controller
             //如果没有头像，返回默认头像
             if($uid==session('temp_login_uid')||$uid==is_login()){
                 $role_id = session('temp_login_role_id') ? session('temp_login_role_id') : get_role_id();
+
             }else{
-                $role_id=query_user('show_role',$uid);
+                $role_id=query_user('show_role',$uid)['show_role'];
             }
             return $this->getImageUrlByRoleId($role_id, $size);
         }
@@ -64,9 +65,10 @@ class UploadAvatar extends Controller
     private function getImageUrlByRoleId($role_id, $size)
     {
         $avatar_id=cache('Role_Avatar_Id_'.$role_id);
+
         if(!$avatar_id){
             $map = getRoleConfigMap('avatar', $role_id);
-            $avatar_id = db('RoleConfig')->where($map)->field('value')->find();
+            $avatar_id = Db::name('RoleConfig')->where($map)->field('value')->find();
             cache('Role_Avatar_Id_'.$role_id,$avatar_id,600);
         }
         if ($avatar_id) {

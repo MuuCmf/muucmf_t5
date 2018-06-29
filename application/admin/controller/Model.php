@@ -255,7 +255,7 @@ class Model extends Admin {
         if(!$res){
             $this->error(D('Model')->getError());
         }else{
-            $this->success($res['id']?L('_UPDATE_'):L('_NEW_SUCCESS_'), Cookie('__forward__'));
+            $this->success($res['id']?L('_UPDATE_'):lang('_NEW_SUCCESS_'), Cookie('__forward__'));
         }
     }
 

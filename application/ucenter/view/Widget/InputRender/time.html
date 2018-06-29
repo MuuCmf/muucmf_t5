@@ -13,7 +13,7 @@
             }
         </php>
         <div class="col-xs-6">
-            <input class="time form-control input-group date form_datetime col-xs-5" id="expand_{$field_id}" name="expand_{$field_id}" size="16" style="position: relative;display: block;" type="text" value="{$field_data}"  placeholder="{:L('_TIME_SELECT_')}" readonly>
+            <input class="time form-control input-group date form_datetime col-xs-5" id="expand_{$field_id}" name="expand_{$field_id}" size="16" style="position: relative;display: block;" type="text" value="{$field_data}"  placeholder="{:lang('_TIME_SELECT_')}" readonly>
             <neq name="input_tips" value=""> <span class="help-block">{$input_tips}</span></neq>
         </div>
     </div>
@@ -26,7 +26,7 @@
         <if condition="($field_data neq null)&&($field_data neq '')">
             {$field_data}
             <else/>
-            {:L('')}        </if>
+            {:lang('')}        </if>
     </dd>
 </eq>
 <div class="clearfix"></div>

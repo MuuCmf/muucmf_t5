@@ -72,7 +72,7 @@
             </ul>
         </div>
 
-        <form action="{:U('editadv?pos_id='.$pos['id'])}" method="post" class="form-horizontal">
+        <form action="{:Url('editadv?pos_id='.$pos['id'])}" method="post" class="form-horizontal">
             <label class="item-label">所属广告位： </label>
             <div class="controls ">
                 <input type="hidden" name="pos_id" value="{$pos.id}"  readonly/>
@@ -165,7 +165,7 @@
             <div class="form-item">
                 <button class="btn btn-success submit-btn ajax-post" id="submit" type="submit" target-form="form-horizontal" style="width: 100px">确定</button>
                 &nbsp;
-                <a class="btn btn-default" href="{:U('adv?pos_id='.$pos['id'])}">返回广告管理</a>
+                <a class="btn btn-default" href="{:Url('adv?pos_id='.$pos['id'])}">返回广告管理</a>
                 &nbsp; <a class="btn btn-danger" onclick="builder.init()">清空并重置
             </a></div>
         </form>

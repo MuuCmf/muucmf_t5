@@ -42,7 +42,7 @@
             $text1.val(html)
         }
         //上传图片
-        editor.customConfig.uploadImgServer = '{:U("Home/File/uploadPicture")}'  // 上传图片到服务器
+        editor.customConfig.uploadImgServer = '{:Url("Home/File/uploadPicture")}'  // 上传图片到服务器
         editor.customConfig.uploadImgHooks = {
         customInsert: function (insertImg, result, editor) {
                 // result 必须是一个 JSON 格式字符串！！！否则报错

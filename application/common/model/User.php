@@ -11,7 +11,7 @@ class User Extends Model
 {
     private $table_fields = array(
         //member
-        'uid', 'nickname', 'sex', 'birthday', 'qq', 'signature', 'pos_province', 'pos_city', 'pos_district', 'pos_community', 'score1', 'score2', 'score3', 'score4','con_check','total_check',
+        'uid', 'nickname', 'sex', 'birthday', 'qq', 'signature', 'pos_province', 'pos_city', 'pos_district', 'pos_community', 'score1', 'score2', 'score3', 'score4','con_check','total_check','show_role',
         //ucmember
         'id', 'username', 'password', 'email', 'mobile'
     );
@@ -46,13 +46,16 @@ class User Extends Model
         //获取昵称拼音 pinyin
         $user_data = $this->getPinyin($fields, $user_data);
         //如果全部命中，则直接返回数据
-
-        if (array_intersect(array('score','score1'), $pFields)) {
-            $user_data['score'] = $user_data['score1'];
+        if(is_array($pFields)){
+            if (array_intersect(['score','score1'], $pFields)) {
+                $user_data['score'] = $user_data['score1'];
+            }
         }
+        
         if (empty($fields)) {
             return $user_data;
         }
+
 
         $user_data = $this->handleTitle($uid, $fields, $user_data);
         //获取头像Avatar数据
@@ -325,11 +328,14 @@ class User Extends Model
             //如果存在需要检索的头像
             $avatarObject = controller('app\ucenter\widget\UploadAvatar');
 
-            foreach ($avatarFields as $e) {
-                $avatarSize = intval(substr($e, 6));
-                $avatarUrl = $avatarObject->getAvatar($uid, $avatarSize);
-                $avatars[$e] = $avatarUrl;
+            if($uid){
+                foreach ($avatarFields as $e) {
+                    $avatarSize = intval(substr($e, 6));
+                    $avatarUrl = $avatarObject->getAvatar($uid, $avatarSize);
+                    $avatars[$e] = $avatarUrl;
+                }
             }
+            
             $user_data = array_merge($user_data, $avatars);
             $this->write_query_user_cache($uid, 'avatars', $avatars);
             $this->popGotFields($fields, $avatarFields);
