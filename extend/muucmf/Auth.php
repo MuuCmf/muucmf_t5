@@ -9,6 +9,7 @@
 // | Author: Byron Sampson <xiaobo.sun@gzzstudio.net>
 // +----------------------------------------------------------------------
 namespace muucmf;
+
 use think\Db;
 use think\Config;
 use think\Session;

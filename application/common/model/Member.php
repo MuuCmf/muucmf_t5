@@ -159,10 +159,10 @@ class Member extends Model
         
         /* 登录用户 */
         $this->autoLogin($user, $remember);
+        //记录行为
+        model('action')->action_log('user_login', 'member', $uid, $uid);
         //挂载登录成功后钩子
         hook('Login_after');
-        //记录行为
-        action_log('user_login', 'member', $uid, $uid);
         return true;
     }
 
@@ -186,7 +186,7 @@ class Member extends Model
         //判断角色用户是否审核
         $map['uid'] = $user['uid'];
         $map['role_id'] = $user['last_login_role'];
-        $audit = Db::name('UserRole')->where($map)->field('status')->find();
+        $audit = Db::name('UserRole')->where($map)->value('status');
         
         //判断角色用户是否审核 end
 
@@ -202,14 +202,14 @@ class Member extends Model
         session('user_auth', $auth);
         session('user_auth_sign', data_auth_sign($auth));
         if ($remember) {
-            $user1 = model('user_token')->where('uid=' . $user['uid'])->find();
+            $user1 = Db::name('user_token')->where(['uid'=>$user['uid']])->find();
             $token = $user1['token'];
             if ($user1 == null) {
                 $token = build_auth_key();
                 $data['token'] = $token;
                 $data['time'] = time();
                 $data['uid'] = $user['uid'];
-                model('user_token')->insert($data);
+                Db::name('user_token')->insert($data);
             }
         }
 

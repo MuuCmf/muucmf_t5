@@ -45,7 +45,7 @@ class Login extends Controller
         if (!check_reg_type($aUnType)) {
             $res['info']=lang('_INFO_TYPE_NOT_OPENED_').lang('_PERIOD_');
         }
-        //用户登录认证
+        //用户登录验证
         $uid = model('UcenterMember')->login($username, $aPassword, $aUnType);
 
         if (0 < $uid) { //登录成功
@@ -54,7 +54,7 @@ class Login extends Controller
             $args['uid'] = $uid;
             $args = array('uid'=>$uid,'nickname'=>$username);
             check_and_add($args);
-
+            //登陆用户记录session
             if ($Member->login($uid, $aRemember == 1)) { //登录用户
                 //TODO:跳转到登录前页面
                 

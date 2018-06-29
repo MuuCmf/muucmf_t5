@@ -1,35 +1,33 @@
-<extend name="Public/base"/>
+{extend name="common/main"/}
 
-<block name="body">
+{block name="body"}
     <!-- 标题栏-->
     <div class="main-title">
-        <h2>{:L("_DATA_BACKUP_")}</h2>
-    </div>
-    <!-- /标题栏-->
-
-    <div class="with-padding">
-        <a id="export" class="btn" href="javascript:;" autocomplete="off">{:L("_IMMEDIATE_BACKUP_")}</a>
-        <a id="optimize" class="btn" href="{:U('optimize')}">{:L("_OPTIMIZATION_TABLE_")}</a>
-        <a id="repair" class="btn" href="{:U('repair')}">{:L("_REPAIR_TABLE_")}</a>
+        <h2>{:lang("_DATA_BACKUP_")}</h2>
     </div>
 
-    <!-- 应用列表-->
     <div class="with-padding">
-        <form id="export-form" method="post" action="{:U('export')}">
+
+        <div class="tool-box button-box">
+            <a id="export" class="btn btn-info" href="javascript:;" autocomplete="off">{:lang("_IMMEDIATE_BACKUP_")}</a>
+            <a id="optimize" class="btn btn-warning" href="{:Url('optimize')}">{:lang("_OPTIMIZATION_TABLE_")}</a>
+            <a id="repair" class="btn btn-warning" href="{:Url('repair')}">{:lang("_REPAIR_TABLE_")}</a>
+        </div>
+        <form id="export-form" method="post" action="{:Url('export')}">
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
                         <th width="48"><input class="check-all" checked="chedked" type="checkbox" value=""></th>
-                        <th>{:L("_TABLE_NAME_")}</th>
-                        <th width="120">{:L("_DATA_QUANTITY_")}</th>
-                        <th width="120">{:L("_DATA_SIZE_")}</th>
-                        <th width="160">{:L("_CREATE_TIME_")}</th>
-                        <th width="160">{:L("_BACKUP_STATE_")}</th>
-                        <th width="120">{:L("_OPERATION_")}</th>
+                        <th>{:lang("_TABLE_NAME_")}</th>
+                        <th width="120">{:lang("_DATA_QUANTITY_")}</th>
+                        <th width="120">{:lang("_DATA_SIZE_")}</th>
+                        <th width="160">{:lang("_CREATE_TIME_")}</th>
+                        <th width="160">{:lang("_BACKUP_STATE_")}</th>
+                        <th width="120">{:lang("_OPERATION_")}</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <volist name="list" id="table">
+                    {volist name="list" id="table"}
                         <tr>
                             <td class="num">
                                 <input class="ids" checked="chedked" type="checkbox" name="tables[]" value="{$table.name}">
@@ -38,21 +36,21 @@
                             <td>{$table.rows}</td>
                             <td>{$table.data_length|format_bytes}</td>
                             <td>{$table.create_time}</td>
-                            <td class="info">{:L("_NOT_BACKED_UP_")}</td>
+                            <td class="info">{:lang("_NOT_BACKED_UP_")}</td>
                             <td class="action">
-                                <a class="ajax-get no-refresh" href="{:U('optimize?tables='.$table['name'])}">{:L("_OPTIMIZATION_TABLE_")}</a>&nbsp;
-                                <a class="ajax-get no-refresh" href="{:U('repair?tables='.$table['name'])}">{:L("_REPAIR_TABLE_")}</a>
+                                <a class="ajax-get no-refresh" href="{:Url('optimize?tables='.$table['name'])}">{:lang("_OPTIMIZATION_TABLE_")}</a>&nbsp;
+                                <a class="ajax-get no-refresh" href="{:Url('repair?tables='.$table['name'])}">{:lang("_REPAIR_TABLE_")}</a>
                             </td>
                         </tr>
-                    </volist>
+                    {/volist}
                 </tbody>
             </table>
         </form>
     </div>
-    <!-- /应用列表-->
-</block>
 
-<block name="script">
+{/block}
+
+{block name="script"}
     <script type="text/javascript">
     (function($){
         var $form = $("#export-form"), $export = $("#export"), tables
@@ -60,10 +58,10 @@
 
         $optimize.add($repair).click(function(){
             $.post(this.href, $form.serialize(), function(data){
-                if(data.status){
-                    updateAlert(data.info,'alert-success');
+                if(data.code){
+                    updateAlert(data.msg,'alert-success');
                 } else {
-                    updateAlert(data.info,'alert-error');
+                    updateAlert(data.msg,'alert-error');
                 }
                 setTimeout(function(){
 	                $('#top-alert').find('button').click();
@@ -75,20 +73,20 @@
 
         $export.click(function(){
             $export.parent().children().addClass("disabled");
-            $export.html("{:L("_IS_SENDING_A_BACKUP_REQUEST_")}..");
+            $export.html("{:lang("_IS_SENDING_A_BACKUP_REQUEST_")}..");
             $.post(
                 $form.attr("action"),
                 $form.serialize(),
                 function(data){
-                    if(data.status){
+                    if(data.code){
                         tables = data.tables;
-                        $export.html(data.info + {:L("_START_BACKUP_PLEASE_DONT_CLOSE_THIS_PAGE_WITH_DOUBLE_")});
+                        $export.html(data.msg + {:lang("_START_BACKUP_PLEASE_DONT_CLOSE_THIS_PAGE_WITH_DOUBLE_")});
                         backup(data.tab);
-                        window.onbeforeunload = function(){ return {:L("_IS_THE_BACKUP_DATABASE_PLEASE_DONT_TURN_OFF_WITH_DOUBLE_")} }
+                        window.onbeforeunload = function(){ return {:lang("_IS_THE_BACKUP_DATABASE_PLEASE_DONT_TURN_OFF_WITH_DOUBLE_")} }
                     } else {
-                        updateAlert(data.info,'alert-error');
+                        updateAlert(data.msg,'alert-error');
                         $export.parent().children().removeClass("disabled");
-                        $export.html({:L("_IMMEDIATE_BACKUP_WITH_DOUBLE_")});
+                        $export.html({:lang("_IMMEDIATE_BACKUP_WITH_DOUBLE_")});
                         setTimeout(function(){
         	                $('#top-alert').find('button').click();
         	                $(that).removeClass('disabled').prop('disabled',false);
@@ -101,22 +99,22 @@
         });
 
         function backup(tab, status){
-            status && showmsg(tab.id, "{:L("_START_BACK_UP_")}..(0%)");
+            status && showmsg(tab.id, "{:lang("_START_BACK_UP_")}..(0%)");
             $.get($form.attr("action"), tab, function(data){
-                if(data.status){
-                    showmsg(tab.id, data.info);
+                if(data.code){
+                    showmsg(tab.id, data.msg);
 
                     if(!$.isPlainObject(data.tab)){
                         $export.parent().children().removeClass("disabled");
-                        $export.html({:L("_BACK_UP_CLICK_ON_THE_BACKUP_WITH_DOUBLE_")});
+                        $export.html({:lang("_BACK_UP_CLICK_ON_THE_BACKUP_WITH_DOUBLE_")});
                         window.onbeforeunload = function(){ return null }
                         return;
                     }
                     backup(data.tab, tab.id != data.tab.id);
                 } else {
-                    updateAlert(data.info,'alert-error');
+                    updateAlert(data.msg,'alert-error');
                     $export.parent().children().removeClass("disabled");
-                    $export.html({:L("_IMMEDIATE_BACKUP_WITH_DOUBLE_")});
+                    $export.html({:lang("_IMMEDIATE_BACKUP_WITH_DOUBLE_")});
                     setTimeout(function(){
     	                $('#top-alert').find('button').click();
     	                $(that).removeClass('disabled').prop('disabled',false);
@@ -131,4 +129,4 @@
         }
     })(jQuery);
     </script>
-</block>
+{/block}

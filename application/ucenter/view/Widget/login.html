@@ -1,5 +1,5 @@
 <div data-role="login_info"></div>
-<div class="">
+<div class="login-main">
 
         <div class="clearfix"></div>
         <form action="{:Url('login')}" method="post" class="lg_lf_form ">
@@ -22,12 +22,9 @@
                     <div class="col-xs-12">
                         <div id="password_block" class="input-group">
                             <input type="password" id="inputPassword" class="form-control input-lg new-input"
-                                   placeholder="{:lang('_NEW_PW_INPUT_')}"
-                                   errormsg="{:lang('_PW_ERROR_')}" nullmsg="{:lang('_PW_INPUT_ERROR_')}" datatype="*6-30" name="password">
+                                   placeholder="{:lang('_NEW_PW_INPUT_')}" name="password">
 
-                            <div class="input-group-addon"><a style="width: 100%;height: 100%"
-                                                              href="javascript:void(0);"
-                                                              onclick="change_show(this)">show</a></div>
+                            <div class="input-group-addon"><a class="change_show" href="javascript:void(0);">show</a></div>
                         </div>
                     </div>
 
@@ -99,52 +96,62 @@
 {block name="script"}
 
 <script type="text/javascript">
-    var quickLogin = "{$login_type}";
-    $(document)
-            .ajaxStart(function () {
-                $("button:submit").addClass("log-in").attr("disabled", true);
-            })
-            .ajaxStop(function () {
-                $("button:submit").removeClass("log-in").attr("disabled", false);
-            });
 
-    function change_show(obj) {
-        if ($(obj).text().trim() == 'show') {
-            var value = $('#inputPassword').val().trim();
-            var html = '<input type="text" value="' + value + '" id="inputPassword" class="form-control input-lg new-input" placeholder="'+"{:lang('_NEW_PW_INPUT_')}"+'" errormsg="'+"{:lang('_PW_ERROR_')}"+'" nullmsg="'+"{:lang('_PW_INPUT_ERROR_')}"+'" datatype="*6-30" name="password">' +
-                    '<div class="input-group-addon"><a style="width: 100%;height: 100%" href="javascript:void(0);" onclick="change_show(this)">hide</a></div>';
-            $('#password_block').html(html);
-        } else {
-            var value = $('#inputPassword').val().trim();
-            var html = '<input type="password" value="' + value + '" id="inputPassword" class="form-control input-lg new-input" placeholder="'+"{:lang('_NEW_PW_INPUT_')}"+'" errormsg="'+"{:lang('_PW_ERROR_')}"+'" nullmsg="'+"{:lang('_PW_INPUT_ERROR_')}"+'" datatype="*6-30" name="password">' +
-                    '<div class="input-group-addon"><a style="width: 100%;height: 100%" href="javascript:void(0);" onclick="change_show(this)">show</a></div>';
-            $('#password_block').html(html);
+    $(function(){
+        var quickLogin = "{$login_type}";
+        $(document)
+                .ajaxStart(function () {
+                    $("button:submit").addClass("log-in").attr("disabled", true);
+                })
+                .ajaxStop(function () {
+                    $("button:submit").removeClass("log-in").attr("disabled", false);
+                });
+
+        $('.login-main').on("click",'.change_show',function(){
+            change_show($(this));
+        });
+
+        function change_show(obj) {
+            if ($(obj).text().trim() == 'show') {
+                var value = $('#inputPassword').val().trim();
+                var html = '<input type="text" value="' + value + '" id="inputPassword" class="form-control input-lg new-input" placeholder="'+"{:lang('_NEW_PW_INPUT_')}"+'" name="password">' +
+                        '<div class="input-group-addon"><a class="change_show" href="javascript:void(0);">hide</a></div>';
+                $('#password_block').html(html);
+            } else {
+                var value = $('#inputPassword').val().trim();
+                var html = '<input type="password" value="' + value + '" id="inputPassword" class="form-control input-lg new-input" placeholder="'+"{:lang('_NEW_PW_INPUT_')}"+'" name="password">' +
+                        '<div class="input-group-addon"><a class="change_show" href="javascript:void(0);">show</a></div>';
+                $('#password_block').html(html);
+            }
         }
-    }
+
+    });
+    
 
     $(function () {
-        $("form").submit(function () {
+        $("form").submit(function (e) {
+            e.preventDefault();
             toast.showLoading();
             var self = $(this);
             $.post(self.attr("action"), self.serialize(), success, "json");
             return false;
+
             function success(data) {
-                if (data.status) {
+                if (data.code) {
                     if (data.url==undefined&&quickLogin == "quickLogin") {
-                        $('[data-role="login_info"]').append(data.info);
+                        $('[data-role="login_info"]').append(data.msg);
                         toast.success("{:lang('_WELCOME_RETURN_')}{:lang('_PERIOD_')}", "{:lang('_TIP_GENTLE_')}");
                         setTimeout(function () {
                             window.location.reload();
                         }, 1500);
                     } else {
-                        $('body').append(data.info);
                         toast.success("{:lang('_WELCOME_RETURN_REDIRECTING_')}", "{:lang('_TIP_GENTLE_')}");
                         setTimeout(function () {
                             window.location.href = data.url;
                         }, 1500);
                     }
                 } else {
-                    toast.error(data.info, "{:lang('_TIP_GENTLE_')}");
+                    toast.error(data.msg, "{:lang('_TIP_GENTLE_')}");
                     //self.find(".Validform_checktip").text(data.info);
                     //刷新验证码
                     $(".reloadverify").click();
@@ -152,6 +159,7 @@
                 toast.hideLoading();
             }
         });
+
         var verifyimg = $(".verifyimg").attr("src");
         $(".reloadverify").click(function () {
             if (verifyimg.indexOf('?') > 0) {

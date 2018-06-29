@@ -627,7 +627,21 @@ ul {
  * 显示加载中样式
  */
 .big_loading {
+  background:rgba(0,0,0,0.2);
+  position:absolute;
+  top:0;
+  right:0;
+  bottom:0;
+  left:0;
   text-align: center;
+  img{
+      vertical-align: middle;
+  }
+  img{
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+  }
 }
 /*通用顶部导航*/
 nav.navbar.bootsnav {

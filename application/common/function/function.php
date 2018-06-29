@@ -396,7 +396,7 @@ function tree_to_list($tree, $child = '_child', $order = 'id', &$list = array())
  */
 function hook($hook, $params = array())
 {
-    \Think\Hook::listen($hook, $params); 
+    \think\Hook::listen($hook, $params); 
 }
 
 /**
@@ -433,7 +433,7 @@ function get_addon_config($name)
 function addons_url($url, $param = array(),$suffix = true, $domain = false)
 {
     $url = parse_url($url);
-    $case = C('URL_CASE_INSENSITIVE');
+    $case = config('URL_CASE_INSENSITIVE');
     $addons = $case ? parse_name($url['scheme']) : $url['scheme'];
     $controller = $case ? parse_name($url['host']) : $url['host'];
     $action = trim($case ? strtolower($url['path']) : $url['path'], '/');
@@ -481,199 +481,7 @@ function time_format($time = NULL, $format = 'Y-m-d H:i')
  */
 function action_log($action = null, $model = null, $record_id = null, $user_id = null)
 {
-    //参数检查
-    if (empty($action) || empty($model) || empty($record_id)) {
-        return lang('_PARAMETERS_CANT_BE_EMPTY_');
-    }
-    if (empty($user_id)) {
-        $user_id = is_login();
-    }
-
-    //查询行为,判断是否执行
-    $action_info = Db::name('Action')->getByName($action);
-
-    if ($action_info['status'] != 1) {
-        return lang('_THE_ACT_IS_DISABLED_OR_DELETED_');
-    }
-
-    //插入行为日志
-    $data['action_id'] = $action_info['id'];
-    $data['user_id'] = $user_id;
-    $data['action_ip'] = request()->ip(1);
-    $data['model'] = $model;
-    $data['record_id'] = $record_id;
-    $data['create_time'] = time();
-
-    //解析日志规则,生成日志备注
-    if (!empty($action_info['log'])) {
-        if (preg_match_all('/\[(\S+?)\]/', $action_info['log'], $match)) {
-            $log['user'] = $user_id;
-            $log['record'] = $record_id;
-            $log['model'] = $model;
-            $log['time'] = time();
-            $log['data'] = array('user' => $user_id, 'model' => $model, 'record' => $record_id, 'time' => time());
-            foreach ($match[1] as $value) {
-                $param = explode('|', $value);
-                if (isset($param[1])) {
-                    $replace[] = call_user_func($param[1], $log[$param[0]]);
-                } else {
-                    $replace[] = $log[$param[0]];
-                }
-            }
-            $data['remark'] = str_replace($match[0], $replace, $action_info['log']);
-        } else {
-            $data['remark'] = $action_info['log'];
-        }
-    } else {
-        //未定义日志规则，记录操作url
-        $data['remark'] = '操作url：' . $_SERVER['REQUEST_URI'];
-    }
-
-
-    $log_id = Db::name('ActionLog')->insertGetId($data);
-
-    if (!empty($action_info['rule'])) {
-        //解析行为
-        $rules = parse_action($action, $user_id);
-        //执行行为
-        $res = execute_action($rules, $action_info['id'], $user_id, $log_id);
-    }
-
-}
-
-/**
- * 解析行为规则
- * 规则定义  table:$table|field:$field|condition:$condition|rule:$rule[|cycle:$cycle|max:$max][;......]
- * 规则字段解释：table->要操作的数据表，不需要加表前缀；
- *              field->要操作的字段；
- *              condition->操作的条件，目前支持字符串，默认变量{$self}为执行行为的用户
- *              rule->对字段进行的具体操作，目前支持四则混合运算，如：1+score*2/2-3
- *              cycle->执行周期，单位（小时），表示$cycle小时内最多执行$max次
- *              max->单个周期内的最大执行次数（$cycle和$max必须同时定义，否则无效）
- * 单个行为后可加 ； 连接其他规则
- * @param string $action 行为id或者name
- * @param int $self 替换规则里的变量为执行用户的id
- * @return boolean|array: false解析出错 ， 成功返回规则数组
- * @author huajie <banhuajie@163.com>
- */
-function parse_action($action = null, $self)
-{
-    if (empty($action)) {
-        return false;
-    }
-
-    //参数支持id或者name
-    if (is_numeric($action)) {
-        $map = array('id' => $action);
-    } else {
-        $map = array('name' => $action);
-    }
-
-    //查询行为信息
-    $info = Db::name('Action')->where($map)->find();
-
-    if (!$info || $info['status'] != 1) {
-        return false;
-    }
-
-
-    //解析规则:table:$table|field:$field|condition:$condition|rule:$rule[|cycle:$cycle|max:$max][;......]
-    $rules = unserialize($info['rule']);
-    foreach ($rules as $key => &$rule) {
-        foreach ($rule as $k => &$v) {
-            if (empty($v)) {
-                unset($rule[$k]);
-            }
-        }
-        unset($k, $v);
-    }
-    unset($key, $rule);
-
-    /*    $rules = str_replace('{$self}', $self, $rules);
-        $rules = explode(';', $rules);
-        $return = array();
-        foreach ($rules as $key => &$rule) {
-            $rule = explode('|', $rule);
-            foreach ($rule as $k => $fields) {
-                $field = empty($fields) ? array() : explode(':', $fields);
-                if (!empty($field)) {
-                    $return[$key][$field[0]] = $field[1];
-                }
-            }
-            //cycle(检查周期)和max(周期内最大执行次数)必须同时存在，否则去掉这两个条件
-            if (!array_key_exists('cycle', $return[$key]) || !array_key_exists('max', $return[$key])) {
-                unset($return[$key]['cycle'], $return[$key]['max']);
-            }
-        }*/
-
-
-    return $rules;
-}
-
-/**
- * 执行行为
- * @param array $rules 解析后的规则数组
- * @param int $action_id 行为id
- * @param array $user_id 执行的用户id
- * @return boolean false 失败 ， true 成功
- * @author huajie <banhuajie@163.com>
- */
-function execute_action($rules = false, $action_id = null, $user_id = null, $log_id = null)
-{
-    $log_score = '';
-
-    hook('handleAction',array('action_id'=>$action_id,'user_id'=>$user_id,'log_id'=>$log_id,'log_score'=>&$log_score));
-
-    if (!$rules || empty($action_id) || empty($user_id)) {
-        return false;
-    }
-    $return = true;
-
-    $action_log = Db::name('ActionLog')->where(['id' => $log_id])->find();
-    foreach ($rules as $rule) {
-        //检查执行周期
-        $map = array('action_id' => $action_id, 'user_id' => $user_id);
-        $map['create_time'] = array('gt', time() - intval($rule['cycle']) * 3600);
-        $exec_count = Db::name('ActionLog')->where($map)->count();
-        if ($exec_count > $rule['max']) {
-            continue;
-        }
-        //执行数据库操作
-        $Model = Db::name(ucfirst($rule['table']));
-        $field = 'score' . $rule['field'];
-        //获取现在的积分数量
-        $nowScore = $Model->where(['uid' => is_login()])->value($field);
-
-        $newScore = $nowScore.$rule['rule'];
-        $rule['rule'] = (is_bool(strpos($rule['rule'], '+')) ? '+' : '') . $rule['rule'];
-        $rule['rule'] = is_bool(strpos($rule['rule'], '-')) ?  $rule['rule'] : substr($rule['rule'],1) ;
-        $newScore = intval($nowScore.$rule['rule']);
-        //设置积分
-        $res = $Model->where(['uid' => is_login(), 'status' => 1])->setField($field, $newScore);
-
-        $scoreModel= model('Ucenter/Score');
-
-        $scoreModel->cleanUserCache(is_login(),$rule['field']);
-
-
-        $sType = Db::name('ucenter_score_type')->where(['id' => $rule['field']])->find();
-        $log_score .= '【' . $sType['title'] . '：' . $rule['rule'] . $sType['unit'] . '】';
-
-        $action = strpos($rule['rule'], '-')?'dec':'inc';
-
-        $scoreModel->addScoreLog(is_login(),$rule['field'],$action , substr($rule['rule'],1,strlen($rule['rule'])-1),$action_log['model'],$action_log['record_id'],$action_log['remark'].'【' . $sType['title'] . '：' . $rule['rule'] . $sType['unit'] . '】');
-
-        if (!$res) {
-            $return = false;
-        }
-    }
-    /* php7不支持exp表达式 暂取消
-    if ($log_score) {
-        cookie('score_tip', $log_score, 30);
-        Db::name('ActionLog')->where(['id' => $log_id])->setField('remark', ['exp', "CONCAT(remark,'" . $log_score . "')"]);
-    }
-    */
-    return $return;
+    return model('action')->action_log($action, $model, $record_id, $user_id);
 }
 
 //基于数组创建目录和文件
@@ -687,15 +495,7 @@ function create_dir_or_files($files)
         }
     }
 }
-function array_gets($array, $fields) {
-    $result = array();
-    foreach($fields as $e) {
-        if(array_key_exists($e, $array)) {
-            $result[$e] = $array[$e];
-        }
-    }
-    return $result;
-}
+
 if (!function_exists('array_column')) {
     function array_column(array $input, $columnKey, $indexKey = null)
     {
@@ -1166,12 +966,6 @@ function check_verify_open($open)
     return false;
 }
 
-function check_is_in_config($key,$config){
-    !is_array($config)  && $config = explode(',',$config);
-    return in_array($key,$config);
-
-}
-
 /**
  * convert_url_query  转换url参数为数组
  * @param $query
@@ -1261,31 +1055,15 @@ function array_search_key($array, $key, $value)
     return false;
 }
 
-
-/**
- * array_delete  删除数组中的某个值
- * @param $array
- * @param $value
- * @return mixed
- * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
- */
-function array_delete($array,$value){
-    $key = array_search($value, $array);
-    if ($key !== false)
-        array_splice($array, $key, 1);
-    return $array;
-}
-
-
 /**
  * get_upload_config  获取上传驱动配置
  * @param $driver
  * @return mixed
- * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
+ * @author:dameng
  */
 function get_upload_config($driver){
     if($driver == 'local'){
-        $uploadConfig =     C("UPLOAD_{$driver}_CONFIG");
+        $uploadConfig =     config("UPLOAD_{$driver}_CONFIG");
     }else{
         $name = get_addon_class($driver);
         $class = new $name();
@@ -1313,23 +1091,6 @@ function check_driver_is_exist($driver){
     }
 }
 
-
-
-function is_mobile()
-{
-    $user_agent = $_SERVER['HTTP_USER_AGENT'];
-    $mobile_agents = Array("240x320", "acer", "acoon", "acs-", "abacho", "ahong", "airness", "alcatel", "amoi", "android", "anywhereyougo.com", "applewebkit/525", "applewebkit/532", "asus", "audio", "au-mic", "avantogo", "becker", "benq", "bilbo", "bird", "blackberry", "blazer", "bleu", "cdm-", "compal", "coolpad", "danger", "dbtel", "dopod", "elaine", "eric", "etouch", "fly ", "fly_", "fly-", "go.web", "goodaccess", "gradiente", "grundig", "haier", "hedy", "hitachi", "htc", "huawei", "hutchison", "inno", "ipad", "ipaq", "ipod", "jbrowser", "kddi", "kgt", "kwc", "lenovo", "lg ", "lg2", "lg3", "lg4", "lg5", "lg7", "lg8", "lg9", "lg-", "lge-", "lge9", "longcos", "maemo", "mercator", "meridian", "micromax", "midp", "mini", "mitsu", "mmm", "mmp", "mobi", "mot-", "moto", "nec-", "netfront", "newgen", "nexian", "nf-browser", "nintendo", "nitro", "nokia", "nook", "novarra", "obigo", "palm", "panasonic", "pantech", "philips", "phone", "pg-", "playstation", "pocket", "pt-", "qc-", "qtek", "rover", "sagem", "sama", "samu", "sanyo", "samsung", "sch-", "scooter", "sec-", "sendo", "sgh-", "sharp", "siemens", "sie-", "softbank", "sony", "spice", "sprint", "spv", "symbian", "tablet", "talkabout", "tcl-", "teleca", "telit", "tianyu", "tim-", "toshiba", "tsm", "up.browser", "utec", "utstar", "verykool", "virgin", "vk-", "voda", "voxtel", "vx", "wap", "wellco", "wig browser", "wii", "windows ce", "wireless", "xda", "xde", "zte");
-    $is_mobile = false;
-    foreach ($mobile_agents as $device) {
-        if (stristr($user_agent, $device)) {
-            $is_mobile = true;
-            break;
-        }
-    }
-    return $is_mobile;
-}
-
-
 /**
  * check_sms_hook_is_exist  判断短信服务插件是否存在，不存在则返回none
  * @param $driver
@@ -1349,34 +1110,6 @@ function check_sms_hook_is_exist($driver){
     }
 }
 
-
-function home_addons_url($url, $param=array(), $suffix = true, $domain = false)
-{
-    $url = parse_url($url);
-    $case = C('URL_CASE_INSENSITIVE');
-    $addons = $case ? parse_name($url['scheme']) : $url['scheme'];
-    $controller = $case ? parse_name($url['host']) : $url['host'];
-    $action = trim($case ? strtolower($url['path']) : $url['path'], '/');
-
-    /* 解析URL带的参数 */
-    if (isset($url['query'])) {
-        parse_str($url['query'], $query);
-        $param = array_merge($query, $param);
-    }
-
-    /* 基础参数 */
-    $params = array(
-        '_addons' => $addons,
-        '_controller' => $controller,
-        '_action' => $action,
-    );
-
-    $params = array_merge($params, $param); //添加额外参数
-    return Url('Home/Addons/execute', $params, $suffix, $domain);
-
-}
-
-
 function render_picture_path($path)
 {
     $path = get_pic_src($path);
@@ -1391,33 +1124,6 @@ function render_picture_path($path)
 function get_area_name($id)
 {
     return Db::name('district')->where(array('id' => $id))->field('name')->find();
-}
-
-function get_all_module_lang($common_lang = array())
-{
-    $file = scandir('./Application', 0);
-    $module_lang = array();
-    $list = array();
-    $now_module = array();
-    foreach ($file as $v) {
-        if (($v != ".") and ($v != "..") and ($v != "Common")) {
-            $file = './Application/' . $v . '/Lang/' . LANG_SET . '.php';
-            if (is_file($file)) {
-                if (MODULE_NAME == $v) {
-                    $now_module = include $file;
-                } else {
-                    $list[] = include $file;
-                }
-            }
-        }
-    }
-    $list[] = $common_lang;
-    $list[] = $now_module;
-    foreach ($list as $val) {
-        $module_lang = array_merge($module_lang, (array)$val);
-    }
-    $lang = $module_lang ; // array_unique(array_merge($common_lang,$module_lang));
-    return $lang;
 }
 
 /**
@@ -1461,21 +1167,21 @@ function url_query($url){
  * @return [type]        [description]
  */
 function deep_in_array($value, $array) {   
-foreach($array as $item) {   
-    if(!is_array($item)) {   
-        if ($item == $value) {  
-            return true;  
-        } else {  
-            continue;   
+    foreach($array as $item) {   
+        if(!is_array($item)) {   
+            if ($item == $value) {  
+                return true;  
+            } else {  
+                continue;   
+            }  
+        }   
+            
+        if(in_array($value, $item)) {  
+            return true;      
+        } else if(deep_in_array($value, $item)) {  
+            return true;      
         }  
-    }   
-        
-    if(in_array($value, $item)) {  
-        return true;      
-    } else if(deep_in_array($value, $item)) {  
-        return true;      
-    }  
-}
-return false;   
+    }
+    return false;   
 }
 
