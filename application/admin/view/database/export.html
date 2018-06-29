@@ -79,9 +79,9 @@
                 $form.serialize(),
                 function(data){
                     if(data.code){
-                        tables = data.tables;
+                        tables = data.data.tables;
                         $export.html(data.msg + {:lang("_START_BACKUP_PLEASE_DONT_CLOSE_THIS_PAGE_WITH_DOUBLE_")});
-                        backup(data.tab);
+                        backup(data.data.tab);
                         window.onbeforeunload = function(){ return {:lang("_IS_THE_BACKUP_DATABASE_PLEASE_DONT_TURN_OFF_WITH_DOUBLE_")} }
                     } else {
                         updateAlert(data.msg,'alert-error');
@@ -104,13 +104,13 @@
                 if(data.code){
                     showmsg(tab.id, data.msg);
 
-                    if(!$.isPlainObject(data.tab)){
+                    if(!$.isPlainObject(data.data.tab)){
                         $export.parent().children().removeClass("disabled");
                         $export.html({:lang("_BACK_UP_CLICK_ON_THE_BACKUP_WITH_DOUBLE_")});
                         window.onbeforeunload = function(){ return null }
                         return;
                     }
-                    backup(data.tab, tab.id != data.tab.id);
+                    backup(data.data.tab, tab.id != data.data.tab.id);
                 } else {
                     updateAlert(data.msg,'alert-error');
                     $export.parent().children().removeClass("disabled");

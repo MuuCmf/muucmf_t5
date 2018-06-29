@@ -69,14 +69,13 @@ class Database extends Admin{
     /**
      * 优化表
      * @param  String $tables 表名
-     * @author 麦当苗儿 <zuojiazi@vip.qq.com>
      */
     public function optimize($tables = null){
         if($tables) {
-            $Db   = Db::getInstance();
+
             if(is_array($tables)){
                 $tables = implode('`,`', $tables);
-                $list = $Db->query("OPTIMIZE TABLE `{$tables}`");
+                $list = Db::query("OPTIMIZE TABLE `{$tables}`");
 
                 if($list){
                     $this->success(lang('_REPAIR_COMPLETE_PARAM_',array('name'=>'')).lang('_EXCLAMATION_'));
@@ -84,7 +83,7 @@ class Database extends Admin{
                     $this->error(lang('_REPAIR_ERROR_PARAM_',array('name'=>'')).lang('_EXCLAMATION_'));
                 }
             } else {
-                $list = $Db->query("OPTIMIZE TABLE `{$tables}`");
+                $list = Db::query("OPTIMIZE TABLE `{$tables}`");
                 if($list){
                     $this->success(lang('_REPAIR_COMPLETE_PARAM_',array('name'=>$tables)).lang('_EXCLAMATION_'));
                 } else {
@@ -103,10 +102,9 @@ class Database extends Admin{
      */
     public function repair($tables = null){
         if($tables) {
-            $Db   = Db::getInstance();
             if(is_array($tables)){
                 $tables = implode('`,`', $tables);
-                $list = $Db->query("REPAIR TABLE `{$tables}`");
+                $list = Db::query("REPAIR TABLE `{$tables}`");
 
                 if($list){
                     $this->success(lang('_REPAIR_COMPLETE_PARAM_',array('name'=>'')).lang('_EXCLAMATION_'));
@@ -114,7 +112,7 @@ class Database extends Admin{
                     $this->error(lang('_REPAIR_ERROR_PARAM_',array('name'=>'')).lang('_EXCLAMATION_'));
                 }
             } else {
-                $list = $Db->query("REPAIR TABLE `{$tables}`");
+                $list = Db::query("REPAIR TABLE `{$tables}`");
                 if($list){
                     $this->success(lang('_REPAIR_COMPLETE_PARAM_',array('name'=>$tables)).lang('_EXCLAMATION_'));
                 } else {
@@ -153,7 +151,7 @@ class Database extends Admin{
      * @param  Integer $start  起始行数
      * @author 麦当苗儿 <zuojiazi@vip.qq.com>
      */
-    public function export($tables = null, $id = null, $start = null){
+    public function export($tables = null){
         if(request()->isPost() && !empty($tables) && is_array($tables)){ //初始化
             //读取备份配置
             $config = array(
@@ -162,11 +160,10 @@ class Database extends Admin{
                 'compress' => config('DATA_BACKUP_COMPRESS'),
                 'level'    => config('DATA_BACKUP_COMPRESS_LEVEL'),
             );
-            //dump(__DIR__ . '/../../../application/');
-
+            
             //检查是否有正在执行的任务
             $lock = "{$config['path']}backup.lock";
-            dump($lock);exit;
+            
             if(is_file($lock)){
                 $this->error(lang('_DETECTED_THAT_THERE_IS_A_BACKUP_TASK_BEING_PERFORMED_'));
             } else {
@@ -197,7 +194,11 @@ class Database extends Admin{
                 $this->error(lang('_INITIALIZATION_FAILED_'));
             }
             
-        } elseif (request()->isGet() && is_numeric($id) && is_numeric($start)) { //备份数据
+        } elseif (request()->isGet()) { //备份数据
+
+            $id = input('id');
+            $start = input('start');
+
             $tables = session('backup_tables');
             //备份指定表
             $Database = new Database(session('backup_file'), session('backup_config'));
@@ -256,7 +257,7 @@ class Database extends Admin{
         } elseif(is_numeric($part) && is_numeric($start)) {
             $list  = session('backup_list');
             $db = new Database($list[$part], array(
-                'path'     => realpath(C('DATA_BACKUP_PATH')) . DIRECTORY_SEPARATOR,
+                'path'     => realpath(config('DATA_BACKUP_PATH')) . DIRECTORY_SEPARATOR,
                 'compress' => $list[$part][2]));
 
             $start = $db->import($start);
