@@ -1,14 +1,15 @@
 <?php
-namespace Admin\Controller;
+namespace app\admin\controller;
 
-class ThemeController extends AdminController
+class Theme extends Admin
 {
     /**
      * 主题列表页
+     * 暂不处理，留给下一版本完善
      */
     public function tpls()
     {
-        $aCleanCookie = I('get.cleanCookie', 0, 'intval');
+        $aCleanCookie = input('get.cleanCookie', 0, 'intval');
         if ($aCleanCookie) {
             cookie('TO_LOOK_THEME', null, array('prefix' => 'MUUCMF'));
         }
@@ -16,13 +17,13 @@ class ThemeController extends AdminController
         $dir = MUUCMF_THEME_PATH;
 
         /*刷新模块列表时清空缓存*/
-        $aRefresh = I('get.refresh', 0, 'intval');
+        $aRefresh = input('get.refresh', 0, 'intval');
         if ($aRefresh == 1) {
         } else if ($aRefresh == 2) {
-            S('admin_themes', null);
+            cache('admin_themes', null);
         }
 
-        $tpls = S('admin_themes');
+        $tpls = cache('admin_themes');
         if ($tpls === false) {
             $tpls = null;
             if (is_dir($dir)) {
@@ -44,18 +45,18 @@ class ThemeController extends AdminController
                     closedir($dh);
                 }
             }
-            S('admin_themes', $tpls);
+            cache('admin_themes', $tpls);
         }
         
 
-        $now_theme =  D('Theme')->getThemeValue('_THEME_NOW_THEME');
-        $now_mtheme = D('Theme')->getThemeValue('_THEME_NOW_MTHEME');
+        $now_theme =  model('Theme')->getThemeValue('_THEME_NOW_THEME');
+        $now_mtheme = model('Theme')->getThemeValue('_THEME_NOW_MTHEME');
 
         $this->meta_title = '主题列表';
         $this->assign('now_theme', $now_theme);
         $this->assign('now_mtheme', $now_mtheme);
         $this->assign('tplList', $tpls);
-        $this->display();
+        return $this->fetch();
     }
 
     /**
@@ -63,7 +64,7 @@ class ThemeController extends AdminController
      */
     public function packageDownload()
     {
-        $aTheme = I('theme', '', 'text');
+        $aTheme = input('theme', '', 'text');
         if ($aTheme != '') {
             $themePath = MUUCMF_THEME_PATH;
             require_once("./ThinkPHP/Library/OT/PclZip.class.php");
@@ -73,11 +74,11 @@ class ThemeController extends AdminController
                 $this->_download($themePath . $aTheme . '.zip', $aTheme . '.zip');
                 return;
             } else {
-                $this->error(L('_PACKAGE_FAILURE_'));
+                $this->error(lang('_PACKAGE_FAILURE_'));
                 return;
             }
         }
-        $this->error(L('_PARAMETER_ERROR_'));
+        $this->error(lang('_PARAMETER_ERROR_'));
     }
 
     /**
@@ -104,19 +105,19 @@ class ThemeController extends AdminController
 
     public function delete_theme()
     {
-        $aTheme = I('theme', '', 'text');
+        $aTheme = input('theme', '', 'text');
         if ($aTheme != '') {
             $themePath = MUUCMF_THEME_PATH . $aTheme;
             $res = $this->_deldir($themePath);
             if ($res) {
-                $this->success(L('_DELETE_SUCCESS_'), U('Admin/Theme/tpls'));
+                $this->success(lang('_DELETE_SUCCESS_'), Url('Admin/Theme/tpls'));
                 return;
             } else {
-                $this->error(L('_DELETE_FAILED_'), U('Admin/Theme/tpls'));
+                $this->error(lang('_DELETE_FAILED_'), Url('Admin/Theme/tpls'));
                 return;
             }
         }
-        $this->error(L('_PARAMETER_ERROR_'), U('Admin/Theme/tpls'));
+        $this->error(lang('_PARAMETER_ERROR_'), Url('Admin/Theme/tpls'));
     }
 
     /**
@@ -125,14 +126,14 @@ class ThemeController extends AdminController
      */
     public function setTheme()
     {
-        $item = I('post.item','all','text');
-        $aTheme = I('post.theme', 'default', 'text');
-        $themeModel = D('Common/Theme');
+        $item = input('post.item','all','text');
+        $aTheme = input('post.theme', 'default', 'text');
+        $themeModel = model('Common/Theme');
         if ($themeModel->setTheme($aTheme,$item)) {
-            $result['info'] = L('_SET_THE_THEME_TO_SUCCEED_');
+            $result['info'] = lang('_SET_THE_THEME_TO_SUCCEED_');
             $result['status'] = 1;
         } else {
-            $result['info'] = L('_SET_THE_THEME_OF_FAILURE_');
+            $result['info'] = lang('_SET_THE_THEME_OF_FAILURE_');
             $result['status'] = 0;
         }
         $this->ajaxReturn($result);
@@ -144,11 +145,11 @@ class ThemeController extends AdminController
      */
     public function lookTheme()
     {
-        $aTheme = I('theme', '', 'text');
-        $themeModel = D('Common/Theme');
+        $aTheme = input('theme', '', 'text');
+        $themeModel = model('Common/Theme');
         $res=$themeModel->lookTheme($aTheme);
         if($res){
-            redirect(U('Home/Index/index'));
+            redirect(Url('Home/Index/index'));
         }else{
             $this->error('请求失败！');
         }
@@ -156,7 +157,7 @@ class ThemeController extends AdminController
 
     public function add()
     {
-        if (IS_POST) {
+        if (request()->isPost()) {
             $config = array(
                 'maxSize' => 3145728,
                 'rootPath' => MUUCMF_THEME_PATH,
@@ -167,13 +168,13 @@ class ThemeController extends AdminController
                 'subName' => '',
                 'replace' => true,
             );
-            $upload = new \Think\Upload($config); // 实例化上传类
+            $upload = new \think\Upload($config); // 实例化上传类
             $info = $upload->upload($_FILES);
             if (!$info) { // 上传错误提示错误信息
                 $this->error($upload->getError());
             } else { // 上传成功
                 $this->_unCompression($info['pkg']['savename']);
-                $this->success(L('_INSTALLATION_SUCCESS_'), U('Admin/Theme/tpls'));
+                $this->success(lang('_INSTALLATION_SUCCESS_'), Url('Admin/Theme/tpls'));
             }
         } else {
             $this->display();

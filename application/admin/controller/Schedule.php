@@ -1,16 +1,16 @@
 <?php
-namespace Admin\Controller;
+namespace app\admin\controller;
 
-use Admin\Builder\AdminConfigBuilder;
-use Admin\Builder\AdminListBuilder;
-use Admin\Builder\AdminSortBuilder;
+use app\admin\builder\AdminConfigBuilder;
+use app\admin\builder\AdminListBuilder;
+use app\admin\builder\AdminSortBuilder;
 
 /**
  * Class ScheduleController  计划任务
  * @package Admin\Controller
  * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
  */
-class ScheduleController extends AdminController
+class Schedule extends Admin
 {
     /**
      * scheduleList  计划任务列表
@@ -18,7 +18,7 @@ class ScheduleController extends AdminController
      */
     public function scheduleList()
     {
-        $model = D('Common/Schedule');
+        $model = model('Common/Schedule');
         $list = $model->getScheduleList();
         foreach ($list as &$v) {
             list($type, $value) = $this->getTypeAndValue($v['type'], $v['type_value']);
@@ -32,7 +32,7 @@ class ScheduleController extends AdminController
         $btn_attr = $model->checkIsRunning() ? array('style' => 'font-weight:700') : array('style' => 'font-weight:700');
         $btn_attr['class'] = 'ajax-post btn-info';
         $btn_attr[' hide-data'] = 'true';
-        $btn_attr['href'] = U('Schedule/run');
+        $btn_attr['href'] = Url('Schedule/run');
         //控制运行按钮文字
         if($model->checkIsRunning()){
             $btn_info = 'Running（点击停止）';
@@ -44,10 +44,10 @@ class ScheduleController extends AdminController
         $builder->title('计划任务')
             ->tips('Tips：执行时间较长的计划任务会影响到其他计划任务时间的计算；')
             ->button($btn_info, $btn_attr)
-            ->setStatusUrl(U('setScheduleStatus'));
+            ->setStatusUrl(Url('setScheduleStatus'));
 
         $btn_attr['style'] = 'font-weight:700';
-        $btn_attr['href'] = U('Schedule/reRun');
+        $btn_attr['href'] = Url('Schedule/reRun');
         $btn_attr['class'] = 'btn-warning ajax-post re_run';
         $btn_attr['onclick'] = 'javascript:$(this).text("重启中，请不要做其他操作...")';
         $builder->button('重启计划任务', $btn_attr);
@@ -56,7 +56,8 @@ class ScheduleController extends AdminController
         $builder
             ->buttonNew(U('Schedule/editSchedule'))
             ->buttonDelete()
-            ->keyId()->keyText('method', '执行方法')
+            ->keyId()
+            ->keyText('method', '执行方法')
             ->keyText('args', '参数')
             ->keyText('type_text', '类型')
             ->keyText('type_value_text', '设定时间')
@@ -77,10 +78,10 @@ class ScheduleController extends AdminController
      * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
      */
     public function setScheduleStatus(){
-        $ids = I('ids');
-        $status = I('get.status', 0, 'intval');
+        $ids = input('ids');
+        $status = input('get.status', 0, 'intval');
 
-        S('schedule_list',null);
+        cache('schedule_list',null);
 
         $builder = new AdminListBuilder();
         $builder->doSetStatus('Schedule', $ids, $status);
@@ -92,15 +93,15 @@ class ScheduleController extends AdminController
      */
     public function showLog()
     {
-        $aId = I('get.id', 0, 'intval');
-        $model = D('Common/Schedule');
+        $aId = input('get.id', 0, 'intval');
+        $model = model('Common/Schedule');
         $log = $model->getLog($aId);
         if ($log) {
             $log = explode("\n", $log);
         }
         $this->assign('log', $log);
         $this->assign('id', $aId);
-        $this->display();
+        return $this->fetch();
     }
 
     /**
@@ -109,8 +110,8 @@ class ScheduleController extends AdminController
      */
     public function clearLog()
     {
-        $aId = I('post.id', 0, 'intval');
-        $model = D('Common/Schedule');
+        $aId = input('post.id', 0, 'intval');
+        $model = model('Common/Schedule');
         $rs = $model->clearLog($aId);
         $this->success('清空成功', 'refresh');
     }
@@ -121,17 +122,17 @@ class ScheduleController extends AdminController
      */
     public function editSchedule()
     {
-        $aId = I('id', 0, 'intval');
-        if (IS_POST) {
+        $aId = input('id', 0, 'intval');
+        if (request()->isPost()) {
             $data['id'] = $aId;
-            $aMethod = $data['method'] = I('post.method', '', 'text');
-            $aArgs = $data['args'] = I('post.args', '', 'text');
-            $aType = $data['type'] = I('post.type_key', 0, 'intval');
-            $aTypeValue = $data['type_value'] = I('post.type_value', '', 'text');
-            $aStartTime = $data['start_time'] = I('post.start_time', 0, 'intval');
-            $aEndTime = $data['end_time'] = I('post.end_time', 0, 'intval');
-            $aIntro = $data['intro'] = I('post.intro', '', 'text');
-            $aLevel = $data['level'] = I('post.level', '', 'text');
+            $aMethod = $data['method'] = input('post.method', '', 'text');
+            $aArgs = $data['args'] = input('post.args', '', 'text');
+            $aType = $data['type'] = input('post.type_key', 0, 'intval');
+            $aTypeValue = $data['type_value'] = input('post.type_value', '', 'text');
+            $aStartTime = $data['start_time'] = input('post.start_time', 0, 'intval');
+            $aEndTime = $data['end_time'] = input('post.end_time', 0, 'intval');
+            $aIntro = $data['intro'] = input('post.intro', '', 'text');
+            $aLevel = $data['level'] = input('post.level', '', 'text');
 
             if (empty($aMethod)) {
                 $this->error('请填写执行方法');
@@ -158,7 +159,7 @@ class ScheduleController extends AdminController
             if ($aType == 1) {
                 $data['type_value'] = strtotime($data['type_value']);
             }
-            $res = D('Schedule')->editSchedule($data);
+            $res = model('Schedule')->editSchedule($data);
 
             if ($res) {
                 $this->success(($aId == 0 ? '添加' : '编辑') . '成功', U('scheduleList'));
@@ -171,15 +172,16 @@ class ScheduleController extends AdminController
 
             if ($aId != 0) {
                 $tip = '编辑';
-                $schedule = D('Schedule')->find($aId);
+                $schedule = model('Schedule')->find($aId);
                 $schedule['type_key'] = $schedule['type']; //当name为type时select有点错误。不知道为什么，用其他变量替换  駿濤
             } else {
                 $tip = '新增';
                 $schedule = array();
             }
-            $builder->title($tip . '计划任务')
+            $builder
+                ->title($tip . '计划任务')
                 ->keyId()
-                ->keyText('method', "执行方法", "只能执行Model中的方法，如 <span style='color: red'>Home/Index->test</span> 则表示执行 D('Home/Index')->test();")
+                ->keyText('method', "执行方法", "只能执行Model中的方法，如 <span style='color: red'>Home/Index->test</span> 则表示执行 model('Home/Index')->test();")
                 ->keyText('args', "执行参数", "url的写法，如 <span style='color: red'>a=1&b=2</span> ")
 
                 ->keySelect('type_key', '类型', '计划任务的类型', array(1 => '执行一次', 2 => '每隔一段时间执行', 3 => '每个时间点执行'))
@@ -189,7 +191,9 @@ class ScheduleController extends AdminController
                 ->keyTextArea('intro', '介绍', '该介绍将会被写入日志')
                 ->keyText('lever', '优先级')
                 ->data($schedule)
-                ->buttonSubmit(U('Schedule/editSchedule'))->buttonBack()->display();
+                ->buttonSubmit(Url('Schedule/editSchedule'))
+                ->buttonBack()
+                ->display();
         }
     }
 
@@ -224,7 +228,7 @@ class ScheduleController extends AdminController
      */
     public function run()
     {
-        $model = D('Common/Schedule');
+        $model = model('Common/Schedule');
 
         if ($model->checkIsRunning()) {
             $model->setStop();
@@ -241,7 +245,7 @@ class ScheduleController extends AdminController
      */
     public function reRun()
     {
-        $model = D('Common/Schedule');
+        $model = model('Common/Schedule');
         $model->setStop();
         //}
         $this->_run();

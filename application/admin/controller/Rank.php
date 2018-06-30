@@ -1,40 +1,33 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 15-3-7
- * Time: 下午1:25
- * @author 郑钟良<zzl@ourstu.com>
- */
+namespace app\admin\controller;
 
-namespace Admin\Controller;
-
-use Admin\Builder\AdminListBuilder;
-use Admin\Builder\AdminConfigBuilder;
+use think\Db;
+use app\admin\builder\AdminListBuilder;
+use app\admin\builder\AdminConfigBuilder;
 
 /**
  * 后台头衔控制器
- * Class RankController
- * @package Admin\Controller
- * @郑钟良
  */
-class RankController extends AdminController
+class Rank extends Admin
 {
 
     /**
      * 头衔管理首页
      * @param int $page
      * @param int $r
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function index($page = 1, $r = 20)
     {
         //读取数据
-        $model = D('Rank');
-        $list = $model->page($page, $r)->select();
+        $model = Db::name('Rank');
+        $list = Db::name('Rank')->paginate(10);
+        // 获取分页显示
+        $page = $list->render();
+        $list = $list->toArray()['data'];
+
         foreach ($list as &$val) {
-            $val['u_name'] = D('member')->where('uid=' . $val['uid'])->getField('nickname');
-            $val['types'] = $val['types'] ? L('_YES_') : L('_NO_');
+            $val['u_name'] = Db::name('member')->where('uid=' . $val['uid'])->value('nickname');
+            $val['types'] = $val['types'] ? lang('_YES_') : lang('_NO_');
             $val['label']='<span class="label" style="border-radius: 20px;background-color:'.$val['label_bg'].';color:'.$val['label_color'].';">'.$val['label_content'].'</span>';
             if($val['logo']==0){
                 $val['logo']='';
@@ -44,11 +37,19 @@ class RankController extends AdminController
         //显示页面
         $builder = new AdminListBuilder();
         $builder
-            ->title(L('_TITLE_LIST_'))
-            ->buttonNew(U('Rank/editRank'))
-            ->keyId()->keyTitle()->keyText('u_name', L('_UPLOAD_'))->keyImage('logo',L('_PICTURE_TITLE_'))->keyHtml('label',L('_WORD_TITLE_'))->keyCreateTime()->keyLink('types', L('_RECEPTION_IS_AVAILABLE_'), 'changeTypes?id=###')->keyDoActionEdit('editRank?id=###')->keyDoAction('deleteRank?id=###', L('_DELETE_'))
+            ->title(lang('_TITLE_LIST_'))
+            ->buttonNew(Url('Rank/editRank'))
+            ->keyId()
+            ->keyTitle()
+            ->keyText('u_name', lang('_UPLOAD_'))
+            ->keyImage('logo',lang('_PICTURE_TITLE_'))
+            ->keyHtml('label',lang('_WORD_TITLE_'))
+            ->keyCreateTime()
+            ->keyLink('types', lang('_RECEPTION_IS_AVAILABLE_'), 'changeTypes?id=###')
+            ->keyDoActionEdit('editRank?id=###')
+            ->keyDoAction('deleteRank?id=###', lang('_DELETE_'))
             ->data($list)
-            ->pagination($totalCount, $r)
+            ->page($page)
             ->display();
     }
 
@@ -60,150 +61,157 @@ class RankController extends AdminController
     public function changeTypes($id = null)
     {
         if (!$id) {
-            $this->error(L('_PLEASE_CHOOSE_THE_TITLE_'));
+            $this->error(lang('_PLEASE_CHOOSE_THE_TITLE_'));
         }
-        $types = D('rank')->where('id=' . $id)->getField('types');
+        $types = Db::name('rank')->where(['id'=>$id])->getField('types');
         $types = $types ? 0 : 1;
-        $result = D('rank')->where('id=' . $id)->setField('types', $types);
+        $result = Db::name('rank')->where(['id'=>$id])->setField('types', $types);
         if ($result) {
-            $this->success(L('_SET_UP_'));
+            $this->success(lang('_SET_UP_'));
         } else {
-            $this->error(L('_SET_FAILURE_'));
+            $this->error(lang('_SET_FAILURE_'));
         }
     }
 
     /**
      * 删除头衔
      * @param null $id
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function deleteRank($id = null)
     {
         if (!$id) {
-            $this->error(L('_PLEASE_CHOOSE_THE_TITLE_'));
+            $this->error(lang('_PLEASE_CHOOSE_THE_TITLE_'));
         }
-        $result = D('rank')->where('id=' . $id)->delete();
-        $result1 = D('rank_user')->where('rank_id=' . $id)->delete();
+        $result = Db::name('rank')->where(['id'=>$id])->delete();
+        $result1 = Db::name('rank_user')->where('rank_id=' . $id)->delete();
         if ($result) {
-            $this->success(L('_DELETE_SUCCESS_'));
+            $this->success(lang('_DELETE_SUCCESS_'));
         } else {
-            $this->error(L('_DELETE_FAILED_'));
+            $this->error(lang('_DELETE_FAILED_'));
         }
     }
 
     /**
      * 编辑头衔
      * @param null $id
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function editRank($id = null)
     {
         //判断是否为编辑模式
         $isEdit = $id ? true : false;
-        if (IS_POST) {
-            $data['title']=I('post.title','','text');
-            $data['logo']=I('post.logo',0,'intval');
-            $data['label_content']=I('post.label_content','','text');
-            $data['label_color']=I('post.label_color','','text');
-            $data['label_bg']=I('post.label_bg','','text');
-            $data['types'] = I('post.types',1,'intval');
-            $model = D('rank');
+        if (request()->isPost()) {
+            $data['title']=input('post.title','','text');
+            $data['logo']=input('post.logo',0,'intval');
+            $data['label_content']=input('post.label_content','','text');
+            $data['label_color']=input('post.label_color','','text');
+            $data['label_bg']=input('post.label_bg','','text');
+            $data['types'] = input('post.types',1,'intval');
+            $model = Db::name('rank');
             if ($data['title'] == '') {
-                $this->error(L('_PLEASE_FILL_IN_THE_TITLE_'));
+                $this->error(lang('_PLEASE_FILL_IN_THE_TITLE_'));
             }
 
             if($data['logo']==''&&$data['label_content']==''){
-                $this->error(L('_THE_TITLE_OF_THE_PICTURE_AND_THE_TITLE_OF_THE_TITLE_'));
+                $this->error(lang('_THE_TITLE_OF_THE_PICTURE_AND_THE_TITLE_OF_THE_TITLE_'));
             }
             if ($isEdit) {
-                $result = $model->where('id=' . $id)->save($data);
+                $result = $model->where(['id'=> $id])->update($data);
                 if (!$result) {
-                    $this->error(L('_CHANGE_FAILED_'));
+                    $this->error(lang('_CHANGE_FAILED_'));
                 }
             } else {
-                $data = $model->create($data);
+                
                 $data['uid'] = is_login();
                 $data['create_time'] = time();
-                $result = $model->add($data);
+                $result = $model->insert($data);
                 if (!$result) {
-                    $this->error(L('_CREATE_FAILURE_'));
+                    $this->error(lang('_CREATE_FAILURE_'));
                 }
             }
-            $this->success($isEdit ? L('_EDIT_SUCCESS_') : L('_ADD_SUCCESS_'), U('Rank/index'));
+            $this->success($isEdit ? lang('_EDIT_SUCCESS_') : lang('_ADD_SUCCESS_'), Url('Rank/index'));
         } else {
             $rank['types'] = '1';//默认前台可以申请
             //如果是编辑模式
             if ($isEdit) {
-                $rank = M('rank')->where(array('id' => $id))->find();
+                $rank = Db::name('rank')->where(['id' => $id])->find();
             }
             //显示页面
             $builder = new AdminConfigBuilder();
             $options = array(
-                '0' => L('_NO_'),
-                '1' => L('_YES_')
+                '0' => lang('_NO_'),
+                '1' => lang('_YES_')
             );
             $builder
-                ->title($isEdit ? L('_EDIT_TITLE_') : L('_NEW_TITLE_'))
+                ->title($isEdit ? lang('_EDIT_TITLE_') : lang('_NEW_TITLE_'))
                 ->keyId()
                 ->keyTitle()
-                ->keySingleImage('logo', L('_PICTURE_TITLE_'), L('_THE_ICON_WHICH_DOES_NOT_SET_THE_TEXT_TITLE_THE_SETTING_IS_USEFUL_'))
-                ->keyText('label_content',L('_WORD_TITLE_'))
-                ->keyColor('label_color',L('_TITLE_COLOR_'))
-                ->keyColor('label_bg',L('_TEXT_TITLE_TAG_BACKGROUND_COLOR_'))
-                ->keyRadio('types', L('_RECEPTION_IS_AVAILABLE_'), null, $options)
+                ->keySingleImage('logo', lang('_PICTURE_TITLE_'), lang('_THE_ICON_WHICH_DOES_NOT_SET_THE_TEXT_TITLE_THE_SETTING_IS_USEFUL_'))
+                ->keyText('label_content',lang('_WORD_TITLE_'))
+                ->keyColor('label_color',lang('_TITLE_COLOR_'))
+                ->keyColor('label_bg',lang('_TEXT_TITLE_TAG_BACKGROUND_COLOR_'))
+                ->keyRadio('types', lang('_RECEPTION_IS_AVAILABLE_'), null, $options)
                 ->data($rank)
-                ->buttonSubmit(U('editRank'))->buttonBack()
+                ->buttonSubmit(Url('editRank'))->buttonBack()
                 ->display();
         }
     }
 
     /**
      * 用户列表
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function userList()
     {
-        $nickname = I('nickname','','text');
+        $nickname = input('nickname','','text');
         $map['status'] = array('egt', 0);
         if (is_numeric($nickname)) {
-            $map['uid|nickname'] = array(intval($nickname), array('like', '%' . $nickname . '%'), '_multi' => true);
+            $map['uid|nickname'] = [intval($nickname), array('like', '%' . $nickname . '%'), '_multi' => true];
         } else {
             if ($nickname !== '')
-                $map['nickname'] = array('like', '%' . (string)$nickname . '%');
+                $map['nickname'] = ['like', '%' . (string)$nickname . '%'];
         }
-        $list = $this->lists('Member', $map);
+        list($list,$page) = $this->lists('Member', $map);
+        $list = $list->toArray()['data'];
+
         int_to_string($list);
         $this->assign('_list', $list);
-        $this->meta_title = L('_USER_LIST_');
-        $this->display();
+        $this->setTitle(lang('_USER_LIST_'));
+        return $this->fetch();
     }
 
     /**
      * 用户头衔列表
      * @param null $id
      * @param int $page
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function userRankList($id = null, $page = 1)
     {
         if (!$id) {
-            $this->error(L('_PLEASE_SELECT_THE_USER_'));
+            $this->error(lang('_PLEASE_SELECT_THE_USER_'));
         }
-        $u_name = D('member')->where('uid=' . $id)->getField('nickname');
-        $model = D('rank_user');
-        $rankList = $model->where(array('uid' => $id, 'status' => 1))->page($page, 20)->order('create_time asc')->select();
-        $totalCount = $model->where(array('uid' => $id, 'status' => 1))->count();
+        $u_name = Db::name('member')->where('uid=' . $id)->value('nickname');
+        
+        $rankList = Db::name('rank_user')->where(array('uid' => $id, 'status' => 1))->page($page, 20)->order('create_time asc')->select();
+
+        $totalCount = Db::name('rank_user')->where(array('uid' => $id, 'status' => 1))->count();
+
         foreach ($rankList as &$val) {
             $val['title'] = D('rank')->where('id=' . $val['rank_id'])->getField('title');
-            $val['is_show'] = $val['is_show'] ? L('_SHOW_') : L('_NOT_SHOW_');
+            $val['is_show'] = $val['is_show'] ? lang('_SHOW_') : lang('_NOT_SHOW_');
         }
+
         $builder = new AdminListBuilder();
         $builder
             ->title($u_name . '的头衔列表')
-            ->buttonNew(U('Rank/userAddRank?id=' . $id), L('_RELATED_NEW_TITLE_'))
-            ->keyId()->keyText('title', L('_TITLE_NAME_'))->keyText('reason', L('_CAUSE_'))->keyText('is_show', L('_IS_SHOWN_ON_THE_RIGHT_SIDE_OF_THE_NICKNAME_'))->keyCreateTime()->keyDoActionEdit('Rank/userChangeRank?id=###')->keyDoAction('Rank/deleteUserRank?id=###', L('_DELETE_'))
+            ->buttonNew(Url('Rank/userAddRank?id=' . $id), lang('_RELATED_NEW_TITLE_'))
+            ->keyId()
+            ->keyText('title', lang('_TITLE_NAME_'))
+            ->keyText('reason', lang('_CAUSE_'))
+            ->keyText('is_show', lang('_IS_SHOWN_ON_THE_RIGHT_SIDE_OF_THE_NICKNAME_'))
+            ->keyCreateTime()
+            ->keyDoActionEdit('Rank/userChangeRank?id=###')
+            ->keyDoAction('Rank/deleteUserRank?id=###', lang('_DELETE_'))
             ->data($rankList)
-            ->pagination($totalCount, 20)
+            ->page($page)
             ->display();
     }
 
@@ -214,59 +222,52 @@ class RankController extends AdminController
      * @param string $reason
      * @param string $is_show
      * @param string $rank_id
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function userAddRank($id = null, $uid = '', $reason = '', $is_show = '', $rank_id = '')
     {
-        if (IS_POST) {
+        if (request()->isPost()) {
             $is_Edit = $id ? true : false;
             $data = array('uid' => $uid, 'reason' => $reason, 'is_show' => $is_show, 'rank_id' => $rank_id);
-            $model = D('rank_user');
+            $model = Db::name('rank_user');
             if ($is_Edit) {
-                $data = $model->create($data);
                 $data['create_time'] = time();
-                $result = $model->where('id=' . $id)->save($data);
+                $result = $model->where(['id'=>$id])->update($data);
                 if (!$result) {
-                    $this->error(L('_RELATED_FAILURE_'));
+                    $this->error(lang('_RELATED_FAILURE_'));
                 }
             } else {
-                $rank_user = $model->where(array('uid' => $uid, 'rank_id' => $rank_id))->find();
+                $rank_user = $model->where(['uid' => $uid, 'rank_id' => $rank_id])->find();
                 if ($rank_user) {
-                    $this->error(L('_THE_USER_ALREADY_HAS_THE_TITLE_PLEASE_CHOOSE_ANOTHER_TITLE_'));
+                    $this->error(lang('_THE_USER_ALREADY_HAS_THE_TITLE_PLEASE_CHOOSE_ANOTHER_TITLE_'));
                 }
-                $data = $model->create($data);
+               
                 $data['create_time'] = time();
                 $data['status'] = 1;
-                $result = $model->add($data);
+                $result = $model->insert($data);
                 if (!$result) {
-                    $this->error(L('_RELATED_FAILURE_'));
+                    $this->error(lang('_RELATED_FAILURE_'));
                 } else {
-                    $rank = D('rank')->where('id=' . $data['rank_id'])->find();
+                    $rank = Db::name('rank')->where(['id'=>$data['rank_id']])->find();
                     //$logoUrl=getRootUrl().D('picture')->where('id='.$rank['logo'])->getField('path');
                     //$u_name = D('member')->where('uid=' . $uid)->getField('nickname');
-                    $content = L('_TITLE_AWARD_BY_ADMIN_').L('_COLON_').'[' . $rank['title'] . ']'; //<img src="'.$logoUrl.'" title="'.$rank['title'].'" alt="'.$rank['title'].'">';
+                    $content = lang('_TITLE_AWARD_BY_ADMIN_').lang('_COLON_').'[' . $rank['title'] . ']'; //<img src="'.$logoUrl.'" title="'.$rank['title'].'" alt="'.$rank['title'].'">';
 
                     $user = query_user(array('username', 'space_link'), $uid);
 
-                    $content1 = L('_TITLE_AWARD_ADMIN_PARAM_',array('nickname'=>$user['nickname'],'title'=>$rank['title'])) . $reason; //<img src="'.$logoUrl.'" title="'.$rank['title'].'" alt="'.$rank['title'].'">';
+                    $content1 = lang('_TITLE_AWARD_ADMIN_PARAM_',array('nickname'=>$user['nickname'],'title'=>$rank['title'])) . $reason; //<img src="'.$logoUrl.'" title="'.$rank['title'].'" alt="'.$rank['title'].'">';
                     clean_query_user_cache($uid, array('rank_link'));
                     $this->sendMessage($data, $content);
-                    if (D('Common/Module')->isInstalled('Weibo')) { //安装了微博模块
-                        //写入数据库
-                        $model = D('Weibo/Weibo');
-                        $result = $model->addWeibo(is_login(), $content1);
-                    }
                 }
             }
-            $this->success($is_Edit ? L('_EDIT_ASSOCIATED_SUCCESS_') : L('_ADD_ASSOCIATED_SUCCESS_'), U('Rank/userRankList?id=' . $uid));
+            $this->success($is_Edit ? lang('_EDIT_ASSOCIATED_SUCCESS_') : lang('_ADD_ASSOCIATED_SUCCESS_'), Url('Rank/userRankList?id=' . $uid));
         } else {
             if (!$id) {
-                $this->error(L('_PLEASE_SELECT_THE_USER_'));
+                $this->error(lang('_PLEASE_SELECT_THE_USER_'));
             }
             $data['uid'] = $id;
-            $ranks = D('rank')->select();
+            $ranks = Db::name('rank')->select();
             if (!$ranks) {
-                $this->error(L('_THERE_IS_NO_TITLE_PLEASE_ADD_A_TITLE_'));
+                $this->error(lang('_THERE_IS_NO_TITLE_PLEASE_ADD_A_TITLE_'));
             }
             foreach ($ranks as $val) {
                 $rank_ids[$val['id']] = $val['title'];
@@ -275,10 +276,10 @@ class RankController extends AdminController
             $data['is_show'] = 1;
             $builder = new AdminConfigBuilder();
             $builder
-                ->title(L('_ADD_TITLE_ASSOCIATION_'))
-                ->keyId()->keyReadOnly('uid', L('_USER_ID_'))->keyText('reason', L('_RELATED_REASONS_'))->keyRadio('is_show', L('_IS_SHOWN_ON_THE_RIGHT_SIDE_OF_THE_NICKNAME_'), null, array(1 => L('_YES_'), 0 => L('_NO_')))->keySelect('rank_id', L('_TITLE_NUMBER_'), null, $rank_ids)
+                ->title(lang('_ADD_TITLE_ASSOCIATION_'))
+                ->keyId()->keyReadOnly('uid', lang('_USER_ID_'))->keyText('reason', lang('_RELATED_REASONS_'))->keyRadio('is_show', lang('_IS_SHOWN_ON_THE_RIGHT_SIDE_OF_THE_NICKNAME_'), null, array(1 => lang('_YES_'), 0 => lang('_NO_')))->keySelect('rank_id', lang('_TITLE_NUMBER_'), null, $rank_ids)
                 ->data($data)
-                ->buttonSubmit(U('userAddRank'))->buttonBack()
+                ->buttonSubmit(Url('userAddRank'))->buttonBack()
                 ->display();
         }
     }
@@ -290,71 +291,70 @@ class RankController extends AdminController
      * @param string $reason
      * @param string $is_show
      * @param string $rank_id
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function userChangeRank($id = null, $uid = '', $reason = '', $is_show = '', $rank_id = '')
     {
-        if (IS_POST) {
+        if (request()->isPost()) {
             $is_Edit = $id ? true : false;
             $data = array('uid' => $uid, 'reason' => $reason, 'is_show' => $is_show, 'rank_id' => $rank_id);
-            $model = D('rank_user');
+            $model = Db::name('rank_user');
             if ($is_Edit) {
-                $data = $model->create($data);
                 $data['create_time'] = time();
-                $result = $model->where('id=' . $id)->save($data);
+                $result = $model->where(['id'=>$id])->update($data);
                 if (!$result) {
-                    $this->error(L('_RELATED_FAILURE_'));
+                    $this->error(lang('_RELATED_FAILURE_'));
                 }
             } else {
                 $rank_user = $model->where(array('uid' => $uid, 'rank_id' => $rank_id))->find();
                 if ($rank_user) {
-                    $this->error(L('_THE_USER_ALREADY_HAS_THE_TITLE_PLEASE_CHOOSE_ANOTHER_TITLE_'));
+                    $this->error(lang('_THE_USER_ALREADY_HAS_THE_TITLE_PLEASE_CHOOSE_ANOTHER_TITLE_'));
                 }
-                $data = $model->create($data);
+                
                 $data['create_time'] = time();
-                $result = $model->add($data);
+                $result = $model->insert($data);
+
                 if (!$result) {
-                    $this->error(L('_RELATED_FAILURE_'));
+                    $this->error(lang('_RELATED_FAILURE_'));
                 } else {
-                    $rank = D('rank')->where('id=' . $data['rank_id'])->find();
+                    $rank = Db::name('rank')->where(['id' => $data['rank_id']])->find();
                     //$logoUrl=getRootUrl().D('picture')->where('id='.$rank['logo'])->getField('path');
                     //$u_name = D('member')->where('uid=' . $uid)->getField('nickname');
-                    $content = L('_TITLE_AWARD_BY_ADMIN_').L('_COLON_').'[' . $rank['title'] . ']'; //<img src="'.$logoUrl.'" title="'.$rank['title'].'" alt="'.$rank['title'].'">';
+                    $content = lang('_TITLE_AWARD_BY_ADMIN_').lang('_COLON_').'[' . $rank['title'] . ']'; //<img src="'.$logoUrl.'" title="'.$rank['title'].'" alt="'.$rank['title'].'">';
 
                     $user = query_user(array('username', 'space_link'), $uid);
 
-                    $content1 = L('_TITLE_AWARD_ADMIN_PARAM_',array('nickname'=>$user['nickname'],'title'=>$rank['title'])) . $reason; //<img src="'.$logoUrl.'" title="'.$rank['title'].'" alt="'.$rank['title'].'">';
+                    $content1 = lang('_TITLE_AWARD_ADMIN_PARAM_',array('nickname'=>$user['nickname'],'title'=>$rank['title'])) . $reason;
                     clean_query_user_cache($uid, array('rank_link'));
                     $this->sendMessage($data, $content);
-                    if (D('Common/Module')->isInstalled('Weibo')) { //安装了微博模块
-                        //写入数据库
-                        $model = D('Weibo/Weibo');
-                        $result = $model->addWeibo(is_login(), $content1);
-                    }
                 }
             }
-            $this->success($is_Edit ? L('_EDIT_ASSOCIATED_SUCCESS_') : L('_ADD_ASSOCIATED_SUCCESS_'), U('Rank/userRankList?id=' . $uid));
+            $this->success($is_Edit ? lang('_EDIT_ASSOCIATED_SUCCESS_') : lang('_ADD_ASSOCIATED_SUCCESS_'), Url('Rank/userRankList?id=' . $uid));
         } else {
             if (!$id) {
-                $this->error(L('_PLEASE_CHOOSE_THE_TITLE_TO_CHANGE_'));
+                $this->error(lang('_PLEASE_CHOOSE_THE_TITLE_TO_CHANGE_'));
             }
-            $data = D('rank_user')->where('id=' . $id)->find();
+            $data = Db::name('rank_user')->where(['id'=>$id])->find();
             if (!$data) {
-                $this->error(L('_THE_TITLE_IS_NOT_ASSOCIATED_WITH_THE_TITLE_'));
+                $this->error(lang('_THE_TITLE_IS_NOT_ASSOCIATED_WITH_THE_TITLE_'));
             }
-            $ranks = D('rank')->select();
+            $ranks = Db::name('rank')->select();
             if (!$ranks) {
-                $this->error(L('_THERE_IS_NO_TITLE_PLEASE_ADD_A_TITLE_'));
+                $this->error(lang('_THERE_IS_NO_TITLE_PLEASE_ADD_A_TITLE_'));
             }
             foreach ($ranks as $val) {
                 $rank_ids[$val['id']] = $val['title'];
             }
             $builder = new AdminConfigBuilder();
             $builder
-                ->title(L('_EDIT_TITLE_ASSOCIATION_'))
-                ->keyId()->keyReadOnly('uid', L('_USER_ID_'))->keyText('reason', L('_RELATED_REASONS_'))->keyRadio('is_show', L('_IS_SHOWN_ON_THE_RIGHT_SIDE_OF_THE_NICKNAME_'), null, array(1 => L('_YES_'), 0 => L('_NO_')))->keySelect('rank_id', L('_TITLE_NUMBER_'), null, $rank_ids)
+                ->title(lang('_EDIT_TITLE_ASSOCIATION_'))
+                ->keyId()
+                ->keyReadOnly('uid', lang('_USER_ID_'))
+                ->keyText('reason', lang('_RELATED_REASONS_'))
+                ->keyRadio('is_show', lang('_IS_SHOWN_ON_THE_RIGHT_SIDE_OF_THE_NICKNAME_'), null, array(1 => lang('_YES_'), 0 => lang('_NO_')))
+                ->keySelect('rank_id', lang('_TITLE_NUMBER_'), null, $rank_ids)
                 ->data($data)
-                ->buttonSubmit(U('userChangeRank'))->buttonBack()
+                ->buttonSubmit(Url('userChangeRank'))
+                ->buttonBack()
                 ->display();
         }
     }
@@ -367,105 +367,121 @@ class RankController extends AdminController
     public function deleteUserRank($id = null)
     {
         if (!$id) {
-            $this->error(L('_PLEASE_CHOOSE_THE_TITLE_LINK_'));
+            $this->error(lang('_PLEASE_CHOOSE_THE_TITLE_LINK_'));
         }
-        $result = D('rank_user')->where('id=' . $id)->delete();
+        $result = Db::name('rank_user')->where(['id'=>$id])->delete();
         if ($result) {
-            $this->success(L('_DELETE_SUCCESS_'));
+            $this->success(lang('_DELETE_SUCCESS_'));
         } else {
-            $this->error(L('_DELETE_FAILED_'));
+            $this->error(lang('_DELETE_FAILED_'));
         }
     }
 
     public function sendMessage($data, $content, $type = '头衔颁发')
     {
-        D('Message')->sendMessage($data['uid'], $type, $content, 'Ucenter/Message/message',array(),is_login(), 1);
+        model('Message')->sendMessage($data['uid'], $type, $content, 'Ucenter/Message/message',array(),is_login(), 1);
     }
 
     /**
      * 待审核
      * @param int $page
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function rankVerify($page = 1)
     {
-        $model = D('rankUser');
-        $rankList = $model->where(array('status' => 0))->page($page, 20)->order('create_time asc')->select();
-        $totalCount = $model->where(array('status' => 0))->count();
+        $rankList = Db::name('rankUser')->where(['status' => 0])->order('create_time asc')->paginate(20);
+        // 获取分页显示
+        $page = $rankList->render();
+        $rankList = $rankList->toArray()['data'];
+
         foreach ($rankList as &$val) {
-            $val['title'] = D('rank')->where('id=' . $val['rank_id'])->getField('title');
-            $val['is_show'] = $val['is_show'] ? L('_SHOW_') : L('_NOT_SHOW_');
+            $val['title'] = Db::name('rank')->where(['id'=>$val['rank_id']])->value('title');
+            $val['is_show'] = $val['is_show'] ? lang('_SHOW_') : lang('_NOT_SHOW_');
             //获取用户信息
-            $u_user = D('member')->where('uid=' . $val['uid'])->getField('nickname');
+            $u_user = Db::name('member')->where(['uid'=>$val['uid']])->value('nickname');
             $val['u_name'] = $u_user;
         }
         unset($val);
+
         $builder = new AdminListBuilder();
         $builder
-            ->title(L('_LIST_OF_TITLES_TO_BE_REVIEWED_'))
-            ->buttonSetStatus(U('setVerifyStatus'), '1', L('_AUDIT_THROUGH_'), null)->buttonDelete(U('setVerifyStatus'), L('_AUDIT_NOT_THROUGH_'))
-            ->keyId()->keyText('uid', L('_USER_ID_'))->keyText('u_name', L('_USER_NAME_'))->keyText('title', L('_TITLE_NAME_'))->keyText('reason', L('_REASONS_FOR_APPLICATION_'))->keyText('is_show', L('_IS_SHOWN_ON_THE_RIGHT_SIDE_OF_THE_NICKNAME_'))->keyCreateTime()->keyDoActionEdit('Rank/userChangeRank?id=###')
+            ->title(lang('_LIST_OF_TITLES_TO_BE_REVIEWED_'))
+            ->buttonSetStatus(Url('setVerifyStatus'), '1', lang('_AUDIT_THROUGH_'), null)
+            ->buttonDelete(Url('setVerifyStatus'), lang('_AUDIT_NOT_THROUGH_'))
+            ->keyId()
+            ->keyText('uid', lang('_USER_ID_'))
+            ->keyText('u_name', lang('_USER_NAME_'))
+            ->keyText('title', lang('_TITLE_NAME_'))
+            ->keyText('reason', lang('_REASONS_FOR_APPLICATION_'))
+            ->keyText('is_show', lang('_IS_SHOWN_ON_THE_RIGHT_SIDE_OF_THE_NICKNAME_'))
+            ->keyCreateTime()
+            ->keyDoActionEdit('Rank/userChangeRank?id=###')
             ->data($rankList)
-            ->pagination($totalCount, 20)
+            ->page($page)
             ->display();
     }
 
     /**
      * 审核不通过
      * @param int $page
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function rankVerifyFailure($page = 1)
     {
-        $model = D('rankUser');
-        $rankList = $model->where(array('status' => -1))->page($page, 20)->order('create_time asc')->select();
-        $totalCount = $model->where(array('status' => -1))->count();
+        $model = Db::name('rankUser');
+        $rankList = $model->where(['status' => -1])->order('create_time asc')->paginate(20);
+
+        // 获取分页显示
+        $page = $rankList->render();
+        $rankList = $rankList->toArray()['data'];
+
         foreach ($rankList as &$val) {
-            $val['title'] = D('rank')->where('id=' . $val['rank_id'])->getField('title');
-            $val['is_show'] = $val['is_show'] ? L('_SHOW_') : L('_NOT_SHOW_');
+            $val['title'] = Db::name('rank')->where(['id'=>$val['rank_id']])->value('title');
+            $val['is_show'] = $val['is_show'] ? lang('_SHOW_') : lang('_NOT_SHOW_');
             //获取用户信息
-            $u_user = D('member')->where('uid=' . $val['uid'])->getField('nickname');
+            $u_user = Db::name('member')->where(['uid'=>$val['uid']])->value('nickname');
             $val['u_name'] = $u_user;
         }
         unset($val);
+
         $builder = new AdminListBuilder();
         $builder
-            ->title(L('_THE_TITLE_OF_THE_APPLICATION_FOR_THE_LIST_'))
-            ->buttonSetStatus(U('setVerifyStatus'), '1', L('_AUDIT_THROUGH_'), null)
-            ->keyId()->keyText('uid', L('_USER_ID_'))->keyText('u_name', L('_USER_NAME_'))->keyText('title', L('_TITLE_NAME_'))->keyText('reason', L('_REASONS_FOR_APPLICATION_'))->keyText('is_show', L('_IS_SHOWN_ON_THE_RIGHT_SIDE_OF_THE_NICKNAME_'))->keyCreateTime()->keyDoActionEdit('Rank/userChangeRank?id=###')
+            ->title(lang('_THE_TITLE_OF_THE_APPLICATION_FOR_THE_LIST_'))
+            ->buttonSetStatus(Url('setVerifyStatus'), '1', lang('_AUDIT_THROUGH_'), null)
+            ->keyId()
+            ->keyText('uid', lang('_USER_ID_'))
+            ->keyText('u_name', lang('_USER_NAME_'))
+            ->keyText('title', lang('_TITLE_NAME_'))
+            ->keyText('reason', lang('_REASONS_FOR_APPLICATION_'))
+            ->keyText('is_show', lang('_IS_SHOWN_ON_THE_RIGHT_SIDE_OF_THE_NICKNAME_'))
+            ->keyCreateTime()
+            ->keyDoActionEdit('Rank/userChangeRank?id=###')
             ->data($rankList)
-            ->pagination($totalCount, 20)
+            ->page($page)
             ->display();
     }
 
     public function setVerifyStatus($ids, $status)
     {
 
-        $model_user = D('rankUser');
-        $model = D('rank');
+        $model_user = Db::name('rankUser');
+        $model = Db::name('rank');
         if ($status == 1) {
             foreach ($ids as $val) {
                 $rank_user = $model_user->where('id=' . $val)->field('uid,rank_id,reason')->find();
                 $rank = $model->where('id=' . $rank_user['rank_id'])->find();
-                $content = l('_RECEPTION_TITLE_PASSED_BY_ADMIN_').L('_COLON_').'[' . $rank['title'] . ']';
+                $content = l('_RECEPTION_TITLE_PASSED_BY_ADMIN_').lang('_COLON_').'[' . $rank['title'] . ']';
 
                 $user = query_user(array('nickname', 'space_link'), $rank_user['uid']);
 
-                $content1 = L('_RECEPTION_PASSED_BY_ADMIN_PARAM_',array('nickname'=>$user['nickname'],'title'=>$rank['title'])) . $rank_user['reason'];
+                $content1 = lang('_RECEPTION_PASSED_BY_ADMIN_PARAM_',array('nickname'=>$user['nickname'],'title'=>$rank['title'])) . $rank_user['reason'];
                 clean_query_user_cache($rank_user['uid'], array('rank_link'));
-                $this->sendMessage($rank_user, $content, L('_TITLE_APPLICATION_FOR_APPROVAL_'));
-                if (D('Common/Module')->isInstalled('Weibo')) { //安装了微博模块
-                    //发微博
-                    $model_weibo = D('Weibo/Weibo');
-                    $result = $model_weibo->addWeibo(is_login(), $content1);
-                }
+                $this->sendMessage($rank_user, $content, lang('_TITLE_APPLICATION_FOR_APPROVAL_'));
             }
         } else if ($status = -1) {
             foreach ($ids as $val) {
                 $rank_user = $model_user->where('id=' . $val)->field('uid,rank_id')->find();
                 $rank = $model->where('id=' . $rank_user['rank_id'])->find();
-                $content = L('_ASK_REFUSED_BY_ADMIN_').L('_COLON_').'[' . $rank['title'] . ']';
-                $this->sendMessage($rank_user, $content, L('_THE_TITLE_OF_THE_APPLICATION_FOR_APPROVAL_IS_NOT_PASSED_'));
+                $content = lang('_ASK_REFUSED_BY_ADMIN_').lang('_COLON_').'[' . $rank['title'] . ']';
+                $this->sendMessage($rank_user, $content, lang('_THE_TITLE_OF_THE_APPLICATION_FOR_APPROVAL_IS_NOT_PASSED_'));
             }
         }
         $builder = new AdminListBuilder();

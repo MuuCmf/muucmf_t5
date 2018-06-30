@@ -54,7 +54,7 @@ class Member extends Model
      */
     protected function checkDenyNickname($nickname,$rule)
     {
-        $denyName = Model("Config")->where(array('name' => 'USER_NAME_BAOLIU'))->getField('value');
+        $denyName = model("Config")->where(array('name' => 'USER_NAME_BAOLIU'))->getField('value');
         if ($denyName != '') {
             $denyName = explode(',', $denyName);
             foreach ($denyName as $val) {

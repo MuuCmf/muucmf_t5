@@ -272,10 +272,7 @@
             {:widget('common/Ueditor/editor',array($field['name'],$field['name'],$field['value'],$field['config'],$field['style'],$field['param'],$field['width']))}
 
     {/case}
-    {case value="simditor"}
-            {:widget('Common/Simditor/editor',array($field['name'],$field['name'],$field['value'],$field['config'],$field['style'],$field['param'],$field['width']))}
 
-    {/case}
     {case value="wangeditor"}
             {:widget('Common/Wangeditor/editor',array($field['name'],$field['name'],$field['value'],$field['config'],$field['style'],$field['param'],$field['width']))}
 
@@ -475,7 +472,7 @@
         {switch name="field['config'][$key]['type']"}
             {case value="text"}
                 <input type="text" name="{$val}" value="{$field['value'][$key]|htmlspecialchars}"
-                       class=" pull-left text input-large form-control" style="{$field['config'][$key]['style']}" placeholder="{$field['config'][$key]['placeholder']}"/>
+                       class=" pull-left text input-large form-control" style="{$field['config'][$key]['style']}" />
             {/case}
             {case value="select"}
                 <select name="{$val}" class="pull-left form-control" style="{$field['config'][$key]['style']}" >

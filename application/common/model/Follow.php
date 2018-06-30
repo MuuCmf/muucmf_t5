@@ -53,36 +53,36 @@ class Follow extends Model
         $follow['follow_who'] = $uid;
         clean_query_user_cache($uid, 'fans');
         clean_query_user_cache(is_login(), 'following');
-        S('atUsersJson_' . is_login(), null);
+        cache('atUsersJson_' . is_login(), null);
         $user = query_user(array('id', 'nickname', 'space_url'));
 
-        D('Message')->sendMessage($uid, lang('_NUMBER_OF_FANS_'), $user['nickname'] . lang('_CANCEL_YOUR_ATTENTION_WITH_PERIOD_'), 'Ucenter/Index/index', array('uid' => is_login()),is_login(),'Ucenter');
+        model('Message')->sendMessage($uid, lang('_NUMBER_OF_FANS_'), $user['nickname'] . lang('_CANCEL_YOUR_ATTENTION_WITH_PERIOD_'), 'ucenter/Index/index', array('uid' => is_login()),is_login(),'Ucenter');
 
 
-        $this->S($follow['who_follow'], $follow['follow_who'], null);
+        $this->cache($follow['who_follow'], $follow['follow_who'], null);
         return $this->where($follow)->delete();
     }
 
     public function isFollow($who_follow, $follow_who)
     {
-        $follow = $this->S($who_follow, $follow_who);
+        $follow = $this->cache($who_follow, $follow_who);
         if ($follow === false) {
-            $follow = D('Follow')->where(array('who_follow' => $who_follow, 'follow_who' => $follow_who))->count();
+            $follow = Db::name('Follow')->where(['who_follow' => $who_follow, 'follow_who' => $follow_who])->count();
             $follow++;
-            $this->S($who_follow, $follow_who, $follow);
+            $this->cache($who_follow, $follow_who, $follow);
         }
         return intval($follow) - 1;
     }
 
     public function getFollow($who_follow, $follow_who)
     {
-        $follow = $this->where(array('who_follow' => $who_follow, 'follow_who' => $follow_who))->find();
+        $follow = $this->where(['who_follow' => $who_follow, 'follow_who' => $follow_who])->find();
         return $follow;
     }
 
     public function S($who_follow, $follow_who, $data = '')
     {
-        return S('Core_follow_' . $who_follow . '_' . $follow_who, $data);
+        return cache('Core_follow_' . $who_follow . '_' . $follow_who, $data);
     }
 
 
@@ -122,10 +122,10 @@ class Follow extends Model
         if ($uid == 0) {
             $uid = is_login();
         }
-        $model_follow = D('Follow');
-        $i_follow = $model_follow->where(array('who_follow' => $uid))->limit(999)->select();
+        $model_follow = Db::name('Follow');
+        $i_follow = $model_follow->where(['who_follow' => $uid])->limit(999)->select();
         foreach ($i_follow as $key => $user) {
-            if ($model_follow->where(array('follow_who' => $uid, 'who_follow' => $user['follow_who']))->count()) {
+            if ($model_follow->where(['follow_who' => $uid, 'who_follow' => $user['follow_who']])->count()) {
                 continue;
             } else {
                 unset($i_follow[$key]);
@@ -138,7 +138,7 @@ class Follow extends Model
     public function getFollowList()
     {
         //获取我关注的人
-        $result = $this->where(array('who_follow' => get_uid()))->select();
+        $result = $this->where(['who_follow' => get_uid()])->select();
         foreach ($result as &$e) {
             $e = $e['follow_who'];
         }

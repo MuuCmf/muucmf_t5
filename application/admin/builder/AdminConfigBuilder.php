@@ -372,19 +372,17 @@ class AdminConfigBuilder extends AdminBuilder
 
     public function display($templateFile = '', $charset = '', $contentType = '', $content = '', $prefix = '')
     {
-
         //将数据融入到key中
         foreach ($this->_keyList as &$e) {
-            if ($e['type'] == 'multiInput') {
-                $e['name'] = explode('|', $e['name']);
-            }
-
+            
             //修正在编辑信息时无法正常显示已经保存的地区信息/***修改的代码****/
             if (is_array($e['name'])) {
-
                 $i = 0;
                 $n = count($e['name']);
                 while ($n > 0) {
+                    empty($this->_data[$e['name'][$i]]) && $this->_data[$e['name'][$i]] = null;
+                    $e['value'][$i] = $this->_data[$e['name'][$i]];
+
                     $e['value'][$i] = $this->_data[$e['name'][$i]];
                     $i++;
                     $n--;
@@ -395,9 +393,7 @@ class AdminConfigBuilder extends AdminBuilder
                 $e['value'] = $this->_data[$e['name']];
             }
         }
-
         //编译按钮的html属性
-        
         foreach ($this->_buttonList as &$button) {
             $button['attr'] = $this->compileHtmlAttr($button['attr']);
         }
@@ -456,11 +452,15 @@ class AdminConfigBuilder extends AdminBuilder
      * @param $config
      * @param null $style
      * @return $this
-     * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
      */
     public function keyMultiInput($name, $title, $subtitle, $config, $style = null)
     {
         empty($style) && $style = 'width:400px;';
+
+        if(strpos($name,'|')){
+            $name = explode('|', $name);
+        }
+        
         $key = array('name' => $name, 'title' => $title, 'subtitle' => $subtitle, 'type' => 'multiInput', 'config' => $config, 'style' => $style);
         $this->_keyList[] = $key;
         return $this;

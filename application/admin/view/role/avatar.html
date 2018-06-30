@@ -1,24 +1,23 @@
-
-<extend name="Public/base"/>
-
-<block name="body">
+{extend name="common/main" /}
+{block name="body"}
     <div class="main-title">
         <h2>{:lang("_DEFAULT_AVATAR_CONFIGURATION_")}</h2>
     </div>
-    <div class="clearfix">
+    <div class="button-box clearfix">
         <div class="col-xs-10">
-            <include file="_link"/>
+            {include file="role/_link"/}
         </div>
         <div class="col-xs-2 text-right">
             <select name="role" class="form-control">
-                <volist name="role_list" id="vo">
-                    <option value="{:Url('Role/configavatar',array('id'=>$vo['id']))}" <eq name="vo['id']" value="$this_role['id']">selected</eq>>{$vo.title}</option>
-                </volist>
+                {volist name="role_list" id="vo"}
+                    <option value="{:Url('Role/configavatar',array('id'=>$vo['id']))}" {eq name="vo['id']" value="$this_role['id']"}selected{/eq}>{$vo.title}</option>
+                {/volist}
             </select>
         </div>
     </div>
+
     <div class="with-padding" style="margin-top: 20px;">
-        <form action="__SELF__" enctype="application/x-www-form-urlencoded" method="POST" class="form-horizontal avatar-form ajax-form">
+        <form action="{:Url()}" enctype="application/x-www-form-urlencoded" method="POST" class="form-horizontal avatar-form ajax-form">
             <input type="hidden" name="id" value="{$this_role.id}"/>
             <input class="attach" type="hidden" name="avatar_id" value="{$this_role.avatar}"/>
             <input class="attach" type="hidden" name="set_null" value="0"/>
@@ -114,9 +113,9 @@
 
     </div>
 
-</block>
+{/block}
 
-<block name="script">
+{block name="script"}
 
     <script type="text/javascript">
         $(function () {
@@ -179,11 +178,11 @@
             });
         })
     </script>
-    <link type="text/css" rel="stylesheet" href="__PUBLIC__/lib/magnific/magnific-popup.css"/>
-    <script type="text/javascript" src="__PUBLIC__/lib/magnific/jquery.magnific-popup.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="__COMMON__/lib/magnific/magnific-popup.css"/>
+    <script type="text/javascript" src="__COMMON__/lib/magnific/jquery.magnific-popup.min.js"></script>
 
-    <script type="text/javascript" charset="utf-8" src="__PUBLIC__/lib/webuploader/js/webuploader.js"></script>
-    <link href="__PUBLIC__/lib/webuploader/css/webuploader.css" type="text/css" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="__COMMON__/lib/webuploader/js/webuploader.js"></script>
+    <link href="__COMMON__/lib/webuploader/css/webuploader.css" type="text/css" rel="stylesheet">
 
     <script>
         $(document).ready(function () {
@@ -212,4 +211,4 @@
         });
     </script>
 
-</block>
+{/block}

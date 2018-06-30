@@ -1,22 +1,22 @@
 <!-- 管理员用户组新增和编辑页面 -->
-<extend name="Public/base"/>
-<block name="body">
+{extend name="common/main" /}
+{block name="body"}
     <div class="main-title">
         <h2>{:lang("_USER_HAS_EXTENDED_DATA_FIELD_CONFIGURATION_")}</h2>
     </div>
     <div class="tab-wrap with-padding">
 
-        <div class="clearfix">
+        <div class="button-box clearfix">
             <div class="col-xs-10">
-                <include file="_link"/>
+                {include file="role/_link"/}
             </div>
             <div class="col-xs-2 text-right">
                 <select name="role" class="form-control">
-                    <volist name="role_list" id="vo">
+                    {volist name="role_list" id="vo"}
                         <option value="{:Url('Role/configfield',array('id'=>$vo['id']))}"
-                        <eq name="vo['id']" value="$this_role['id']">selected</eq>
+                        {eq name="vo['id']" value="$this_role['id']"}selected{/eq}
                         >{$vo.title}</option>
-                    </volist>
+                    {/volist}
                 </select>
             </div>
         </div>
@@ -24,16 +24,16 @@
         <div>
             <!-- 访问授权 -->
             <div class="node-list in">
-                <form action="__SELF__" enctype="application/x-www-form-urlencoded" method="POST" class="form-horizontal auth-form">
-                    <notempty name="field_list">
-                        <volist name="field_list" id="group">
+                <form action="{:Url()}" enctype="application/x-www-form-urlencoded" method="POST" class="form-horizontal auth-form">
+                    {notempty name="field_list"}
+                        {volist name="field_list" id="group"}
                             <dl class="checkmod">
                                 <dt class="hd">
                                     <label class="checkbox"><input class="auth_fields fields_all" type="checkbox">{$group.profile_name}</label>
                                 </dt>
                                 <dd class="bd">
-                                    <present name="group['field_list']">
-                                        <volist name="group['field_list']" id="field">
+                                    {present name="group['field_list']"}
+                                        {volist name="group['field_list']" id="field"}
                                             <div class="filed_check">
                                                 <div>
                                                     <label class="checkbox"
@@ -43,15 +43,20 @@
                                                     </label>
                                                 </div>
                                             </div>
-                                        </volist>
-                                    </present>
+                                        {/volist}
+                                    {/present}
                                     <div class="clearfix"></div>
                                 </dd>
                             </dl>
-                        </volist>
-                        <else/>
-                        <div style="margin: 10px;color: rgb(255, 81, 81);">{:lang("_FIRST_TO_USER_MANAGEMENT_USER_MANAGEMENT_WITH_SPACE_")}中<a href="{:Url('admin/user/profile')}" title="" target="_blank" style="color: rgb(255, 81, 81);text-decoration: underline;">{:lang("_ADD_USER_EXTENSION_")}</a>~</div>
-                    </notempty>
+                        {/volist}
+                    {else/}
+                        <div style="margin: 10px;color: rgb(255, 81, 81);">
+                            {:lang("_FIRST_TO_USER_MANAGEMENT_USER_MANAGEMENT_WITH_SPACE_")}中
+                            <a href="{:Url('admin/user/profile')}" title="" target="_blank" style="color: rgb(255, 81, 81);text-decoration: underline;">
+                                {:lang("_ADD_USER_EXTENSION_")}
+                            </a>~
+                        </div>
+                    {/notempty}
 
                     <input type="hidden" name="id" value="{$this_role.id}"/>
                     <button type="submit" class="btn submit-btn ajax-post" target-form="auth-form">{:lang("_SURE_WITH_SPACE_")}</button>
@@ -59,12 +64,6 @@
                     <span style="color: #BABABA;margin: 11px;">{:lang("_PLEASE_SAVE_THE_ABOVE_CONFIGURATION_AND_THEN_SWITCH_TO_ANOTHER_INTERFACE_")}</span>
                 </form>
             </div>
-
-            <!-- 成员授权 -->
-            <div class="tab-pane"></div>
-
-            <!-- 分类 -->
-            <div class="tab-pane"></div>
         </div>
     </div>
     <style>
@@ -74,10 +73,8 @@
             margin: 5px 0;
         }
     </style>
-</block>
-<block name="script">
-    <script type="text/javascript" src="__STATIC__/qtip/jquery.qtip.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="__STATIC__/qtip/jquery.qtip.min.css" media="all">
+{/block}
+{block name="script"}
     <script type="text/javascript" charset="utf-8">
         +function ($) {
             var fields = [{$this_role.fields}];
@@ -98,34 +95,10 @@
             $(this).closest('.filed_check').find('.child_row').find('input').prop('checked', this.checked);
         });
 
-        $('.checkbox').each(function () {
-            $(this).qtip({
-                content: {
-                    text: $(this).attr('title'),
-                    title: $(this).text()
-                },
-                position: {
-                    my: 'bottom center',
-                    at: 'top center',
-                    target: $(this)
-                },
-                style: {
-                    classes: 'qtip-dark',
-                    tip: {
-                        corner: true,
-                        mimic: false,
-                        width: 10,
-                        height: 10
-                    }
-                }
-            });
-        });
-
         $('select[name="role"]').change(function () {
             location.href = this.value;
         });
-
-       
+ 
     }(jQuery);
     </script>
-</block>
+{/block}

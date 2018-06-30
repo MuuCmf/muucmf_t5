@@ -744,6 +744,7 @@ return array(
     '_RECEPTION_PASSED_BY_ADMIN_PARAM_' => '管理员通过了@{:nickname} 的头衔申请：[{:title}]，申请理由：',
     '_TITLE_AWARD_BY_ADMIN_' => '管理员给你颁发了头衔',
     '_TITLE_AWARD_ADMIN_PARAM_' => '管理员给@{:nickname} 颁发了新的头衔：[{:title}]，颁发理由：',
+    '_DEFAULT_TITLE_CONFIGURATION_' =>'默认头衔配置',
 
 //    report
     '_REPORT_PROCESSING_LIST_' => '举报处理列表',

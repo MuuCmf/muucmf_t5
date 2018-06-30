@@ -5,14 +5,14 @@
     </div>
     <div class="tab-wrap with-padding">
 
-        <div class="clearfix">
+        <div class="button-box clearfix">
             <div class="col-xs-10">
-                <include file="_link"/>
+                {include file="role/_link"/}
             </div>
             <div class="col-xs-2 text-right">
                 <select name="role" class="form-control">
                     {volist name="role_list" id="vo"}
-                        <option value="{:Url('Role/configScore',array('role_id'=>$vo['id']))}" {eq name="vo['id']" value="$this_role['role_id']"}selected{/eq} >
+                        <option value="{:Url('Role/configScore',array('id'=>$vo['id']))}" {eq name="vo['id']" value="$this_role['id']"}selected{/eq} >
                             {$vo.title}
                         </option>
                     {/volist}
@@ -22,7 +22,7 @@
         <div class="node-list">
             <!-- 访问授权 -->
             <div class="tab-pane in">
-                <form action="{:Url('Role/configScore')}" enctype="application/x-www-form-urlencoded" method="POST" class="form-horizontal auth-form">
+                <form action="{:Url()}" enctype="application/x-www-form-urlencoded" method="POST" class="form-horizontal auth-form">
                     {volist name="score_keys" id="score"}
                         <label class="item-label">{$score.title|htmlspecialchars}<span>{:lang("_UNIT_WITH_COLON_")}{$score.unit|htmlspecialchars}）</span></label>
                         <div class="controls ">
@@ -30,7 +30,7 @@
                         </div>
                     {/volist}
                     <input type="hidden" name="post_key" value="{$post_key}"/>
-                    <input type="hidden" name="role_id" value="{$this_role.role_id}" />
+                    <input type="hidden" name="id" value="{$this_role.id}" />
                     <div style="margin-top: 20px;"></div>
 
                     <button type="submit" class="btn submit-btn ajax-post" target-form="auth-form">{:lang("_SURE_WITH_SPACE_")}</button>

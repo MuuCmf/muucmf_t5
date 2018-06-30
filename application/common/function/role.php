@@ -88,22 +88,21 @@ function getRoleConfigMap($type,$role_id=0){
  * @param int $role_id 角色id
  * @param $type 要清除的缓存，空：清除所有；字符串（Role_Expend_Info_）：清除一个缓存；数组array('Role_Expend_Info_','Role_Avatar_Id_','Role_Register_Expend_Info_')：清除多个缓存
  * @return bool
- * @author 郑钟良<zzl@ourstu.com>
  */
-function clear_role_cache($role_id=0,$type){
+function clear_role_cache($role_id=0,$type=null){
     if(isset($type)){
         if(is_array($type)){
             foreach($type as $val){
-                S($val.$role_id,null);
+                cache($val.$role_id,null);
             }
             unset($val);
         }else{
-            S($type.$role_id,null);
+            cache($type.$role_id,null);
         }
     }else{
-        S('Role_Expend_Info_'.$role_id,null);
-        S('Role_Avatar_Id_'.$role_id,null);
-        S('Role_Register_Expend_Info_'.$role_id,null);
+        cache('Role_Expend_Info_'.$role_id,null);
+        cache('Role_Avatar_Id_'.$role_id,null);
+        cache('Role_Register_Expend_Info_'.$role_id,null);
     }
     return true;
 }

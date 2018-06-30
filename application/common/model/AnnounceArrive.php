@@ -1,39 +1,29 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 16-6-21
- * Time: 下午5:05
- * @author 郑钟良<zzl@ourstu.com>
- */
+namespace app\common\model;
 
-namespace Common\Model;
+use think\Model;
+use think\Db;
 
+class AnnounceArrive extends Model{
 
-use Think\Model;
-
-class AnnounceArriveModel extends Model{
-
-    public function getListPage($map,$order='uid asc',$page=1,$r=30)
+    public function getListPage($map,$order='uid asc',$r=30)
     {
         $totalCount=$this->where($map)->count();
-        if($totalCount){
-            $list=$this->where($map)->order($order)->page($page,$r)->select();
-        }
+        $list=$this->where($map)->order($order)->paginate($r);
+
         return array($list,$totalCount);
     }
 
     public function addData($data)
     {
-        $data=$this->create($data);
-        $res=$this->add($data);
+        $res=$this->save($data);
         if($res){
-            M('Announce')->where(array('id'=>$data['announce_id']))->setInc('arrive');
+            Db::name('Announce')->where(['id'=>$data['announce_id']])->setInc('arrive');
         }
         return $res;
     }
 
-    public function getData($map)
+    public function getDataByMap($map)
     {
         $data=$this->where($map)->find();
         return $data;
@@ -43,7 +33,6 @@ class AnnounceArriveModel extends Model{
      * 设置全部公告到达某人
      * @param int $uid
      * @return bool
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function setAllArrive($uid=0)
     {
@@ -52,10 +41,12 @@ class AnnounceArriveModel extends Model{
             $this->error="请先登录！";
             return false;
         }
-        $announceModel=M('Announce');
+        $announceModel=Db::name('Announce');
         $map['status']=1;
-        $map['end_time']=array('gt',time());
+        $map['end_time']=['gt',time()];
+
         $announceIds=$announceModel->where($map)->field('id')->limit(999)->select();
+
         $announceIds=array_column($announceIds,'id');
         if(count($announceIds)){
             $map_arrive['announce_id']=array('in',$announceIds);
@@ -76,7 +67,7 @@ class AnnounceArriveModel extends Model{
             unset($val);
             $res=$this->addAll($dataList);
             if($res){
-                $announceModel->where(array('id'=>array('in',$needIds)))->setInc('arrive');
+                $announceModel->where(['id'=>['in',$needIds]])->setInc('arrive');
             }
             return $res;
         }
@@ -88,9 +79,8 @@ class AnnounceArriveModel extends Model{
      * 获取已读列表
      * @param $map
      * @return mixed
-     * @author 郑钟良<zzl@ourstu.com>
      */
-    public function getListMap($map)
+    public function getListByMap($map)
     {
         $list=$this->where($map)->select();
         return $list;

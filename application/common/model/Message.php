@@ -19,7 +19,7 @@ class Message extends Model
      * @return bool
      * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
      */
-    public function sendMessage($to_uids, $title = '您有新的消息', $content = '', $url = '', $url_args = array(), $from_uid = -1, $type = 'Common_system', $tpl = '')
+    public function sendMessage($to_uids, $title = '您有新的消息', $content = '', $url = '', $url_args = array(), $from_uid = -1, $type = 'common_system', $tpl = '')
     {
         $from_uid == -1 && $from_uid = is_login();
         $to_uids = is_array($to_uids) ? $to_uids : array($to_uids);
@@ -47,7 +47,7 @@ class Message extends Model
      * @return bool
      * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
      */
-    public function sendMessageWithoutCheckSelf($to_uids, $title = '您有新的消息', $content = '', $url = '', $url_args = array(), $from_uid = -1, $type = 'Common_system', $tpl = '')
+    public function sendMessageWithoutCheckSelf($to_uids, $title = '您有新的消息', $content = '', $url = '', $url_args = array(), $from_uid = -1, $type = 'common_system', $tpl = '')
     {
         $to_uids = is_array($to_uids) ? $to_uids : array($to_uids);
         $to_uids=$this->_removeOldUser($to_uids);
@@ -55,7 +55,7 @@ class Message extends Model
             return false;
         }
         if (in_array($type, array('1', '2','3','0','4', '5'))) {
-            $type = 'Common_system';
+            $type = 'common_system';
         }
         $from_uid == -1 && $from_uid = is_login();
         $message_content_id = $this->addMessageContent($from_uid, $title, $content, $url, $url_args, $type);
@@ -88,12 +88,11 @@ class Message extends Model
      * @param string $type 消息类型标识，对应各模块message_config.php中设置的消息类型
      * @param string $tpl 消息模板标识，对应各模块message_config.php中设置的消息模板
      * @return bool
-     * @author 郑钟良<zzl@ourstu.com>
      */
-    public function sendALotOfMessageWithoutCheckSelf($to_uids, $title = '您有新的消息', $content = '', $url = '', $url_args = array(), $from_uid = -1, $type = 'Common_system', $tpl = '')
+    public function sendALotOfMessageWithoutCheckSelf($to_uids, $title = '您有新的消息', $content = '', $url = '', $url_args = array(), $from_uid = -1, $type = 'common_system', $tpl = '')
     {
         if (in_array($type, array('1', '2','3','0','4', '5'))) {
-            $type = 'Common_system';
+            $type = 'common_system';
         }
         $from_uid == -1 && $from_uid = is_login();
         $message_content_id = $this->addMessageContent($from_uid, $title, $content, $url, $url_args, $type);
@@ -126,7 +125,7 @@ class Message extends Model
         return true;
     }
 
-    public function sendEmail($to_uids, $title = '您有新的消息', $content = '', $url = '', $url_args = array(), $from_uid = -1, $type = 'Common_email', $tpl = '')
+    public function sendEmail($to_uids, $title = '您有新的消息', $content = '', $url = '', $url_args = array(), $from_uid = -1, $type = 'common_email', $tpl = '')
     {
         $from_uid == -1 && $from_uid = is_login();
         $message_content_id = $this->addMessageContent($from_uid, $title, $content, $url, $url_args, $type);
@@ -174,7 +173,7 @@ class Message extends Model
     }
 
 
-    public function sendMobileMessage($to_uids, $title = '您有新的消息', $content = '', $url = '', $url_args = array(), $from_uid = -1, $type = 'Common_mobile', $tpl = '')
+    public function sendMobileMessage($to_uids, $title = '您有新的消息', $content = '', $url = '', $url_args = array(), $from_uid = -1, $type = 'common_mobile', $tpl = '')
     {
         $from_uid == -1 && $from_uid = is_login();
         $message_content_id = $this->addMessageContent($from_uid, $title, $content, $url, $url_args, $type);
@@ -275,7 +274,6 @@ class Message extends Model
      * @param $url_args 消息链接的参数，U函数的第二个参数
      * @param string $type 消息类型，对应各模块message_config.php中设置的会话类型
      * @return mixed
-     * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
      */
     private function addMessageContent($from_uid, $title, $content, $url, $url_args, $type)
     {
@@ -287,7 +285,7 @@ class Message extends Model
         $data_content['type'] = $type;
         $data_content['create_time'] = time();
         $data_content['status'] = 1;
-        $message_id = D('message_content')->add($data_content);
+        $message_id = Db::name('message_content')->insert($data_content);
         return $message_id;
     }
 
@@ -300,7 +298,7 @@ class Message extends Model
     {
         $content = cache('message_content_' . $id);
         if (empty($content)) {
-            $content = D('message_content')->find($id);
+            $content = Db::name('message_content')->find($id);
             if ($content) {
                 $content['args'] = json_decode($content['args'], true);
                 $content['args_json'] = json_encode($content['args']);
@@ -320,7 +318,7 @@ class Message extends Model
                     $content['tip']=$content['content'];
                 }
                 if (in_array($content['type'], array('1', '2','3','0','4', '5'))) {
-                    $content['type'] = 'Common_system';
+                    $content['type'] = 'common_system';
                 }
             }
             cache('message_content_' . $id, $content, 60 * 60);
@@ -396,22 +394,21 @@ class Message extends Model
      */
     public function getAllMessageType()
     {   
-        //echo APP_PATH;exit;
         $tag = 'ALL_MESSAGE_SESSION';
         //$message_session = cache($tag);
         if (empty($message_session)) {
 
-            $message_session = load_config(CONF_PATH . 'message_config.php');
-
-            $message_session = $message_session['session'];
+            $message_session = config('message.session');
+            //dump($message_session);
+            //$message_session = $message_session['session'];
             foreach ($message_session as &$val) {
                 if ($val['name'] == '') {
-                    $val['name'] = 'Common';
+                    $val['name'] = 'common';
                 } else {
-                    $val['name'] = 'Common_' . $val['name'];
+                    $val['name'] = 'common_' . $val['name'];
                 }
-                $val['module'] = 'Common';
-                $val['icon'] = '/Public/images/message_icon/' . $val['icon'];
+                $val['module'] = 'common';
+                $val['icon'] = '/static/common/images/message_icon/' . $val['icon'];
                 !isset($val['sort']) && $val['sort'] = 0;
                 $val['alias']='系统';
             }
@@ -419,12 +416,14 @@ class Message extends Model
             
             $model_message_session = array();
             $module_alias=array();
-            $modules = model('Common/Module')->getAll(1);
+            $modules = model('common/Module')->getAll(1);
+
+            $conf=[];
             foreach ($modules as $val) {
-                $path = APP_PATH . $val['name'] . '/Conf/message_config.php';
+                $path = APP_PATH . $val['name'] . '/extra/message.php';
                 if (file_exists($path)) {
-                    $conf = load_config($path);
-                    $conf = $conf['session'];
+                    //$conf = load_config($path);
+                    $conf = config('message.session');
                 }
                 if (!in_array($val['name'], array('Core'))) {
                     //模块默认会话类型，logo使用模块logo，现在先用null代替,在下面替换为模块logo
@@ -458,12 +457,12 @@ class Message extends Model
                     !isset($one_type['sort']) && $one_type['sort'] = 0;
                     if($one_type['icon']==null){
 
-                        $one_type['icon'] = APP_PATH . $key . '/Static/images/message_icon.png';//使用模块logo
+                        $one_type['icon'] = '/static/' . $key . '/images/message_icon.png';//使用模块logo
                         //图标文件不存在用系统默认图标
                         if(!file_exists($one_type['icon'])){
-                            $one_type['icon'] = '/Public/images/message_icon/system.png';//模块logo不存在使用系统logo
+                            $one_type['icon'] = '/static/common/images/message_icon/system.png';//模块logo不存在使用系统logo
                         }else{
-                            $one_type['icon'] = '/Application/' . $key . '/Static/images/message_icon.png';//使用模块logo
+                            $one_type['icon'] = '/Static/'. $key . '/images/message_icon.png';//使用模块logo
                         }
                     }
                     $one_type['alias']=$module_alias[$key];
@@ -556,7 +555,7 @@ class Message extends Model
     {
         foreach ($messages as &$v) {
             if (in_array($v['type'], array('1', '2','3','0','4', '5'))) {
-                $v['type'] = 'Common_system';
+                $v['type'] = 'common_system';
             }
             $v['ctime'] = friendlyDate($v['create_time']);
             $v['content'] = $this->getContent($v['content_id']);

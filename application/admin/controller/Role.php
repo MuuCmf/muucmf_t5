@@ -82,7 +82,7 @@ class Role extends Admin
             ->keyCreateTime()
             ->keyUpdateTime()
             ->keyDoActionEdit('Role/editRole?id=###')
-            ->keyDoAction('Role/configScore?role_id=###', lang('_DEFAULT_INFORMATION_CONFIGURATION_'))
+            ->keyDoAction('Role/configScore?id=###', lang('_DEFAULT_INFORMATION_CONFIGURATION_'))
             ->data($roleList)
             ->page($page)
             ->display();
@@ -516,7 +516,7 @@ class Role extends Admin
      */
     public function configScore()
     {
-        $aRoleId = input('role_id', 0, 'intval');
+        $aRoleId = input('id', 0, 'intval');
         if (!$aRoleId) {
             $this->error(lang('_PLEASE_CHOOSE_YOUR_IDENTITY_'));
         }
@@ -545,7 +545,7 @@ class Role extends Admin
                 $result = Db::name('RoleConfig')->insert($data);
             }
             if ($result) {
-                $this->success(lang('_OPERATION_SUCCESS_'), Url('Admin/Role/configScore', array('role_id' => $aRoleId)));
+                $this->success(lang('_OPERATION_SUCCESS_'), Url('Admin/Role/configScore', array('id' => $aRoleId)));
             } else {
                 $this->error(lang('_OPERATION_FAILED_'));
             }
@@ -568,12 +568,12 @@ class Role extends Admin
                 }
             }
             unset($val);
-            
+
             $this->setTitle(lang('_IDENTITY_DEFAULT_INTEGRATION_'));
             $this->assign('score_keys', $score_keys);
             $this->assign('post_key', $post_key);
             $this->assign('role_list', $mRole_list);
-            $this->assign('this_role', array('role_id' => $aRoleId));
+            $this->assign('this_role', array('id' => $aRoleId));
             $this->assign('tab', 'score');
             return $this->fetch('score');
         }
@@ -581,7 +581,6 @@ class Role extends Admin
 
     /**
      * 身份默认头像配置
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function configAvatar()
     {
@@ -591,22 +590,22 @@ class Role extends Admin
         }
         $map = getRoleConfigMap('avatar', $aRoleId);
         $data['data'] = '';
-        if (IS_POST) {
+        if (request()->isPost()) {
             $data['value'] = input('post.avatar_id', 0, 'intval');
             $aSetNull = input('post.set_null', 0, 'intval');
             if (!$aSetNull) {
                 if($data['value']==0){
                     $this->error(lang('_PLEASE_UPLOAD_YOUR_AVATAR_'));
                 }
-                if ($this->roleConfigModel->where($map)->find()) {
-                    $result = $this->roleConfigModel->saveData($map, $data);
+                if (Db::name('RoleConfig')->where($map)->find()) {
+                    $result = Db::name('RoleConfig')->saveData($map, $data);
                 } else {
                     $data = array_merge($map, $data);
-                    $result = $this->roleConfigModel->addData($data);
+                    $result = Db::name('RoleConfig')->addData($data);
                 }
             } else {//使用系统默认头像
-                if ($this->roleConfigModel->where($map)->find()) {
-                    $result = $this->roleConfigModel->where($map)->delete();
+                if (Db::name('RoleConfig')->where($map)->find()) {
+                    $result = Db::name('RoleConfig')->where($map)->delete();
                 }else{
                     $this->success(lang('_THE_CURRENT_USE_OF_THE_SYSTEM_IS_THE_DEFAULT_AVATAR_'));
                 }
@@ -615,21 +614,20 @@ class Role extends Admin
                 clear_role_cache($aRoleId);
                 $this->success(lang('_OPERATION_SUCCESS_'), Url('Admin/Role/configAvatar', array('id' => $aRoleId)));
             } else {
-                $this->error(lang('_OPERATION_FAILED_') . $this->roleConfigModel->getError());
+                $this->error(lang('_OPERATION_FAILED_') . Db::name('RoleConfig')->getError());
             }
         } else {
-            $avatar_id = $this->roleConfigModel->where($map)->getField('value');
+            $avatar_id = Db::name('RoleConfig')->where($map)->value('value');
             $mRole_list = $this->roleModel->field('id,title')->select();
             $this->assign('role_list', $mRole_list);
             $this->assign('this_role', array('id' => $aRoleId, 'avatar' => $avatar_id));
             $this->assign('tab', 'avatar');
-            $this->display('avatar');
+            return $this->fetch('avatar');
         }
     }
 
     /**
      * 身份默认头衔配置
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function configRank()
     {
@@ -638,31 +636,33 @@ class Role extends Admin
             $this->error(lang('_PLEASE_CHOOSE_YOUR_IDENTITY_'));
         }
         $map = getRoleConfigMap('rank', $aRoleId);
-        if (IS_POST) {
+
+        if (request()->isPost()) {
             $data['value'] = '';
             if (isset($_POST['ranks'])) {
                 sort($_POST['ranks']);
                 $data['value'] = implode(',', array_unique($_POST['ranks']));
             }
-            $aReason['reason'] = input('post.reason', '', 'op_t');
+            $aReason['reason'] = input('post.reason', '', 'text');
             $data['data'] = json_encode($aReason, true);
-            if ($this->roleConfigModel->where($map)->find()) {
-                $result = $this->roleConfigModel->saveData($map, $data);
+            if (Db::name('RoleConfig')->where($map)->find()) {
+                $result = Db::name('RoleConfig')->saveData($map, $data);
             } else {
                 $data = array_merge($map, $data);
-                $result = $this->roleConfigModel->addData($data);
+                $result = Db::name('RoleConfig')->addData($data);
             }
             if ($result) {
                 $this->success(lang('_OPERATION_SUCCESS_'), Url('Admin/Role/configrank', array('id' => $aRoleId)));
             } else {
-                $this->error(lang('_OPERATION_FAILED_') . $this->roleConfigModel->getError());
+                $this->error(lang('_OPERATION_FAILED_') . Db::name('RoleConfig')->getError());
             }
         } else {
+
             $mRole_list = $this->roleModel->field('id,title')->select();
             $mRole_list = array_combine(array_column($mRole_list, 'id'), $mRole_list);
 
             //获取默认配置值
-            $rank = $this->roleConfigModel->where($map)->field('value,data')->find();
+            $rank = Db::name('RoleConfig')->where($map)->field('value,data')->find();
             if ($rank) {
                 $rank['data'] = json_decode($rank['data'], true);
                 if (!$rank['data']['reason']) {
@@ -670,12 +670,11 @@ class Role extends Admin
                 }
             } else {
                 $rank['data']['reason'] = "{$mRole_list[$aRoleId]['title']}".lang('_TITLE_OWNED_DEFAULT_').lang('_EXCLAMATION_');
-                $rank['value'] = array();
+                $rank['value'] = json_encode(array());
             }
 
             //获取头衔列表
-            $model = D('Rank');
-            $list = $model->select();
+            $list = Db::name('Rank')->select();
             $canApply = $unApply = array();
             foreach ($list as $val) {
                 $val['name'] = query_user(array('nickname'), $val['uid']);
@@ -687,20 +686,19 @@ class Role extends Admin
                 }
             }
             unset($val);
-
+            
             $this->assign('can_apply', $canApply);
             $this->assign('un_apply', $unApply);
             $this->assign('reason', $rank['data']['reason']);
             $this->assign('role_list', $mRole_list);
             $this->assign('this_role', array('id' => $aRoleId, 'ranks' => $rank['value']));
             $this->assign('tab', 'rank');
-            $this->display('rank');
+            return $this->fetch('rank');
         }
     }
 
     /**
      * 用户可拥有标签配置
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function configUserTag()
     {
@@ -710,33 +708,36 @@ class Role extends Admin
         }
 
         $map = getRoleConfigMap('user_tag', $aRoleId);
+
         if(request()->isPost()){
             $data['value'] = '';
             if (isset($_POST['tags'])) {
                 sort($_POST['tags']);
                 $data['value'] = implode(',', array_unique($_POST['tags']));
             }
-            if ($this->roleConfigModel->where($map)->find()) {
-                $result = $this->roleConfigModel->saveData($map, $data);
+            if (Db::name('RoleConfig')->where($map)->find()) {
+                $result = Db::name('RoleConfig')->where($map)->update($data);
             } else {
                 $data = array_merge($map, $data);
-                $result = $this->roleConfigModel->addData($data);
+                $result = Db::name('RoleConfig')->insert($data);
             }
             if ($result === false) {
-                $this->error(lang('_FAILED_') . $this->roleConfigModel->getError());
+                $this->error(lang('_FAILED_') . Db::name('RoleConfig')->getError());
             } else {
                 clear_role_cache($aRoleId);
                 $this->success(lang('_OPERATION_SUCCESS_'));
             }
         }else{
             $mRole_list = $this->roleModel->field('id,title')->select();
-            $fields = $this->roleConfigModel->where($map)->getField('value');
-            $tag_list=D('Ucenter/UserTag')->getTreeList();
+            $fields = Db::name('RoleConfig')->where($map)->value('value');
+
+            $tag_list=model('Ucenter/UserTag')->getTreeList();
+
             $this->assign('tag_list',$tag_list);
             $this->assign('role_list', $mRole_list);
             $this->assign('this_role', array('id' => $aRoleId, 'fields' => $fields));
             $this->assign('tab', 'userTag');
-            $this->display('usertag');
+            return $this->fetch('usertag');
         }
 
     }
@@ -751,7 +752,7 @@ class Role extends Admin
         if (!$aRoleId) {
             $this->error(lang('_PLEASE_CHOOSE_YOUR_IDENTITY_'));
         }
-        $aType = input('get.type', 0, 'intval'); //扩展资料设置类型：1注册时要填写资料配置，0扩展资料字段设置
+        $aType = input('type', 0, 'intval'); //扩展资料设置类型：1注册时要填写资料配置，0扩展资料字段设置
 
         if ($aType) { //注册时要填写资料配置
             $type = 'register_expend_field';
@@ -759,41 +760,47 @@ class Role extends Admin
             $type = 'expend_field';
         }
         $map = getRoleConfigMap($type, $aRoleId);
-        if (IS_POST) {
+
+        if (request()->isPost()) {
+            //注册时资料提交未处理，下一版完善
             $data['value'] = '';
             if (isset($_POST['fields'])) {
                 sort($_POST['fields']);
                 $data['value'] = implode(',', array_unique($_POST['fields']));
             }
-            if ($this->roleConfigModel->where($map)->find()) {
-                $result = $this->roleConfigModel->saveData($map, $data);
+            if (Db::name('RoleConfig')->where($map)->find()) {
+                $result = Db::name('RoleConfig')->where($map)->update($data);
             } else {
                 $data = array_merge($map, $data);
-                $result = $this->roleConfigModel->addData($data);
+                $result = Db::name('RoleConfig')->insert($data);
             }
             if ($result === false) {
-                $this->error(lang('_FAILED_') . $this->roleConfigModel->getError());
+                $this->error(lang('_FAILED_') . Db::name('RoleConfig')->getError());
             } else {
                 clear_role_cache($aRoleId);
                 $this->success(lang('_OPERATION_SUCCESS_'));
             }
         } else {
+
             $aType = input('get.type', 0, 'intval'); //扩展资料设置类型：1注册时要填写资料配置，0扩展资料字段设置
 
             $mRole_list = $this->roleModel->field('id,title')->select();
 
-            $fields = $this->roleConfigModel->where($map)->getField('value');
+            $fields = Db::name('RoleConfig')->where($map)->value('value');
 
             if ($aType == 1) { //注册时要填写资料配置
                 $map_fields = getRoleConfigMap('expend_field', $aRoleId);
-                $expend_fields = $this->roleConfigModel->where($map_fields)->getField('value');
+                $expend_fields = Db::name('RoleConfig')->where($map_fields)->value('value');
                 $field_list = $expend_fields ? $this->getExpendField($expend_fields) : array();
-                $this->meta_title = lang('_REGISTRATION_TO_FILL_IN_THE_DATA_CONFIGURATION_');
+
+                $this->setTitle(lang('_REGISTRATION_TO_FILL_IN_THE_DATA_CONFIGURATION_'));
+
                 $tpl = 'fieldregister'; //模板地址
                 $tab = 'fieldRegister';
             } else { //扩展资料字段设置
+
                 $field_list = $this->getExpendField();
-                $this->meta_title = lang('_EXTENDED_DATA_FIELD_SETTINGS_');
+                $this->setTitle(lang('_EXTENDED_DATA_FIELD_SETTINGS_'));
                 $tpl = 'field'; //模板地址
                 $tab = 'field';
             }
@@ -801,7 +808,7 @@ class Role extends Admin
             $this->assign('role_list', $mRole_list);
             $this->assign('this_role', array('id' => $aRoleId, 'fields' => $fields));
             $this->assign('tab', $tab);
-            $this->display($tpl);
+            return $this->fetch($tpl);
         }
     }
 
@@ -811,7 +818,6 @@ class Role extends Admin
      * 获取扩展字段列表
      * @param string $in
      * @return mixed
-     * @author 郑钟良<zzl@ourstu.com>
      */
     private function getExpendField($in = '')
     {
@@ -819,10 +825,9 @@ class Role extends Admin
             $in = is_array($in) ? $in : explode(',', $in);
             $map_field['id'] = array('in', $in);
         }
-        $map['status'] = array('egt', 0);
-        $profileList = D('field_group')->where($map)->order("sort asc")->select(); //获取扩展字段分组
+        $map['status'] = ['egt', 0];
+        $profileList = Db::name('field_group')->where($map)->order("sort asc")->select(); //获取扩展字段分组
 
-        $fieldSettingModel = D('field_setting');
         $type_default = array(
             'input' => lang('_ONE-WAY_TEXT_BOX_'),
             'radio' => lang('_RADIO_BUTTON_'),
@@ -835,7 +840,7 @@ class Role extends Admin
         foreach ($profileList as $key => &$val) {
             //获取分组下字段列表
             $map_field['profile_group_id'] = $val['id'];
-            $field_list = $fieldSettingModel->where($map_field)->order("sort asc")->select();
+            $field_list = Db::name('field_setting')->where($map_field)->order("sort asc")->select();
             foreach ($field_list as &$vl) {
                 $vl['form_type'] = $type_default[$vl['form_type']];
             }
@@ -852,23 +857,22 @@ class Role extends Admin
 
     /**
      * 上传图片（上传默认头像）
-     * @author huajie <banhuajie@163.com>
      */
     public function uploadPicture()
     {
         //TODO: 用户登录检测
 
         /* 返回标准数据 */
-        $return = array('status' => 1, 'info' => lang('_UPLOAD_SUCCESS_'), 'data' => '');
+        $return = ['status' => 1, 'info' => lang('_UPLOAD_SUCCESS_'), 'data' => ''];
 
         /* 调用文件上传组件上传文件 */
-        $Picture = D('Picture');
-        $pic_driver = C('PICTURE_UPLOAD_DRIVER');
+        $Picture = model('Picture');
+        $pic_driver = config('PICTURE_UPLOAD_DRIVER');
         $info = $Picture->upload(
             $_FILES,
-            C('PICTURE_UPLOAD'),
-            C('PICTURE_UPLOAD_DRIVER'),
-            C("UPLOAD_{$pic_driver}_CONFIG")
+            config('PICTURE_UPLOAD'),
+            config('PICTURE_UPLOAD_DRIVER'),
+            config("UPLOAD_{$pic_driver}_CONFIG")
         ); //TODO:上传到远程服务器
         /* 记录图片信息 */
         if ($info) {
@@ -894,7 +898,7 @@ class Role extends Admin
      */
     public function initUnhaveUser()
     {
-        $memberModel=D('Common/Member');
+        $memberModel=model('Common/Member');
 
         $uids=$memberModel->field('uid')->select();
         $uids=array_column($uids,'uid');

@@ -1,19 +1,25 @@
 
 
-<php> if(\Think\Hook::get('adminEditor') && MODULE_NAME == 'Admin'){</php>
+{php}
+ if(\think\Hook::get('adminEditor') && MODULE_NAME == 'Admin'){
+ {/php}
 <label class="textarea">
     <textarea name="{$name}" id="{$id}">{$default}</textarea>
     {:hook('adminEditor', array('id'=>$id,'value'=>$default))}
 </label>
 
-<php>}elseif(\Think\Hook::get('editor')){</php>
+{php}
+    }elseif(\think\Hook::get('editor')){
+{/php}
 
 <label class="textarea">
     <textarea name="{$name}" id="{$id}">{$default}</textarea>
     {:hook('editor', array('id'=>$id,'value'=>$default))}
 </label>
 
-<php>}else{</php>
+{php}
+}else{
+{/php}
     <style type="text/css">
         .toolbar {
             border: 1px solid #ccc;
@@ -28,9 +34,10 @@
     <div id="toolbar_{$id}" class="toolbar"></div>
 	<div id="editarea_{$id}" class="editarea" style="{$style}">{$default}</div>
 	<textarea id="wangeditor_{$id}" name="{$name}" class="hidden">{$default}</textarea>
-    <php>if(!$param['is_load_script']){</php>
-	<script type="text/javascript" src="__PUBLIC__/lib/wangEditor-3.1.1/wangEditor.min.js"></script>
-
+    {php}
+        if(!isset($param['is_load_script'])){
+    {/php}
+	<script type="text/javascript" src="__COMMON__/lib/wangEditor-3.1.1/wangEditor.min.js"></script>
 	<script type="text/javascript">
 	$(function(){
         var E = window.wangEditor;
@@ -58,5 +65,9 @@
         //$('#editarea').attr('style','height:auto;');
     });
 	</script>
-	<php>}</php>
-<php>}</php>
+	{php}
+    }
+    {/php}
+{php}
+}
+{/php}

@@ -1,33 +1,25 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 16-6-21
- * Time: 上午11:15
- * @author 郑钟良<zzl@ourstu.com>
- */
+namespace app\admin\controller;
 
-namespace Admin\Controller;
+use app\admin\builder\AdminConfigBuilder;
+use app\admin\builder\AdminListBuilder;
 
+class Announce extends Admin{
 
-use Admin\Builder\AdminConfigBuilder;
-use Admin\Builder\AdminListBuilder;
-
-class AnnounceController extends AdminController{
     protected $announceModel,$announceArriveModel;
 
     public function _initialize()
     {
-        $this->announceModel=D('Common/Announce');
-        $this->announceArriveModel=D('Common/AnnounceArrive');
+        $this->announceModel=model('Common/Announce');
+        $this->announceArriveModel=model('Common/AnnounceArrive');
         parent::_initialize();
     }
 
-    public function announceList($page=1,$r=10)
+    public function announceList($r=10)
     {
-        $aOrder=I('get.order','create_time','text');
+        $aOrder=input('get.order','create_time','text');
         $aOrder=$aOrder.' desc';
-        $aStatus=I('get.status',0,'intval');
+        $aStatus=input('get.status',0,'intval');
         switch($aStatus){
             case 1:
             case 2:
@@ -44,24 +36,28 @@ class AnnounceController extends AdminController{
             default:
                 $map['status']=array('in','0,1');
         }
-        list($list,$totalCount)=$this->announceModel->getListPage($map,$page,$aOrder,$r);
+        list($list,$totalCount)=$this->announceModel->getListPage($map,$aOrder,$r);
+        // 获取分页显示
+        $page = $list->render();
+        $list = $list->toArray()['data'];
         foreach($list as &$val){
             $val['content']=text($val['content']);
         }
+
         $builder=new AdminListBuilder();
-        $builder->title('公告列表')
-            ->buttonNew(U('add'))
-            ->setStatusUrl(U('setStatus'))
+        $builder
+            ->title('公告列表')
+            ->buttonNew(Url('add'))
+            ->setStatusUrl(Url('setStatus'))
             ->buttonEnable()
             ->buttonDisable()
             ->buttonDelete()
-            ->setSelectPostUrl(U('announceList'))
+            ->setSelectPostUrl(Url('announceList'))
             ->select('','status','select','','','',array(array('id'=>0,'value'=>'全部'),array('id'=>2,'value'=>'启用'),array('id'=>1,'value'=>'禁用'),array('id'=>3,'value'=>'未过期'),array('id'=>4,'value'=>'已过期')))
             ->select('排序方式：','order','select','','','',array(array('id'=>'create_time','value'=>'创建时间'),array('id'=>'sort','value'=>'排序值')))
             ->keyId()
             ->keyTitle()
             ->keyBool('is_force','是否强制推送')
-            ->keyText('sort','排序值')
             ->keyText('link','链接地址')
             ->keyText('content','公告内容')
             ->keyStatus()
@@ -71,48 +67,49 @@ class AnnounceController extends AdminController{
             ->keyDoActionEdit('edit?id=###','设置')
             ->keyDoAction('arrive?announce_id=###','查看确认人')
             ->data($list)
-            ->pagination($totalCount,$r)
+            ->page($page)
             ->display();
     }
 
     public function add()
     {
-        if(IS_POST){
-            $data['title']=I('post.title','','text');
+        if(request()->isPost()){
+            $data['title']=input('post.title','','text');
             if($data['title']==''){
                 $this->error('公告标题不能为空！');
             }
-            $data['content']=I('post.content','');
+            $data['content']=input('post.content','');
             if($data['content']==''){
                 $this->error('公告内容不能为空！');
             }
 
-            $data['link']=I('post.link');
+            $data['link']=input('post.link');
             if(mb_strlen($data['link'],'utf-8')&&!in_array(strtolower(substr($data['link'], 0, 6)), array('http:/', 'https:', 'ftp://', 'rtsp:/', 'mms://'))) {
                 $data['link'] = 'http://'.$data['link'];
             }
-            $data['create_time']=I('post.create_time',time(),'intval');
-            $data['end_time']=I('post.end_time',time()+7*24*60*60,'intval');
-            $data['status']=I('post.status',1,'intval');
-            $data['is_force']=I('post.is_force',1,'intval');
-            $data['sort']=I('post.sort',0,'intval');
+            $data['create_time']=input('post.create_time',time(),'intval');
+            $data['end_time']=input('post.end_time',time()+7*24*60*60,'intval');
+            $data['status']=input('post.status',1,'intval');
+            $data['is_force']=input('post.is_force',1,'intval');
+            $data['sort']=input('post.sort',0,'intval');
             $res=$this->announceModel->addData($data);
             if($res){
-                S('Announce_list',null);
+                cache('Announce_list',null);
                 $this->_sendMessage($res);
-                $this->success('公告发布成功！',U('announceList'));
+                $this->success('公告发布成功！',Url('announceList'));
             }else{
                 $this->error('公告发布失败！');
             }
         }else{
             $data=array('status'=>1,'sort'=>0,'is_force'=>1,'end_time'=>(time()+7*24*60*60));
             $builder=new AdminConfigBuilder();
-            $builder->title('新增公告')
+            $builder
+                ->title('新增公告')
                 ->suggest('公告只能新增，无法修改，保存时请慎重！')
                 ->keyId()
                 ->keyTitle()
                 ->keyText('link','链接')
-                ->keyEditor('content','内容')
+                ->keyEditor('content','内容','','wangeditor')
                 ->keyTime('end_time','有效期至')
                 ->keyBool('is_force','是否强制推送')
                 ->keyText('sort','排序','前台数值大的先展示')
@@ -133,22 +130,22 @@ class AnnounceController extends AdminController{
 
     public function edit()
     {
-        if(IS_POST){
-            $data['id']=I('post.id',0,'intval');
+        if(request()->isPost()){
+            $data['id']=input('post.id',0,'intval');
             if($data['id']==0){
                 $this->error('非法操作！');
             }
-            $data['sort']=I('post.sort',0,'intval');
-            $data['end_time']=I('post.end_time',time()+7*24*60*60,'intval');
+            $data['sort']=input('post.sort',0,'intval');
+            $data['end_time']=input('post.end_time',time()+7*24*60*60,'intval');
             $res=$this->announceModel->saveData($data);
             if($res){
-                S('Announce_list',null);
-               $this->success('操作成功！',U('announceList'));
+                cache('Announce_list',null);
+               $this->success('操作成功！',Url('announceList'));
             }else{
                 $this->error('操作失败！');
             }
         }else{
-            $aId=I('get.id',0,'intval');
+            $aId=input('get.id',0,'intval');
             $data=$this->announceModel->getData($aId);
             if(!$data){
                 $this->error('非法操作！');
@@ -168,24 +165,32 @@ class AnnounceController extends AdminController{
         }
     }
 
-    public function arrive($page=1,$r=30)
+    public function arrive($r=30)
     {
-        $aOrder=I('get.order','create_time','text');
+        $aOrder=input('get.order','create_time','text');
         $aOrder=$aOrder.' asc';
-        $aAnnounceId=I('get.announce_id',0,'intval');
-        $announce=$this->announceModel->getData($aAnnounceId);
+        $aAnnounceId=input('get.announce_id',0,'intval');
+        $announce=$this->announceModel->getDataById($aAnnounceId);
+
         $map['announce_id']=$aAnnounceId;
-        list($list,$totalCount)=$this->announceArriveModel->getListPage($map,$aOrder,$page,$r);
+
+        list($list,$totalCount)=$this->announceArriveModel->getListPage($map,$aOrder,$r);
+
+        // 获取分页显示
+        $page = $list->render();
+        $list = $list->toArray()['data'];
+
         $builder=new AdminListBuilder();
-        $builder->title("公告<{$announce['title']}>确认记录")
-            ->setSelectPostUrl(U('arrive',array('announce_id'=>$aAnnounceId)))
+        $builder
+            ->title("公告<{$announce['title']}>确认记录")
+            ->setSelectPostUrl(Url('arrive',array('announce_id'=>$aAnnounceId)))
             ->button('返回',array('href'=>'javascript:history.go(-1)'))
-            ->select('排序方式：','order','select','','','',array(array('id'=>'uid','value'=>'用户uid'),array('id'=>'create_time','value'=>'确认时间')))
+            ->select('排序方式：','order','select','','','',[['id'=>'uid','value'=>'用户uid'],['id'=>'create_time','value'=>'确认时间']])
             ->keyId()
             ->keyUid()
             ->keyCreateTime('create_time','确认时间')
             ->data($list)
-            ->pagination($totalCount,$r)
+            ->page($page)
             ->display();
     }
 
@@ -193,7 +198,7 @@ class AnnounceController extends AdminController{
     {
         if($announce_id!=0){
             $time=time();
-            $url = U('Home/Announce/sendAnnounceMessage', array('announce_id' => $announce_id,'time' => $time, 'token' => md5($time . C('DATA_AUTH_KEY'))), true, true);
+            $url = Url('Api/Announce/sendAnnounceMessage', array('announce_id' => $announce_id,'time' => $time, 'token' => md5($time . config('DATA_AUTH_KEY'))), true, true);
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_TIMEOUT, 1);  //设置过期时间为1秒，防止进程阻塞

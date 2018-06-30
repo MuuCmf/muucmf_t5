@@ -1,23 +1,21 @@
 <?php
-namespace Admin\Controller;
+namespace app\admin\controller;
 
-use Admin\Builder\AdminConfigBuilder;
-use Admin\Builder\AdminListBuilder;
+use app\admin\builder\AdminConfigBuilder;
+use app\admin\builder\AdminListBuilder;
 
 /**
- * Class MessageController  消息控制器
- * @package Admin\Controller
- * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
+ *  消息控制器
  */
-class MessageController extends AdminController
+class Message extends Admin
 {
 
 
     public function userList($page=1,$r=20)
     {
-        $aSearch1 = I('get.user_search1','');
-        $aSearch2 = I('get.user_search2',0,'intval');
-        $user_order = I('get.user_order',0,'intval');
+        $aSearch1 = input('get.user_search1','');
+        $aSearch2 = input('get.user_search2',0,'intval');
+        $user_order = input('get.user_order',0,'intval');
         if($user_order==0){
             $order = 'uid desc';
         }
@@ -33,8 +31,8 @@ class MessageController extends AdminController
         if (empty($aSearch1) && empty($aSearch2)) {
 
 
-            $aUserGroup = I('get.user_group', 0, 'intval');
-            $aRole = I('get.role', 0, 'intval');
+            $aUserGroup = input('get.user_group', 0, 'intval');
+            $aRole = input('get.role', 0, 'intval');
 
 
             if (!empty($aRole) || !empty($aUserGroup)) {
@@ -88,16 +86,16 @@ class MessageController extends AdminController
         $builder->title(L('_"MASS_USER_LIST"_'));
         $builder->meta_title = L('_"MASS_USER_LIST"_');
 
-        $builder->setSelectPostUrl(U('Message/userList'))
-            ->setSearchPostUrl(U('Message/userList'))
+        $builder->setSelectPostUrl(Url('Message/userList'))
+            ->setSearchPostUrl(Url('Message/userList'))
             ->select('排序：','user_order','select','排序','','',$order_array)
             ->select(L('_USER_GROUP:_'), 'user_group', 'select', L('_FILTER_ACCORDING_TO_USER_GROUP_'), '', '', $user_group)
             ->select(L('_IDENTITY_'), 'role', 'select', L('_FILTER_ACCORDING_TO_USER_IDENTITY_'), '', '', $user_role)
             ->search('','user_search1','',L('_SEARCH_ACCORDING_TO_USERS_NICKNAME_'),'','','')
             ->search('','user_search2','',L('_SEARCH_ACCORDING_TO_USER_ID_'),'','','');
-        $builder->buttonModalPopup(U('Message/sendMessage'), array('user_group' => $aUserGroup, 'role' => $aRole), L('_SEND_A_MESSAGE_'), array('data-title' => L('_MASS_MESSAGE_'), 'target-form' => 'ids', 'can_null' => 'true'));
+        $builder->buttonModalPopup(Url('Message/sendMessage'), array('user_group' => $aUserGroup, 'role' => $aRole), L('_SEND_A_MESSAGE_'), array('data-title' => L('_MASS_MESSAGE_'), 'target-form' => 'ids', 'can_null' => 'true'));
 
-        //$builder->buttonModalPopup(U('Message/sendMobileMessage'), array('user_group' => $aUserGroup),L('_SNS_SEND_'), array('data-title' => L('_SNS_SEND_'), 'target-form' => 'ids', 'can_null' => 'true'));
+        //$builder->buttonModalPopup(Url('Message/sendMobileMessage'), array('user_group' => $aUserGroup),L('_SNS_SEND_'), array('data-title' => L('_SNS_SEND_'), 'target-form' => 'ids', 'can_null' => 'true'));
 
         $builder->keyText('uid', L('_USER_ID_'))
                 ->keyText('nickname', L('_"NICKNAME"_'))
@@ -164,14 +162,14 @@ class MessageController extends AdminController
     {
 
         if (IS_POST) {
-            $aSendType=I('post.sendType','','text');
-            $aUids = I('post.uids');
-            $aUserGroup = I('post.user_group');
-            $aUserRole = I('post.user_role');
-            $aTitle = I('post.title', '', 'text');
-            $aContent = I('post.content', '', 'html');
-            $aUrl = I('post.url', '', 'text');
-            $aArgs = I('post.args', '', 'text');
+            $aSendType=input('post.sendType','','text');
+            $aUids = input('post.uids');
+            $aUserGroup = input('post.user_group');
+            $aUserRole = input('post.user_role');
+            $aTitle = input('post.title', '', 'text');
+            $aContent = input('post.content', '', 'html');
+            $aUrl = input('post.url', '', 'text');
+            $aArgs = input('post.args', '', 'text');
             $args = array();
             // 转换成数组
             if ($aArgs) {
@@ -238,9 +236,9 @@ class MessageController extends AdminController
             $result['info'] = L('_SEND_');
             $this->ajaxReturn($result);
         } else {
-            $aUids = I('get.ids');
-            $aUserGroup = I('get.user_group', 0, 'intval');
-            $aRole = I('get.role', 0, 'intval');
+            $aUids = input('get.ids');
+            $aUserGroup = input('get.user_group', 0, 'intval');
+            $aRole = input('get.role', 0, 'intval');
             if (empty($aUids)) {
                 $role = D('Role')->selectByMap(array('status' => 1));
                 $roles = array();
@@ -267,9 +265,9 @@ class MessageController extends AdminController
     }
     public function sendMobileMessage(){
         if (IS_POST) {
-            $aUids = I('post.uids');
-            $aUserGroup = I('post.user_group');
-            $aContent = I('post.content', '', 'html');
+            $aUids = input('post.uids');
+            $aUserGroup = input('post.user_group');
+            $aContent = input('post.content', '', 'html');
 
             if (empty($aContent)) {
                 $this->error(L('_PLEASE_ENTER_THE_MESSAGE_CONTENT_'));
@@ -310,16 +308,16 @@ class MessageController extends AdminController
             $result['info'] = L('_SEND_').','.$success_num.'条';
             $this->ajaxReturn($result);
         } else {
-            $aUids = I('get.ids');
-            $aUserGroup = I('get.user_group', 0, 'intval');
-            $aRole = I('get.role', 0, 'intval');
+            $aUids = input('get.ids');
+            $aUserGroup = input('get.user_group', 0, 'intval');
+            $aRole = input('get.role', 0, 'intval');
             if (empty($aUids)) {
-                $role = D('Role')->selectByMap(array('status' => 1));
+                $role = model('Role')->selectByMap(array('status' => 1));
                 $roles = array();
                 foreach ($role as $key => $v) {
                     array_push($roles, array('id' => $v['id'], 'value' => $v['title']));
                 }
-                $group = D('AuthGroup')->getGroups();
+                $group = model('AuthGroup')->getGroups();
                 $groups = array();
                 foreach ($group as $key => $v) {
                     array_push($groups, array('id' => $v['id'], 'value' => $v['title']));
@@ -332,7 +330,7 @@ class MessageController extends AdminController
                 $this->assign('users', $users);
                 $this->assign('uids', $uids);
             }
-            $this->display('sendmobilemessage');
+            return $this->fetch('sendmobilemessage');
         }
     }
 
@@ -346,7 +344,8 @@ class MessageController extends AdminController
         $admin_config = new AdminConfigBuilder();
         $data = $admin_config->handleConfig();
 
-        $admin_config->title("会话配置")
+        $admin_config
+            ->title("消息会话配置")
             ->data($data)
             ->keySelect('MESSAGE_TYPE_TPL', '会话列表模板', '', array('type1' => '官方模板1','type2' => '官方模板2','type3' => '官方模板3','type4' => '官方模板4'))
             ->buttonSubmit()
@@ -356,13 +355,14 @@ class MessageController extends AdminController
 
     /**
      * 系统会话列表
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function messageTypeList()
     {
         $message_sessions=get_all_message_type();
+
         foreach($message_sessions as &$val){
-            if($val['tpl_name']){
+
+            if(isset($val['tpl_name'])){
                 $val['tpl_name']=APP_PATH.$val['module'].'/.../'.$val['tpl_name'].'.html';
             }else{
                 $val['tpl_name']=APP_PATH.'Common/.../_message_li.html';
@@ -371,22 +371,23 @@ class MessageController extends AdminController
         unset($val);
         //dump($message_sessions);exit;
         $builder=new AdminListBuilder();
-        $builder->title('消息类型列表')
+        $builder
+            ->title('消息类型列表')
             ->suggest('这里只能查看和刷新，要对会话做增删改，请修改对应文件')
-            ->ajaxButton(U('Message/sessionRefresh'),null,'刷新',array('hide-data' => 'true'))
+            ->ajaxButton(Url('message/sessionRefresh'),null,'刷新',array('hide-data' => 'true'))
             ->keyText('name','标识（发送消息时的$type参数值）')
-            ->keyTitle()
+            ->keyTitle('消息列表')
             ->keyText('alias','所属模块')
             ->keyImage('icon','消息图标（自定义消息icon.png）')
             ->keyText('sort','排序值')
-            ->keyText('tpl_name','消息模板(“...”表示“View/default/MessageTpl/”)')
+            ->keyText('tpl_name','消息模板(“...”表示“View/Message/”)')
             ->data($message_sessions)
             ->display();
     }
     public function sessionRefresh()
     {
-        S('ALL_MESSAGE_SESSION',null);
-        $this->success('刷新成功！',U('Message/messageTypeList'));
+        cache('ALL_MESSAGE_SESSION',null);
+        $this->success('刷新成功！',Url('Message/messageTypeList'));
     }
     private function _toShowArray(&$data)
     {

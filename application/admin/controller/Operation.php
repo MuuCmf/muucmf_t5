@@ -1,13 +1,11 @@
 <?php
-namespace Admin\Controller;
+namespace app\admin\controller;
 
-use Admin\Builder\AdminConfigBuilder;
-
+use app\admin\builder\AdminConfigBuilder;
 
 /**
  * Class OperationController  运维控制器
  * @package Admin\Controller
- * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
  */
 class OperationController extends AdminController
 {

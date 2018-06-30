@@ -53,7 +53,6 @@ class UserTag extends Model {
      * @param int $id
      * @param bool $field
      * @return array
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function getTreeList($id = 0, $field = true){
         /* 获取当前分类信息 */
@@ -64,7 +63,8 @@ class UserTag extends Model {
 
         /* 获取所有分类 */
         $map  = array('status' => 1);
-        $list = $this->field($field)->where($map)->order('sort')->select();
+        $list = collection($this->field($field)->where($map)->order('sort')->select())->toArray();
+        
         $list = list_to_tree($list, $pk = 'id', $pid = 'pid', $child = 'tag_list', $root = $id);
 
 

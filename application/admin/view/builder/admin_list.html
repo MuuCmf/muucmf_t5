@@ -27,10 +27,8 @@
 
     <form id="searchForm" method="get" action="{$searchPostUrl}?" class="form-dont-clear-url-param">
     <div class="search-form cf">
-        <table class="tb_search">
-
+    <table class="tb_search">
     {volist name="searches" id="search"}
-
          <!--判断搜索选项是TEXT还是SELECT-->
 		 {eq name="search['type']" value="select"}
 		 	<tr style="line-height: 28px">
@@ -70,7 +68,7 @@
                 <td></td>
             </tr>
     </table>
-        </div>
+    </div>
     </form>
 
 
@@ -159,7 +157,7 @@
             {notempty name="list"}
             {volist name="list" id="e"}
                 <tr>
-                    <td><input class="ids" type="checkbox" value="{$e['id']}" name="ids[]"></td>
+                    <td><input class="ids" type="checkbox" value="{notempty name="e['id']"}{$e['id']}{/notempty}" name="ids[]"></td>
                     {volist name="keyList" id="field"}
                         <td style="width:auto;max-width: {$field['width']};"  class="text-ellipsis">{$e[$field['name']]}</td>
 

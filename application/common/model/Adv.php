@@ -12,11 +12,11 @@ class Adv extends Model
     public function getAdvList($name, $path)
     {
 
-        $list = S('adv_list_' . $name . $path);
+        $list = cache('adv_list_' . $name . $path);
         if ($list === false) {
             $now_theme = modC('NOW_THEME', 'default', 'Theme');
 
-            $advPos = D('Common/AdvPos')->getInfo($name, $path); //找到当前调用的广告位
+            $advPos = model('Common/AdvPos')->getInfo($name, $path); //找到当前调用的广告位
             if ($advPos['theme'] != 'all' && !in_array($now_theme, explode(',', $advPos['theme']))) {
                 return null;
             }
@@ -36,7 +36,7 @@ class Adv extends Model
                 }
             }
             unset($v);
-            S('adv_list_' . $name . $path, $list);
+            cache('adv_list_' . $name . $path, $list);
         }
 
         return $data;

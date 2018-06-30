@@ -674,6 +674,9 @@
 '_RECEPTION_PASSED_BY_ADMIN_PARAM_' =>' Administrators through the application of the title of [{:title}]: @{:nickname}, for reasons:',
 '_TITLE_AWARD_BY_ADMIN_' =>' The administrator has given you a title.',
 '_TITLE_AWARD_ADMIN_PARAM_' =>' The administrator has given a new title to [{:title}]: @{:nickname}, the reason for the issue:',
+'_DEFAULT_TITLE_CONFIGURATION_' =>'Default title configuration',
+
+
 '_REPORT_PROCESSING_LIST_' =>' Report processing list',
 '_PROCESS_' =>' Handle',
 '_IGNORE_' =>' Neglect treatment',

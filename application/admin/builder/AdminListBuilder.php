@@ -820,8 +820,12 @@ class AdminListBuilder extends AdminBuilder
         } else {
             $seperator = '&';
         }
-        $params = http_build_query($params);
-        return $url . $seperator . $params;
+        if(isset($params)){
+            $params = http_build_query($params);
+            return $url . $seperator . $params;
+        }
+        return $url;
+        
     }
 
     /**自动处理清空回收站
