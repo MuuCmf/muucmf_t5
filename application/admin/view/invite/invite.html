@@ -1,15 +1,15 @@
-<extend name="Public/base"/>
-<block name="body">
+{extend name="common/main" /}
+{block name="body"}
 <!-- 标题 -->
     <div class="main-title">
         <h2>
            {:lang("_INVITATION_CODE_LIST_PAGE_")}
         </h2>
     </div>
-    </div>
+
     <!-- 按钮工具栏 -->
-    <div class="with-padding">
-        <div class="fl">
+    <div class="">
+        <div class="button-box">
             <button class="btn ajax-post btn" url="{:Url('admin/invite/delete',array('status'=>-1))}" target-form="ids">
                {:lang("_DELETE_")}
             </button>
@@ -35,7 +35,7 @@
             </button>
             &nbsp;
             <!-- 选择框select -->
-            <div style="float: right;">
+            <div style="margin:10px auto">
                 <style>
                     .oneselect {
                         display: inline-block;
@@ -61,13 +61,13 @@
                         <div class="title">{:lang("_INVITATION_CODE_TYPE_")}{:lang("_COLON_")}</div>
                         <div class="select_box">
                             <select name="type" data-role="select_text" class="form-control">
-                                <volist name="type_list" id="type">
-                                    <php>if($type['id']==$now_type){</php>
+                                {volist name="type_list" id="type"}
+                                    {php}if($type['id']==$now_type){{/php}
                                     <option value="{$type.id}" selected>{$type.value}</option>
-                                    <php>}else{</php>
+                                    {php}}else{{/php}
                                     <option value="{$type.id}">{$type.value}</option>
-                                    <php>}</php>
-                                </volist>
+                                    {php}}{/php}
+                                {/volist}
                             </select>
                         </div>
                     </div>
@@ -85,8 +85,8 @@
                     <div class="oneselect">
                         <div class="select_box">
                             <select name="buyer" data-role="select_text" class="form-control">
-                                <option value="-1" <eq name="buyer" value="-1">selected</eq>>{:lang("_ADMINISTRATOR_GENERATION_")}</option>
-                                <option value="1" <eq name="buyer" value="1">selected</eq>>{:lang("_USER_PURCHASE_")}</option>
+                                <option value="-1" {eq name="buyer" value="-1"}selected{/eq}>{:lang("_ADMINISTRATOR_GENERATION_")}</option>
+                                <option value="1" {eq name="buyer" value="1"}selected{/eq}>{:lang("_USER_PURCHASE_")}</option>
                             </select>
                         </div>
                     </div>
@@ -120,7 +120,7 @@
 
             <!-- 列表 -->
             <tbody>
-            <volist name="invite_list" id="invite">
+            {volist name="invite_list" id="invite"}
                 <tr>
                     <td><input class="ids" type="checkbox" value="{$invite.id}" name="ids[]" data-code="{$invite.code}" data-code-url="{$invite.code_url}"></td>
                     <td>{$invite.id}</td>
@@ -138,18 +138,19 @@
                         </div>
                     </td>
                 </tr>
-            </volist>
+            {/volist}
 
             </tbody>
         </table>
+
+        <div class="page">
+        {$page}
+        </div>
     </div>
     <!-- 分页 -->
-    <div class="with-padding">
-        {$pagination}
-    </div>
-    </div>
-</block>
-<block name="script">
+    
+{/block}
+{block name="script"}
     <script type="text/javascript">
         function toggle_search(){
             $('#search_form').toggle('slide');
@@ -239,4 +240,4 @@
             })
         });
     </script>
-</block>
+{/block}
