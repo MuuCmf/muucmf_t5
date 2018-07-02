@@ -405,7 +405,7 @@ function hook($hook, $params = array())
  */
 function get_addon_class($name)
 {
-    $class = "Addons\\{$name}\\{$name}Addon";
+    $class = "Addons\\{$name}\\{$name}";
     return $class;
 }
 

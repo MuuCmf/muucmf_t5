@@ -1,28 +1,18 @@
 <?php
-// +----------------------------------------------------------------------
-// | i友街 [ 新生代贵州网购社区 ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2014 http://www.iyo9.com All rights reserved.
-// +----------------------------------------------------------------------
-// | Author: i友街 <iyo9@iyo9.com> <http://www.iyo9.com>
-// +----------------------------------------------------------------------
-// 
-namespace Addons\ChinaCity;
-use Common\Controller\Addon;
+namespace addons\chinaCity;
 
-/**
- * 中国省市区三级联动插件
- * @author i友街
- */
+use app\common\controller\Addons;
+use think\Db;
 
-    class ChinaCityAddon extends Addon{
+
+    class Chinacity extends Addons{
 
         public $info = array(
-            'name'=>'ChinaCity',
+            'name'=>'Chinacity',
             'title'=>'中国省市区三级联动',
             'description'=>'每个系统都需要的一个中国省市区三级联动插件。想天-駿濤修改，将镇级地区移除',
             'status'=>1,
-            'author'=>'i友街',
+            'author'=>'muucmf',
             'version'=>'2.0'
         );
 
@@ -32,27 +22,28 @@ use Common\Controller\Addon;
             $this->getisHook('J_China_City', $this->info['name'], $this->info['description']);
 
             //读取插件sql文件
-            $sqldata = file_get_contents('http://'.$_SERVER['HTTP_HOST'].__ROOT__.'/Addons/'.$this->info['name'].'/install.sql');
-            $sqlFormat = $this->sql_split($sqldata, C('DB_PREFIX'));
+            $sqldata = file_get_contents($this->addon_path.'install.sql');
+
+            $sqlFormat = $this->sql_split($sqldata, config('database.perfix'));
             $counts = count($sqlFormat);
             
             for ($i = 0; $i < $counts; $i++) {
                 $sql = trim($sqlFormat[$i]);
-                D()->execute($sql);
+                Db::execute($sql);
             }
             return true;
         }
 
         public function uninstall(){
             //读取插件sql文件
-            $sqldata = file_get_contents('http://'.$_SERVER['HTTP_HOST'].__ROOT__.'/Addons/'.$this->info['name'].'/uninstall.sql');
+            $sqldata = file_get_contents($this->addon_path.'uninstall.sql');
 
-            $sqlFormat = $this->sql_split($sqldata, C('DB_PREFIX'));
+            $sqlFormat = $this->sql_split($sqldata, config('database.perfix'));
             $counts = count($sqlFormat);
              
             for ($i = 0; $i < $counts; $i++) {
                 $sql = trim($sqlFormat[$i]);
-                D()->execute($sql);
+                Db::execute($sql);
             }
             return true;
         }
@@ -60,23 +51,23 @@ use Common\Controller\Addon;
         //实现的J_China_City钩子方法
         public function J_China_City($param){
             $this->assign('param', $param);
-            $this->display('chinacity');
+            return $this->fetch('chinacity');
         }
 
         //获取插件所需的钩子是否存在
         public function getisHook($str, $addons, $msg=''){
-            $hook_mod = M('Hooks');
+            
             $where['name'] = $str;
-            $gethook = $hook_mod->where($where)->find();
+            $gethook = Db::name('Hooks')->where($where)->find();
             if(!$gethook || empty($gethook) || !is_array($gethook)){
                 $data['name'] = $str;
                 $data['description'] = $msg;
                 $data['type'] = 1;
-                $data['update_time'] = NOW_TIME;
+                $data['update_time'] = time();
                 $data['addons'] = $addons;
-                if( false !== $hook_mod->create($data) ){
-                    $hook_mod->add();
-                }
+                
+                Db::name('Hooks')->insert($data);
+                
             }
         }
 
@@ -88,8 +79,8 @@ use Common\Controller\Addon;
          */
         public function sql_split($sql, $tablepre) {
 
-            if ($tablepre != "thinkox_")
-                $sql = str_replace("thinkox_", $tablepre, $sql);
+            if ($tablepre != "muucmf_")
+                $sql = str_replace("muucmf_", $tablepre, $sql);
                 $sql = preg_replace("/TYPE=(InnoDB|MyISAM|MEMORY)( DEFAULT CHARSET=[^; ]+)?/", "ENGINE=\\1 DEFAULT CHARSET=utf8", $sql);
 
             if ($r_tablepre != $s_tablepre)

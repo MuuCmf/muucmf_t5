@@ -124,7 +124,7 @@ str;
         if (!$data['info']['name'])
             $this->error(lang('_PLUGIN_LOGO_MUST_'));
         //检测插件名是否合法
-        $addons_dir = ONETHINK_ADDON_PATH;
+        $addons_dir = ADDON_PATH;
         if (file_exists("{$addons_dir}{$data['info']['name']}")) {
             $this->error(lang('_PLUGIN_ALREADY_EXISTS_'));
         }
@@ -136,7 +136,7 @@ str;
         $data = $_POST;
         $data['info']['name'] = trim($data['info']['name']);
         $addonFile = $this->preview(false);
-        $addons_dir = ONETHINK_ADDON_PATH;
+        $addons_dir = ADDON_PATH;
         //创建目录结构
         $files = array();
         $addon_dir = "$addons_dir{$data['info']['name']}/";
@@ -231,7 +231,7 @@ str;
      */
     public function index()
     {
-        $this->meta_title = lang('_PLUGIN_LIST_');
+        
         $type = input('get.type', 'all', 'text');
 
         $addon_dir = ADDONS_PATH;
@@ -251,37 +251,56 @@ str;
 
         
         $where['name'] = ['in', $dirs];
-        $list = collection(Db::name('Addons')->where($where)->select())->toArray();
-        dump($list);
-        
+        $list = Db::name('Addons')->where($where)->paginate(20);
+        $page = $list->render();
+        $list=$list->toArray()['data'];
 
-$addons = [];
-        $request = (array)input('request.');
-
-        $listRows = 20;
-        if ($type == 'yes') {//已安装的
-            foreach ($list as $key => $value) {
-                if ($value['uninstall'] != 1) {
-                    unset($list[$key]);
-                }
+        foreach ($list as &$addon) {
+            $addon['uninstall'] = 0;
+            $file = $addon_dir.$addon['name'].'/icon.png';
+            if(file_exists($file)){
+                $addon['icon_photo'] = $addon_dir.$addon['name'].'/icon.png';
+            }else{
+                $addon['icon_photo'] = '';
             }
-        } else if ($type == 'no') {
-            foreach ($list as $key => $value) {
-                if ($value['uninstall'] == 1) {
-                    unset($list[$key]);
-                }
-            }
-        } else {
-            $type = 'all';
         }
+        unset($addon);
+
+        foreach ($dirs as $value) {
+
+            if (!isset($list[$value])) {
+                $class = get_addon_class($value);
+                if (!class_exists($class)) { // 实例化插件失败忽略执行
+                    \think\Log::record(lang('_PLUGIN_') . $value . lang('_THE_ENTRY_FILE_DOES_NOT_EXIST_WITH_EXCLAMATION_'));
+                    continue;
+                }
+                $obj = new $class;
+                $list[$value] = $obj->info;
+                dump($obj->info);
+                if ($list[$value]) {
+                    $list[$value]['uninstall'] = 1;
+                    unset($list[$value]['status']);
+                }
+                //插件图标
+                $file = $addon_dir . $value . '/icon.png';
+                if(file_exists($file)){
+                    $list[$value]['icon_photo'] = $addon_dir.$value.'/icon.png';
+                }else{
+                    $list[$value]['icon_photo'] = '';
+                }
+            }
+        }
+        int_to_string($list, ['status' => [-1 => lang('_DAMAGE_'), 0 => lang('_DISABLE_'), 1 => lang('_ENABLE_'), null => lang('_NOT_INSTALLED_')]]);
+
+        $list = list_sort_by($list, 'uninstall', 'desc');
+        
+        //$request = (array)input('request.');
+
+        //dump($list);
+        $this->setTitle(lang('_PLUGIN_LIST_'));
         $this->assign('type', $type);
-
-        //$page = new \Think\Page($total, $listRows, $request);
-        //$voList = array_slice($list, $page->firstRow, $page->listRows);
-        //$p = $page->show();
-        $this->assign('_list', $voList);
-
-        $this->assign('_page', $p ? $p : '');
+        $this->assign('_list', $list);
+        $this->assign('page', $page);
         // 记录当前列表页的cookie
         Cookie('__forward__', $_SERVER['REQUEST_URI']);
         return $this->fetch();
@@ -424,24 +443,28 @@ $addons = [];
      */
     public function uninstall()
     {
-        $addonsModel = M('Addons');
+        $addonsModel = Db::name('Addons');
         $id = trim(input('id'));
-        $db_addons = $addonsModel->find($id);
+        $db_addons = Db::name('Addons')->find($id);
+
         $class = get_addon_class($db_addons['name']);
+
         $this->assign('jumpUrl', Url('index'));
+
         if (!$db_addons || !class_exists($class))
             $this->error(lang('_PLUGIN_DOES_NOT_EXIST_'));
+
         session('addons_uninstall_error', null);
         $addons = new $class;
         $uninstall_flag = $addons->uninstall();
         if (!$uninstall_flag)
             $this->error(lang('_EXECUTE_THE_PLUG-IN_TO_THE_PRE_UNLOAD_OPERATION_FAILED_') . session('addons_uninstall_error'));
-        $hooks_update = D('Hooks')->removeHooks($db_addons['name']);
+        $hooks_update = model('Hooks')->removeHooks($db_addons['name']);
         if ($hooks_update === false) {
             $this->error(lang('_FAILED_HOOK_MOUNTED_DATA_UNINSTALL_PLUG-INS_'));
         }
-        S('hooks', null);
-        $delete = $addonsModel->where("name='{$db_addons['name']}'")->delete();
+        cache('hooks', null);
+        $delete = Db::name('Addons')->where(['id'=>$id])->delete();
         if ($delete === false) {
             $this->error(lang('_UNINSTALL_PLUG-IN_FAILED_'));
         } else {
