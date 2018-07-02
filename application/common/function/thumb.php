@@ -1,5 +1,8 @@
 <?php
 use think\Db;
+use think\Loader;
+use think\Image;
+
 /**
  * 获取文档封面图片
  * @param int $cover_id
@@ -11,7 +14,7 @@ function get_cover($cover_id, $field = null)
     if (empty($cover_id)) {
         return false;
     }
-    $picture = Db::name('Picture')->where(array('status' => 1))->get($cover_id);
+    $picture = Db::name('Picture')->where(['id'=>$cover_id,'status' => 1])->find();
     $picture['path'] = get_pic_src($picture['path']);
     return empty($field) ? $picture : $picture[$field];
 }
@@ -77,13 +80,11 @@ function getThumbImage($filename, $width = 100, $height = 'auto', $type = 0, $re
             if (intval($height) == 0 || intval($width) == 0) {
                 return 0;
             }
-            require_once(VENDOR_PATH.'phpthumb/PhpThumbFactory.php');
-            $thumb = PhpThumbFactory::create($UPLOAD_PATH . $filename);
-            if ($type == 0) {
-                $thumb->adaptiveResize($width, $height);
-            } else {
-                $thumb->resize($width, $height);
-            }
+
+            $thumb = Image::open($UPLOAD_PATH . $filename);
+            
+            $thumb->thumb($width, $height);
+            
             $res = $thumb->save($UPLOAD_PATH . $thumbFile);
             $info['src'] = $UPLOAD_PATH . $thumbFile;
             $info['width'] = $old_image_width;
@@ -92,14 +93,6 @@ function getThumbImage($filename, $width = 100, $height = 'auto', $type = 0, $re
 
         }
     }
-}
-
-/**获取网站的根Url
- * @return string
- */
-function getRootUrl()
-{
-    return '/';
 }
 
 /**通过ID获取到图片的缩略图
@@ -116,11 +109,12 @@ function getThumbImageById($cover_id, $width = 100, $height = 'auto', $type = 0,
     //存在cover_id为空时，写入public/images路径的bug待修复
     $picture = cache('picture_' . $cover_id);
     if (empty($picture)) {
-        $picture = Db::name('Picture')->where(array('status' => 1))->getById($cover_id);
+        $picture = Db::name('Picture')->where(['id'=>$cover_id,'status' => 1])->find();
+        
         cache('picture_' . $cover_id, $picture);
     }
     if (empty($picture)) {
-        $attach = getThumbImage('Uploads/Picture/nopic.png', $width, $height, $type, $replace);
+        $attach = getThumbImage('uploads/picture/nopic.png', $width, $height, $type, $replace);
         return get_pic_src($attach['src']);
     }
 
@@ -136,6 +130,7 @@ function getThumbImageById($cover_id, $width = 100, $height = 'auto', $type = 0,
                 $new_img = $class->thumb($picture['path'], $width, $height, $type, $replace);
             }
         }
+
         return get_pic_src($new_img);
     }
 
@@ -189,4 +184,12 @@ function get_pic_src($path)
         //远端url
         return $path;
     }
+}
+
+/**获取网站的根Url
+ * @return string
+ */
+function getRootUrl()
+{
+    return '/';
 }

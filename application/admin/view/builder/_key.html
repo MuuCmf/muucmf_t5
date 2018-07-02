@@ -127,7 +127,7 @@
                     // swf文件路径
                     swf: 'Uploader.swf',
                     // 文件接收服务端。
-                    server: "{:Url('File/uploadPicture',array('session_id'=>session_id()))}",
+                    server: "{:Url('api/file/uploadPicture',array('session_id'=>session_id()))}",
                     // 选择文件的按钮。可选。
                     // 内部根据当前运行是创建，可能是input元素，也可能是flash.
                     pick: '#upload_single_image_{$field.name}',
@@ -135,7 +135,7 @@
                     accept: {
                         title: 'Images',
                         extensions: 'gif,jpg,jpeg,bmp,png',
-                        mimeTypes: 'image/*'
+                        mimeTypes: 'image/jpg,image/jpeg,image/png'
                     }
                 });
                 uploader_{$field.name}.on('fileQueued', function (file) {
@@ -143,15 +143,15 @@
                 });
                 /*上传成功**/
                 uploader_{$field.name}.on('uploadSuccess', function (file, data) {
-                    if (data.status) {
-                        $("[name='{$field.name}']").val(data.id);
+                    if (data.code) {
+                        $("[name='{$field.name}']").val(data.data.id);
                         $("[name='{$field.name}']").parent().find('.upload-pre-item').html(
-                                ' <div class="each"><a href="'+ data.path+'" title={:lang("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}><img src="'+ data.path+'"></a><div class="text-center opacity del_btn" ></div>' +
-                                        '<div onclick="admin_image.removeImage($(this),'+data.id+')"  class="text-center del_btn">{:lang("_DELETE_")}</div></div>'
+                                ' <div class="each"><a href="'+ data.data.path+'" title={:lang("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}><img src="'+ data.data.path+'"></a><div class="text-center opacity del_btn" ></div>' +
+                                        '<div onclick="admin_image.removeImage($(this),'+data.data.id+')"  class="text-center del_btn">{:lang("_DELETE_")}</div></div>'
                         );
                         uploader_{$field.name}.reset();
                     } else {
-                        updateAlert(data.info);
+                        updateAlert(data.msg);
                         setTimeout(function () {
                             $('#top-alert').find('button').click();
                             $(that).removeClass('disabled').prop('disabled', false);

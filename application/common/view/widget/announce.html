@@ -89,9 +89,10 @@
             $('#AnnounceModel').modal('hide');
         });
     });
+    
     var un_show_announce=function(){
         if(is_login()){
-            $.post(U('Home/Announce/setArrive'),{announce_id:announce_id});
+            $.post(Url('Home/Announce/setArrive'),{announce_id:announce_id});
         }else{
             //设置已读未登录状态记录
             var unShowAnnounceList=$.cookie('announce_already_list');

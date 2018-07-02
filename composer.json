@@ -20,6 +20,7 @@
         "overtrue/wechat": "~3.1",
         "endroid/qr-code": "^1.9",
         "topthink/think-captcha": "^1.0",
+        "topthink/think-image": "^1.0.7",
         "mtdowling/cron-expression": "^1.2",
         "phpmailer/phpmailer": "^5.2",
         "overtrue/pinyin": "~3.0",

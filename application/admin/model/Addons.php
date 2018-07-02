@@ -76,45 +76,29 @@ class Addons extends Model
         }
     }
 
-    /**
-     * 文件模型自动完成
-     * @var array
-     */
-    protected $_auto = array(
-        array('create_time', NOW_TIME, self::MODEL_INSERT),
-    );
 
     /**
      * 获取插件列表
      * @param string $addon_dir
      */
-    public function getList($addon_dir = '')
+    public function getList()
     {
-        if (!$addon_dir)
-            $addon_dir = ONETHINK_ADDON_PATH;
-        $dirs = array_map('basename', glob($addon_dir . '*', GLOB_ONLYDIR));
-        //TODO 新增模块插件的支持
-        /* $modules=D('Module')->getAll();
-         foreach($modules as $m){
-             if($m['is_setup']){
-                 $module_dir=APP_PATH.$m['name'].'/Addons/';
-                 if(!file_exists($module_dir)){
-                     continue;
-                 }
-                 $tmp_dirs = array_map('basename',glob($module_dir.'*', GLOB_ONLYDIR));
-                 $dirs=array_merge($dirs,$tmp_dirs);
-             }
-         }*/
-
-
+        $addon_dir = ADDONS_PATH;
+        
+        if(is_dir($addon_dir)){
+            $dirs = array_map('basename', glob($addon_dir . '*', GLOB_ONLYDIR));
+        }
+        
         if ($dirs === FALSE || !file_exists($addon_dir)) {
             $this->error = lang('_THE_PLUGIN_DIRECTORY_IS_NOT_READABLE_OR_NOT_');
             return FALSE;
         }
-        $addons = array();
-        $where['name'] = array('in', $dirs);
-        $list = $this->where($where)->field(true)->select();
 
+        $addons = [];
+        $where['name'] = ['in', $dirs];
+        $list = collection($this->where($where)->select())->toArray();
+
+        //dump($list);exit;
         foreach ($list as $addon) {
             $addon['uninstall'] = 0;
             $file = $addon_dir.$addon['name'].'/icon.png';
@@ -123,9 +107,9 @@ class Addons extends Model
             }else{
                 $addon['icon_photo'] = '';
             }
-            //$addon['addonlogo'] = $addon_dir.$addon['name'].'/logo.png';
             $addons[$addon['name']] = $addon;
         }
+
         foreach ($dirs as $value) {
 
             if (!isset($addons[$value])) {
@@ -150,7 +134,8 @@ class Addons extends Model
             }
         }
         
-        int_to_string($addons, array('status' => array(-1 => lang('_DAMAGE_'), 0 => lang('_DISABLE_'), 1 => lang('_ENABLE_'), null => lang('_NOT_INSTALLED_'))));
+        int_to_string($addons, ['status' => [-1 => lang('_DAMAGE_'), 0 => lang('_DISABLE_'), 1 => lang('_ENABLE_'), null => lang('_NOT_INSTALLED_')]]);
+
         $addons = list_sort_by($addons, 'uninstall', 'desc');
         return $addons;
     }

@@ -54,7 +54,7 @@ class Config extends Base
             }
         } else {
             $map['status'] = 1;
-            if ($roleModel->where($map)->count() > 1) {
+            if (Db::name('Role')->where($map)->count() > 1) {
                 $have = 1;
             }
         }

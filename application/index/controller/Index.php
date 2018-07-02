@@ -3,7 +3,6 @@
 namespace app\index\controller;
 
 use app\common\controller\Common;
-use think\Lang;
 
 class Index extends Common
 {
@@ -14,6 +13,11 @@ class Index extends Common
 
     public function index()
     {
-        return $this->view->fetch();
+        return $this->fetch();
+    }
+
+    public function demo() 
+    {
+    	return $this->fetch();
     }
 }

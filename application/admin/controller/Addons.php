@@ -1,25 +1,17 @@
 <?php
-// +----------------------------------------------------------------------
-// | OneThink [ WE CAN DO IT JUST THINK IT ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2013 http://www.onethink.cn All rights reserved.
-// +----------------------------------------------------------------------
-// | Author: yangweijie <yangweijiester@gmail.com> <code-tech.diandian.com>
-// +----------------------------------------------------------------------
+namespace app\admin\controller;
 
-namespace Admin\Controller;
-
+use think\Db;
 /**
  * 扩展后台管理页面
- * @author yangweijie <yangweijiester@gmail.com>
  */
-class AddonsController extends AdminController
+class Addons extends Admin
 {
 
     public function _initialize()
     {
         $this->assign('_extra_menu', array(
-            L('_ALREADY_INSTALLED_IN_THE_BACKGROUND_') => D('Addons')->getAdminList(),
+            lang('_ALREADY_INSTALLED_IN_THE_BACKGROUND_') => model('Addons')->getAdminList(),
         ));
         parent::_initialize();
     }
@@ -27,13 +19,13 @@ class AddonsController extends AdminController
     //创建向导首页
     public function create()
     {
-        if (!is_writable(ONETHINK_ADDON_PATH))
-            $this->error(L('_YOU_DO_NOT_CREATE_A_DIRECTORY_TO_WRITE_PERMISSION_'));
+        if (!is_writable(APPONS_PATH))
+            $this->error(lang('_YOU_DO_NOT_CREATE_A_DIRECTORY_TO_WRITE_PERMISSION_'));
 
-        $hooks = M('Hooks')->field('name,description')->select();
+        $hooks = Db::name('Hooks')->field('name,description')->select();
         $this->assign('Hooks', $hooks);
-        $this->meta_title = L('_CREATE_WIZARD_');
-        $this->display('create');
+        $this->setTitle(lang('_CREATE_WIZARD_'));
+        return $this->fetch('create');
     }
 
     //预览
@@ -130,13 +122,13 @@ str;
         $data = $_POST;
         $data['info']['name'] = trim($data['info']['name']);
         if (!$data['info']['name'])
-            $this->error(L('_PLUGIN_LOGO_MUST_'));
+            $this->error(lang('_PLUGIN_LOGO_MUST_'));
         //检测插件名是否合法
         $addons_dir = ONETHINK_ADDON_PATH;
         if (file_exists("{$addons_dir}{$data['info']['name']}")) {
-            $this->error(L('_PLUGIN_ALREADY_EXISTS_'));
+            $this->error(lang('_PLUGIN_ALREADY_EXISTS_'));
         }
-        $this->success(L('_CAN_CREATE_'));
+        $this->success(lang('_CAN_CREATE_'));
     }
 
     public function build()
@@ -214,7 +206,7 @@ class {$data['info']['name']}Model extends Model{
         ),
         'title'=>array(
             'name'=>'title',
-            'title'=>L('_TITLE_'),
+            'title'=>lang('_TITLE_'),
             'type'=>'string',
             'remark'=>'',
             'is_show'=>1,
@@ -231,7 +223,7 @@ str;
         if ($data['has_config'] == 1)
             file_put_contents("{$addon_dir}config.php", $data['config']);
 
-        $this->success(L('_CREATE_SUCCESS_'), U('index'));
+        $this->success(lang('_CREATE_SUCCESS_'), Url('index'));
     }
 
     /**
@@ -239,10 +231,32 @@ str;
      */
     public function index()
     {
-        $this->meta_title = L('_PLUGIN_LIST_');
-        $type = I('get.type', 'no', 'text');
-        $list = D('Addons')->getList('');
-        $request = (array)I('request.');
+        $this->meta_title = lang('_PLUGIN_LIST_');
+        $type = input('get.type', 'all', 'text');
+
+        $addon_dir = ADDONS_PATH;
+        if(is_dir($addon_dir)){
+            $dirs = array_map('basename', glob($addon_dir . '*', GLOB_ONLYDIR));
+        }
+        
+        if ($dirs === FALSE || !file_exists($addon_dir)) {
+            $this->error(lang('_THE_PLUGIN_DIRECTORY_IS_NOT_READABLE_OR_NOT_'));
+        }
+        if ($type == 'yes') {//已安装
+            $where['uninstall'] !=1;
+        }
+        if ($type == 'no') {//已安装
+            $where['uninstall'] =1;
+        }
+
+        
+        $where['name'] = ['in', $dirs];
+        $list = collection(Db::name('Addons')->where($where)->select())->toArray();
+        dump($list);
+        
+
+$addons = [];
+        $request = (array)input('request.');
 
         $listRows = 20;
         if ($type == 'yes') {//已安装的
@@ -260,17 +274,17 @@ str;
         } else {
             $type = 'all';
         }
-        $total = $list ? count($list) : 1;
         $this->assign('type', $type);
-        $page = new \Think\Page($total, $listRows, $request);
-        $voList = array_slice($list, $page->firstRow, $page->listRows);
-        $p = $page->show();
+
+        //$page = new \Think\Page($total, $listRows, $request);
+        //$voList = array_slice($list, $page->firstRow, $page->listRows);
+        //$p = $page->show();
         $this->assign('_list', $voList);
 
         $this->assign('_page', $p ? $p : '');
         // 记录当前列表页的cookie
         Cookie('__forward__', $_SERVER['REQUEST_URI']);
-        $this->display();
+        return $this->fetch();
     }
 
     /**
@@ -290,12 +304,12 @@ str;
         Cookie('__forward__', $_SERVER['REQUEST_URI']);
         $class = get_addon_class($name);
         if (!class_exists($class))
-            $this->error(L('_PLUGIN_DOES_NOT_EXIST_'));
+            $this->error(lang('_PLUGIN_DOES_NOT_EXIST_'));
         $addon = new $class();
         $this->assign('addon', $addon);
         $param = $addon->admin_list;
         if (!$param)
-            $this->error(L('_THE_PLUGIN_LIST_INFORMATION_IS_NOT_CORRECT_'));
+            $this->error(lang('_THE_PLUGIN_LIST_INFORMATION_IS_NOT_CORRECT_'));
         $this->meta_title = $addon->info['title'];
         extract($param);
         $this->assign('title', $addon->info['title']);
@@ -317,8 +331,8 @@ str;
      */
     public function enable()
     {
-        $id = I('id');
-        $msg = array('success' => L('_ENABLE_SUCCESS_'), 'error' => L('_ENABLE_FAILED_'));
+        $id = input('id');
+        $msg = array('success' => lang('_ENABLE_SUCCESS_'), 'error' => lang('_ENABLE_FAILED_'));
         S('hooks', null);
         $this->resume('Addons', "id={$id}", $msg);
     }
@@ -328,8 +342,8 @@ str;
      */
     public function disable()
     {
-        $id = I('id');
-        $msg = array('success' => L('_DISABLE_SUCCESS_'), 'error' => L('_DISABLE_'));
+        $id = input('id');
+        $msg = array('success' => lang('_DISABLE_SUCCESS_'), 'error' => lang('_DISABLE_'));
         S('hooks', null);
         $this->forbid('Addons', "id={$id}", $msg);
     }
@@ -339,17 +353,17 @@ str;
      */
     public function config()
     {
-        $id = (int)I('id');
+        $id = (int)input('id');
         $addon = M('Addons')->find($id);
         if (!$addon)
-            $this->error(L('_PLUGIN_NOT_INSTALLED_'));
+            $this->error(lang('_PLUGIN_NOT_INSTALLED_'));
         $addon_class = get_addon_class($addon['name']);
         if (!class_exists($addon_class))
-            trace(L('_FAIL_ADDON_PARAM_',array('model'=>$addon['name'])), 'ADDONS', 'ERR');
+            trace(lang('_FAIL_ADDON_PARAM_',array('model'=>$addon['name'])), 'ADDONS', 'ERR');
         $data = new $addon_class;
         $addon['addon_path'] = $data->addon_path;
         $addon['custom_config'] = $data->custom_config;
-        $this->meta_title = L('_ADDONS_SET_') . $data->info['title'];
+        $this->meta_title = lang('_ADDONS_SET_') . $data->info['title'];
         $db_config = $addon['config'];
         $addon['config'] = include $data->config_file;
         if ($db_config) {
@@ -377,16 +391,16 @@ str;
      */
     public function saveConfig()
     {
-        $id = (int)I('id');
-        $config = I('config');
+        $id = (int)input('id');
+        $config = input('config');
         $flag = M('Addons')->where("id={$id}")->setField('config', json_encode($config));
         if (isset($config['addons_cache'])) {//清除缓存
             S($config['addons_cache'], null);
         }
         if ($flag !== false) {
-            $this->success(L('_SAVE_'), Cookie('__forward__'));
+            $this->success(lang('_SAVE_'), Cookie('__forward__'));
         } else {
-            $this->error(L('_SAVE_FAILED_'));
+            $this->error(lang('_SAVE_FAILED_'));
         }
     }
 
@@ -395,11 +409,11 @@ str;
      */
     public function install()
     {
-        $addon_name = trim(I('addon_name'));
+        $addon_name = trim(input('addon_name'));
         $addonsModel = D('Addons');
         $rs = $addonsModel->install($addon_name);
         if ($rs === true) {
-            $this->success(L('_INSTALL_PLUG-IN_SUCCESS_'));
+            $this->success(lang('_INSTALL_PLUG-IN_SUCCESS_'));
         } else {
             $this->error($addonsModel->getError());
         }
@@ -411,27 +425,27 @@ str;
     public function uninstall()
     {
         $addonsModel = M('Addons');
-        $id = trim(I('id'));
+        $id = trim(input('id'));
         $db_addons = $addonsModel->find($id);
         $class = get_addon_class($db_addons['name']);
-        $this->assign('jumpUrl', U('index'));
+        $this->assign('jumpUrl', Url('index'));
         if (!$db_addons || !class_exists($class))
-            $this->error(L('_PLUGIN_DOES_NOT_EXIST_'));
+            $this->error(lang('_PLUGIN_DOES_NOT_EXIST_'));
         session('addons_uninstall_error', null);
         $addons = new $class;
         $uninstall_flag = $addons->uninstall();
         if (!$uninstall_flag)
-            $this->error(L('_EXECUTE_THE_PLUG-IN_TO_THE_PRE_UNLOAD_OPERATION_FAILED_') . session('addons_uninstall_error'));
+            $this->error(lang('_EXECUTE_THE_PLUG-IN_TO_THE_PRE_UNLOAD_OPERATION_FAILED_') . session('addons_uninstall_error'));
         $hooks_update = D('Hooks')->removeHooks($db_addons['name']);
         if ($hooks_update === false) {
-            $this->error(L('_FAILED_HOOK_MOUNTED_DATA_UNINSTALL_PLUG-INS_'));
+            $this->error(lang('_FAILED_HOOK_MOUNTED_DATA_UNINSTALL_PLUG-INS_'));
         }
         S('hooks', null);
         $delete = $addonsModel->where("name='{$db_addons['name']}'")->delete();
         if ($delete === false) {
-            $this->error(L('_UNINSTALL_PLUG-IN_FAILED_'));
+            $this->error(lang('_UNINSTALL_PLUG-IN_FAILED_'));
         } else {
-            $this->success(L('_SUCCESS_UNINSTALL_'));
+            $this->success(lang('_SUCCESS_UNINSTALL_'));
         }
     }
 
@@ -440,7 +454,7 @@ str;
      */
     public function hooks()
     {
-        $this->meta_title = L('_HOOK_LIST_');
+        $this->meta_title = lang('_HOOK_LIST_');
         $map = $fields = array();
         $list = $this->lists(D("Hooks")->field($fields), $map);
         int_to_string($list, array('type' => C('HOOKS_TYPE')));
@@ -453,7 +467,7 @@ str;
     public function addhook()
     {
         $this->assign('data', null);
-        $this->meta_title = L('_NEW_HOOK_');
+        $this->meta_title = lang('_NEW_HOOK_');
         $this->display('edithook');
     }
 
@@ -462,7 +476,7 @@ str;
     {
         $hook = M('Hooks')->field(true)->find($id);
         $this->assign('data', $hook);
-        $this->meta_title = L('_EDIT_HOOK_');
+        $this->meta_title = lang('_EDIT_HOOK_');
         $this->display('edithook');
     }
 
@@ -470,9 +484,9 @@ str;
     public function delhook($id)
     {
         if (M('Hooks')->delete($id) !== false) {
-            $this->success(L('_DELETE_SUCCESS_'));
+            $this->success(lang('_DELETE_SUCCESS_'));
         } else {
-            $this->error(L('_DELETE_FAILED_'));
+            $this->error(lang('_DELETE_FAILED_'));
         }
     }
 
@@ -484,15 +498,15 @@ str;
             if ($data['id']) {
                 $flag = $hookModel->save($data);
                 if ($flag !== false)
-                    $this->success(L('_UPDATE_'), Cookie('__SELF__'));
+                    $this->success(lang('_UPDATE_'), Cookie('__SELF__'));
                 else
-                    $this->error(L('_UPDATE_FAILED_'));
+                    $this->error(lang('_UPDATE_FAILED_'));
             } else {
                 $flag = $hookModel->add($data);
                 if ($flag)
-                    $this->success(L('_NEW_SUCCESS_'), Cookie('__forward__'));
+                    $this->success(lang('_NEW_SUCCESS_'), Cookie('__forward__'));
                 else
-                    $this->error(L('_NEW_FAILURE_'));
+                    $this->error(lang('_NEW_FAILURE_'));
             }
         } else {
             $this->error($hookModel->getError());
@@ -515,7 +529,7 @@ str;
 
             $Addons = A("Addons://{$_addons}/{$_controller}")->$_action();
         } else {
-            $this->error(L('_NO_SPECIFIED_PLUG-IN_NAME,_CONTROLLER_OR_OPERATION_'));
+            $this->error(lang('_NO_SPECIFIED_PLUG-IN_NAME,_CONTROLLER_OR_OPERATION_'));
         }
     }
 
@@ -524,24 +538,24 @@ str;
         $this->assign('name', $name);
         $class = get_addon_class($name);
         if (!class_exists($class))
-            $this->error(L('_PLUGIN_DOES_NOT_EXIST_'));
+            $this->error(lang('_PLUGIN_DOES_NOT_EXIST_'));
         $addon = new $class();
         $this->assign('addon', $addon);
         $param = $addon->admin_list;
         if (!$param)
-            $this->error(L('_THE_PLUGIN_LIST_INFORMATION_IS_NOT_CORRECT_'));
+            $this->error(lang('_THE_PLUGIN_LIST_INFORMATION_IS_NOT_CORRECT_'));
         extract($param);
         $this->assign('title', $addon->info['title']);
         if (isset($model)) {
             $addonModel = D("Addons://{$name}/{$model}");
             if (!$addonModel)
-                $this->error(L('_MODEL_CANNOT_BE_REAL_'));
+                $this->error(lang('_MODEL_CANNOT_BE_REAL_'));
             $model = $addonModel->model;
             $this->assign('model', $model);
         }
         if ($id) {
             $data = $addonModel->find($id);
-            $data || $this->error(L('_DATA_DOES_NOT_EXIST_'));
+            $data || $this->error(lang('_DATA_DOES_NOT_EXIST_'));
             $this->assign('data', $data);
         }
 
@@ -553,19 +567,19 @@ str;
             if ($id) {
                 $flag = $addonModel->save();
                 if ($flag !== false)
-                    $this->success(L('_SUCCESS_ADD_PARAM_',array('model'=>$model['title'])), Cookie('__forward__'));
+                    $this->success(lang('_SUCCESS_ADD_PARAM_',array('model'=>$model['title'])), Cookie('__forward__'));
                 else
                     $this->error($addonModel->getError());
             } else {
                 $flag = $addonModel->add();
                 if ($flag)
-                    $this->success(L('_FAIL_ADD_PARAM_',array('model'=>$model['title'])), Cookie('__forward__'));
+                    $this->success(lang('_FAIL_ADD_PARAM_',array('model'=>$model['title'])), Cookie('__forward__'));
             }
             $this->error($addonModel->getError());
         } else {
             $fields = $addonModel->_fields;
             $this->assign('fields', $fields);
-            $this->meta_title = $id ? L('_EDIT_') . $model['title'] : L('_NEW_') . $model['title'];
+            $this->meta_title = $id ? lang('_EDIT_') . $model['title'] : lang('_NEW_') . $model['title'];
             if ($id)
                 $template = $model['template_edit'] ? $model['template_edit'] : '';
             else
@@ -576,31 +590,31 @@ str;
 
     public function del($id = '', $name)
     {
-        $ids = array_unique((array)I('ids', 0));
+        $ids = array_unique((array)input('ids', 0));
 
         if (empty($ids)) {
-            $this->error(L('_ERROR_DATA_SELECT_'));
+            $this->error(lang('_ERROR_DATA_SELECT_'));
         }
 
         $class = get_addon_class($name);
         if (!class_exists($class))
-            $this->error(L('_PLUGIN_DOES_NOT_EXIST_'));
+            $this->error(lang('_PLUGIN_DOES_NOT_EXIST_'));
         $addon = new $class();
         $param = $addon->admin_list;
         if (!$param)
-            $this->error(L('_THE_PLUGIN_LIST_INFORMATION_IS_NOT_CORRECT_'));
+            $this->error(lang('_THE_PLUGIN_LIST_INFORMATION_IS_NOT_CORRECT_'));
         extract($param);
         if (isset($model)) {
             $addonModel = D("Addons://{$name}/{$model}");
             if (!$addonModel)
-                $this->error(L('_MODEL_CANNOT_BE_REAL_'));
+                $this->error(lang('_MODEL_CANNOT_BE_REAL_'));
         }
 
         $map = array('id' => array('in', $ids));
         if ($addonModel->where($map)->delete()) {
-            $this->success(L('_DELETE_SUCCESS_'));
+            $this->success(lang('_DELETE_SUCCESS_'));
         } else {
-            $this->error(L('_DELETE_FAILED_'));
+            $this->error(lang('_DELETE_FAILED_'));
         }
     }
 

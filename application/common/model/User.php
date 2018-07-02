@@ -334,11 +334,11 @@ class User Extends Model
                     $avatarUrl = $avatarObject->getAvatar($uid, $avatarSize);
                     $avatars[$e] = $avatarUrl;
                 }
+
+                $user_data = array_merge($user_data, $avatars);
+                $this->write_query_user_cache($uid, 'avatars', $avatars);
+                $this->popGotFields($fields, $avatarFields);
             }
-            
-            $user_data = array_merge($user_data, $avatars);
-            $this->write_query_user_cache($uid, 'avatars', $avatars);
-            $this->popGotFields($fields, $avatarFields);
         }
 
         return $user_data;

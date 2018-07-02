@@ -11,8 +11,13 @@
 // +----------------------------------------------------------------------
 // [ 应用入口文件 ]
 // 定义应用目录
-define('APP_PATH', __DIR__ . '/../application/');
 
+//模块目录
+define('APP_PATH', __DIR__ . '/../application/');
+//插件目录
+define('ADDONS_PATH', __DIR__ . '/../addons/');
+//类库目录
+define('EXTEND_PATH', __DIR__ . '/../extend/');
 // 判断是否安装MuuCmf
 if (!is_file(__DIR__ . '/../install.lock'))
 {	

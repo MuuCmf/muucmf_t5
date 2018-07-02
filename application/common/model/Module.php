@@ -10,6 +10,7 @@ use think\Db;
 
 class Module extends Model
 {
+    protected $tokenFile = '/Info/token.ini';
     protected $moduleName = '';
 
     /**获取全部的模块信息
@@ -79,8 +80,7 @@ class Module extends Model
                 //$this->save($info);
             } 
         }
-        //$db_prefix = config('database.prefix');
-        //Db::execute("TRUNCATE TABLE {$db_prefix}module");
+
         $this->saveAll($info);
 
         $this->cleanModulesCache();
@@ -169,7 +169,9 @@ class Module extends Model
      */
     public function uninstall($id, $withoutData = 1)
     {
-        $module = $this->find($id);
+        $module = $this->get($id);
+        $module = $module->toArray();
+
         if (!$module || $module['is_setup'] == 0) {
             $this->error = lang('_MODULE_DOES_NOT_EXIST_OR_IS_NOT_INSTALLED_WITH_PERIOD_');
             return false;
@@ -178,11 +180,17 @@ class Module extends Model
         $this->cleanAuthRules($module['name']);
         $this->cleanAction($module['name']);
         $this->cleanActionLimit($module['name']);
+
         if ($withoutData == 0) {
             //如果不保留数据
             if (file_exists(APP_PATH . '/' . $module['name'] . '/Info/cleanData.sql')) {
                 $uninstallSql = APP_PATH . '/' . $module['name'] . '/Info/cleanData.sql';
-                $res = Db::executeSqlFile($uninstallSql);
+
+                $uninstallSql = file_get_contents($uninstallSql);
+                $uninstallSql = str_replace("\r", "\n", $uninstallSql);
+                $uninstallSql = explode(";\n", $uninstallSql);
+
+                $res = Db::execute($uninstallSql);
                 if ($res === false) {
                     $this->error = lang('_CLEAN_UP_THE_MODULE_DATA_AND_ERROR_MESSAGE_WITH_COLON_') . $res['error_code'];
                     return false;
@@ -191,7 +199,11 @@ class Module extends Model
             //兼容老的卸载方式，执行一边uninstall.sql
             if (file_exists(APP_PATH . '/' . $module['name'] . '/Info/uninstall.sql')) {
                 $uninstallSql = APP_PATH . '/' . $module['name'] . '/Info/uninstall.sql';
-                $res = Db::executeSqlFile($uninstallSql);
+
+                $uninstallSql = file_get_contents($uninstallSql);
+                $uninstallSql = str_replace("\r", "\n", $uninstallSql);
+                $uninstallSql = explode(";\n", $uninstallSql);
+                $res = Db::execute($uninstallSql);
                 if ($res === false) {
                     $this->error = lang('_CLEAN_UP_THE_MODULE_DATA_AND_ERROR_MESSAGE_WITH_COLON_') . $res['error_code'];
                     return false;
@@ -199,7 +211,7 @@ class Module extends Model
             }
         }
         $module['is_setup'] = 0;
-        $this->save($module);
+        $this->save($module,['id'=>$id]);
 
         $this->cleanModulesCache();
         return true;
@@ -271,7 +283,7 @@ class Module extends Model
      */
     public function getModuleById($id)
     {
-        $module = $this->where(array('id' => $id))->find();
+        $module = $this->where(['id' => $id])->find();
         if ($module === false || $module == null) {
             $m = $this->getInfo($module['name']);
             if ($m != array()) {
@@ -316,9 +328,14 @@ class Module extends Model
         if ($id != 0) {
             $module = $this->find($id);
         } else {
-            $aName = input('get.name', '');
+            $aName = input('get.name','','text');
+            if(empty($aName)){
+                return false;
+            }
             $module = $this->getModule($aName);
         }
+
+        $module = $module->toArray();
         if ($module['is_setup'] == 1) {
             $this->error = lang('_MODULE_INSTALLED_WITH_PERIOD_');
             return false;
@@ -370,15 +387,50 @@ class Module extends Model
 
             if (file_exists(APP_PATH . '/' . $module['name'] . '/Info/install.sql')) {
                 $install_sql = APP_PATH . '/' . $module['name'] . '/Info/install.sql';
-                if (D()->executeSqlFile($install_sql) === true) {
-                    $log .= '&nbsp;&nbsp;>模块数据添加成功。';
+
+                $install_sql = file_get_contents($install_sql);
+                $install_sql = str_replace("\r", "\n", $install_sql);
+                $install_sql = explode(";\n", $install_sql);
+                //系统配置表前缀
+                $prefix = config('database.prefix');
+
+                foreach ($install_sql as $value) {
+                    
+                    $value = trim($value);
+                    if (empty($value)) continue;
+                    if (strpos($value,'CREATE TABLE')) {//创建表
+                        //获取表名
+                        $name = preg_replace("/[\s\S]*CREATE TABLE IF NOT EXISTS `(\w+)`[\s\S]*/", "\\1", $value);
+                        //获取表前缀
+                        $orginal = preg_replace("/[\s\S]*CREATE TABLE IF NOT EXISTS `([a-zA-Z]+_)[\s\S]*/", "\\1", $value);
+                        //替换表前缀
+                        $value = str_replace(" `{$orginal}", " `{$prefix}", $value);
+                        
+                        $msg = "创建数据表{$name}";
+                        if (false !== Db::execute($value)) {
+                            $log .= '&nbsp;&nbsp;>'.$msg . '...成功;';
+                        } else {
+                            $log .= '&nbsp;&nbsp;>'.$msg . '...失败;';
+                        }
+                    } else {//写入数据
+                        
+                        //获取表名
+                        $name = preg_replace("/[\s\S]*INSERT INTO `(\w+)`[\s\S]*/", "\\1", $value);
+                        //获取表前缀
+                        $orginal = preg_replace("/[\s\S]*INSERT INTO `([a-zA-Z]+_)[\s\S]*/", "\\1", $value);
+                        //替换表前缀
+                        $value = str_replace(" `{$orginal}", " `{$prefix}", $value);
+                        //写入前清空
+                        Db::execute("TRUNCATE TABLE `{$name}`;");
+                        
+                        Db::execute($value);
+                    }
                 }
             }
         }
-
         $module['is_setup'] = 1;
         $module['auth_role']=input('post.auth_role','','text');
-        $rs = $this->save($module);
+        $rs = $this->save($module,['id'=>$module['id']]);
         if ($rs === false) {
             $this->error = lang('_MODULE_INFORMATION_MODIFICATION_FAILED_WITH_PERIOD_');
             return false;
@@ -387,8 +439,6 @@ class Module extends Model
         $this->error = $log;
         return true;
     }
-
-
 
     /*——————————————————————————私有域—————————————————————————————*/
 
@@ -404,19 +454,19 @@ class Module extends Model
     private function addDefaultRule($default_rule, $module_name)
     {
         foreach ($default_rule as $v) {
-            $rule = M('AuthRule')->where(array('module' => $module_name, 'name' => $v))->find();
+            $rule = Db::name('AuthRule')->where(['module' => $module_name, 'name' => $v])->find();
             if ($rule) {
                 $default[] = $rule;
             }
         }
         $auth_id = getSubByKey($default, 'id');
         if ($auth_id) {
-            $groups = M('AuthGroup')->select();
+            $groups = Db::name('AuthGroup')->select();
             foreach ($groups as $g) {
                 $old = explode(',', $g['rules']);
                 $new = array_merge($old, $auth_id);
                 $g['rules'] = implode(',', $new);
-                M('AuthGroup')->save($g);
+                Db::name('AuthGroup')->save($g);
             }
         }
         return true;
@@ -453,14 +503,14 @@ class Module extends Model
     {
         $db_prefix = config('database.prefix');
         $sql = "DELETE FROM `{$db_prefix}action_limit` where `module` = '" . $module_name . "'";
-        D()->execute($sql);
+        Db::execute($sql);
     }
 
     private function cleanAction($module_name)
     {
         $db_prefix = config('database.prefix');
         $sql = "DELETE FROM `{$db_prefix}action` where `module` = '" . $module_name . "'";
-        D()->execute($sql);
+        Db::execute($sql);
     }
 
     private function cleanAuthRules($module_name)
@@ -476,12 +526,15 @@ class Module extends Model
         $sql = "DELETE FROM `{$db_prefix}menu` where `url` like '" . $module_name . "/%'";
         Db::execute($sql);
     }
-
+    /**
+     * 写入模块菜单
+     * @param [type] $menu [description]
+     */
     private function addMenus($menu)
     {
-        Db::name('Menu')->save($menu);
+        Db::name('Menu')->strict(false)->insert($menu);
 
-        $menu['id'] = $id;
+        //$menu['id'] = $id;
         if (!empty($menu['_']))
             foreach ($menu['_'] as $v) {
                 $this->addMenus($v);
@@ -534,6 +587,5 @@ class Module extends Model
         closedir($fp);
         return $files;
     }
-
 
 } 

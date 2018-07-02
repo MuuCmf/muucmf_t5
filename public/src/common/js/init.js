@@ -87,7 +87,7 @@ $(function () {
 function handleAjax(a) {
     //如果需要跳转的话，消息的末尾附上即将跳转字样
     if (a.url) {
-        a.info += '，页面即将跳转～';
+        a.msg += '，页面即将跳转～';
     }
 
     //弹出提示消息

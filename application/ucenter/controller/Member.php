@@ -491,16 +491,19 @@ class Member extends Controller
      */
     public function saveAvatar()
     {
-        $redirect_url = session('temp_login_uid') ? Url('Ucenter/member/step', array('step' => get_next_step('change_avatar'))) : 'refresh';
-        $aCrop = input('post.crop', '', 'op_t');
+        $redirect_url = session('temp_login_uid') ? Url('Ucenter/member/step', ['step' => get_next_step('change_avatar')]) : $_SERVER["HTTP_REFERER"];
+
+        $aCrop = input('post.crop', '', 'text');
         $aUid = session('temp_login_uid') ? session('temp_login_uid') : is_login();
-        $aPath = input('post.path', '', 'op_t');
+        $aPath = input('post.path', '', 'text');
 		
         if (empty($aCrop)) {
             $this->success(lang('_SUCCESS_SAVE_').lang('_EXCLAMATION_'),$redirect_url );
         }
         $returnPath = controller('Ucenter/UploadAvatar', 'widget')->cropPicture($aCrop,$aPath);
+
         $driver = modC('PICTURE_UPLOAD_DRIVER','local','config');
+        
         $data = ['uid' => $aUid, 'status' => 1, 'is_temp' => 0, 'path' => $returnPath,'driver'=> $driver, 'create_time' => time()];
         $res = Db::name('avatar')->where(['uid' => $aUid])->update($data);
         if (!$res) {

@@ -12,18 +12,12 @@ class Common extends Controller
 
 	public function _initialize()
     {
-        $request = request()->instance();
-        $base    = $request->root();
-        $root    = strpos($base, '.') ? ltrim(dirname($base), DS) : $base;
-        if ('' != $root) {
-            $root = '/' . ltrim($root, '/');
-        }
-        $this->assign('root',$root);
         //记住登陆
  		model('Common/Member')->rembember_login();
+
  		//获取站点LOGO
  		$logo = get_cover(modC('LOGO',0,'Config'),'path');
-        $logo = $logo?$logo: $root. '/static/common/images/logo.png';
+        $logo = $logo?$logo: '/static/common/images/logo.png';
         $this->assign('logo',$logo);
 
         //获取前端导航菜单
@@ -41,11 +35,13 @@ class Common extends Controller
         	cache('common_user_nav',$user_nav);
         }
         $this->assign('user_nav',$user_nav);
+
         //邀请注册开关
         $register_type=modC('REGISTER_TYPE','normal','Invite');
         $register_type=explode(',',$register_type);
         $invite = in_array('invite',$register_type);
         $this->assign('invite',$invite);
+
         //用户登录、注册
         $open_quick_login=modC('OPEN_QUICK_LOGIN', 0, 'USERCONFIG');
         $this->assign('open_quick_login',$open_quick_login);

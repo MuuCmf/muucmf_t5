@@ -3,8 +3,7 @@ namespace app\ucenter\widget;
 
 use think\Controller;
 use think\Db;
-use PHPImageWorkshop\Core\ImageWorkshopLayer;
-use PHPImageWorkshop\ImageWorkshop;
+use think\Image;
 
 class UploadAvatar extends Controller
 {
@@ -22,7 +21,7 @@ class UploadAvatar extends Controller
         if ($avatar) {
 
             if($avatar['driver'] == 'local'){
-                $avatar_path = "/Uploads/Avatar".$avatar['path'];
+                $avatar_path = "/uploads/avatar".$avatar['path'];
                 return $this->getImageUrlByPath($avatar_path, $size);
             }else{
                 $new_img = $avatar['path'];
@@ -68,7 +67,7 @@ class UploadAvatar extends Controller
 
         if(!$avatar_id){
             $map = getRoleConfigMap('avatar', $role_id);
-            $avatar_id = Db::name('RoleConfig')->where($map)->field('value')->find();
+            $avatar_id = Db::name('RoleConfig')->where($map)->value('value');
             cache('Role_Avatar_Id_'.$role_id,$avatar_id,600);
         }
         if ($avatar_id) {
@@ -94,32 +93,38 @@ class UploadAvatar extends Controller
         if (!$crop) {
             $this->error('必须裁剪');
         }
+        
         $driver = modC('PICTURE_UPLOAD_DRIVER','local','config');
         if (strtolower($driver) == 'local') {
             //解析crop参数
             $crop = explode(',', $crop);
             $x = $crop[0];
             $y = $crop[1];
-            $width = $crop[2];
-            $height = $crop[3];
+            $w = $crop[2];
+            $h = $crop[3];
+
+            $path = str_replace("\\","/",$path);
+            $path = ltrim($path,'/');
             //本地环境
-            $image = ImageWorkshop::initFromPath($path);
+            
+            $image = Image::open($path);
+            
             //生成将单位换算成为像素
-            $x = $x * $image->getWidth();
-            $y = $y * $image->getHeight();
-            $width = $width * $image->getWidth();
-            $height = $height * $image->getHeight();
+            $x = $x * $image->width();
+            $y = $y * $image->height();
+            $w = $w * $image->width();
+            $h = $h * $image->height();
+
             //如果宽度和高度近似相等，则令宽和高一样
-            if (abs($height - $width) < $height * 0.01) {
-                $height = min($height, $width);
-                $width = $height;
+            if (abs($h - $w) < $h * 0.01) {
+                $h = min($h, $w);
+                $w = $h;
             }
             //调用组件裁剪头像
-            $image = ImageWorkshop::initFromPath($path);
-            $image->crop(ImageWorkshopLayer::UNIT_PIXEL, $width, $height, $x, $y);
-            $image->save(dirname($path), basename($path));
+            $image->crop($w, $h, $x, $y);
+            $image->save($path);
             //返回新文件的路径
-            return  cut_str('/Uploads/Avatar',$path,'l');
+            return  cut_str('uploads/avatar',$path,'l');
         }else{
             $name = get_addon_class($driver);
             $class = new $name();

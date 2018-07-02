@@ -340,9 +340,6 @@ INSERT INTO `muucmf_auth_rule` (`id`, `module`, `type`, `name`, `title`, `status
 (101, 'admin', 1, 'Admin/other', '其他', -1, ''),
 (102, 'admin', 1, 'Admin/Menu/add', '新增', 1, ''),
 (103, 'admin', 1, 'Admin/Menu/edit', '编辑', 1, ''),
-(104, 'admin', 1, 'Admin/Think/lists?model=article', '文章管理', -1, ''),
-(105, 'admin', 1, 'Admin/Think/lists?model=download', '下载管理', -1, ''),
-(106, 'admin', 1, 'Admin/Think/lists?model=config', '配置管理', -1, ''),
 (107, 'admin', 1, 'Admin/Action/actionlog', '行为日志', 1, ''),
 (108, 'admin', 1, 'Admin/User/updatePassword', '修改密码', 1, ''),
 (109, 'admin', 1, 'Admin/User/updateNickname', '修改昵称', 1, ''),
@@ -4529,25 +4526,6 @@ CREATE TABLE IF NOT EXISTS `muucmf_invite_user_info` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='邀请注册用户信息' AUTO_INCREMENT=1 ;
 
-DROP TABLE IF EXISTS `muucmf_keywords`;
-CREATE TABLE IF NOT EXISTS `muucmf_keywords` (
-  `id` int(11) NOT NULL,
-  `title` varchar(255) NOT NULL COMMENT '关键字',
-  `app` varchar(255) NOT NULL COMMENT '应用名称',
-  `row` int(11) NOT NULL COMMENT '所在应用ID',
-  `create_time` int(11) NOT NULL COMMENT '创建时间',
-  `status` tinyint(2) NOT NULL DEFAULT '1' COMMENT '状态'
-) ENGINE=MyISAM AUTO_INCREMENT=27 DEFAULT CHARSET=utf8 COMMENT='全部应用关键字表';
-
-DROP TABLE IF EXISTS `muucmf_keywords_count`;
-CREATE TABLE IF NOT EXISTS `muucmf_keywords_count` (
-  `id` int(11) NOT NULL,
-  `title` varchar(64) NOT NULL,
-  `num` int(11) NOT NULL DEFAULT '1' COMMENT '数量',
-  `tips` int(11) NOT NULL COMMENT '访问次数',
-  `create_time` int(11) NOT NULL COMMENT '创建时间'
-) ENGINE=MyISAM AUTO_INCREMENT=31 DEFAULT CHARSET=utf8;
-
 DROP TABLE IF EXISTS `muucmf_local_comment`;
 CREATE TABLE IF NOT EXISTS `muucmf_local_comment` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -4613,10 +4591,10 @@ CREATE TABLE IF NOT EXISTS `muucmf_menu` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `tip`, `group`, `is_dev`, `icon`, `module`) VALUES
-('1', '首页', '0', 1, 'Index/index', 0, '后端首页', '', 0, 'home', ''),
-('2', '用户', '0', 2, 'User/index', 0, '', '', 0, 'user', ''),
+INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `tip`, `group`, `is_dev`, `icon`, `module`) VALUES
+('2', '用户', '0', 3, 'User/index', 0, '', '', 0, 'user', ''),
 ('3', '用户信息', '2', 2, 'User/index', 0, '', '用户管理', 0, '', ''),
-('4', '行为&积分规则', '113', 3, 'User/action', 0, '', '行为管理', 0, '', ''),
+('4', '行为&积分规则', '113', 3, 'Action/action', 0, '', '行为管理', 0, '', ''),
 ('5', '新增用户行为', '4', 0, 'User/addaction', 0, '', '', 0, '', ''),
 ('6', '编辑用户行为', '4', 0, 'User/editaction', 0, '', '', 0, '', ''),
 ('7', '保存用户行为', '4', 0, 'User/saveAction', 0, '"用户->用户行为"保存编辑和新增的用户行为', '', 0, '', ''),
@@ -4624,7 +4602,7 @@ INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `tip`, `
 ('9', '禁用会员', '4', 0, 'User/changeStatus?method=forbidUser', 0, '"用户->用户信息"中的禁用', '', 0, '', ''),
 ('10', '启用会员', '4', 0, 'User/changeStatus?method=resumeUser', 0, '"用户->用户信息"中的启用', '', 0, '', ''),
 ('11', '删除会员', '4', 0, 'User/changeStatus?method=deleteUser', 0, '"用户->用户信息"中的删除', '', 0, '', ''),
-('12', '用户组管理', '2', 5, 'AuthManager/index', 0, '', '权限管理', 0, '', ''),
+('12', '用户组管理', '2', 3, 'AuthManager/index', 0, '', '权限管理', 0, '', ''),
 ('13', '删除', '12', 0, 'AuthManager/changeStatus?method=deleteGroup', 0, '删除用户组', '', 0, '', ''),
 ('14', '禁用', '12', 0, 'AuthManager/changeStatus?method=forbidGroup', 0, '禁用用户组', '', 0, '', ''),
 ('15', '恢复', '12', 0, 'AuthManager/changeStatus?method=resumeGroup', 0, '恢复已禁用的用户组', '', 0, '', ''),
@@ -4651,13 +4629,13 @@ INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `tip`, `
 ('36', '用户头衔列表', '35', 0, 'Rank/userRankList', 1, '', '', 0, '', ''),
 ('37', '关联新头衔', '35', 0, 'Rank/userAddRank', 1, '', '', 0, '', ''),
 ('38', '编辑头衔关联', '35', 0, 'Rank/userChangeRank', 1, '', '', 0, '', ''),
-('39', '扩展资料', '2', 3, 'User/profile', 0, '', '用户管理', 0, '', ''),
+('39', '扩展资料', '2', 6, 'User/profile', 0, '', '身份管理', 0, '', ''),
 ('40', '添加、编辑分组', '39', 0, 'Admin/User/editProfile', 0, '', '', 0, '', ''),
 ('41', '分组排序', '39', 0, 'Admin/User/sortProfile', 0, '', '', 0, '', ''),
 ('42', '字段列表', '39', 0, 'Admin/User/field', 0, '', '', 0, '', ''),
 ('43', '添加、编辑字段', '39', 0, 'Admin/User/editFieldSetting', 0, '', '', 0, '', ''),
 ('44', '字段排序', '39', 0, 'Admin/User/sortField', 0, '', '', 0, '', ''),
-('45', '用户扩展资料列表', '2', 7, 'User/expandinfo_select', 0, '', '用户管理', 0, '', ''),
+('45', '用户扩展资料列表', '2', 8, 'User/expandinfo_select', 0, '', '身份管理', 0, '', ''),
 ('46', '扩展资料详情', '45', 0, 'User/expandinfo_details', 0, '', '', 0, '', ''),
 ('47', '待审核用户头衔', '197', 2, 'Rank/rankVerify', 0, '', '头衔管理', 0, '', ''),
 ('48', '被驳回的头衔申请', '197', 3, 'Rank/rankVerifyFailure', 0, '', '头衔管理', 0, '', ''),
@@ -4684,7 +4662,7 @@ INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `tip`, `
 ('71', 'URL方式访问插件', '57', 0, 'Addons/execute', 0, '控制是否有权限通过url访问插件控制器方法', '', 0, '', ''),
 ('72', '新增钩子', '58', 0, 'Addons/addHook', 0, '', '', 0, '', ''),
 ('73', '编辑钩子', '58', 0, 'Addons/edithook', 0, '', '', 0, '', ''),
-('74', '系统', '0', 5, 'Config/group', 0, '', '', 0, 'windows', ''),
+('74', '系统', '0', 6, 'Config/group', 0, '', '', 0, 'windows', ''),
 ('75', '网站设置', '74', 1, 'Config/group', 0, '', '系统设置', 0, '', ''),
 ('76', '配置管理', '74', 7, 'Config/index', 0, '', '系统设置', 0, '', ''),
 ('77', '编辑', '76', 0, 'Config/edit', 0, '新增编辑和保存配置', '', 0, '', ''),
@@ -4709,20 +4687,20 @@ INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `tip`, `
 ('96', '还原数据库', '113', 9, 'Database/index?type=import', 0, '', '数据备份', 0, '', ''),
 ('97', '恢复', '96', 0, 'Database/import', 0, '数据库恢复', '', 0, '', ''),
 ('98', '删除', '96', 0, 'Database/del', 0, '删除备份文件', '', 0, '', ''),
-('99', 'SEO规则管理', '74', 8, 'SEO/index', 0, '', 'SEO规则', 0, '', ''),
+('99', 'SEO规则管理', '74', 8, 'Seo/index', 0, '', 'SEO规则', 0, '', ''),
 ('100', '新增、编辑', '99', 0, 'SEO/editRule', 0, '', '', 0, '', ''),
 ('101', '排序', '99', 0, 'SEO/sortRule', 1, '', '', 0, '', ''),
-('102', 'SEO规则回收站', '74', 9, 'SEO/ruleTrash', 0, '', 'SEO规则', 0, '', ''),
+('102', 'SEO规则回收站', '74', 9, 'Seo/ruleTrash', 0, '', 'SEO规则', 0, '', ''),
 ('103', '全部补丁', '74', 16, 'Update/quick', 1, '', '升级补丁', 0, '', ''),
 ('104', '新增补丁', '74', 15, 'Update/addpack', 1, '', '升级补丁', 0, '', ''),
-('105', '扩展', '0', 6, 'module/lists', 0, '', '', 0, 'cloud', ''),
+('105', '扩展', '0', 7, 'module/lists', 0, '', '', 0, 'cloud', ''),
 ('106', '模块安装', '105', 3, 'module/install', 1, '', '本地', 0, '', ''),
-('107', '模块管理', '105', 5, 'module/lists', 0, '', '本地', 0, '', ''),
+('107', '模块管理', '105', 5, 'module/index', 0, '', '本地', 0, '', ''),
 ('108', '卸载模块', '105', 7, 'module/uninstall', 1, '', '本地', 0, '', ''),
-('113', '安全', '0', 4, 'ActionLimit/limitList', 0, '', '', 0, 'shield', ''),
+('113', '安全', '0', 5, 'ActionLimit/limitList', 0, '', '', 0, 'shield', ''),
 ('114', '行为限制列表', '113', 6, 'ActionLimit/limitList', 0, '', '行为限制', 0, '', ''),
 ('115', '新增/编辑行为限制', '113', 7, 'ActionLimit/editLimit', 1, '', '行为限制', 0, '', ''),
-('117', '身份列表', '2', 8, 'Role/index', 0, '', '身份管理', 0, '', ''),
+('117', '身份列表', '2', 4, 'Role/index', 0, '', '身份管理', 0, '', ''),
 ('118', '编辑身份', '2', 8, 'Role/editRole', 1, '', '', 0, '', ''),
 ('119', '启用、禁用、删除身份', '2', 8, 'Role/setStatus', 1, '', '', 0, '', ''),
 ('120', '身份排序', '2', 8, 'Role/sort', 1, '', '', 0, '', ''),
@@ -4731,11 +4709,11 @@ INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `tip`, `
 ('123', '默认头像配置', '117', 0, 'Role/configAvatar', 1, '', '', 0, '', ''),
 ('124', '默认头衔配置', '117', 0, 'Role/configRank', 1, '', '', 0, '', ''),
 ('125', '默认字段管理', '117', 0, 'Role/configField', 1, '', '', 0, '', ''),
-('126', '身份分组', '2', 8, 'Role/group', 0, '', '身份管理', 0, '', ''),
+('126', '身份分组', '2', 5, 'Role/group', 0, '', '身份管理', 0, '', ''),
 ('127', '编辑分组', '126', 0, 'Role/editGroup', 1, '', '', 0, '', ''),
 ('128', '删除分组', '126', 0, 'Role/deleteGroup', 1, '', '', 0, '', ''),
 ('129', '身份基本信息配置', '2', 8, 'Role/config', 1, '', '身份管理', 0, '', ''),
-('130', '用户列表', '2', 10, 'Role/userList', 0, '', '身份用户管理', 0, '', ''),
+('130', '审核身份用户', '2', 9, 'Role/userList', 0, '', '用户管理', 0, '', ''),
 ('131', '设置用户状态', '130', 0, 'Role/setUserStatus', 1, '', '', 0, '', ''),
 ('132', '审核用户', '130', 0, 'Role/setUserAudit', 1, '', '', 0, '', ''),
 ('133', '迁移用户', '130', 0, 'Role/changeRole', 1, '', '', 0, '', ''),
@@ -4769,7 +4747,7 @@ INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `tip`, `
 ('161', '使用补丁', '103', 0, 'Update/usePack', 1, '', '', 0, '', ''),
 ('162', '查看补丁', '103', 0, 'Update/view', 1, '', '', 0, '', ''),
 ('163', '删除补丁', '103', 0, 'Update/delPack', 1, '', '', 0, '', ''),
-('164', '用户标签列表', '2', 4, 'UserTag/userTag', 0, '', '用户管理', 0, '', ''),
+('164', '用户标签列表', '2', 7, 'UserTag/userTag', 0, '', '身份管理', 0, '', ''),
 ('165', '添加分类、标签', '164', 0, 'UserTag/add', 1, '', '', 0, '', ''),
 ('166', '设置分类、标签状态', '164', 0, 'UserTag/setStatus', 1, '', '', 0, '', ''),
 ('167', '分类、标签回收站', '164', 0, 'UserTag/tagTrash', 1, '', '', 0, '', ''),
@@ -4783,8 +4761,7 @@ INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `tip`, `
 ('175', '主题打包下载', '105', 10, 'Theme/packageDownload', 1, '', '本地', 0, '', ''),
 ('176', '卸载删除主题', '105', 11, 'Theme/delete', 1, '', '本地', 0, '', ''),
 ('177', '上传安装主题', '105', 12, 'Theme/add', 1, '', '本地', 0, '', ''),
-
-('197', '运营', '0', 3, 'Operation/index', 0, '', '', 0, 'laptop', ''),
+('197', '运营', '0', 4, 'Operation/index', 0, '', '', 0, 'laptop', ''),
 ('198', '群发消息用户列表', '197', 4, 'message/userList', 0, '', '群发消息', 0, '', ''),
 ('199', '群发消息', '197', 5, 'message/sendMessage', 1, '', '群发消息', 0, '', ''),
 ('201', '重置用户密码', '3', 0, 'User/initpass', 1, '', '', 0, '', ''),
@@ -4799,35 +4776,27 @@ INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `tip`, `
 ('230', '广告排期', '226', 0, 'Adv/schedule', 1, '', '', 0, '', ''),
 ('231', '用户导航', '74', 0, 'Channel/user', 0, '', '导航管理', 0, '', 'Core'),
 ('232', '积分日志', '113', 0, 'Action/scoreLog', 0, '', '积分管理', 0, '', ''),
-
 ('10311', '公告列表', '197', 0, 'announce/announcelist', 0, '', '公告管理', 0, '', ''),
 ('10312', '发布公告', '197', 0, 'announce/add', 0, '', '公告管理', 0, '', ''),
 ('10452', '公告送达情况', '10311', 0, 'Announce/arrive', 0, '', '公告管理', 0, '', ''),
 ('10451', '设置公告状态', '10311', 0, 'Announce/setStatus', 0, '', '公告管理', 0, '', ''),
 ('10313', '应用商店', '105', 0, 'Appcloud/index', 0, '', '云端', 0, '', ''),
 ('10314', '系统升级', '105', 0, 'Update/index', 0, '', '云端', 0, '', ''),
-('10330', '关键字管理', '197', 0, 'Keywords/index', 0, '', '关键字管理', 0, '', ''),
 ('10332', '编辑、新增系统升级补丁', '10331', 0, 'Muucmf/editSysupdate', 0, '', '', 0, '', 'Expand'),
 ('10333', '系统升级流程', '10314', 0, 'Update/startupdate', 0, '', '', 0, '', ''),
 ('10337', '消息类型列表', '197', 0, 'message/messagetypelist', 0, '', '消息设置', 0, '', ''),
 ('10339', '消息设置', '197', 0, 'message/config', 0, '', '消息设置', 0, '', ''),
 ('10458', '扩展设置', '74', 3, 'Config/expandConfig', 0, '', '系统设置', 0, '', ''),
-
-('10000', '网站主页', '0', 0, 'Home/config', 1, '', '', 0, 'home', 'Home'),
+('10000', '网站主页2', '0', 0, 'Home/config', 1, '', '', 0, 'home', ''),
 ('10001', '基本设置', '10000', 0, 'Home/config', 0, '', '设置', 0, '', 'Home'),
-
-('10266', '文章', '0', 0, 'Articles/index', 1, '', '', 0, '', 'Articles'),
-('10276', '设置分类状态', '10275', 0, 'Articles/setStatus', 0, '', '', 0, '', 'Articles'),
 ('10277', '编辑、添加分类', '10275', 0, 'Articles/add', 0, '', '', 0, '', 'Articles'),
-('10267', '文章列表', '10266', 0, 'Articles/index', 0, '', '文章管理', 0, '', 'Articles'),
-('10268', '编辑、添加文章', '10267', 0, 'Articles/editArticles', 0, '', '', 0, '', 'Articles'),
-('10269', '设为到期', '10267', 0, 'Articles/setDead', 0, '', '', 0, '', 'Articles'),
-('10270', '审核列表', '10266', 0, 'Articles/audit', 0, '', '文章管理', 0, '', 'Articles'),
-('10271', '审核通过', '10270', 0, 'Articles/setArticlesStatus', 0, '', '', 0, '', 'Articles'),
-('10272', '审核失败', '10270', 0, 'Articles/doAudit', 0, '', '', 0, '', 'Articles'),
-('10273', '回收站', '10266', 0, 'Articles/recycle', 0, '', '文章管理', 0, '', 'Articles'),
+('10276', '设置分类状态', '10275', 0, 'Articles/setStatus', 0, '', '', 0, '', 'Articles'),
 ('10274', '基础配置', '10266', 0, 'Articles/config', 0, '', '文章配置', 0, '', 'Articles'),
 ('10275', '分类管理', '10266', 0, 'Articles/articlesCategory', 0, '', '文章管理', 0, '', 'Articles'),
+('10273', '回收站', '10266', 0, 'Articles/recycle', 0, '', '文章管理', 0, '', 'Articles'),
+('10272', '审核失败', '10270', 0, 'Articles/doAudit', 0, '', '', 0, '', 'Articles'),
+('10271', '审核通过', '10270', 0, 'Articles/setArticlesStatus', 0, '', '', 0, '', 'Articles'),
+('10270', '审核列表', '10266', 0, 'Articles/audit', 0, '', '文章管理', 0, '', 'Articles'),
 ('10278', '开发者工具', '0', 0, 'Devtool/module', 1, '', '', 0, '', 'Devtool'),
 ('10279', '模块打包向导', '10278', 0, 'Devtool/module', 0, '', '模块工具', 0, '', 'Devtool'),
 ('10280', '替换文件', '10279', 0, 'Devtool/replace', 1, '', '', 0, '', 'Devtool'),
@@ -4857,7 +4826,11 @@ INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `tip`, `
 ('0AAED4DF-55D3-03DA-5860-3ABAEC00096D', '活跃用户数据', '197', 0, 'count/active', 0, '', '数据统计', 0, '', ''),
 ('CCAE3F89-4E09-1912-9F3B-453E0A265A62', '在线用户', '197', 0, 'count/nowuserlist', 0, '', '数据统计', 0, '', ''),
 ('9DE8F2CA-913A-B828-E4F3-BF4EFE8CB5D2', 'Restful', '0', 0, 'Restful/config', 1, '', '', 0, '', 'Restful'),
-('5B70CCBA-7245-92D0-A1F0-2C46B3765E7D', '基础配置', '9DE8F2CA-913A-B828-E4F3-BF4EFE8CB5D2', 0, 'Restful/config', 0, '', '基础配置', 0, '', 'Restful');
+('5B70CCBA-7245-92D0-A1F0-2C46B3765E7D', '基础配置', '9DE8F2CA-913A-B828-E4F3-BF4EFE8CB5D2', 0, 'Restful/config', 0, '', '基础配置', 0, '', 'Restful'),
+('10267', '文章列表', '10266', 0, 'Articles/index', 0, '', '文章管理', 0, '', 'Articles'),
+('10268', '编辑、添加文章', '10267', 0, 'Articles/editArticles', 0, '', '', 0, '', 'Articles'),
+('10269', '设为到期', '10267', 0, 'Articles/setDead', 0, '', '', 0, '', 'Articles'),
+('10266', '文章', '0', 0, 'Articles/index', 1, '', '', 0, '', 'Articles');
 
 DROP TABLE IF EXISTS `muucmf_message`;
 CREATE TABLE IF NOT EXISTS `muucmf_message` (
@@ -4914,6 +4887,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_module` (
   `icon` varchar(20) NOT NULL,
   `can_uninstall` tinyint(4) NOT NULL,
   `admin_entry` varchar(50) NOT NULL,
+  `auth_role` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`),
   KEY `name_2` (`name`)
@@ -4933,6 +4907,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_picture` (
   `type` varchar(50) NOT NULL,
   `path` varchar(255) NOT NULL DEFAULT '' COMMENT '路径',
   `url` varchar(255) NOT NULL DEFAULT '' COMMENT '图片链接',
+  `driver` varchar(64) NOT NULL DEFAULT '' COMMENT '图片驱动',
   `md5` char(32) NOT NULL DEFAULT '' COMMENT '文件md5',
   `sha1` char(40) NOT NULL DEFAULT '' COMMENT '文件 sha1编码',
   `status` tinyint(2) NOT NULL DEFAULT '0' COMMENT '状态',

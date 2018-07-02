@@ -2,18 +2,11 @@
 
 //上传配置
 return [
-    /**
-     * 上传地址,默认是本地上传
-     */
-    'uploadurl' => 'ajax/upload',
-    /**
-     * CDN地址
-     */
-    'cdnurl'    => '',
+
     /**
      * 文件保存格式
      */
-    'savekey'   => '/uploads/{year}{mon}{day}/{filemd5}{.suffix}',
+    'savepath'   => '/uploads/{year}{mon}{day}/{filemd5}{.suffix}',
     /**
      * 最大可上传大小
      */
