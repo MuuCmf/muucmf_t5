@@ -55,6 +55,7 @@ package-lock.json
 
 #
 /.idea
+/*.lock
 
 # MuuCmf
 /public/src
@@ -62,4 +63,3 @@ package-lock.json
 /.hatccess
 /data
 /install.lock
-install.lock
