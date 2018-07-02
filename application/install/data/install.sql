@@ -4591,7 +4591,6 @@ CREATE TABLE IF NOT EXISTS `muucmf_menu` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `tip`, `group`, `is_dev`, `icon`, `module`) VALUES
-INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `tip`, `group`, `is_dev`, `icon`, `module`) VALUES
 ('2', '用户', '0', 3, 'User/index', 0, '', '', 0, 'user', ''),
 ('3', '用户信息', '2', 2, 'User/index', 0, '', '用户管理', 0, '', ''),
 ('4', '行为&积分规则', '113', 3, 'Action/action', 0, '', '行为管理', 0, '', ''),
@@ -4826,11 +4825,7 @@ INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `tip`, `
 ('0AAED4DF-55D3-03DA-5860-3ABAEC00096D', '活跃用户数据', '197', 0, 'count/active', 0, '', '数据统计', 0, '', ''),
 ('CCAE3F89-4E09-1912-9F3B-453E0A265A62', '在线用户', '197', 0, 'count/nowuserlist', 0, '', '数据统计', 0, '', ''),
 ('9DE8F2CA-913A-B828-E4F3-BF4EFE8CB5D2', 'Restful', '0', 0, 'Restful/config', 1, '', '', 0, '', 'Restful'),
-('5B70CCBA-7245-92D0-A1F0-2C46B3765E7D', '基础配置', '9DE8F2CA-913A-B828-E4F3-BF4EFE8CB5D2', 0, 'Restful/config', 0, '', '基础配置', 0, '', 'Restful'),
-('10267', '文章列表', '10266', 0, 'Articles/index', 0, '', '文章管理', 0, '', 'Articles'),
-('10268', '编辑、添加文章', '10267', 0, 'Articles/editArticles', 0, '', '', 0, '', 'Articles'),
-('10269', '设为到期', '10267', 0, 'Articles/setDead', 0, '', '', 0, '', 'Articles'),
-('10266', '文章', '0', 0, 'Articles/index', 1, '', '', 0, '', 'Articles');
+('5B70CCBA-7245-92D0-A1F0-2C46B3765E7D', '基础配置', '9DE8F2CA-913A-B828-E4F3-BF4EFE8CB5D2', 0, 'Restful/config', 0, '', '基础配置', 0, '', 'Restful');
 
 DROP TABLE IF EXISTS `muucmf_message`;
 CREATE TABLE IF NOT EXISTS `muucmf_message` (
