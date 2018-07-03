@@ -20,6 +20,8 @@ use think\Db;
             'version'=>'2.0'
         ];
 
+
+
         public function install(){
 
             /* 先判断插件需要的钩子是否存在 */
@@ -52,27 +54,9 @@ use think\Db;
         }
 
         //实现的J_China_City钩子方法
-        public function J_China_City($param){
+        public function Chinacity($param){
+
             $this->assign('param', $param);
             return $this->fetch('chinacity');
-        }
-
-        //获取插件所需的钩子是否存在
-        public function getisHook($str, $addons, $msg=''){
-            
-            $where['name'] = $str;
-            $gethook = Db::name('Hooks')->where($where)->find();
-            if(!$gethook || empty($gethook) || !is_array($gethook)){
-                $data['name'] = $str;
-                $data['description'] = $msg;
-                $data['type'] = 1;
-                $data['update_time'] = time();
-                $data['addons'] = $addons;
-                
-                Db::name('Hooks')->insert($data);
-                
-            }
-        }
-
-        
+        }   
     }

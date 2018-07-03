@@ -4,28 +4,26 @@
 
 <script type="text/javascript">
 
-
-
 $(function(){
-	var pid=<if condition="$param.province neq ''">{$param.province}<else />0</if>;  //默认省份id
-	var cid=<if condition="$param.city neq ''">{$param.city}<else />0</if>;  //默认城市id
-	var did=<if condition="$param.district neq ''">{$param.district}<else />0</if>;  //默认区县市id
+	var pid={if condition="$param.province neq ''"}{$param.province}{else /}0{/if};  //默认省份id
+	var cid={if condition="$param.city neq ''"}{$param.city}{else /}0{/if};  //默认城市id
+	var did={if condition="$param.district neq ''"}{$param.district}{else /}0{/if};  //默认区县市id
 
     /*修复联动不及时的bug，陈一枭*/
 function change_province(pid){
-        $.post("{:addons_url('ChinaCity://ChinaCity/getProvince')}", {pid: pid}, function(result){
+        $.post("{:addons_url('Chinacity://Chinacity/getProvince')}", {pid: pid}, function(result){
             $("#J_province").html(result);
         });
     }
 
 function change_city(p_pid,p_cid){
-    $.post('{:addons_url("ChinaCity://ChinaCity/getCity")}', {pid: p_pid, cid: p_cid}, function(result){
+    $.post('{:addons_url("Chinacity://Chinacity/getCity")}', {pid: p_pid, cid: p_cid}, function(result){
         $("#J_city").show().html(result);
     });
 
 }
 function change_district(p_cid,p_did){
-    $.post('{:addons_url("ChinaCity://ChinaCity/getDistrict")}', {cid: p_cid, did: p_did}, function(result){
+    $.post('{:addons_url("Chinacity://Chinacity/getDistrict")}', {cid: p_cid, did: p_did}, function(result){
         $("#J_district").show().html(result);
     });
 }

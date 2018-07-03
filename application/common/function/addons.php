@@ -67,7 +67,7 @@ function get_addon_config($name)
  * @param bool|string $suffix 生成的URL后缀
  * @param bool|string $domain 域名
  */
-function addon_url($url, $param = [], $suffix = true, $domain = false)
+function addons_url($url, $param = [], $suffix = true, $domain = false)
 {
     $url = parse_url($url);
     $case = config('url_convert');
