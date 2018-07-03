@@ -33,7 +33,8 @@ class Hooks extends Model {
             return false;
         }
         $methods = get_class_methods($addons_class);
-        $hooks = $this->getField('name', true);
+        $hooks = collection($this->column('name'))->toArray();
+
         $common = array_intersect($hooks, $methods);
         if(!empty($common)){
             foreach ($common as $hook) {
@@ -51,19 +52,18 @@ class Hooks extends Model {
      * 更新单个钩子处的插件
      */
     public function updateAddons($hook_name, $addons_name){
-        $o_addons = $this->where("name='{$hook_name}'")->getField('addons');
-        if($o_addons)
-            $o_addons = str2arr($o_addons);
+        $o_addons = $this->where(['name'=>$hook_name])->column('addons');
+        
         if($o_addons){
             $addons = array_merge($o_addons, $addons_name);
             $addons = array_unique($addons);
         }else{
             $addons = $addons_name;
         }
-        $flag = D('Hooks')->where("name='{$hook_name}'")
-        ->setField('addons',arr2str($addons));
+
+        $flag = $this->where(['name'=>$hook_name])->setField('addons',implode(',',$addons));
         if(false === $flag)
-            D('Hooks')->where("name='{$hook_name}'")->setField('addons',arr2str($o_addons));
+            $this->where(['name'=>$hook_name])->setField('addons',implode(',',$o_addons));
         return $flag;
     }
 
@@ -76,7 +76,8 @@ class Hooks extends Model {
             return false;
         }
         $methods = get_class_methods($addons_class);
-        $hooks = $this->getField('name', true);
+        $hooks = collection($this->column('name'))->toArray();
+
         $common = array_intersect($hooks, $methods);
         if($common){
             foreach ($common as $hook) {
@@ -93,18 +94,16 @@ class Hooks extends Model {
      * 去除单个钩子里对应的插件数据
      */
     public function removeAddons($hook_name, $addons_name){
-        $o_addons = $this->where("name='{$hook_name}'")->getField('addons');
-        $o_addons = str2arr($o_addons);
+        $o_addons = $this->where(['name'=>$hook_name])->column('addons');
+        
         if($o_addons){
             $addons = array_diff($o_addons, $addons_name);
         }else{
             return true;
         }
-        $flag = D('Hooks')->where("name='{$hook_name}'")
-                          ->setField('addons',arr2str($addons));
+        $flag = $this->where(['name'=>$hook_name])->setField('addons',implode(',',$addons));
         if(false === $flag)
-            D('Hooks')->where("name='{$hook_name}'")
-                      ->setField('addons',arr2str($o_addons));
+            $this->where(['name'=>$hook_name])->setField('addons',implode(',',$o_addons));
         return $flag;
     }
 }

@@ -553,7 +553,7 @@ class Module extends Model
             $module = require(APP_PATH . '/' . $name . '/info/info.php');
             return $module;
         } else {
-            return array();
+            return [];
         }
 
     }

@@ -231,80 +231,37 @@ str;
      */
     public function index()
     {
-        
         $type = input('get.type', 'all', 'text');
+        $list = model('Addons')->getList('');
+        $request = (array)input('request.');
 
-        $addon_dir = ADDONS_PATH;
-        if(is_dir($addon_dir)){
-            $dirs = array_map('basename', glob($addon_dir . '*', GLOB_ONLYDIR));
-        }
-        
-        if ($dirs === FALSE || !file_exists($addon_dir)) {
-            $this->error(lang('_THE_PLUGIN_DIRECTORY_IS_NOT_READABLE_OR_NOT_'));
-        }
-        if ($type == 'yes') {//已安装
-            $where['uninstall'] !=1;
-        }
-        if ($type == 'no') {//已安装
-            $where['uninstall'] =1;
-        }
-
-        
-        $where['name'] = ['in', $dirs];
-        $list = Db::name('Addons')->where($where)->paginate(20);
-        $page = $list->render();
-        $list=$list->toArray()['data'];
-
-        foreach ($list as &$addon) {
-            $addon['uninstall'] = 0;
-            $file = $addon_dir.$addon['name'].'/icon.png';
-            if(file_exists($file)){
-                $addon['icon_photo'] = $addon_dir.$addon['name'].'/icon.png';
-            }else{
-                $addon['icon_photo'] = '';
-            }
-        }
-        unset($addon);
-
-        foreach ($dirs as $value) {
-
-            if (!isset($list[$value])) {
-                $class = get_addon_class($value);
-                if (!class_exists($class)) { // 实例化插件失败忽略执行
-                    \think\Log::record(lang('_PLUGIN_') . $value . lang('_THE_ENTRY_FILE_DOES_NOT_EXIST_WITH_EXCLAMATION_'));
-                    continue;
-                }
-                $obj = new $class;
-                $list[$value] = $obj->info;
-                dump($obj->info);
-                if ($list[$value]) {
-                    $list[$value]['uninstall'] = 1;
-                    unset($list[$value]['status']);
-                }
-                //插件图标
-                $file = $addon_dir . $value . '/icon.png';
-                if(file_exists($file)){
-                    $list[$value]['icon_photo'] = $addon_dir.$value.'/icon.png';
-                }else{
-                    $list[$value]['icon_photo'] = '';
+        if ($type == 'yes') {//已安装的
+            foreach ($list as $key => $value) {
+                if ($value['uninstall'] != 1) {
+                    unset($list[$key]);
                 }
             }
+        } else if ($type == 'no') {
+            foreach ($list as $key => $value) {
+                if ($value['uninstall'] == 1) {
+                    $value['id'] = 0;
+                    unset($list[$key]);
+                }
+            }
+        } else {
+            $type = 'all';
         }
-        int_to_string($list, ['status' => [-1 => lang('_DAMAGE_'), 0 => lang('_DISABLE_'), 1 => lang('_ENABLE_'), null => lang('_NOT_INSTALLED_')]]);
 
-        $list = list_sort_by($list, 'uninstall', 'desc');
-        
-        //$request = (array)input('request.');
-
-        //dump($list);
         $this->setTitle(lang('_PLUGIN_LIST_'));
         $this->assign('type', $type);
         $this->assign('_list', $list);
-        $this->assign('page', $page);
+        
         // 记录当前列表页的cookie
         Cookie('__forward__', $_SERVER['REQUEST_URI']);
         return $this->fetch();
     }
+
+    
 
     /**
      * 插件后台显示页面
@@ -342,7 +299,7 @@ str;
         $this->assign('_list', $list);
         if ($addon->custom_adminlist)
             $this->assign('custom_adminlist', $this->fetch($addon->addon_path . $addon->custom_adminlist));
-        $this->display();
+        return $this->fetch();
     }
 
     /**
@@ -373,7 +330,7 @@ str;
     public function config()
     {
         $id = (int)input('id');
-        $addon = M('Addons')->find($id);
+        $addon = Db::name('Addons')->find($id);
         if (!$addon)
             $this->error(lang('_PLUGIN_NOT_INSTALLED_'));
         $addon_class = get_addon_class($addon['name']);
@@ -402,7 +359,7 @@ str;
         $this->assign('data', $addon);
         if ($addon['custom_config'])
             $this->assign('custom_config', $this->fetch($addon['addon_path'] . $addon['custom_config']));
-        $this->display();
+        return $this->fetch();
     }
 
     /**
@@ -412,9 +369,9 @@ str;
     {
         $id = (int)input('id');
         $config = input('config');
-        $flag = M('Addons')->where("id={$id}")->setField('config', json_encode($config));
+        $flag = Db::name('Addons')->where("id={$id}")->setField('config', json_encode($config));
         if (isset($config['addons_cache'])) {//清除缓存
-            S($config['addons_cache'], null);
+            cache($config['addons_cache'], null);
         }
         if ($flag !== false) {
             $this->success(lang('_SAVE_'), Cookie('__forward__'));
@@ -429,7 +386,7 @@ str;
     public function install()
     {
         $addon_name = trim(input('addon_name'));
-        $addonsModel = D('Addons');
+        $addonsModel = model('Addons');
         $rs = $addonsModel->install($addon_name);
         if ($rs === true) {
             $this->success(lang('_INSTALL_PLUG-IN_SUCCESS_'));
@@ -490,23 +447,23 @@ str;
     public function addhook()
     {
         $this->assign('data', null);
-        $this->meta_title = lang('_NEW_HOOK_');
-        $this->display('edithook');
+        $this->setTitle(lang('_NEW_HOOK_'));
+        return $this->fetch('edithook');
     }
 
     //钩子出编辑挂载插件页面
     public function edithook($id)
     {
-        $hook = M('Hooks')->field(true)->find($id);
+        $hook = Db::name('Hooks')->field(true)->find($id);
         $this->assign('data', $hook);
         $this->meta_title = lang('_EDIT_HOOK_');
-        $this->display('edithook');
+        return $this->fetch('edithook');
     }
 
     //超级管理员删除钩子
     public function delhook($id)
     {
-        if (M('Hooks')->delete($id) !== false) {
+        if (Db::name('Hooks')->delete($id) !== false) {
             $this->success(lang('_DELETE_SUCCESS_'));
         } else {
             $this->error(lang('_DELETE_FAILED_'));

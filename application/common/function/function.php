@@ -2,6 +2,7 @@
 
 use think\Db;
 
+require_once(APP_PATH . '/common/function/addons.php');
 require_once(APP_PATH . '/common/function/api.php');
 require_once(APP_PATH . '/common/function/cache.php');
 require_once(APP_PATH . '/common/function/collect.php');
@@ -388,76 +389,8 @@ function tree_to_list($tree, $child = '_child', $order = 'id', &$list = array())
     return $list;
 }
 
-/**
- * 处理插件钩子
- * @param string $hook 钩子名称
- * @param mixed $params 传入参数
- * @return void
- */
-function hook($hook, $params = array())
-{
-    \think\Hook::listen($hook, $params); 
-}
 
-/**
- * 获取插件类的类名
- * @param strng $name 插件名
- */
-function get_addon_class($name)
-{
-    $class = "Addons\\{$name}\\{$name}";
-    return $class;
-}
 
-/**
- * 获取插件类的配置文件数组
- * @param string $name 插件名
- */
-function get_addon_config($name)
-{
-    $class = get_addon_class($name);
-    if (class_exists($class)) {
-        $addon = new $class();
-        return $addon->getConfig();
-    } else {
-        return array();
-    }
-}
-
-/**
- * 插件显示内容里生成访问插件的url
- * @param string $url url
- * @param array $param 参数
- * @author 麦当苗儿 <zuojiazi@vip.qq.com>
- */
-function addons_url($url, $param = array(),$suffix = true, $domain = false)
-{
-    $url = parse_url($url);
-    $case = config('URL_CASE_INSENSITIVE');
-    $addons = $case ? parse_name($url['scheme']) : $url['scheme'];
-    $controller = $case ? parse_name($url['host']) : $url['host'];
-    $action = trim($case ? strtolower($url['path']) : $url['path'], '/');
-
-    /* 解析URL带的参数 */
-    if (isset($url['query'])) {
-        parse_str($url['query'], $query);
-        $param = array_merge($query, $param);
-    }
-
-    /* 基础参数 */
-    $params = array(
-        '_addons' => $addons,
-        '_controller' => $controller,
-        '_action' => $action,
-    );
-    $params = array_merge($params, $param); //添加额外参数
-    if (strtolower(MODULE_NAME) == 'admin') {
-        return Url('Admin/Addons/execute', $params,$suffix, $domain);
-    } else {
-        return Url('Home/Addons/execute', $params,$suffix, $domain);
-
-    }
-}
 
 /**
  * 时间戳格式化

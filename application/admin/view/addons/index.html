@@ -28,22 +28,27 @@
                     <div class="module-list-box">
                         <div class="card">
                             <div class="media-wrapper">
-                                <a href="{:Url('config',array('id'=>$vo['id']))}">
-                                    {empty name="vo.icon_photo"}
-                                        <div class="cover-icon">
-                                            <img src="__IMG__/plugin.png" alt=""> 
-                                        </div>
-                                    {else/}
-                                        <div class="cover-icon">
-                                            <img src="{$vo.icon_photo}" alt=""> 
-                                        </div>
-                                    {/empty}
+                                {empty name="vo.id"}
+                                <a href="#">
+                                {else /}
+                                <a href="{:Url('config',['id'=>$vo['id']])}">
+                                {/empty}
+                                
+                                {empty name="vo.icon_photo"}
+                                    <div class="cover-icon">
+                                        <img src="__IMG__/plugin.png" alt=""> 
+                                    </div>
+                                {else/}
+                                    <div class="cover-icon">
+                                        <img src="{$vo.icon_photo}" alt=""> 
+                                    </div>
+                                {/empty}
                                     
                                 </a>
                             </div>
 
 
-                            <div class="content-wrapper">
+                            <div class="">
                                 <div class="card-heading title">
                                     <h3>{$vo.title} <span class="text-muted">{$vo.name}</span></h3>
                                 </div>
@@ -109,6 +114,6 @@
     <!-- 数据列表 -->
     <!-- 分页 -->
     <div class="page">
-        {$page}
+        
     </div>
 {/block}

@@ -3,41 +3,49 @@ namespace app\common\controller;
 
 use think\Config;
 use think\View;
+use think\Db;
 /**
  * 插件类
  */
 abstract class Addons{
 
     //视图实例对象
-    protected $view = null;
+    protected $view             = null;
+    // 当前错误信息
+    protected $error;
 
     public $info                =   [];
-    public $addon_path          =   '';
+    public $addons_path         =   '';
     public $config_file         =   '';
+
     public $custom_config       =   '';
     public $admin_list          =   [];
     public $custom_adminlist    =   '';
     public $access_url          =   [];
 
+
+    /**
+     * 架构函数
+     * @access public
+     */
     public function __construct(){
+
         // 获取当前插件目录
-        $this->addon_path = ADDON_PATH . $this->getName(). DS;
+        $this->addons_path = ADDONS_PATH . $this->getName(). DS;
 
+        // 读取当前插件配置信息
+        if (is_file($this->addons_path . 'config.php')) {
+            $this->config_file = $this->addons_path . 'config.php';
+        }
+        
         $view_replace_str = Config::get('view_replace_str');
-
-        $view_replace_str['__ADDONROOT__'] = $this->addon_path;
-
+        $view_replace_str['__ADDONROOT__'] = $this->addons_path;
         Config::set('view_replace_str', $view_replace_str);
 
         // 初始化视图模型
         $config = ['view_path' => $this->addons_path];
         $config = array_merge(Config::get('template'), $config);
-
         $this->view = new View($config, Config::get('view_replace_str'));
-
-        if(is_file($this->addon_path.'config.php')){
-            $this->config_file = $this->addon_path . 'config.php';
-        }
 
         // 控制器初始化
         if (method_exists($this, '_initialize')) {
@@ -114,21 +122,23 @@ abstract class Addons{
      * 获取当前模块名
      * @return string
      */
-    final public function getName(){
-
-        $class = get_class($this);
-        return substr($class,strrpos($class, '\\')+1, -5);
+    final public function getName()
+    {
+        $data = explode('\\', get_class($this));
+        return strtolower(array_pop($data));
     }
 
     /**
-     * 检查基础配置信息是否完整
+     * 检查配置信息是否完整
      * @return bool
      */
-    final public function checkInfo(){
-        $info_check_keys = ['name','title','description','status','author','version'];
+    final public function checkInfo()
+    {
+        $info_check_keys = ['name', 'title', 'description', 'author', 'version'];
         foreach ($info_check_keys as $value) {
-            if(!array_key_exists($value, $this->info))
+            if (!array_key_exists($value, $this->info)) {
                 return false;
+            }
         }
         return true;
     }
@@ -137,30 +147,32 @@ abstract class Addons{
      * 获取插件的配置数组
      */
     final public function getConfig($name=''){
-        static $_config = array();
+        static $_config = [];
         if(empty($name)){
             $name = $this->getName();
         }
         if(isset($_config[$name])){
             return $_config[$name];
         }
-        $config =   array();
+        $config = [];
         $map['name']    =   $name;
         $map['status']  =   1;
         $config  =   Db::name('Addons')->where($map)->value('config');
         if($config){
             $config   =   json_decode($config, true);
         }else{
-            $temp_arr = include $this->config_file;
-            foreach ($temp_arr as $key => $value) {
-                if($value['type'] == 'group'){
-                    foreach ($value['options'] as $gkey => $gvalue) {
-                        foreach ($gvalue['options'] as $ikey => $ivalue) {
-                            $config[$ikey] = $ivalue['value'];
+            if (is_file($this->config_file)) {
+                $temp_arr = include $this->config_file;
+                foreach ($temp_arr as $key => $value) {
+                    if($value['type'] == 'group'){
+                        foreach ($value['options'] as $gkey => $gvalue) {
+                            foreach ($gvalue['options'] as $ikey => $ivalue) {
+                                $config[$ikey] = $ivalue['value'];
+                            }
                         }
+                    }else{
+                        $config[$key] = $temp_arr[$key]['value'];
                     }
-                }else{
-                    $config[$key] = $temp_arr[$key]['value'];
                 }
             }
         }
@@ -191,6 +203,43 @@ abstract class Addons{
             }
         }
         return true;
+    }
+
+    /**
+     * 解析数据库语句函数
+     * @param string $sql  sql语句   带默认前缀的
+     * @param string $tablepre  自己的前缀
+     * @return multitype:string 返回最终需要的sql语句
+     */
+    public function sqlSplit($sql, $tablepre, $type='install') {
+
+        $sql = preg_replace("/TYPE=(InnoDB|MyISAM|MEMORY)( DEFAULT CHARSET=[^; ]+)?/", "ENGINE=\\1 DEFAULT CHARSET=utf8", $sql);
+        if($type == 'install'){
+            //获取表前缀
+            $r_tablepre = preg_replace("/[\s\S]*CREATE TABLE IF NOT EXISTS `([a-zA-Z]+_)[\s\S]*/", "\\1", $sql);
+        }else{
+            $r_tablepre = preg_replace("/[\s\S]*DROP TABLE IF EXISTS `([a-zA-Z]+_)[\s\S]*/", "\\1", $sql);
+        }
+        //替换表前缀
+        $sql = str_replace($r_tablepre, $tablepre , $sql);
+        $sql = str_replace("\r", "\n", $sql);
+        $ret = [];
+        $num = 0;
+        $queriesarray = explode(";\n", trim($sql));
+        unset($sql);
+
+        foreach ($queriesarray as $query) {
+            $ret[$num] = '';
+            $queries = explode("\n", trim($query));
+            $queries = array_filter($queries);
+            foreach ($queries as $query) {
+                $str1 = substr($query, 0, 1);
+                if ($str1 != '#' && $str1 != '-')
+                    $ret[$num] .= $query;
+            }
+            $num++;
+        }
+        return $ret;
     }
 
     /**

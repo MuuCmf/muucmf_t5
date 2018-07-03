@@ -29,7 +29,7 @@
         {php}$codeText=$code == 1 ? 'success' : ($code == 0 ? 'error' : 'info');{/php}
         <div class="system-message {$codeText}">
             <div class="image">
-                <img src="__CDN__/static/common/images/{$codeText}.svg" alt="" width="150" />
+                <img src="__COMMON__/images/{$codeText}.svg" alt="" width="150" />
             </div>
             <h1>{$msg}</h1>
             <p class="jump">

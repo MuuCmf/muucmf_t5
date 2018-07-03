@@ -67,8 +67,6 @@ class Module extends Admin
             }
         }
         unset($m);
-
-        
         $this->assign('modules', $modules);
         return $this->fetch();
     }
