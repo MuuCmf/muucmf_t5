@@ -8,14 +8,14 @@
 // +----------------------------------------------------------------------
 // | Author: Byron Sampson <xiaobo.sun@qq.com>
 // +----------------------------------------------------------------------
-namespace app\common\library;
+namespace muucmf\addons;
 
 use think\Request;
 use think\Config;
 use think\Loader;
 
 /**
- * 插件基类控制器
+ * 插件前台基类控制器
  * Class Controller
  * @package think\addons
  */

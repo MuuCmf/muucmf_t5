@@ -61,6 +61,10 @@ class Admin extends Controller
                 $this->error(lang('_VISIT_NOT_AUTH_'));
             }
         }
+        //
+        // 获取插件后台管理列表
+        $addons_admin = model('Admin/Addons')->getAdminList();
+        //dump($addons_admin);
         //获取本地版本
         $version = $this->localVersion();
         //获取管理员数据
@@ -70,6 +74,7 @@ class Admin extends Controller
         $this->assign('__AUTH_USER__',$auth_user);
         $this->assign('__MANAGE_COULD__',$this->checkRule('admin/module/lists',array('in','1,2')));
         $this->assign('__MENU__', $this->getTreeMenus());
+        $this->assign('__ADDONS_MENU__', $addons_admin );
         $this->assign('version',$version);
         $this->checkUpdate();
     }
@@ -78,7 +83,7 @@ class Admin extends Controller
 
         $uid = is_login();
         if (!$uid) {// 还没登录 跳转到登录页面
-            $this->redirect('common/login');
+            $this->redirect('admin/common/login');
         }
         return $uid;
     }
@@ -564,7 +569,7 @@ class Admin extends Controller
         $pk = $model->getPk();
         if ($order === null) {
             //order置空
-        } else if (isset($REQUEST['_order']) && isset($REQUEST['_field']) && in_array(strtolower($REQUEST['_order']), array('desc', 'asc'))) {
+        } else if (isset($REQUEST['_order']) && isset($REQUEST['_field']) && in_array(strtolower($REQUEST['_order']), ['desc', 'asc'])) {
             $options['order'] = '`' . $REQUEST['_field'] . '` ' . $REQUEST['_order'];
         } elseif ($order === '' && empty($options['order']) && !empty($pk)) {
             $options['order'] = $pk . ' desc';
@@ -586,15 +591,16 @@ class Admin extends Controller
             unset($options['where']);
         }
 
-        $total = $model->where($options['where'])->count();
+        //$total = $model->where($options['where'])->count();
 
-        if (isset($REQUEST['r'])) {
-            $listRows = (int)$REQUEST['r'];
+        if (input('r')!==null) {
+            $listRows = (int)input('r');
         } else {
-            $listRows = cache('LIST_ROWS') > 0 ? cache('LIST_ROWS') : 10;
+            $listRows = 20;
         }
+
         //获取列表
-        $list = $model->where($options['where'])->order($options['order'])->paginate(20);
+        $list = $model->where($options['where'])->order($options['order'])->paginate($listRows);
         // 获取分页显示
         $page = $list->render();
         // 模板变量赋值

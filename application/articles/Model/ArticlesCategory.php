@@ -1,21 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * @author 大蒙<59262424@qq.com>
- */
-
-namespace Articles\Model;
+namespace app\articles\model;
 
 
-use Think\Model;
+use think\Model;
 
-class ArticlesCategoryModel extends Model{
-
-    protected $_auto = array(
-        array('status', '1', self::MODEL_INSERT),
-    );
-
+class ArticlesCategory extends Model{
+    
     /**
      * 获得分类树
      * @param int $id

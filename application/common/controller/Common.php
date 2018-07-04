@@ -9,6 +9,7 @@ use think\Db;
  */
 class Common extends Controller
 {
+    public $_seo = ['title' => '','setKeywords' => '', 'description' => ''];
 
 	public function _initialize()
     {
@@ -52,5 +53,23 @@ class Common extends Controller
         $this->assign('only_open_register',$only_open_register);
         $login_url = Url('ucenter/Member/login');
         $this->assign('login_url',$login_url);
+    }
+
+    public function setTitle($title)
+    {
+        $this->_seo['title'] = $title;
+        $this->assign('seo', $this->_seo);
+    }
+
+    public function setKeywords($keywords)
+    {
+        $this->_seo['keywords'] = $keywords;
+        $this->assign('seo', $this->_seo);
+    }
+
+    public function setDescription($description)
+    {
+        $this->_seo['description'] = $description;
+        $this->assign('seo', $this->_seo);
     }
 }

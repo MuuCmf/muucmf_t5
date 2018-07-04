@@ -1,19 +1,19 @@
+{extend name="common/main"/}
 
-<extend name="Public/base" />
-
-<block name="body">
+{block name="body"}
 	<!-- 标题栏 -->
 	<div class="main-title">
 		<h2>{:lang("_HOOK_LIST_")}</h2>
 	</div>
-	<div class="with-padding">
-		<?php if (IS_ROOT): ?>
-			<a class="btn" href="{:Url('addhook')}">{:lang("_NEW_GROWTH_WITH_SPACE_")}</a>
-		<?php endif ?>
+	<div class="button-box">
+
+			<a class="btn btn-info" href="{:Url('addhook')}">{:lang("_NEW_GROWTH_WITH_SPACE_")}</a>
+
 	</div>
 
 	<!-- 数据列表 -->
-	<div class="data-table with-padding">
+	<div class="with-padding">
+		<div class="data-table">
 		<table class="table table-bordered table-striped ">
 			<thead>
 				<tr>
@@ -25,7 +25,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<volist name="list" id="vo">
+				{volist name="list" id="vo"}
 					<tr>
 						<td>{$vo.id}</td>
 						<td><a href="{:Url('edithook?id='.$vo['id'])}">{$vo.name}</a></td>
@@ -36,20 +36,22 @@
 							<a class="confirm ajax-get" title={:lang("_DELETE_WITH_DOUBLE_")} href="{:Url('delhook?id='.$vo['id'])}">{:lang("_DELETE_")}</a>
 						</td>
 					</tr>
-				</volist>
+				{/volist}
 			</tbody>
-		</table>        
+		</table> 
+		</div>
+		<!-- 分页 -->
+	    <div class="page">
+	        {$page}
+	    </div>       
 	</div>
-	<!-- 分页 -->
-    <div class="with-padding">
-        {$_page}
-    </div>
-</block>
 
-<block name="script">
+{/block}
+
+{block name="script"}
 	<script type="text/javascript">
 		$(function(){
 
 		})
 	</script>
-</block>
+{/block}

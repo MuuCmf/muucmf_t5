@@ -100,6 +100,18 @@
           {/neq}
         {/volist}
         
+        <li class="header">插件管理</li>
+        {volist name="__ADDONS_MENU__" id="menu"}
+          <li>
+              <a href="{$menu.url|Url}" target="main_iframe">
+                
+                  <i class="fa fa-circle-o"></i>
+
+                {$menu.title}
+            </a>
+          </li>
+        {/volist}
+
       </ul>
     </section>
     <!-- /.sidebar -->

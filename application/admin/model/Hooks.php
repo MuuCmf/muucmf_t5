@@ -36,6 +36,7 @@ class Hooks extends Model {
         $hooks = collection($this->column('name'))->toArray();
 
         $common = array_intersect($hooks, $methods);
+
         if(!empty($common)){
             foreach ($common as $hook) {
                 $flag = $this->updateAddons($hook, array($addons_name));
@@ -50,17 +51,21 @@ class Hooks extends Model {
 
     /**
      * 更新单个钩子处的插件
+     * @param  [type] $hook_name   插件执行方法
+     * @param  [type] $addons_name 插件名||插件目录
+     * @return [type]              [description]
      */
     public function updateAddons($hook_name, $addons_name){
         $o_addons = $this->where(['name'=>$hook_name])->column('addons');
-        
-        if($o_addons){
+        $o_addons = $o_addons[0];
+        $o_addons = explode(',',$o_addons);
+        if(!empty($o_addons[0]) || $o_addons[0]!=''){
+
             $addons = array_merge($o_addons, $addons_name);
             $addons = array_unique($addons);
         }else{
             $addons = $addons_name;
         }
-
         $flag = $this->where(['name'=>$hook_name])->setField('addons',implode(',',$addons));
         if(false === $flag)
             $this->where(['name'=>$hook_name])->setField('addons',implode(',',$o_addons));
@@ -95,8 +100,10 @@ class Hooks extends Model {
      */
     public function removeAddons($hook_name, $addons_name){
         $o_addons = $this->where(['name'=>$hook_name])->column('addons');
+        $o_addons = $o_addons[0];
+        $o_addons = explode(',',$o_addons);
         
-        if($o_addons){
+        if(!empty($o_addons[0]) || $o_addons[0]!=''){
             $addons = array_diff($o_addons, $addons_name);
         }else{
             return true;

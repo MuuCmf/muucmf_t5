@@ -17,8 +17,7 @@ abstract class AdminBuilder extends Admin
 
     public function display($templateFile='',$charset='',$contentType='',$content='',$prefix='') {
         //获取模版的名称
-        $template = dirname(__FILE__) . '/../View/builder/' . $templateFile . '.html';
-
+        $template = APP_PATH . 'admin/view/builder/' . $templateFile . '.html';
         //显示页面
         echo $this->fetch($template);
     }

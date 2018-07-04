@@ -1,11 +1,9 @@
 <?php
 namespace app\common\behavior;
 
-use think\App;
 use think\Hook;
 use think\Db;
 use think\Loader;
-use think\Config;
 use think\Cache;
 use think\Route;
 
@@ -18,9 +16,9 @@ class InitHook {
         // 注册类的根命名空间
         Loader::addNamespace('addons', ADDONS_PATH);
         // 定义路由
-        Route::any('addons/execute/:route', "\\app\\common\\library\\Route@execute");
+        Route::any('addons/execute/:route', "\\muucmf\\addons\\Route@execute");
 
-        $data = cache('hooks');
+        $data = Cache::get('hooks');
         if(!$data){
             $hooks = collection(Db::name('Hooks')->column('name,addons'))->toArray();
 
@@ -35,7 +33,7 @@ class InitHook {
                     Hook::add($key,$addons);
                 }
             }
-            cache('hooks',Hook::get());
+            Cache::set('hooks',Hook::get());
         }else{
             Hook::import($data,false);
         }

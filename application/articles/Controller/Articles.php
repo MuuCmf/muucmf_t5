@@ -1,19 +1,13 @@
 <?php
-/**
- * Date: 16-4-26
- * Time: 上午10:21
- * @author 大蒙
- */
+namespace app\articles\controller;
 
-namespace Admin\Controller;
+use app\admin\controller\Admin;
+use app\admin\builder\AdminConfigBuilder;
+use app\admin\builder\AdminListBuilder;
+use app\admin\builder\AdminTreeListBuilder;
+use app\common\model\ContentHandlerModel;
 
-
-use Admin\Builder\AdminConfigBuilder;
-use Admin\Builder\AdminListBuilder;
-use Admin\Builder\AdminTreeListBuilder;
-use Common\Model\ContentHandlerModel;
-
-class ArticlesController extends AdminController{
+class Articles extends Admin{
 
     protected $articlesModel;
     protected $articlesDetailModel;
@@ -22,9 +16,9 @@ class ArticlesController extends AdminController{
     function _initialize()
     {
         parent::_initialize();
-        $this->articlesModel = D('Articles/Articles');
-        $this->articlesDetailModel = D('Articles/ArticlesDetail');
-        $this->articlesCategoryModel = D('Articles/ArticlesCategory');
+        $this->articlesModel = model('Articles/Articles');
+        $this->articlesDetailModel = model('Articles/ArticlesDetail');
+        $this->articlesCategoryModel = model('Articles/ArticlesCategory');
     }
 
     public function articlesCategory()
@@ -94,7 +88,7 @@ class ArticlesController extends AdminController{
      * @param $status
      * @author 郑钟良<zzl@ourstu.com>
      */
-    public function setStatus($ids, $status)
+    public function setCategoryStatus($ids, $status)
     {
         !is_array($ids)&&$ids=explode(',',$ids);
         if(in_array(1,$ids)){
@@ -290,7 +284,7 @@ str;
                 $result['status']=1;
                 $result['url']=U('Admin/Articles/audit');
                 //发送消息
-                $messageModel=D('Common/Message');
+                $messageModel=model('Common/Message');
                 foreach($ids as $val){
                     $articles=$this->articlesModel->getData($val);
                     $tip = '你的投稿【'.$articles['title'].'】审核失败，失败原因：'.$reason;
@@ -316,7 +310,7 @@ str;
         $builder = new AdminListBuilder();
         S('articles_home_data',null);
         //发送消息
-        $messageModel=D('Common/Message');
+        $messageModel=model('Common/Message');
         foreach($ids as $val){
             $articles=$this->articlesModel->getData($val);
             $tip = '你的投稿【'.$articles['title'].'】审核通过。';
@@ -358,7 +352,7 @@ str;
 
             $result=$this->articlesModel->editData($data);
             //这里可以放关键字写入方法
-            D('Common/keywords')->editKeywords('Articles',$aId?$aId:$result,$data['keywords']);
+            model('Common/keywords')->editKeywords('Articles',$aId?$aId:$result,$data['keywords']);
 
             if($result){
                 S('articles_home_data',null);
@@ -425,7 +419,7 @@ str;
         $res=$this->articlesModel->setDead($ids);
         if($res){
             //发送消息
-            $messageModel=D('Common/Message');
+            $messageModel=model('Common/Message');
             foreach($ids as $val){
                 $articles=$this->articlesModel->getData($val);
                 $tip = '你的文章投稿【'.$articles['title'].'】被设为过期。';

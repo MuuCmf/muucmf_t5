@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 // | Author: Byron Sampson <xiaobo.sun@qq.com>
 // +----------------------------------------------------------------------
-namespace app\common\library;
+namespace muucmf\addons;
 
 use think\Hook;
 use think\Request;

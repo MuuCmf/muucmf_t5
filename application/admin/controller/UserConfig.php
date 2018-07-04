@@ -29,7 +29,7 @@ class UserConfig extends Admin
             [
                 'id' => 'enable', 
                 'title' => lang('_ENABLE_'), 
-                'items' => array()
+                'items' => []
              ],
         ];
         //$default=array(lang('_DISABLE_')=>$step,lang('_ENABLE_AND_SKIP_')=>array(),lang('_ENABLE_BUT_NOT_SKIP_')=>array());

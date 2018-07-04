@@ -1,38 +1,6 @@
 <?php
 return array(
 
-    /*Builder*/
-
-    '_UNAUDITED_' => '未审核',
-    '_OPEN_' => '开启',
-    '_CLOSE_' => '关闭',
-    '_SUCCESS_CONF_SAVE_' => '保存配置成功',
-    '_FAIL_CONF_SAVE_' => '保存配置失败',
-    '_COMMENTS_ALLOW_VISITOR_IF_' => '是否允许游客评论',
-    '_ALLOW_DEFAULT_' => '默认为允许',
-    '_DISALLOW_' => '不允许',
-    '_ALLOW_' => '允许',
-    '_COMMENTS_SORT_' => '评论排序',
-    '_DESC_DEFAULT_' => '默认降序',
-    '_COMMENTS_PAGE_DISPLAY_COUNT_' => '每页评论显示的数量',
-    '_CLEAR_OUT_' => '清空',
-    '_CONFIRM_CLEAR_OUT_' => '您确实要清空回收站吗？（清空后不可恢复）',
-    '_CONFIRM_DELETE_COMPLETELY_' => '您确实要彻底删除吗？（彻底删除后不可恢复）',
-    '_DELETE_COMPLETELY_' => '彻底删除',
-    '_NOT_' => '不是',
-    '_NONE_' => '无',
-    '_VIEW_BIGGER_' => '查看大图',
-    '_EMPTY_BRACED_' => '（空）',
-    '_SUCCESS_TRASH_CLEARED_' => '成功清空回收站，共删除  {:result}   条记录。',
-    '_TRASH_ALREADY_EMPTY_' => '回收站是空的，未能删除任何东西。',
-    '_TRASH_SELECT_' => '请选择要清空的模型。',
-    '_SUCCESS_DELETE_COMPLETELY_' => '彻底删除成功',
-    '_ERROR_SORT_' => '未修改排序或排序错误',
-    '_SUCCESS_SORT_' => '排序成功',
-    '_DISABLE_' => '禁用',
-    '_ENABLED_' => '启用',
-
-    /*Controller&View*/
 //    public
     '_MUUCMF_BACKSTAGE_MANAGE_' => 'MuuCmf管理后台',
     '_Q_AND_A_' => '问答',
@@ -1112,22 +1080,6 @@ return array(
     '_TIP_DELETE_CATEGORY_' => 'id为 1 的分类是基础分类，不能被删除！',
     '_NO_CATEGORY_' => '无分类',
 
-    /*Home*/
-
-    '_DISPLAY_BLOCK_' => '展示模块',
-    '_HOME_SETTING_' => '首页设置',
-    '_CAROUSEL_' => '轮播',
-    '_DISABLED_' => '禁用',
-    '_TIP_DISPLAY_BLOCK_' => '拖拽到右侧以展示这些模块，新的模块安装后会多出一些可操作的项目',
-    '_PICTURE_' => '图片',
-    '_LINK_' => '链接',
-    '_NEW_WINDOW_OPEN_' => '新窗口打开',
-    '_NEW_WINDOW_' => '新窗口',
-    '_SELF_WINDOW_' => '本窗口',
-    '_SLIDE1_' => '幻灯片1',
-    '_SLIDE2_' => '幻灯片2',
-    '_SLIDE3_' => '幻灯片3',
-
     /*Forum*/
 
 
@@ -1442,7 +1394,7 @@ return array(
     '_NAVIGATION_CONNECTION_' => '导航连接',
     '_USED_TO_REVERSE_URL_' => '（用于调转的URL',
     '_SUPPORT_WITH_HTTP_' => '支持带http://的URL',
-    '_L_OR_U_FUNCTION_PARAMETER_FORMAT_' => '或U函数参数格式）',
+    '_L_OR_U_FUNCTION_PARAMETER_FORMAT_' => '或Url函数参数格式）',
     '_ONLY_TWO_LEVEL_' => '（仅支持二级）',
     '_TOP_MENU_' => '顶级菜单',
     '_NEW_WINDOW_OPENS_' => '新窗口打开',
@@ -1763,7 +1715,7 @@ return array(
     '_SMALL_ICON_' => '小图标',
     '_USED_TO_DISPLAY_THE_LEFT_SIDE_OF_THE_MENU_NOT_TO_SHOW_' => '（用于显示在菜单左侧，不填则不显示）',
     '_LINK_' => '链接',
-    '_U_FUNCTION_ANALYSIS_OF_THE_URL_OR_THE_CHAIN_' => 'U函数解析的URL或者外链',
+    '_U_FUNCTION_ANALYSIS_OF_THE_URL_OR_THE_CHAIN_' => 'Url函数解析的路径，结构：模块/控制器/方法，系统菜单可省略模块部分',
     '_SUPERIOR_MENU_' => '上级菜单',
     '_THE_HIGHER_LEVEL_MENU_' => '（所属的上级菜单）',
     '_GROUPING_' => '分组',

@@ -30,7 +30,6 @@ class Menu extends Admin {
 
         int_to_string($list,['hide'=>[1=>lang('_YES_'),0=>lang('_NOT_')],'is_dev'=>[1=>lang('_YES_'),0=>lang('_NOT_')]]);
         
-        
         $this->assign('list',$list);
 
         // 记录当前列表页的cookie

@@ -1,6 +1,6 @@
-<extend name="Public/base" />
+{extend name="common/main"/}
 
-<block name="body">
+{block name="body"}
 	<!-- 标题栏 -->
 	<div class="main-title">
 		<h2>{$title}{:lang("_CONTENT_LIST_")}</h2>
@@ -8,7 +8,7 @@
 
 	<!-- 数据列表 -->
 	<div class="data-table table-striped">
-		<empty name="custom_adminlist">
+		{empty name="custom_adminlist"}
 			<!-- 数据列表 -->
 	        <table class="table table-bordered table-striped">
 				<thead>
@@ -16,34 +16,34 @@
 						<th>
 						 	<input class="check-all" type="checkbox">{:lang("_SERIAL_NUMBER_")}
 	                    </th>
-						<volist name="listKey" id="vo">
+						{volist name="listKey" id="vo"}
 							<th>{$vo}</th>
-						</volist>
+						{/volist}
 					</tr>
 				</thead>
 				<tbody>
-					<volist name="_list" id="lv" key="vo">
+					{volist name="_list" id="lv" key="vo"}
 					<tr>
 						<td><input class="ids" type="checkbox" value="{$lv.id}" name="id[]">{$lv.id}</td>
-						<volist name="listKey" id="lk">
+						{volist name="listKey" id="lk"}
 							<td>{$lv.$key}</td>
-						</volist>
+						{/volist}
 					</tr>
-					</volist>
+					{/volist}
 				</tbody>
 			</table>
-		<else />
-			<present name="custom_adminlist">
+		{else /}
+			{present name="custom_adminlist"}
 				{$custom_adminlist}
-			</present>
-		</empty>
+			{/present}
+		{/empty}
 	</div>
 	<!-- 分页 -->
     <div class="page">
         {$_page}
     </div>
-</block>
-<block name="script">
+{/block}
+{block name="script"}
 	<script type="text/javascript">
 		$(function(){
 	        //全选节点
@@ -52,4 +52,4 @@
 	        });
 		})
 	</script>
-</block>
+{/block}

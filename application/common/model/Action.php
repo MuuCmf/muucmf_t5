@@ -6,11 +6,9 @@ use think\Db;
 
 class Action extends Model
 {
-
 	/**
      * 新增或更新一个行为
      * @return boolean fasle 失败 ， int  成功 返回完整的数据
-     * @author huajie <banhuajie@163.com>
      */
     public function updateAction(){
 
@@ -21,19 +19,22 @@ class Action extends Model
             return false;
         }
 
-        $action_rule = $data['action_rule'];
-        if(!empty($action_rule)){
+        if(!empty($data['action_rule'])){
+        	$action_rule = $data['action_rule'];
+	        if(!empty($action_rule)){
 
-            for($i=0;$i<count($action_rule['table']);$i++){
-                $data['rule'][] = [
-                    'table'=>$action_rule['table'][$i],
-                    'field'=>$action_rule['field'][$i],
-                    'rule'=>$action_rule['rule'][$i],
-                    'cycle'=>$action_rule['cycle'][$i],
-                    'max'=>$action_rule['max'][$i],
-                ];
-            }
+	            for($i=0;$i<count($action_rule['table']);$i++){
+	                $data['rule'][] = [
+	                    'table'=>$action_rule['table'][$i],
+	                    'field'=>$action_rule['field'][$i],
+	                    'rule'=>$action_rule['rule'][$i],
+	                    'cycle'=>$action_rule['cycle'][$i],
+	                    'max'=>$action_rule['max'][$i],
+	                ];
+	            }
+	        }
         }
+        
         
         if(empty($data['rule'])){
             $data['rule'] ='';
@@ -68,6 +69,12 @@ class Action extends Model
 
     public function getAction($map){
         $result = collection($this->where($map)->select())->toArray();
+        foreach ($result as &$v) {
+        	if($v['module']=='' || empty($v['module'])) {
+        		$v['module'] = 'muucmf';
+        	}
+        }
+        unset($v);
         return $result;
     }
 

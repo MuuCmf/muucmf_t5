@@ -1,16 +1,12 @@
 <?php
-/**
- * 云端应用商店
- */
+namespace app\admin\controller;
 
-namespace Admin\Controller;
-
-use Admin\Builder\AdminListBuilder;
-use Admin\Builder\AdminSortBuilder;
-use Admin\Builder\AdminConfigBuilder;
+use app\admin\builder\AdminListBuilder;
+use app\admin\builder\AdminSortBuilder;
+use app\admin\builder\AdminConfigBuilder;
 
 
-class AppcloudController extends AdminController
+class Appcloud extends Admin
 {
 
     public function _initialize()
@@ -19,7 +15,9 @@ class AppcloudController extends AdminController
     }
 
     public function index(){
-    	$this->meta_title =('应用商店');
-        $this->display();
+
+    	$this->error('应用商店将采用接口调用云端数据，该版暂未提供');
+    	$this->setTitle('应用商店');
+        return $this->fetch();
     }
 } 

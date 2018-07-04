@@ -1,102 +1,112 @@
-<extend name="Public/base" />
+{extend name="common/main"/}
+{block name="style"}
+<link href="__ZUI__/lib/board/zui.board.min.css" rel="stylesheet">
+{/block}
+{block name="body"}
 
-<block name="style">
-	<style>
-		.dragsort {
-		    width:400px;
-		}
-	</style>
-</block>
-
-<block name="body">
 	<!-- 标题栏 -->
 	<div class="main-title cf">
-		<h2><present name="data">{:lang("_EDIT_")}<else />{:lang("_NEWLY_ADDED_")}</present>{:lang("_HOOK_")}</h2>
+		<h2>{present name="data"}{:lang("_EDIT_")}{else /}{:lang("_NEWLY_ADDED_")}{/present}{:lang("_HOOK_")}</h2>
 	</div>
 
 	<!-- 修改密码表单 -->
-	<form action="{:Url('updateHook')}" method="post" class="form-horizontal">
+	<form action="{:Url('updateHook')}" method="post" class="form-horizontal ajax-post">
         <div class="with-padding">
-            <div class="form-item cf">
+            <div class="form-item builder_item">
                 <label class="item-label">{:lang("_HOOK_NAME_")}<span class="check-tips"></span></label>
                 <div class="controls">
                     <input type="text" value="{$data.name}" name="name" class="text form-control" style="width: 400px">
                 </div>
             </div>
-            <div class="form-item cf">
+            <div class="form-item builder_item">
                 <label class="item-label">{:lang("_HOOK_DESCRIPTION_")}<span class="check-tips">{:lang("_HOOKS_DESCRIPTION_")}</span></label>
                 <div class="controls">
                     <label class="textarea input-large"><textarea name="description" class="form-control" style="width: 400px" >{$data.description}</textarea></label>
                 </div>
             </div>
-            <div class="form-item cf">
+            <div class="form-item builder_item">
                 <label class="item-label">{:lang("_HOOK_TYPE_")}<span class="check-tips">{:lang("_THE_MAIN_USE_OF_THE_HOOK_")}</span></label>
                 <div class="controls">
                     <select name="type" class="form-control" style="width: auto">
-                        <volist name=":C('HOOKS_TYPE')" id="vo">
-                            <option value="{$key}" <eq name="data.type" value="$key"> selected</eq>>{$vo}</option>
-                        </volist>
+                        {volist name=":config('HOOKS_TYPE')" id="vo"}
+                            <option value="{$key}" {eq name="data.type" value="$key"} selected{/eq}>{$vo}</option>
+                        {/volist}
                     </select>
                 </div>
             </div>
-            <present name="data">
-                <div class="form-item cf">
-                    <label class="item-label">{:lang("_HOOK_MOUNTED_PLUGIN_SORTING_")}<span class="check-tips">{:lang("_ORDER_PRESERVING_DRAG_EFFECT_WITH_A_HOOK_MOUNT_PLUGIN_EXECUTION_ORDER_")}</span></label>
+            {present name="data"}
+                <div class="form-item builder_item">
+                    <label class="item-label">{:lang("_HOOK_MOUNTED_PLUGIN_SORTING_")}
+                        <span class="check-tips">{:lang("_ORDER_PRESERVING_DRAG_EFFECT_WITH_A_HOOK_MOUNT_PLUGIN_EXECUTION_ORDER_")}</span>
+                    </label>
+
                     <div id="drag-container" class="controls" style="position:relative;">
-                        <input type="hidden" name="addons" value="{$data.addons}" style="width: 100%" readonly>
-                        <script>
-                            $(function(){
-                                function updateVal() {
-                                    var sortVal = [];
-                                    $('#hook_sort .kanban-item').each(function(){
-                                        if(typeof $(this).data('id') != 'undefined'){
-                                            sortVal.push($(this).data('id'));
-                                        }
-
-                                    });
-                                    $("input[name='addons']").val(sortVal.join(','));
-
-                                }
-                                $('#hook_sort').kanbans({'drop':updateVal});
-                            })
-                        </script>
-                        <empty name="data.addons">
+                        <input type="hidden" name="addons" value="{$data.addons}" readonly>
+                        {empty name="data.addons"}
                            {:lang("_NO_PLUGINS_CANNOT_SORT_")}
-                            <else />
+                        {else /}
                             <div id="hook_sort" class="kanbans">
-                                <div class="kanban panel" data-id="addons">
-                                    <div class="panel-heading">
-                                        <strong>{:lang("_PLUGIN_SORT_")}</strong>
-                                    </div>
-                                    <div class="panel-body">
-                                        <div class="kanban-list">
-                                            <volist name=":explode(',',$data['addons'])" id="addons_vo">
-                                                <div class="kanban-item" data-id="{$addons_vo}">
-                                                    {$addons_vo}
-                                                </div>
-                                            </volist>
+
+                                <div class="boards pannel panel-primary" id="myBoards">
+                                    <div class="board panel" data-id="addons">
+                                        <div class="panel-heading">
+                                          <strong>{:lang("_PLUGIN_SORT_")}</strong>
+                                        </div>
+                                        <div class="panel-body">
+                                          <div class="board-list">
+                                            <!-- 使用 .board-item 来标识可以操作的条目 -->
+                                            {volist name=":explode(',',$data['addons'])" id="addons_vo"}
+                                            <div class="board-item" data-id="{$addons_vo}">
+                                                {$addons_vo}
+                                            </div>
+                                            {/volist}
+                                          </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        {/empty}
 
-                        </empty>
                     </div>
                 </div>
-            </present>
+            {/present}
+
+            <div class="">
+                <input type="hidden" name="id" value="{$data.id}">
+                <button type="submit" class="btn btn-success submit-btn ajax-post" target-form="form-horizontal">{:lang("_SURE_WITH_SPACE_")}</button>
+                <button class="btn btn-return" onclick="javascript:history.back(-1);return false;">{:lang("_RETURN_WITH_SPACE_")}</button>
+            </div>
         </div>
-
-        <div class="with-padding">
-            <input type="hidden" name="id" value="{$data.id}">
-            <button type="submit" class="btn submit-btn ajax-post" target-form="form-horizontal">{:lang("_SURE_WITH_SPACE_")}</button>
-            <button class="btn btn-return" onclick="javascript:history.back(-1);return false;">{:lang("_RETURN_WITH_SPACE_")}</button>
-
 	</form>
 
 </div>
-</block>
+{/block}
 
-<block name="script">
-	<present name="data">
-	</present>
-</block>
+{block name="script"}
+    <!--新版看板资源引入-->
+    
+    <script src="__ZUI__/lib/board/zui.board.min.js"></script>
+	{present name="data"}
+    <script>
+        $('#myBoards').boards({
+            drop: function(e){
+                
+                if(e.isNew){
+                    //有BUG延迟执行
+                    setTimeout("updateVal()",100);
+                }
+            }
+        });
+
+        function updateVal() {
+            var sortVal = [];
+            $('#hook_sort .board-item[data-id]').each(function(){
+                sortVal.push($(this).data('id'));
+            });
+
+            $("input[name='addons']").val(sortVal.join(','));
+        }
+    </script>
+	{/present}
+
+{/block}

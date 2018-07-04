@@ -17,8 +17,6 @@
         </ul>
         <div class="btn-group pull-right">
             <a class="btn btn-danger" href="{:Url('hooks')}">{:lang("_HOOK_MANAGEMENT_")}</a>
-
-            <a class="btn btn-primary" href="{:Url('create')}">{:lang("_QUICK_CREATE_PLUGIN_")}</a>
         </div>
         </div>
         <div class="module-list cards">
@@ -85,7 +83,7 @@
                                             {php} } {/php}
                                             
                                             
-                                            <a class="btn btn-danger ajax-get"
+                                            <a class="btn btn-danger confirm ajax-get"
                                                    href="{:Url('uninstall?id='.$vo['id'])}">{:lang("_UNINSTALL_")}</a>  
                                             
                                             

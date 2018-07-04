@@ -187,9 +187,12 @@ class Module extends Model
                 $uninstallSql = APP_PATH . '/' . $module['name'] . '/Info/cleanData.sql';
 
                 $uninstallSql = file_get_contents($uninstallSql);
+                if(empty($uninstallSql) || $uninstallSql = ''){
+                    $this->cleanModulesCache();
+                    return true;
+                }
                 $uninstallSql = str_replace("\r", "\n", $uninstallSql);
                 $uninstallSql = explode(";\n", $uninstallSql);
-
                 $res = Db::execute($uninstallSql);
                 if ($res === false) {
                     $this->error = lang('_CLEAN_UP_THE_MODULE_DATA_AND_ERROR_MESSAGE_WITH_COLON_') . $res['error_code'];
@@ -201,6 +204,10 @@ class Module extends Model
                 $uninstallSql = APP_PATH . '/' . $module['name'] . '/Info/uninstall.sql';
 
                 $uninstallSql = file_get_contents($uninstallSql);
+                if(empty($uninstallSql) || $uninstallSql = ''){
+                    $this->cleanModulesCache();
+                    return true;
+                }
                 $uninstallSql = str_replace("\r", "\n", $uninstallSql);
                 $uninstallSql = explode(";\n", $uninstallSql);
                 $res = Db::execute($uninstallSql);

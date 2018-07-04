@@ -20,9 +20,10 @@ use think\Db;
             'version'=>'1.0.0'
         ];
 
-        public function install(){
+        public $admin = 1;
 
-            
+        public function install(){
+    
             return true;
         }
 

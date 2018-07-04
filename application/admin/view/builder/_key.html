@@ -362,6 +362,7 @@
         <!-- 使用 .boards 类来管理多个 .board -->
         <div class="boards" id="{$field.name}">
           <!-- .board 为单个容器 -->
+          {notempty name="$field['value']"}
           {php}foreach($field['value'] as $key =>$kanban){{/php}
           <div class="board panel" data-id="{$kanban['id']}" data-title="{$kanban['title']}">
             <div class="panel-heading">
@@ -380,37 +381,47 @@
             </div>
           </div>
           {php}}{/php}
+          {/notempty}
         </div>
 
-        <script type="text/javascript">
-           $(function(){
-                var flag = "{$field.name}"
-                $('#{$field.name}').boards({
-                    drop: function(e){
-                        var v =new Array();
-                        $('.boards .board').each(function (index, element) {
-                            if ($(element).data('id')) {
-                                v[index] =  new Object();
-                                v[index]['id'] =  $(element).data('id');
-                                v[index]['title'] =  $(element).data('title');
-                                v[index]['items'] =  new Array();
-                                var obj = $(element).find('.board-item[data-id]');
-                                if(obj){
-                                    for (var i = 0; i < obj.length; i++) {
-                                        v[index]['items'][i] = new Object();
-                                        v[index]['items'][i]['id'] = $(obj[i]).data('id');
-                                        v[index]['items'][i]['title'] = $(obj[i]).data('title');
-                                    };
-                                }
-                            }
-                        })
-                        var kanban_str = JSON.stringify(v);
-                        $('[name="'+flag+'"]').val(kanban_str);
-                        console.log(kanban_str);
+    <script type="text/javascript">
+        $(function(){
+
+            var flag = "{$field.name}"
+            $('#{$field.name}').boards({
+                drop: function(e){
+                    setTimeout(function(){
+
+                        newVal();
+
+                    },100);
+                }
+            });
+
+            function newVal(){
+                var v =new Array();
+                $('.boards .board').each(function (index, element) {
+                    if ($(element).data('id')) {
+                        v[index] =  new Object();
+                        v[index]['id'] =  $(element).data('id');
+                        v[index]['title'] =  $(element).data('title');
+                        v[index]['items'] =  new Array();
+                        var obj = $(element).find('.board-item[data-id]');
+                        if(obj){
+                            for (var i = 0; i < obj.length; i++) {
+                                v[index]['items'][i] = new Object();
+                                v[index]['items'][i]['id'] = $(obj[i]).data('id');
+                                v[index]['items'][i]['title'] = $(obj[i]).data('title');
+                            };
+                        }
                     }
                 });
-           }) 
-        </script>
+                var kanban_str = JSON.stringify(v);
+                $('[name="'+flag+'"]').val(kanban_str);
+                console.log(kanban_str);
+            }
+        });
+    </script>
     {/case}
 {case value="chosen"}
 

@@ -90,7 +90,10 @@ class Config extends Base
             return $this->fetch(); 
         }
     }
-
+    /**
+     * 我的积分
+     * @return [type] [description]
+     */
     public function score()
     {
 
@@ -120,7 +123,8 @@ class Config extends Base
         $this->assign('self', $self);
 
         $action = model('admin/action')->getAction(['status' => 1]);
-        $action_module = array();
+
+        $action_module = [];
         
         foreach ($action as &$v) {
             
@@ -188,16 +192,14 @@ class Config extends Base
             }
         } else {
             $role_id = get_login_role();//当前登录角色
-            $roleModel = Db::name('Role');
-            $userRoleModel = Db::name('UserRole');
 
-            $already_role_list = $userRoleModel->where(array('uid' => is_login()))->field('role_id,status')->select();
+            $already_role_list = Db::name('UserRole')->where(['uid' => is_login()])->field('role_id,status')->select();
             $already_role_ids = array_column($already_role_list, 'role_id');
             $already_role_list = array_combine($already_role_ids, $already_role_list);
 
             $map_already_roles['id'] = array('in', $already_role_ids);
             $map_already_roles['status'] = 1;
-            $already_roles = $roleModel->where($map_already_roles)->order('sort asc')->select();
+            $already_roles = Db::name('Role')->where($map_already_roles)->order('sort asc')->select();
             $already_group_ids = array_unique(array_column($already_roles, 'group_id'));
 
             foreach ($already_roles as &$val) {
@@ -211,16 +213,16 @@ class Config extends Base
             if (count($already_group_ids)) {
                 $map_can_have_roles['group_id'] = array('not in', $already_group_ids);//同组内的角色不显示
             }
-            $map_can_have_roles['id'] = array('not in', $already_role_ids);//去除已有角色
+            $map_can_have_roles['id'] = ['not in', $already_role_ids];//去除已有角色
             $map_can_have_roles['invite'] = 0;//不需要邀请注册
             $map_can_have_roles['status'] = 1;
-            $can_have_roles = $roleModel->where($map_can_have_roles)->order('sort asc')->select();//可持有角色
+            $can_have_roles = Db::name('Role')->where($map_can_have_roles)->order('sort asc')->select();//可持有角色
 
             $register_type = modC('REGISTER_TYPE', 'normal', 'Invite');
             $register_type = explode(',', $register_type);
             if (in_array('invite', $register_type)) {//开启邀请注册
                 $map_can_have_roles['invite'] = 1;
-                $can_up_roles = $roleModel->where($map_can_have_roles)->order('sort asc')->select();//可升级角色
+                $can_up_roles = Db::name('Role')->where($map_can_have_roles)->order('sort asc')->select();//可升级角色
                 $this->assign('can_up_roles', $can_up_roles);
             }
 
@@ -230,7 +232,7 @@ class Config extends Base
             $this->assign('can_have_roles', $can_have_roles);
 
             $this->_setTab('role');
-            $this->display();
+            return $this->fetch();
         }
 
     }

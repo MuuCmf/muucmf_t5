@@ -54,7 +54,7 @@ class Addons extends Model
         $addonsModel = model('Addons');
         $data = (array)$info;
 
-        if (is_array($addons->admin_list) && $addons->admin_list !== []) {
+        if ($addons->admin == 1 || $addons->admin == true) {
             $data['has_adminlist'] = 1;
         } else {
             $data['has_adminlist'] = 0;
@@ -151,11 +151,14 @@ class Addons extends Model
      */
     public function getAdminList()
     {
-        $admin = array();
+        $admin = [];
         $db_addons = $this->where("status=1 AND has_adminlist=1")->field('title,name')->select();
         if ($db_addons) {
             foreach ($db_addons as $value) {
-                $admin[] = array('title' => $value['title'], 'url' => "Addons/adminList?name={$value['name']}");
+                $admin[] = [
+                    'title' => $value['title'],
+                    'url' => "addons/execute/{$value['name']}-admin-index"
+                ];
             }
         }
         return $admin;

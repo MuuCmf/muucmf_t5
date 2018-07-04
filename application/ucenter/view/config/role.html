@@ -1,12 +1,14 @@
-<extend name="Config/base"/>
-<block name="style">
+{extend name="config/base"/}
+
+
+{block name="style"}
     <style>
         .jcrop-holder > div > div {
             border-radius: 50%;
         }
     </style>
-</block>
-<block name="body">
+{/block}
+{block name="body"}
     <script>
         function center_toggle(name) {
             var show = $('#' + name + '_panel').css('display');
@@ -40,13 +42,13 @@
                             <div class="title" style="font-size: 18px;line-height: 50px;">{:lang('_IDENTITY_OWNED_')}</div>
                             <table class="col-xs-12">
                                 <tbody>
-                                <volist name="already_roles" id="role">
+                                {volist name="already_roles" id="role"}
                                     <tr style="line-height: 40px;">
                                         <td style="width: 20%">{$role.title}</td>
                                         <td style="width: 50%">{$role.user_status}</td>
                                         <td style="width: 30%"><neq name="role.user_role_status" value="0"><eq name="role.can_login" value="1"><a data-role="changeLoginRole" data-id="{$role.id}">{:lang('_LOGIN_CHANGE_')}</a><else/>{:lang('_LOGIN_NOW_')}</neq></eq></td>
                                     </tr>
-                                </volist>
+                                {/volist}
                                 </tbody>
                             </table>
                         </div>
@@ -54,21 +56,21 @@
                             <div class="title" style="font-size: 18px;line-height: 50px;">{:lang('_IDENTITY_OWNED_')}</div>
                             <table class="col-xs-12">
                                 <tbody>
-                                <volist name="can_have_roles" id="role">
+                                {volist name="can_have_roles" id="role"}
                                     <tr style="line-height: 40px;">
                                         <td style="width: 20%">{$role.title}</td>
                                         <td style="width: 80%"><a data-role="hold_role" data-id="{$role.id}">{:lang('_IDENTITY_OWN_')}</a></td>
                                     </tr>
-                                </volist>
-                                <volist name="can_up_roles" id="role">
+                                {/volist}
+                                {volist name="can_up_roles" id="role"}
                                     <tr style="line-height: 40px;">
                                         <td style="width: 20%">{$role.title}</td>
                                         <td style="width: 80%"><a data-role="up_role" data-url="{:Url('Ucenter/Member/upRole',array('role_id'=>$role['id']))}">{:lang('_IDENTITY_UPGRADE_')}</a></td>
                                     </tr>
-                                </volist>
-                                <if condition="!count($can_have_roles)&&!count($can_up_roles)">
+                                {/volist}
+                                {if condition="!count($can_have_roles)&&!count($can_up_roles)"}
                                     <div style="width: 100%;margin-left: 60px;color: #cdcdcd;font-size: 18px;">{:lang('_IDENTITY_NONE_')}{:lang('_EXCLAMATION_')}</div>
-                                </if>
+                                {/if}
                                 </tbody>
                             </table>
                         </div>
@@ -84,14 +86,14 @@
                             <div class="col-xs-4">
 
                                 <select class="form-control" id="show_role" name="show_role">
-                                    <volist name="already_roles" id="onerole">
-                                        <if condition="$onerole['id'] eq $show_role">
+                                    {volist name="already_roles" id="onerole"}
+                                        {if condition="$onerole['id'] eq $show_role"}
                                             <option value="{$onerole.id}" selected>{$onerole.title|htmlspecialchars}</option>
-                                            <else/>
+                                        {else/}
                                             <option value="{$onerole.id}">{$onerole.title|htmlspecialchars}</option>
-                                        </if>
+                                        {/if}
 
-                                    </volist>
+                                    {/volist}
                                 </select>
                                 <div class="clearfix"></div>
                             </div>
@@ -111,7 +113,7 @@
         $(function(){
             $('[data-role="changeLoginRole"]').click(function(){
                 var role_id=$(this).attr('data-id');
-                $.post(U('Ucenter/Member/changeLoginRole'),{role_id:role_id},function(data){
+                $.post(Url('Ucenter/Member/changeLoginRole'),{role_id:role_id},function(data){
                     if(data.status){
                         if(data.url!=undefined){
                             toast.success("{:lang('_REDIRECT_AFTER_IDENTITY_CHANGE_')}{:lang('_WAVE_')}");
@@ -131,7 +133,7 @@
             });
             $('[data-role="hold_role"]').click(function(){
                 var role_id=$(this).attr('data-id');
-                $.post(U('Ucenter/Member/registerRole'),{role_id:role_id},function(data){
+                $.post(Url('Ucenter/Member/registerRole'),{role_id:role_id},function(data){
                     if(data.status){
                         toast.success("{:lang('_REDIRECT_AFTER_IDENTITY_OWN_')}{:lang('_WAVE_')}");
                         setTimeout(function(){
@@ -153,4 +155,4 @@
             });
         });
     </script>
-</block>
+{/block}

@@ -1,11 +1,9 @@
 <?php
+namespace app\articles\model;
 
-namespace Articles\Model;
+use think\Model;
 
-
-use Think\Model;
-
-class ArticlesModel extends Model{
+class Articles extends Model{
 
     public function editData($data)
     {
@@ -67,7 +65,7 @@ class ArticlesModel extends Model{
         return $res;
     }
 
-    public function getData($id)
+    public function getDataById($id)
     {
         if($id>0){
             $map['id']=$id;

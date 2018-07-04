@@ -1,6 +1,6 @@
-<extend name="Public/base"/>
+{extend name="common/main"/}
 
-<block name="body">
+{block name="body"}
 	<div class="main-title">
 		<h2>
 			{$info['id']?L('_EDIT_WITH_SINGLE_'):lang('_NEW_WITH_SINGLE_')}{:lang("_NAVIGATION_")}
@@ -81,7 +81,7 @@
 			<button class="btn btn-return" onclick="javascript:history.back(-1);return false;">{:lang("_RETURN_WITH_SPACE_")}</button>
 		</div>
 	</form>
-</block>
-<block name="script">
+{/block}
+{block name="script"}
 
-</block>
+{/block}

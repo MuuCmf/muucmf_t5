@@ -3,7 +3,7 @@ namespace app\admin\controller;
 
 use think\Db;
 /**
- * 扩展后台管理页面
+ * 扩展后台插件管理页面
  */
 class Addons extends Admin
 {
@@ -16,107 +16,6 @@ class Addons extends Admin
         parent::_initialize();
     }
 
-    //创建向导首页
-    public function create()
-    {
-        if (!is_writable(APPONS_PATH))
-            $this->error(lang('_YOU_DO_NOT_CREATE_A_DIRECTORY_TO_WRITE_PERMISSION_'));
-
-        $hooks = Db::name('Hooks')->field('name,description')->select();
-        $this->assign('Hooks', $hooks);
-        $this->setTitle(lang('_CREATE_WIZARD_'));
-        return $this->fetch('create');
-    }
-
-    //预览
-    public function preview($output = true)
-    {
-        $data = $_POST;
-        $data['info']['status'] = (int)$data['info']['status'];
-        $extend = array();
-        $custom_config = trim($data['custom_config']);
-        if ($data['has_config'] && $custom_config) {
-            $custom_config = <<<str
-
-
-        public \$custom_config = '{$custom_config}';
-str;
-            $extend[] = $custom_config;
-        }
-
-        $admin_list = trim($data['admin_list']);
-        if ($data['has_adminlist'] && $admin_list) {
-            $admin_list = <<<str
-
-
-        public \$admin_list = array(
-            {$admin_list}
-        );
-str;
-            $extend[] = $admin_list;
-        }
-
-        $custom_adminlist = trim($data['custom_adminlist']);
-        if ($data['has_adminlist'] && $custom_adminlist) {
-            $custom_adminlist = <<<str
-
-
-        public \$custom_adminlist = '{$custom_adminlist}';
-str;
-            $extend[] = $custom_adminlist;
-        }
-
-        $extend = implode('', $extend);
-        $hook = '';
-        foreach ($data['hook'] as $value) {
-            $hook .= <<<str
-        //实现的{$value}钩子方法
-        public function {$value}(\$param){
-
-        }
-
-str;
-        }
-
-        $tpl = <<<str
-<?php
-
-namespace Addons\\{$data['info']['name']};
-use Common\Controller\Addon;
-
-/**
- * {$data['info']['title']}插件
- * @author {$data['info']['author']}
- */
-
-    class {$data['info']['name']}Addon extends Addon{
-
-        public \$info = array(
-            'name'=>'{$data['info']['name']}',
-            'title'=>'{$data['info']['title']}',
-            'description'=>'{$data['info']['description']}',
-            'status'=>{$data['info']['status']},
-            'author'=>'{$data['info']['author']}',
-            'version'=>'{$data['info']['version']}'
-        );{$extend}
-
-        public function install(){
-            return true;
-        }
-
-        public function uninstall(){
-            return true;
-        }
-
-{$hook}
-    }
-str;
-        if ($output)
-            exit($tpl);
-        else
-            return $tpl;
-    }
-
     public function checkForm()
     {
         $data = $_POST;
@@ -124,107 +23,14 @@ str;
         if (!$data['info']['name'])
             $this->error(lang('_PLUGIN_LOGO_MUST_'));
         //检测插件名是否合法
-        $addons_dir = ADDON_PATH;
+        $addons_dir = ADDONS_PATH;
         if (file_exists("{$addons_dir}{$data['info']['name']}")) {
             $this->error(lang('_PLUGIN_ALREADY_EXISTS_'));
         }
         $this->success(lang('_CAN_CREATE_'));
     }
 
-    public function build()
-    {
-        $data = $_POST;
-        $data['info']['name'] = trim($data['info']['name']);
-        $addonFile = $this->preview(false);
-        $addons_dir = ADDON_PATH;
-        //创建目录结构
-        $files = array();
-        $addon_dir = "$addons_dir{$data['info']['name']}/";
-        $files[] = $addon_dir;
-        $addon_name = "{$data['info']['name']}Addon.class.php";
-        $files[] = "{$addon_dir}{$addon_name}";
-        if ($data['has_config'] == 1) ;//如果有配置文件
-        $files[] = $addon_dir . 'config.php';
 
-        if ($data['has_outurl']) {
-            $files[] = "{$addon_dir}Controller/";
-            $files[] = "{$addon_dir}Controller/{$data['info']['name']}Controller.class.php";
-            $files[] = "{$addon_dir}Model/";
-            $files[] = "{$addon_dir}Model/{$data['info']['name']}Model.class.php";
-        }
-        $custom_config = trim($data['custom_config']);
-        if ($custom_config)
-            $data[] = "{$addon_dir}{$custom_config}";
-
-        $custom_adminlist = trim($data['custom_adminlist']);
-        if ($custom_adminlist)
-            $data[] = "{$addon_dir}{$custom_adminlist}";
-
-        create_dir_or_files($files);
-
-        //写文件
-        file_put_contents("{$addon_dir}{$addon_name}", $addonFile);
-        if ($data['has_outurl']) {
-            $addonController = <<<str
-<?php
-
-namespace Addons\\{$data['info']['name']}\Controller;
-use Home\Controller\AddonsController;
-
-class {$data['info']['name']}Controller extends AddonsController{
-
-}
-
-str;
-            file_put_contents("{$addon_dir}Controller/{$data['info']['name']}Controller.class.php", $addonController);
-            $addonModel = <<<str
-<?php
-
-namespace Addons\\{$data['info']['name']}\Model;
-use Think\Model;
-
-/**
- * {$data['info']['name']}模型
- */
-class {$data['info']['name']}Model extends Model{
-    public \$model = array(
-        'title'=>'',//新增[title]、编辑[title]、删除[title]的提示
-        'template_add'=>'',//自定义新增模板自定义html edit.html 会读取插件根目录的模板
-        'template_edit'=>'',//自定义编辑模板html
-        'search_key'=>'',// 搜索的字段名，默认是title
-        'extend'=>1,
-    );
-
-    public \$_fields = array(
-        'id'=>array(
-            'name'=>'id',//字段名
-            'title'=>'ID',//显示标题
-            'type'=>'num',//字段类型
-            'remark'=>'',// 备注，相当于配置里的tip
-            'is_show'=>3,// 1-始终显示 2-新增显示 3-编辑显示 0-不显示
-            'value'=>0,//默认值
-        ),
-        'title'=>array(
-            'name'=>'title',
-            'title'=>lang('_TITLE_'),
-            'type'=>'string',
-            'remark'=>'',
-            'is_show'=>1,
-            'value'=>0,
-            'is_must'=>1,
-        ),
-    );
-}
-
-str;
-            file_put_contents("{$addon_dir}Model/{$data['info']['name']}Model.class.php", $addonModel);
-        }
-
-        if ($data['has_config'] == 1)
-            file_put_contents("{$addon_dir}config.php", $data['config']);
-
-        $this->success(lang('_CREATE_SUCCESS_'), Url('index'));
-    }
 
     /**
      * 插件列表
@@ -261,47 +67,6 @@ str;
         return $this->fetch();
     }
 
-    
-
-    /**
-     * 插件后台显示页面
-     * @param string $name 插件名
-     */
-    public function adminList($name)
-    {
-
-        if (method_exists(A('Addons://' . $name . '/Admin'), 'buildList')) {
-            A('Addons://' . $name . '/Admin')->buildList();
-            exit;
-        }
-
-
-        // 记录当前列表页的cookie
-        Cookie('__forward__', $_SERVER['REQUEST_URI']);
-        $class = get_addon_class($name);
-        if (!class_exists($class))
-            $this->error(lang('_PLUGIN_DOES_NOT_EXIST_'));
-        $addon = new $class();
-        $this->assign('addon', $addon);
-        $param = $addon->admin_list;
-        if (!$param)
-            $this->error(lang('_THE_PLUGIN_LIST_INFORMATION_IS_NOT_CORRECT_'));
-        $this->meta_title = $addon->info['title'];
-        extract($param);
-        $this->assign('title', $addon->info['title']);
-        $this->assign($param);
-        if (!isset($fields))
-            $fields = '*';
-        if (!isset($map))
-            $map = array();
-        if (isset($model))
-            $list = $this->lists(D("Addons://{$model}/{$model}")->field($fields), $map, $order);
-        $this->assign('_list', $list);
-        if ($addon->custom_adminlist)
-            $this->assign('custom_adminlist', $this->fetch($addon->addon_path . $addon->custom_adminlist));
-        return $this->fetch();
-    }
-
     /**
      * 启用插件
      */
@@ -309,7 +74,8 @@ str;
     {
         $id = input('id');
         $msg = array('success' => lang('_ENABLE_SUCCESS_'), 'error' => lang('_ENABLE_FAILED_'));
-        S('hooks', null);
+        cache('hooks', null);
+
         $this->resume('Addons', "id={$id}", $msg);
     }
 
@@ -320,7 +86,8 @@ str;
     {
         $id = input('id');
         $msg = array('success' => lang('_DISABLE_SUCCESS_'), 'error' => lang('_DISABLE_'));
-        S('hooks', null);
+        cache('hooks', null);
+
         $this->forbid('Addons', "id={$id}", $msg);
     }
 
@@ -333,11 +100,15 @@ str;
         $addon = Db::name('Addons')->find($id);
         if (!$addon)
             $this->error(lang('_PLUGIN_NOT_INSTALLED_'));
+
         $addon_class = get_addon_class($addon['name']);
+
         if (!class_exists($addon_class))
             trace(lang('_FAIL_ADDON_PARAM_',array('model'=>$addon['name'])), 'ADDONS', 'ERR');
+
         $data = new $addon_class;
-        $addon['addon_path'] = $data->addon_path;
+
+        $addon['addon_path'] = $data->addons_path;
         $addon['custom_config'] = $data->custom_config;
         $this->meta_title = lang('_ADDONS_SET_') . $data->info['title'];
         $db_config = $addon['config'];
@@ -368,8 +139,8 @@ str;
     public function saveConfig()
     {
         $id = (int)input('id');
-        $config = input('config');
-        $flag = Db::name('Addons')->where("id={$id}")->setField('config', json_encode($config));
+        $config = input('config/a');
+        $flag = Db::name('Addons')->where(['id'=>$id])->setField('config', json_encode($config));
         if (isset($config['addons_cache'])) {//清除缓存
             cache($config['addons_cache'], null);
         }
@@ -430,18 +201,22 @@ str;
     }
 
     /**
-     * 钩子列表
+     * 钩子管理列表
      */
     public function hooks()
     {
-        $this->meta_title = lang('_HOOK_LIST_');
-        $map = $fields = array();
-        $list = $this->lists(D("Hooks")->field($fields), $map);
-        int_to_string($list, array('type' => C('HOOKS_TYPE')));
+        $this->setTitle(lang('_HOOK_LIST_'));
+        $map = $fields = ['id'=>['>',0]];
+
+        list($list,$page) = $this->lists('Hooks', $map, 'id desc', []);
+        $list = $list->toArray()['data'];
+        int_to_string($list, ['type' => config('HOOKS_TYPE')]);
         // 记录当前列表页的cookie
         Cookie('__forward__', $_SERVER['REQUEST_URI']);
+
         $this->assign('list', $list);
-        $this->display();
+        
+        return $this->fetch();
     }
 
     public function addhook()
@@ -456,7 +231,7 @@ str;
     {
         $hook = Db::name('Hooks')->field(true)->find($id);
         $this->assign('data', $hook);
-        $this->meta_title = lang('_EDIT_HOOK_');
+        $this->setTitle(lang('_EDIT_HOOK_'));
         return $this->fetch('edithook');
     }
 
@@ -470,39 +245,47 @@ str;
         }
     }
 
+    /**
+     * 编辑、新增钩子处理
+     * @return [type] [description]
+     */
     public function updateHook()
     {
-        $hookModel = D('Hooks');
-        $data = $hookModel->create();
-        if ($data) {
-            if ($data['id']) {
-                $flag = $hookModel->save($data);
-                if ($flag !== false)
-                    $this->success(lang('_UPDATE_'), Cookie('__SELF__'));
-                else
-                    $this->error(lang('_UPDATE_FAILED_'));
+        if(request()->isPost())
+        {
+            $data = input('');
+
+            if ($data) {
+                if ($data['id']) {
+                    $flag = Db::name('Hooks')->where(['id'=>$data['id']])->update($data);
+                    if ($flag !== false)
+                        $this->success(lang('_UPDATE_'), Cookie('__forward__'));
+                    else
+                        $this->error(lang('_UPDATE_FAILED_'));
+                } else {
+                    $flag = Db::name('Hooks')->insert($data);
+                    if ($flag)
+                        $this->success(lang('_NEW_SUCCESS_'), Cookie('__forward__'));
+                    else
+                        $this->error(lang('_NEW_FAILURE_'));
+                }
             } else {
-                $flag = $hookModel->add($data);
-                if ($flag)
-                    $this->success(lang('_NEW_SUCCESS_'), Cookie('__forward__'));
-                else
-                    $this->error(lang('_NEW_FAILURE_'));
+                $this->error($hookModel->getError());
             }
-        } else {
-            $this->error($hookModel->getError());
         }
+        
     }
 
     public function execute($_addons = null, $_controller = null, $_action = null)
     {
-        if (C('URL_CASE_INSENSITIVE')) {
+        if (config('URL_CASE_INSENSITIVE')) {
             $_addons = ucfirst(parse_name($_addons, 1));
             $_controller = parse_name($_controller, 1);
         }
 
-        $TMPL_PARSE_STRING = C('TMPL_PARSE_STRING');
+        $TMPL_PARSE_STRING = config('TMPL_PARSE_STRING');
         $TMPL_PARSE_STRING['__ADDONROOT__'] = __ROOT__ . "/Addons/{$_addons}";
-        C('TMPL_PARSE_STRING', $TMPL_PARSE_STRING);
+        config('TMPL_PARSE_STRING', $TMPL_PARSE_STRING);
 
 
         if (!empty($_addons) && !empty($_controller) && !empty($_action)) {
@@ -510,61 +293,6 @@ str;
             $Addons = A("Addons://{$_addons}/{$_controller}")->$_action();
         } else {
             $this->error(lang('_NO_SPECIFIED_PLUG-IN_NAME,_CONTROLLER_OR_OPERATION_'));
-        }
-    }
-
-    public function edit($name, $id = 0)
-    {
-        $this->assign('name', $name);
-        $class = get_addon_class($name);
-        if (!class_exists($class))
-            $this->error(lang('_PLUGIN_DOES_NOT_EXIST_'));
-        $addon = new $class();
-        $this->assign('addon', $addon);
-        $param = $addon->admin_list;
-        if (!$param)
-            $this->error(lang('_THE_PLUGIN_LIST_INFORMATION_IS_NOT_CORRECT_'));
-        extract($param);
-        $this->assign('title', $addon->info['title']);
-        if (isset($model)) {
-            $addonModel = D("Addons://{$name}/{$model}");
-            if (!$addonModel)
-                $this->error(lang('_MODEL_CANNOT_BE_REAL_'));
-            $model = $addonModel->model;
-            $this->assign('model', $model);
-        }
-        if ($id) {
-            $data = $addonModel->find($id);
-            $data || $this->error(lang('_DATA_DOES_NOT_EXIST_'));
-            $this->assign('data', $data);
-        }
-
-        if (IS_POST) {
-            // 获取模型的字段信息
-            if (!$addonModel->create())
-                $this->error($addonModel->getError());
-
-            if ($id) {
-                $flag = $addonModel->save();
-                if ($flag !== false)
-                    $this->success(lang('_SUCCESS_ADD_PARAM_',array('model'=>$model['title'])), Cookie('__forward__'));
-                else
-                    $this->error($addonModel->getError());
-            } else {
-                $flag = $addonModel->add();
-                if ($flag)
-                    $this->success(lang('_FAIL_ADD_PARAM_',array('model'=>$model['title'])), Cookie('__forward__'));
-            }
-            $this->error($addonModel->getError());
-        } else {
-            $fields = $addonModel->_fields;
-            $this->assign('fields', $fields);
-            $this->meta_title = $id ? lang('_EDIT_') . $model['title'] : lang('_NEW_') . $model['title'];
-            if ($id)
-                $template = $model['template_edit'] ? $model['template_edit'] : '';
-            else
-                $template = $model['template_add'] ? $model['template_add'] : '';
-            $this->display($addon->addon_path . $template);
         }
     }
 

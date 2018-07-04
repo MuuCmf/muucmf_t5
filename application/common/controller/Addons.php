@@ -16,11 +16,12 @@ abstract class Addons{
 
     public $info                =   [];
     public $addons_path         =   '';
-    public $config_file         =   '';
+    //public $config_file         =   '';
 
     public $custom_config       =   '';
-    public $admin_list          =   [];
-    public $custom_adminlist    =   '';
+    //public $admin_list          =   [];
+    public $admin               =   '';
+    //public $custom_adminlist    =   '';
     public $access_url          =   [];
 
 

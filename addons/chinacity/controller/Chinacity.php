@@ -1,7 +1,7 @@
 <?php
-namespace Addons\Chinacity\controller;
+namespace addons\Chinacity\controller;
 
-use app\common\library\Controller;
+use muucmf\addons\Controller;
 
 class Chinacity extends Controller{
 	

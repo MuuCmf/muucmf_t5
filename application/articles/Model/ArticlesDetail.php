@@ -1,9 +1,10 @@
 <?php
-namespace Articles\Model;
-use Common\Model\ContentHandlerModel;
-use Think\Model;
+namespace app\articles\model;
 
-class ArticlesDetailModel extends Model{
+use app\common\model\ContentHandler;
+use think\Model;
+
+class ArticlesDetail extends Model{
 
     public function editData($data=array())
     {
@@ -18,7 +19,7 @@ class ArticlesDetailModel extends Model{
         return $res;
     }
 
-    public function getData($id)
+    public function getDataById($id)
     {   
         //处理代码块时会产生BUG，暂时去掉
         //$contentHandler=new ContentHandlerModel();
