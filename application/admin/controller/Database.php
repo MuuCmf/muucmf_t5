@@ -2,7 +2,7 @@
 namespace app\admin\controller;
 
 use think\Db;
-use muucmf\Database;
+use muucmf\Database as MuucmfDb;
 /**
  * 数据库备份还原控制器
  */
@@ -186,7 +186,7 @@ class Database extends Admin{
             session('backup_tables', $tables);
 
             //创建备份文件
-            $Database = new Database($file, $config);
+            $Database = new MuucmfDb($file, $config);
             if(false !== $Database->create()){
                 $tab = array('id' => 0, 'start' => 0);
                 $this->success(lang('_INITIAL_SUCCESS_'), '', array('tables' => $tables, 'tab' => $tab));
@@ -201,7 +201,7 @@ class Database extends Admin{
 
             $tables = session('backup_tables');
             //备份指定表
-            $Database = new Database(session('backup_file'), session('backup_config'));
+            $Database = new MuucmfDb(session('backup_file'), session('backup_config'));
             $start  = $Database->backup($tables[$id], $start);
             if(false === $start){ //出错
                 $this->error(lang('_BACKUP_ERROR_'));
@@ -256,7 +256,7 @@ class Database extends Admin{
             }
         } elseif(is_numeric($part) && is_numeric($start)) {
             $list  = session('backup_list');
-            $db = new Database($list[$part], array(
+            $db = new MuucmfDb($list[$part], array(
                 'path'     => realpath(config('DATA_BACKUP_PATH')) . DIRECTORY_SEPARATOR,
                 'compress' => $list[$part][2]));
 
