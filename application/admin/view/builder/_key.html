@@ -77,21 +77,12 @@
             <select name="{$field.name}" title={:lang("_SELECT_ICON_WITH_DOUBLE_")} class="chosen-icons" data-value="{$field.value|default='icon-star'}"></select>
         </div>
         {php}
-            if(!$have_icon){
+            if(empty($have_icon)){
             $have_icon=1;
         {/php}
-        <script src="__ZUI__/lib/chosen/chosen.icons.min.js"></script>
-        <link href="__ZUI__/lib/chosen/chosen.icons.css" rel="stylesheet">
+        
         {php}}{/php}
-        <script>
-            $(function(){
-                $('.chosen-container').remove()
-                $('form select.chosen-icons').attr('class','chosen-icons');
-                $('form select.chosen-icons').data('zui.chosenIcons',null);
-                $('form select.chosen-icons').data('chosen',null);
-                $('form select.chosen-icons').chosenIcons();
-            });
-        </script>
+        
     {/case}
 
     {case value="singleFile"}

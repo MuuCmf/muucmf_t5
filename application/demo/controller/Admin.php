@@ -39,11 +39,27 @@ class Admin extends MuuAdmin
         $builder
         	->title('title标题')
         	->suggest('suggest副标题')
+
+        	->keyReadOnly('DEMO_READONLY','ReadOnly','只读文本')
+        	->keyDefault('DEMO_READONLY','ReadOnly')
+
+        	->keyReadOnlyText('DEMO_READONLYTEXT','ReadOnlyText','只读文本框')
+        	->keyDefault('DEMO_READONLYTEXT','只读文本框')
+
+        	->keyText('DEMO_TEXT', 'Text', 'Text副标题')
+            ->keyDefault('DEMO_TEXT','TEXT演示')
+
             ->keyTextArea('DEMO_TEXTAREA','TextArea')
             ->keyDefault('DEMO_TEXTAREA',$default_textarea)
 
-            ->keyText('DEMO_TEXT', 'Text', 'Text副标题')
-            ->keyDefault('DEMO_TEXT','TEXT演示')
+            ->keyReadOnlyHtml('DEMO_READONLYHTML','ReadOnlyHtml','')
+            ->keyDefault('DEMO_READONLYHTML','<h2>只读HTML<small>小标题</small></h2>')
+
+            ->keyColor('DEMO_COLOR','Color','')
+
+            ->keyInteger('DEMO_INTEGER','Integer','')
+
+            ->keyIcon('DEMO_ICON','Icon','图标')
 
             ->keyRadio('DEMO_RADIO', 'Radio', 'Radio副标题', $default_arr)
             ->keyDefault('DEMO_RADIO',0)
@@ -55,16 +71,27 @@ class Admin extends MuuAdmin
             ->keyChosen('DEMO_CHOSEN','Chosen','',$default_arr)
             ->keyDefault('DEMO_CHOSEN',0)
 
+            ->keyTime('DEMO_TIME','Time','')
+
             ->group('分组1', [
+            	'DEMO_READONLY',
+            	'DEMO_READONLYTEXT',
             	'DEMO_TEXT',
+            	'DEMO_INTEGER',
             	'DEMO_TEXTAREA',
+            	'DEMO_READONLYHTML',
+            	'DEMO_COLOR',
+            	'DEMO_ICON',
             	'DEMO_RADIO',
             	'DEMO_CHECKBOX',
             	'DEMO_SELECT',
             	'DEMO_CHOSEN',
+            	'DEMO_TIME',
 
         	])
-            ->group('分组2', '')
+            ->group('分组2', [
+            	
+        	])
 
             ->buttonSubmit()
             ->buttonBack()
