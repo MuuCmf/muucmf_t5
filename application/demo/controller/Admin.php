@@ -23,9 +23,9 @@ class Admin extends MuuAdmin
     public function config(){
 
 		$builder=new AdminConfigBuilder();
-        $data=$builder->handleConfig();
-        $default_textarea='文本域默认值';
+        $data='';
 
+        $default_textarea='文本域默认值';
         $default_arr=[
         	0=>'选项1',
         	1=>'选项2',
@@ -73,6 +73,7 @@ class Admin extends MuuAdmin
 
             ->keyTime('DEMO_TIME','Time','')
 
+
             ->group('分组1', [
             	'DEMO_READONLY',
             	'DEMO_READONLYTEXT',
@@ -80,7 +81,7 @@ class Admin extends MuuAdmin
             	'DEMO_INTEGER',
             	'DEMO_TEXTAREA',
             	'DEMO_READONLYHTML',
-            	'DEMO_COLOR',
+            	//'DEMO_COLOR',
             	'DEMO_ICON',
             	'DEMO_RADIO',
             	'DEMO_CHECKBOX',
@@ -91,8 +92,27 @@ class Admin extends MuuAdmin
         	])
             ->group('分组2', [
             	
-        	])
+        	]);
 
+			//上传
+			$builder
+			->keySingleImage('DEMO_SINGLEIMAGE','SingleImage','单图片上传')
+
+			->keyMultiImage('DEMO_MULTIIMAGE','MultImage','多图片上传')
+
+            ->keySingleFile('DEMO_SINGFILE','SingFile','单文件上传')
+
+            ->keyMultiFile('DEMO_MULTIFILE','MultiFile','多文件上传')
+
+        	->group('上传', [
+        		'DEMO_SINGLEIMAGE',
+        		'DEMO_MULTIIMAGE',
+            	'DEMO_SINGFILE',
+            	//'DEMO_MULTIFILE',
+        	]);
+
+        	//提交
+        	$builder
             ->buttonSubmit()
             ->buttonBack()
             ->display();

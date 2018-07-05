@@ -1,3 +1,4 @@
+<div class="builder_item">
 <label class="item-label">{$field.title|htmlspecialchars}
     {if condition="$field['subtitle']"}
         <span class="suggest check-tips">（{$field.subtitle}）</span>
@@ -7,7 +8,7 @@
     <p>{:lang("_DEVELOPMENT_STAFF_ATTENTION_")}{:lang("_YOU_USE_A_FIELD_NAMED_ACTION_")}，{:lang("_BECAUSE_THIS_FIELD_NAME_WILL_BE_WITH_FORM_")}[action]{:lang("_CONFLICT_WHICH_CAUSES_THE_FORM_TO_BE_UNABLE_TO_COMMIT_PLEASE_USE_ANOTHER_NAME_")}
     </p>
 {/if}
-<div class="controls ">
+<div class="controls">
 {switch name="field.type"}
 
     {case value="text"}
@@ -60,6 +61,32 @@
         <div class="color-picker" style="width:100px;height: 30px;">
             <input type="text" name="{$field.name}" class="simple_color_callback form-control" onchange="setColorPicker(this);" value="{$field.value|default=''}">
         </div>
+            <script type="text/javascript" src="__LIB__/jquery.simple-color/jquery.simple-color.js"></script>
+            <script>
+                $(function(){
+                    $('.simple_color_callback').simpleColor({
+                        boxWidth:20,
+                        cellWidth: 20,
+                        cellHeight: 20,
+                        chooserCSS:{ 'z-index': 500 },
+                        displayCSS: { 'border': 0 ,
+                            'width': '32px',
+                            'height': '32px',
+                            'margin-top': '-32px'
+                        },
+                        onSelect: function(hex, element) {
+                            $('#tw_color').val('#'+hex);
+                        }
+                    });
+                    $('.simple_color_callback').show();
+                    $('.simpleColorContainer').css('margin-left','105px');
+                    $('.simpleColorDisplay').css('border','1px solid #DFDFDF');
+                });
+                var setColorPicker=function(obj){
+                    var color=$(obj).val();
+                    $(obj).parents('.color-picker').find('.simpleColorDisplay').css('background',color);
+                }
+            </script>
     {/case}
     {case value="radio"}
         {volist name="field.opt" id="option"}
@@ -82,34 +109,109 @@
         {/php}
         
         {php}}{/php}
-        
+        <script>
+            $(function(){
+                $('.chosen-container').remove()
+                $('form select.chosen-icons').attr('class','chosen-icons');
+                $('form select.chosen-icons').data('zui.chosenIcons',null);
+                $('form select.chosen-icons').data('chosen',null);
+                $('form select.chosen-icons').chosenIcons();
+            });
+        </script>
     {/case}
 
     {case value="singleFile"}
-        {:widget('common/UploadFile/render',array(array('name'=>$field['name'],'value'=>$field['value'])))}
-    {/case}
-    {case value="multiFile"}
-        {:widget('common/UploadMultiFile/render',array(array('name'=>$field['name'],'limit'=>9,'value'=>$field['value'])))}
-    {/case}
-    {case value="singleImage"}
-        <div class="controls">
-            <div id="upload_single_image_{$field.name}" style="padding-bottom: 5px;">{:lang("_SELECT_PICTURES_")}</div>
-            <input class="attach" type="hidden" name="{$field.name}" value="{$field['value']}"/>
-            <div class="upload-img-box">
-                <div class="upload-pre-item popup-gallery">
+        <div class="singleFile">
+        <input name="{$field.name}" id="file_upload_{$field.name}" type="hidden" value="{$field.value}">
+        <div id="file_list_{$field.name}" class="file_list_box">
+            {empty name="file"}
+            
+            {else/}
+                <div class="file_item">{$file.name} <a onclick="remove_file_{$field.name}(this,{$file.id})"><i class="icon-trash"></i></a> </div>
+            {/empty}
+        </div>
 
-                {notempty name="field.value"}
-                    <div class="each">
-                    <a href="{$field.value|get_cover='path'}" title={:lang("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
-                        <img src="{$field.value|get_cover='path'}">
-                    </a>
-                        <div class="text-center opacity del_btn" ></div>
-                        <div onclick="admin_image.removeImage($(this),'{$field.value}')"  class="text-center del_btn">{:lang("_DELETE_")}</div>
-                    </div>
-                {/notempty}
-                </div>
+        <div id="uploader_{$field.name}">
+            <div class="btns">
+                <div id="picker">{:lang('_FILE_SELECT_')}</div>
             </div>
         </div>
+        </div>
+        <script>
+        $(function () {
+            var id = "#uploader_{$field.name}";
+            var $list_{$field.name}=$('#file_list_{$field.name}');
+            var uploader_{$field.name} = WebUploader.create({
+
+                // swf文件路径
+                swf: 'Uploader.swf',
+
+                // 文件接收服务端。
+                server: "{:Url('api/file/uploadFile',array('session_id'=>session_id()))}",
+
+                // 选择文件的按钮。可选。
+                // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+                pick: id,
+
+                // 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
+                resize: false
+            });
+            // 当有文件被添加进队列的时候
+            uploader_{$field.name}.on( 'fileQueued', function( file ) {
+                uploader_{$field.name}.upload();
+                toast.showLoading();
+            });
+            // 文件上传过程中创建进度条实时显示。
+            uploader_{$field.name}.on( 'uploadSuccess', function( file ,ret ) {
+                if(ret.code==1){
+                    toast.success("{:lang('_SUCCESS_UPLOAD_')}{:lang('_PERIOD_')}");
+                    $list_{$field.name}.html('<div class="file_item">'+ret.data.name+' <a onclick="remove_file_{$field.name}'+'(this,'+ret.data.id+')"><i class="icon-trash"></i></a></div>');
+                   $('#file_upload_{$field.name}').val(ret.data.id);
+                }else{
+                    toast.error("{:lang('_FAIL_UPLOAD_')}{:lang('_PERIOD_')}"+ret.msg);
+                }
+                console.log(ret)
+            });
+
+            uploader_{$field.name}.on( 'uploadError', function( file ) {
+                toast.error("{:lang('_ERROR_UPLOAD_')}{:lang('_PERIOD_')}")
+            });
+
+            uploader_{$field.name}.on( 'uploadComplete', function( file ) {
+                toast.hideLoading();
+            });
+
+            function remove_file_{$field.name}(obj, attachId) {
+                $('#file_upload_{$field.name}').val('');
+                $(obj).parent('div').remove();
+            }
+        });
+        </script>
+
+    {/case}
+    {case value="multiFile"}
+        {:widget('common/UploadMultiFile/render',['name'=>$field['name'],'limit'=>9,'value'=>$field['value']])}
+    {/case}
+    {case value="singleImage"}
+        <div class="singleImage">
+        <div id="upload_single_image_{$field.name}" style="padding-bottom: 5px;">{:lang("_SELECT_PICTURES_")}</div>
+        <input class="attach" type="hidden" name="{$field.name}" value="{$field['value']}"/>
+        <div class="upload-img-box">
+            <div class="upload-pre-item popup-gallery">
+
+            {notempty name="field.value"}
+                <div class="each">
+                <a href="{$field.value|get_cover='path'}" title={:lang("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+                    <img src="{$field.value|get_cover='path'}">
+                </a>
+                    <div class="text-center opacity del_btn" ></div>
+                    <div onclick="admin_image.removeImage($(this),'{$field.value}')"  class="text-center del_btn">{:lang("_DELETE_")}</div>
+                </div>
+            {/notempty}
+            </div>
+        </div>
+        </div>
+
         <script>
             $(function () {
                 var uploader_{$field.name}= WebUploader.create({
@@ -155,26 +257,25 @@
     {/case}
 
     {case value="multiImage"}
-        <div class="controls multiImage">
+        <div class="multiImage">
             <div id="upload_multi_image_{$field.name}">{:lang("_SELECT_PICTURES_")}</div>
             <input class="attach" type="hidden" name="{$field.name}" value="{$field['value']}"/>
             <div class="upload-img-box">
                 <div class="upload-pre-item popup-gallery">
-
-                    <notempty name="field.value">
+                    {notempty name="field.value"}
                         {php}$aIds = explode(',',$field['value']);{/php}
                         {volist name="aIds" id="aId"}
                             <div class="each">
-                                <a href="{$aId|get_cover='path'}" title={:lang("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
+                                <a href="{$aId|get_cover='path'}" data-toggle="lightbox" title={:lang("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>
                                     <img src="{$aId|get_cover='path'}">
                                 </a>
                                 <div class="text-center opacity del_btn" ></div>
-                                <div onclick="admin_image.removeImage($(this),'{$aId}')"  class="text-center del_btn">{:lang("_DELETE_")}</div>
+                                <div onclick="admin_image.removeImage($(this),'{$aId}')"  class="text-center del_btn">
+                                    {:lang("_DELETE_")}
+                                </div>
                             </div>
                         {/volist}
-
-
-                    </notempty>
+                    {/notempty}
                 </div>
             </div>
         </div>
@@ -187,7 +288,7 @@
                       // sw{:lang("_F_FILE_PATH_")}
                     swf: 'Uploader.swf',
                     // 文件接收服务端。
-                    server: "{:Url('File/uploadPicture',array('session_id'=>session_id()))}",
+                    server: "{:Url('api/file/uploadPicture',array('session_id'=>session_id()))}",
                     // 选择文件的按钮。可选。
                     // 内部根据当前运行是创建，可能是input元素，{:lang("_AND_IT_COULD_BE_FLASH_")}.
                     //pick: '#upload_multi_image_{$field.name}',
@@ -197,7 +298,7 @@
                     accept: {
                         title: 'Images',
                         extensions: 'gif,jpg,jpeg,bmp,png',
-                        mimeTypes: 'image/*'
+                        mimeTypes: 'image/image/jpg,image/jpeg,image/png'
                     }
                 });
                 uploader_{$field.name}.on('fileQueued', function (file) {
@@ -208,29 +309,36 @@
                 });
                 /*上传成功**/
                 uploader_{$field.name}.on('uploadSuccess', function (file, data) {
-                          if (data.status) {
-                            var ids = $("[name='{$field.name}']").val();
-                            ids = ids.split(',');
-                          if( ids.indexOf(data.id) == -1){
-                                var rids = admin_image.upAttachVal('add',data.id, $("[name='{$field.name}']"));
-                              if(rids.length>limit){
-                                  updateAlert({:lang('_EXCEED_THE_PICTURE_LIMIT_WITH_SINGLE_')});
-                                  return;
-                              }
-                              $("[name='{$field.name}']").parent().find('.upload-pre-item').append(
-                                        ' <div class="each"><a href="'+ data.path+'" title={:lang("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}><img src="'+ data.path+'"></a><div class="text-center opacity del_btn" ></div>' +
-                                                '<div onclick="admin_image.removeImage($(this),'+data.id+')"  class="text-center del_btn">{:lang("_DELETE_")}</div></div>'
-                                );
-                            }else{
-                                updateAlert({:lang('_THE_PICTURE_ALREADY_EXISTS_WITH_SINGLE_')});
-                            }
-                        } else {
-                            updateAlert(data.info);
-                            setTimeout(function () {
-                                $('#top-alert').find('button').click();
-                                $(that).removeClass('disabled').prop('disabled', false);
-                            }, 1500);
-                        }
+                  if (data.code) {
+
+                    var ids = $("[name='{$field.name}']").val();
+                    ids = ids.split(',');
+
+                  if( ids.indexOf(data.data.id) == -1){
+                        var rids = admin_image.upAttachVal('add',data.data.id, $("[name='{$field.name}']"));
+                      if(rids.length>limit){
+                          updateAlert({:lang('_EXCEED_THE_PICTURE_LIMIT_WITH_SINGLE_')});
+                          return;
+                      }
+                      $("[name='{$field.name}']").parent().find('.upload-pre-item').append(
+                            '<div class="each">'+
+                            '<a href="'+ data.data.path+'" data-toggle="lightbox" title={:lang("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>'+
+                            '<img src="'+ data.data.path+'">'+
+                            '</a>'+
+                            '<div class="text-center opacity del_btn" ></div>' +
+                                '<div onclick="admin_image.removeImage($(this),'+data.data.id+')"  class="text-center del_btn">{:lang("_DELETE_")}</div>'+
+                            '</div>'
+                        );
+                    }else{
+                        updateAlert({:lang('_THE_PICTURE_ALREADY_EXISTS_WITH_SINGLE_')});
+                    }
+                } else {
+                    updateAlert(data.msg);
+                    setTimeout(function () {
+                        $('#top-alert').find('button').click();
+                        $(that).removeClass('disabled').prop('disabled', false);
+                    }, 1500);
+                }
                 });
             })
         </script>
@@ -416,8 +524,6 @@
     {/case}
 {case value="chosen"}
 
-    
-
     <select data-placeholder="" name="{$field.name}[]" class="chosen-select form-control" tabindex="2" multiple="">
         {php}
             if( key($field['opt']) === 0){
@@ -500,4 +606,5 @@
     <span>{:lang("_ERROR_")}{:lang("_COLON_")}{:lang("_UNKNOWN_FIELD_TYPE_")}{$field.type}</span>
     <input type="hidden" name="{$field.name}" value="{$field.value|htmlspecialchars}"/>
 {/switch}
+</div>
 </div>

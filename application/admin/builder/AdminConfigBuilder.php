@@ -8,12 +8,12 @@ class AdminConfigBuilder extends AdminBuilder
 {
     private $_title;
     private $_suggest;
-    private $_keyList = array();
-    private $_data = array();
-    private $_buttonList = array();
-    private $_savePostUrl = array();
-    private $_group = array();
-    private $_callback = null;
+    private $_keyList     = [];
+    private $_data        = [];
+    private $_buttonList  = [];
+    private $_savePostUrl = [];
+    private $_group       = [];
+    private $_callback    = null;
 
     public function title($title)
     {
@@ -219,6 +219,11 @@ class AdminConfigBuilder extends AdminBuilder
         return $this->keyTime($name, $title, $subtitle);
     }
 
+    public function keyUpdateTime($name = 'update_time', $title = '修改时间', $subtitle = null)
+    {
+        return $this->keyTime($name, $title, $subtitle);
+    }
+
     public function keyBool($name, $title, $subtitle = null)
     {
         $map = array(1 => lang('_YES_'), 0 => lang('_NO_'));
@@ -229,11 +234,6 @@ class AdminConfigBuilder extends AdminBuilder
     {
         $map = array(1 => lang('_OPEN_'), 0 => lang('_CLOSE_'));
         return $this->keyRadio($name, $title, $subtitle, $map);
-    }
-
-    public function keyUpdateTime($name = 'update_time', $title = '修改时间', $subtitle = null)
-    {
-        return $this->keyTime($name, $title, $subtitle);
     }
 
     public function keyKanban($name, $title, $subtitle = null)
@@ -250,12 +250,6 @@ class AdminConfigBuilder extends AdminBuilder
     public function keyId($name = 'id', $title = '编号', $subtitle = null)
     {
         return $this->keyReadOnly($name, $title, $subtitle);
-    }
-
-    public function keyMultiUserGroup($name, $title, $subtitle = null)
-    {
-        $options = $this->readUserGroups();
-        return $this->keyCheckBox($name, $title, $subtitle, $options);
     }
 
     /**单文件上传
@@ -276,8 +270,6 @@ class AdminConfigBuilder extends AdminBuilder
         return   $this->key($name,$title,$subtitle,'multiFile');
     }
 
-
-
     public function keySingleImage($name, $title, $subtitle = null)
     {
         return $this->key($name, $title, $subtitle, 'singleImage');
@@ -292,6 +284,12 @@ class AdminConfigBuilder extends AdminBuilder
     {
         $options = $this->readUserGroups();
         return $this->keySelect($name, $title, $subtitle, $options);
+    }
+
+    public function keyMultiUserGroup($name, $title, $subtitle = null)
+    {
+        $options = $this->readUserGroups();
+        return $this->keyCheckBox($name, $title, $subtitle, $options);
     }
 
     /** 添加城市选择（需安装城市联动插件）

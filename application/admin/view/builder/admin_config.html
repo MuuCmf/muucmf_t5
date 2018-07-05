@@ -1,5 +1,12 @@
 {extend name="admin@common/main"/}
-
+{block name="style"}
+<link href="__ZUI__/lib/datetimepicker/datetimepicker.css" rel="stylesheet" type="text/css">
+<link href="__COMMON__/lib/magnific/magnific-popup.css" rel="stylesheet" type="text/css"/>
+<link href="__COMMON__/lib/webuploader/css/webuploader.css" rel="stylesheet" type="text/css">
+<link href="__ZUI__/lib/board/zui.board.min.css" rel="stylesheet">
+<link href="__ZUI__/lib/chosen/chosen.min.css" rel="stylesheet">
+<link href="__ZUI__/lib/chosenicons/zui.chosenicons.min.css" rel="stylesheet">
+{/block}
 {block name="body"}
 <div class="builder">
     <div class="main-title">
@@ -19,21 +26,23 @@
         {php}if($group){{/php}
             {volist name="group" id="vGroup"}
                 <div class="group_list" style="{if condition='$i neq 1'}display: none;{/if}">
+                    
                     {volist name="keyList" id="field"}
-                    <div class="builder_item">
+                    
                         {php}if(in_array($field['name'],$vGroup)){{/php}
                         {include file="admin@builder/_key"/}
                         {php}}{/php}
-                    </div>
+                    
                     {/volist}
+
                 </div>
             {/volist}
 
         {php}}else{{/php}
             {volist name="keyList" id="field"}
-            <div class="builder_item">
+            
                 {include file="admin@builder/_key"/}
-            </div>
+
             {/volist}
         {php}}{/php}
         <br/>
@@ -50,10 +59,12 @@
 
 {block name="script"}
 
-    <link href="__ZUI__/lib/datetimepicker/datetimepicker.css" rel="stylesheet" type="text/css">
     <script type="text/javascript" src="__ZUI__/lib/datetimepicker/datetimepicker.min.js"></script>
+    <script type="text/javascript" src="__COMMON__/lib/magnific/jquery.magnific-popup.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="__COMMON__/lib/webuploader/js/webuploader.js"></script>
 
     <script>
+    $(function () {
         $('.form-datetime').datetimepicker({
             language: "zh-CN",
             autoclose: true,
@@ -79,37 +90,14 @@
             var timestamp = date.getTime();
             $('[name=' + fieldName + ']').val(Math.floor(timestamp / 1000));
         });
+    });
     </script>
 
-    <script type="text/javascript" src="__LIB__/jquery.simple-color/jquery.simple-color.js"></script>
-    <script>
-        $(function(){
-            $('.simple_color_callback').simpleColor({
-                boxWidth:20,
-                cellWidth: 20,
-                cellHeight: 20,
-                chooserCSS:{ 'z-index': 500 },
-                displayCSS: { 'border': 0 ,
-                    'width': '32px',
-                    'height': '32px',
-                    'margin-top': '-32px'
-                },
-                onSelect: function(hex, element) {
-                    $('#tw_color').val('#'+hex);
-                }
-            });
-            $('.simple_color_callback').show();
-            $('.simpleColorContainer').css('margin-left','105px');
-            $('.simpleColorDisplay').css('border','1px solid #DFDFDF');
-        });
-        var setColorPicker=function(obj){
-            var color=$(obj).val();
-            $(obj).parents('.color-picker').find('.simpleColorDisplay').css('background',color);
-        }
-    </script>
+
 
     <script>
         $(function () {
+            //多选框数据处理
             function implode(x, list) {
                 var result = "";
                 for (var i = 0; i < list.length; i++) {
@@ -148,11 +136,7 @@
         Think.setValue("type", {$info.type|default=0});
         Think.setValue("group", {$info.group|default=0});
     </script>
-    <link type="text/css" rel="stylesheet" href="__COMMON__/lib/magnific/magnific-popup.css"/>
-    <script type="text/javascript" src="__COMMON__/lib/magnific/jquery.magnific-popup.min.js"></script>
-    <script type="text/javascript" charset="utf-8" src="__COMMON__/lib/webuploader/js/webuploader.js"></script>
-    <link href="__COMMON__/lib/webuploader/css/webuploader.css" type="text/css" rel="stylesheet">
-
+    
     <script>
         $(document).ready(function () {
             $('.popup-gallery').each(function () { // the containers for all your galleries
@@ -182,21 +166,9 @@
     </script>
     <!--chosen 依赖资源引入-->
     <script src="__ZUI__/lib/chosen/chosen.min.js"></script>
-    <link href="__ZUI__/lib/chosen/chosen.min.css" rel="stylesheet">
     <!--chosenICON 依赖资源引入-->
     <script src="__ZUI__/lib/chosenicons/zui.chosenicons.min.js"></script>
-    <link href="__ZUI__/lib/chosenicons/zui.chosenicons.min.css" rel="stylesheet">
-    <script>
-        $(function(){
-            $('.chosen-container').remove()
-            $('form select.chosen-icons').attr('class','chosen-icons');
-            $('form select.chosen-icons').data('zui.chosenIcons',null);
-            $('form select.chosen-icons').data('chosen',null);
-            $('form select.chosen-icons').chosenIcons();
-        });
-    </script>
     <!--新版看板资源引入-->
-    <link href="__ZUI__/lib/board/zui.board.min.css" rel="stylesheet">
     <script src="__ZUI__/lib/board/zui.board.min.js"></script>
     {notempty name="myJs"}
         {$myJs}

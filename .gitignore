@@ -59,6 +59,7 @@ package-lock.json
 
 # MuuCmf
 /public/src
+/public/uploads
 /runtime
 /.hatccess
 /data
