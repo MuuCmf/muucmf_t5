@@ -2,10 +2,10 @@
 namespace app\index\controller;
 
 use app\admin\builder\AdminConfigBuilder;
-use app\admin\controller\Admin;
+use app\admin\controller\Admin as MuuAdmin;
 
 
-class Home extends Admin
+class Admin extends MuuAdmin
 {
     public function _initialize()
     {

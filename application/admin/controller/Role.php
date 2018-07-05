@@ -157,8 +157,11 @@ class Role extends Admin
                 ->keyTextArea('description', lang('_DESCRIPTION_'))
                 ->keySelect('group_id', lang('_GROUP_'), '', $group)
                 ->keyChosen('user_groups', lang('_DEFAULT_USER_GROUP_'), lang('_THE_DEFAULT_USER_REGISTRATION_WHERE_THE_USER_GROUP_CHOOSE_'), $authGroupList)
-                ->keyRadio('invite', lang('_NEED_TO_BE_INVITED_TO_REGISTER_'), lang('_DEFAULT_IS_OFF_AFTER_OPENING_THE_USER_CAN_BE_INVITED_TO_REGISTER_'), array(1 => lang('_OPEN_'), 0 => lang('_OFF_')))
+
+                ->keyRadio('invite', lang('_NEED_TO_BE_INVITED_TO_REGISTER_'), lang('_DEFAULT_IS_OFF_AFTER_OPENING_THE_USER_CAN_BE_INVITED_TO_REGISTER_'), [1 => lang('_OPEN_'), 0 => lang('_OFF_')])
+
                 ->keyRadio('audit', lang('_NEED_TO_EXAMINE_'), lang('_DEFAULT_IS_CLOSED_AFTER_THE_USER_AUDIT_TO_HAVE_THE_IDENTITY_OF_THE_'), array(1 => lang('_OPEN_'), 0 => lang('_OFF_')))
+                
                 ->keyStatus()
                 ->data($data)
                 ->buttonSubmit(Url('editRole'))

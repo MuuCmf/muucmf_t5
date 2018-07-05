@@ -372,6 +372,7 @@ class AdminConfigBuilder extends AdminBuilder
 
     public function display($templateFile = '', $charset = '', $contentType = '', $content = '', $prefix = '')
     {
+
         //将数据融入到key中
         foreach ($this->_keyList as &$e) {
             
@@ -495,7 +496,6 @@ class AdminConfigBuilder extends AdminBuilder
     {
         if (request()->isPost()) {
             $success = false;
-            $configModel = Db::name('config');
             foreach (input() as $k => $v) {
                 $config['name'] = '_' . strtoupper(request()->controller()) . '_' . strtoupper($k);
                 $config['type'] = 0;
@@ -510,14 +510,14 @@ class AdminConfigBuilder extends AdminBuilder
                 $config['sort'] = 0;
 
                 //查询是否存在
-                $this_conf = $configModel->where(['name' => $config['name']])->find();
+                $this_conf = Db::name('config')->where(['name' => $config['name']])->find();
 
                 if($this_conf) {
                     //$config['id'] = $this_conf['id'];
-                    $configModel->where(['id' => $this_conf['id']])->update($config);
+                    Db::name('config')->where(['id' => $this_conf['id']])->update($config);
                     $success = 1;
                 }else{
-                    $configModel->insert($config);
+                    Db::name('config')->insert($config);
                     $success = 1;
                 }
                 $tag = 'conf_' . strtoupper(request()->controller()) . '_' . strtoupper($k);
@@ -544,7 +544,7 @@ class AdminConfigBuilder extends AdminBuilder
 
 
         } else {
-            $configs = Db::name('Config')->where(array('name' => array('like', '_' . strtoupper(request()->controller()) . '_' . '%')))->limit(999)->select();
+            $configs = Db::name('Config')->where(['name' => array('like', '_' . strtoupper(request()->controller()) . '_' . '%')])->limit(999)->select();
             $data = array();
             foreach ($configs as $k => $v) {
                 $key = str_replace('_' . strtoupper(request()->controller()) . '_', '', strtoupper($v['name']));
@@ -672,8 +672,6 @@ class AdminConfigBuilder extends AdminBuilder
         return $this;
     }
 
-
-
     public function keyUserDefined($name,$title,$subtitle,$display='',$param=''){
         $this->assign('param',$param);
         $this->assign('name',$name);
@@ -683,15 +681,12 @@ class AdminConfigBuilder extends AdminBuilder
         $this->_keyList[] = $key;
         return $this;
     }
-    public function addCustomJs($script){
+    /**
+     * 自定义JS
+     * @param [type] $script [description]
+     */
+    public function customJs($script){
         $this->assign('myJs',$script);
     }
-
-
-
-
-
-
-
 
 }

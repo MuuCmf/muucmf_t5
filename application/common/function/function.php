@@ -4,6 +4,7 @@ use think\Db;
 
 require_once(APP_PATH . '/common/function/addons.php');
 require_once(APP_PATH . '/common/function/api.php');
+require_once(APP_PATH . '/common/function/builder.php');
 require_once(APP_PATH . '/common/function/cache.php');
 require_once(APP_PATH . '/common/function/collect.php');
 require_once(APP_PATH . '/common/function/ext_parse.php');

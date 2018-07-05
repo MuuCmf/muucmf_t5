@@ -1053,7 +1053,6 @@ return array(
     '_NEWS_TO_EXPIRE_' => '资讯投稿被设为过期！',
 
     /*News:Public*/
-
     '_NOTE_' => '摘要',
     '_TIP_SUCCESS_' => '资讯成功！',
     '_TIP_FAIL_' => '资讯失败！',
@@ -1064,9 +1063,7 @@ return array(
     '_EXPIRE_AND_UNAUDITED_' => '已过期未审核',
     '_AUDIT_ALL_' => '全部审核',
 
-
     /*Paper*/
-
     '_PAPER_BASIC_CONF_' => '文章基础设置',
     '_PAPER_TOP_TITLE_' => '文章顶部标题',
     '_PAPER_INTRO_' => '介绍',
@@ -1081,7 +1078,6 @@ return array(
     '_NO_CATEGORY_' => '无分类',
 
     /*Forum*/
-
 
     /*Devtool*/
     '_PACK_PROCESS_' => '打包流程',
@@ -1285,7 +1281,6 @@ return array(
     '_MODULAR_' => '模块',
     '_NEW_NODE_' => '新增节点',
 
-
 //addnode
     '_EDIT_WITH_SINGLE_' => "'编辑'",
     '_NEW_WITH_SINGLE_' => "'新增'",
@@ -1297,16 +1292,9 @@ return array(
     '_THE_MODULE_' => '所属模块',
     '_MODULES_OF_THE_RIGHT_NODE_' => '权限节点所属的模块',
 
-
 //group
     '_USER_GROUP_AUTHORIZATION_' => '权限组授权',
     '_USER_GROUP_LIST_' => ' 所属的权限组列表',
-
-//index
-
-
-//tree
-
 
 //user
     '_USER_GROUP_MEMBERSHIP_' => '权限组成员授权',
@@ -1316,98 +1304,6 @@ return array(
     '_RELEASE_AUTHORITY_' => '解除授权',
     '_PLEASE_ENTER_UID_' => '请输入uid',
     '_COMMA_SEPARATED_IN_ENGLISH_' => '多个用英文逗号分隔',
-
-
-    /*Builder*/
-
-
-//admin_config
-    '_LOADING_' => '正在载入 ',
-    '_PICTURE_' => '图片 ',
-    '_COULD_NOT_BE_LOADED_' => ' 无法被载入.',
-
-
-//admin__LIST_
-    '_DETERMINATION_WITH_DOUBLE_' => '"确定"',
-    '_NO_OPERATIONAL_DATA_WITH_SINGLE_' => "'没有可操作数据。'",
-
-//admin_so_LIST_
-    '_O_SEGMENTATION_' => 'O分割符',
-    '_SEARCH_WITH_DOUBLE_' => '"搜索"',
-    '_SELECT_ID_' => ' 选择的ID',
-
-
-//admin_sort
-    '_CONFIGURATION_SORTING_' => ' 配置排序',
-    '_CHECK_WITH_SPACE_' => '查 找',
-    '_FIRST_WITH_SPACE_' => '第 一',
-    '_UPPER_SHIFT_WITH_SPACE_' => '上 移',
-    '_NEXT_MOVE_WITH_SPACE_' => '下 移',
-    '_AFTER_THE_MOST_WITH_SPACE_' => '最 后',
-
-//admin_tree
-    '_FOLD_' => '折叠',
-    '_TABLE_LIST_' => '表格列表 ',
-
-
-//tree
-
-    '_MOVE_WITH_DOUBLE_' => '"移动"',
-    '_MOBILE_' => '移动',
-    '_MERGER_WITH_DOUBLE_' => '"合并"',
-    '_MERGE_' => '合并',
-    '_ADD_A_SUB_CATEGORY_WITH_DOUBLE_' => '"添加子分类"',
-
-
-//_key
-    '_DEVELOPMENT_STAFF_ATTENTION_' => '开发人员注意',
-    '_YOU_USE_A_FIELD_NAMED_ACTION_' => '你使用了一个名称为action的字段',
-    '_BECAUSE_THIS_FIELD_NAME_WILL_BE_WITH_FORM_' => '由于这个字段名称会与form',
-    '_CONFLICT_WHICH_CAUSES_THE_FORM_TO_BE_UNABLE_TO_COMMIT_PLEASE_USE_ANOTHER_NAME_' => '冲突，导致无法提交表单，请换用另外一个名字。',
-    '_NO_NEED_TO_FILL_IN_WITH_DOUBLE_' => '"无需填写"',
-    '_SELECT_ICON_WITH_DOUBLE_' => '"选择icon"',
-    '_SELECT_PICTURES_' => '选择图片',
-    '_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_' => '"点击查看大图"',
-    '_F_FILE_PATH_' => 'f文件路径',
-    '_AND_IT_COULD_BE_FLASH_' => '也可能是flash',
-    '_EXCEED_THE_PICTURE_LIMIT_WITH_SINGLE_' => "'超过图片限制'",
-    '_THE_PICTURE_ALREADY_EXISTS_WITH_SINGLE_' => "'该图片已存在'",
-    '_S_STYLE_IS_NOT_GOOD_TO_DEAL_WITH_THE_LAYOUT_IS_A_BIT_STRANGE_' => 's样式不好处理排版有点怪）',
-    '_START_' => '开始-',
-    '_CHOICE_WITH_DOUBLE_' => '"选择"',
-    '_POP_UP_WINDOW_WITH_DOUBLE_' => '"弹出窗口"',
-    '_THE_WINDOW_IS_CLOSED_WITH_DOUBLE_' => '"窗口已关闭"',
-    '_END_' => '结束-',
-    '_ERROR_' => '错误',
-    '_UNKNOWN_FIELD_TYPE_' => '未知字段类型 ',
-
-
-    /*Channel*/
-
-
-//edit
-
-    '_NAVIGATION_' => '导航',
-    '_FATHER_NAVIGATION_' => '父导航',
-    '_NAVIGATION_TITLE_' => '导航标题',
-    '_USED_TO_DISPLAY_TEXT_' => '（用于显示的文字）',
-    '_NAVIGATION_CONNECTION_' => '导航连接',
-    '_USED_TO_REVERSE_URL_' => '（用于调转的URL',
-    '_SUPPORT_WITH_HTTP_' => '支持带http://的URL',
-    '_L_OR_U_FUNCTION_PARAMETER_FORMAT_' => '或Url函数参数格式）',
-    '_ONLY_TWO_LEVEL_' => '（仅支持二级）',
-    '_TOP_MENU_' => '顶级菜单',
-    '_NEW_WINDOW_OPENS_' => '新窗口打开',
-    '_WHETHER_THE_NEW_WINDOW_OPENS_THE_LINK_' => '（是否新窗口打开链接）',
-    '_ENTER_ICON_' => '输入图标英文',
-    '_PRIORITY_' => '优先级',
-    '_NAVIGATION_DISPLAY_ORDER_' => '（导航显示顺序）',
-    '_TEXT_COLOR_' => '文字颜色',
-    '_THE_UPPER_RIGHT_CORNER_OF_THE_LOGO_COLOR_SUPPORTS_ALL_KINDS_OF_CSS_REPRESENTATION_' => '（右上角的标志点颜色，支持各类css表示方式',
-    '_MARK_POINT_COLOR_' => '标志点颜色',
-    '_MARK_POINT_' => '标志点文字',
-    '_THE_UPPER_RIGHT_CORNER_OF_THE_LOGO_NOT_TOO_LONG_NOT_AUTOMATICALLY_HIDDEN_' => '（右上角的标志点文字，不要太长，没有自动隐藏）',
-
 
 //index
     '_SYSTEM_MODULE_' => '系统模块',
@@ -1424,17 +1320,13 @@ return array(
     '_SELECT_THE_FLAG_COLOR_WITH_DOUBLE_' => '"选择标志点颜色"',
     '_ADD_NAVIGATION_WITH_DOUBLE_' => '"添加导航"',
 
-
 //sort
     '_RETURN_LIST_' => '返回列表',
-
 
 //_li
     '__WITH_DOUBLE_' => '"选择icon"',
 
-
-    /*Cloud*/
-
+/*Cloud*/
 
 //compare
     '_AUTOMATIC_UPGRADE_' => '自动升级 ',
@@ -1466,11 +1358,9 @@ return array(
     '_PLEASE_DONT_JUMP_OVER_' => '请不要跳过。',
     '_I_HAVE_TO_MERGE_THE_CODE_SKIP_FILE_UPGRADE_' => '我已经自行合并代码，跳过文件升级',
 
-
 //_COVER_
     '_UPDATE_SOURCE_' => ' 更新源码',
     '_FILE_COVER_IMPORT_DATABASE_' => '文件覆盖完成，导入数据库。',
-
 
 //finish
     '_COMPLETE_' => ' 完成',
@@ -1492,20 +1382,14 @@ return array(
     '_UPDATE_FILE_STORAGE_LOCATION_' => ' 更新文件存放位置',
     '_DOWNLOAD_COMPLETE_COMPARE_FILES_' => '下载完成，比较文件',
 
-
 //getVersionList
     '_VERSION_NUMBER_' => '版本号',
     '_RELEASE_TIME_' => '发布时间',
     '_UPDATE_LOG_' => '更新日志',
     '_GO_TO_UPDATE_' => '前往更新',
 
-
-//index
-
-
 //install
     '_CLOUD_MARKET_ONLINE_INSTALLATION_' => '云市场在线安装',
-
 
 //update
     '_CURRENT_REMOTE_LATEST_VERSION_' => '当前远程最新版本',
@@ -1522,7 +1406,6 @@ return array(
     '_MANUAL_DOWNLOAD_' => '下载文件',
     '_HISTORICAL_VERSION_' => ' 历史版本',
     '_FUTURE_VERSIONS_' => ' 未来版本',
-
 
 //updategoods
     '_CLOUD_MARKET_EXPANSION_AUTOMATIC_UPGRADE_' => '云市场扩展自动升级',
@@ -1568,14 +1451,7 @@ return array(
     '_COMPLETE_SYNCHRONIZED_VERSION_NUMBER_AND_TOKEN_' => ' 完成，同步版本号和Token',
     '_CURRENT_ESCALATION_' => ' 当前升级的扩展',
 
-
-//version
-
-
-//_updatingGoods
-
-
-    /*Config*/
+/*Config*/
 
 
 //edit
@@ -1624,9 +1500,7 @@ return array(
     '_START_BACK_UP_' => '开始备份.',
     '_BACK_UP_CLICK_ON_THE_BACKUP_WITH_DOUBLE_' => '"备份完成，点击重新备份"',
 
-
 //import
-
     '_BACKUP_NAME_' => '备份名称',
     '_VOLUME_NUMBER_' => '卷数',
     '_COMPRESSION_' => '压缩',
@@ -1634,18 +1508,13 @@ return array(
     '_REDUCTION_' => '还原',
     '_RESTORING_DATABASE_PLEASE_DONT_TURN_OFF_WITH_DOUBLE_' => '"正在还原数据库，请不要关闭！"',
 
-
-    /*Expression*/
-
-
+/*Expression*/
 //add
     '_UPLOAD_THE_EXPRESSION_PACKAGE_' => '上传表情包',
     '_THE_CHINESE_NAME_OF_THE_EXPRESSION_' => '表情的中文名称',
     '_UPLOAD_FILE_' => '上传文件',
     '_EXPRESSION_ONLY_SUPPORTS_' => ' 表情仅支持 ',
     '_FORMAT_' => ' 格式。',
-
-
 //edit
     '_EDIT_EXPRESSION_PACKAGE_' => '编辑表情包',
 
@@ -1656,20 +1525,14 @@ return array(
     '_EXPRESSION_QUANTITY_' => '表情数量',
     '_ENABLE_WITH_SINGLE_' => "'启用'",
     '_DISABLE_WITH_SINGLE_' => "'禁用'",
-
-
-    /*Index*/
-
-
+/*Index*/
 //index
     '_THE_MAIN_MODULE_HAS_A_NEW_UPDATE_' => ' 主模块有新的更新。',
     '_MICROBLOGGING_MODULE_HAS_A_NEW_UPDATE_CONTENT_' => ' 微博模块有新的更新内容。',
     '_SONG_WITH_DOUBLE_' => '"宋体"',
 
 
-    /*Invite*/
-
-
+/*Invite*/
 //create
     '_GENERATE_A_NUMBER_' => ' 生成个数',
     '_REGISTERED_NUMBER_' => ' 注册个数',
@@ -1703,8 +1566,7 @@ return array(
     '_PLEASE_SELECT_THE_DATA_WITH_SINGLE_' => "'请选择数据！'",
     '_BATCH_COPY_SUCCESS_WITH_SINGLE_' => "'批量复制成功'",
 
-
-    /*Menu*/
+/*Menu*/
 
 
 //edit
@@ -1774,13 +1636,11 @@ return array(
     '_STOP_JUMP_' => '停止跳转',
     '_RE_LOGIN_' => '重新登录',
 
-
 //exception
     '_SYSTEM_ERROR_' => '系统发生错误',
     '_WRONG_POSITION_' => '错误位置',
     '_OFFICIAL_WEBSITE_WITH_DOUBLE_' => '"官方网站"',
     '_OPEN_SOURCE_SOCIAL_SYSTEMS_' => '开源社交系统',
-
 
 //login
     '_LOGIN_BACKGROUND_' => '登录后台',
@@ -1798,7 +1658,6 @@ return array(
 
 
     /*Qiniu*/
-
 
 //index
     '_NOT_SELECTED_FILE_' => '未选择文件',
@@ -1840,10 +1699,7 @@ return array(
     '_L_CONVERSION_' => 'l转换',
     '_SUBMIT_WITH_SINGLE_' => "'提交'",
     '_VIDEO_PROCESSING_WITH_SINGLE_' => "'视频处理'",
-
-
     /*Rank*/
-
 
 //user_LIST_
     '_PLEASE_ENTER_A_USER_NAME_OR_ID_WITH_DOUBLE_' => '"请输入用户昵称或者ID"',
@@ -1956,10 +1812,7 @@ return array(
 //_LIST_s
     '_PLEASE_ENTER_THE_KEYWORD_WITH_DOUBLE_' => '"请输入关键字"',
 
-
-    /*Update*/
-
-
+/*Update*/
 //addpack
     '_PATCH_' => '补丁',
     '_NAME_ENGLISH_PATCH_BLANK_GENERATED_AUTOMATICALLY_ACCORDING_TO_THE_TIME_' => '（英文补丁的名称，留空自动根据时间生成）',
@@ -1969,13 +1822,11 @@ return array(
     '_USED_IN_THE_TEXT_OF_THE_ROLE_OF_THE_PATCH_' => '（用于说明补丁作用的文字）',
     '_FILL_IN_THE_PATCH_' => '（填写补丁作者）',
 
-
 //index
     '_DO_YOU_NEED_TO_BACK_UP_IMPORTANT_FILES_' => '是否需要备份重要文件',
     '_FOR_A_BACKUP_DATABASE_PLEASE_' => '如需备份数据库，请',
     '_CLICK_BACKUP_' => '点击备份',
     '_START_UPDATING_' => '开始更新',
-
 
 //quick
     '_USE_PATCHES_' => '使用补丁',
@@ -1984,7 +1835,7 @@ return array(
     '_SEE_' => '查看',
     '_VIEW_CONTENT_WITH_SINGLE_' => "'查看内容'",
 
-    /*User*/
+/*User*/
 
 
 //action
@@ -2094,9 +1945,7 @@ return array(
     '_DRAFT_' => '草稿',
     '_INTEGRAL_' => '积分',
     '_SUB_DOMAIN_NAME_' => '子域名',
-
-
-    /*LOGINC*/
+/*LOGINC*/
 //ArticleLogic
     '_CONTENT_CAN_NOT_BE_EMPTY_WITH_EXCLAMATION_' => '内容不能为空！',
     '_NEW_DETAILS_FAILED_WITH_EXCLAMATION_' => '新增详细内容失败！',
@@ -2114,9 +1963,7 @@ return array(
     '_ACCESS_TO_UPLOAD_FILE_INFORMATION_FAILED_WITH_EXCLAMATION_' => '获取上传文件信息失败！',
     '_DOCUMENT_NOT_EXIST_WITH_COLON_' => '不存在的文档ID：',
 
-    /*MODEL*/
-
-    //ActionModel
+//ActionModel
     '_BEHAVIOR_IDENTIFICATION_MUST_' => '行为标识必须',
     '_LOGO_IS_NOT_LEGAL_' => '标识不合法',
     '_LOGO_ALREADY_EXISTS_' => '标识已经存在',
@@ -2126,7 +1973,6 @@ return array(
     '_BEHAVIOR_DESCRIPTION_CANT_EXCEED_140_CHARACTERS_' => '行为描述不能超过140个字符',
     '_NEW_BEHAVIOR_WITH_EXCLAMATION_' => '新增行为出错！',
     '_UPDATE_BEHAVIOR_WITH_EXCLAMATION_' => '更新行为出错！',
-
 
 //AddonsModel
     '_PLUGIN_INFORMATION_MISSING_' => '插件信息缺失',
@@ -2138,7 +1984,6 @@ return array(
     '_THE_ENTRY_FILE_DOES_NOT_EXIST_WITH_EXCLAMATION_' => '的入口文件不存在！',
     '_DAMAGE_' => '损坏',
 
-
 //AuthGroupModel
     '_YOU_MUST_SET_THE_USERS_GROUP_TITLE_' => '必须设置权限组标题',
     '_DESCRIPTION_UP_TO_80_CHARACTERS_' => '描述最多80字符',
@@ -2149,13 +1994,8 @@ return array(
     '_USER_GROUP_ID_' => '权限组id',
     '_USER_GROUP_NAME_' => '权限组名称',
 
-
-//AuthRuleModel
-
-
 //ChannelModel
     '_URL_CANT_BE_EMPTY_' => 'URL不能为空',
-
 
 //CloudModel
     '_UPDATED_VERSION_LIST_IS_NOT_PRESENT_WITH_PERIOD_' => '更新版本列表不存在。',
@@ -2165,9 +2005,6 @@ return array(
 //ConfigModel
     '_LOGO_CAN_NOT_BE_EMPTY_' => '标识不能为空',
     '_NAME_CANT_BE_EMPTY_' => '名称不能为空',
-
-
-//CurlModel
 
 
 //DocumentModel
@@ -2198,26 +2035,16 @@ return array(
     '_HOOK_NAME_MUST_BE_WITH_EXCLAMATION_' => '钩子名称必须！',
     '_THE_HOOK_IS_A_MUST_WITH_EXCLAMATION_' => '钩子描述必须！',
 
-
 //MemberModel
     '_NICKNAME_IS_OCCUPIED_' => '昵称被占用',
     '_USERS_DO_NOT_EXIST_OR_HAVE_BEEN_DISABLED_WITH_EXCLAMATION_' => '用户不存在或已被禁用！',
     '_NICKNAME_LENGTH_MUST_BE_IN_' => '昵称长度必须在',
     '_POSITION_WITH_EXCLAMATION_' => '位之间！',
 
-
 //MenuModel
     '_URL_MUST_FILL_IN_' => 'url必须填写',
-
-
 //PictureModel
-
     '_UNSUPPORTED_FILE_STORAGE_TYPE_WITH_EXCLAMATION_' => '不支持的文件存储类型！',
-
-
-//RoleConfigModel
-
-
 //RoleModel
     '_LOGO_CAN_NOT_BE_EMPTY_WITH_PERIOD_' => '标识不能为空。',
     '_IDENTITY_ALREADY_EXISTS_WITH_PERIOD_' => '身份标识已经存在。',
@@ -2226,21 +2053,10 @@ return array(
     '_ID_ALREADY_EXISTS_WITH_PERIOD_' => '身份名已经存在。',
 
 
-//SsoModel
-
-
-//UrlModel
+    //UrlModel
     '_URL_FORMAT_IS_NOT_CORRECT_' => 'URL格式不正确',
     '_NEW_LINK_ERROR_WITH_EXCLAMATION_' => '新增链接出错！',
     '_UPDATE_LINK_ERROR_WITH_EXCLAMATION_' => '更新链接出错！',
 
-    '_ASC_'=>'升序',
-    '_DESC_'=>'降序',
-    '_COMMENTS_PAGE_DISPLAY_COUNT_DESC'=>'每页默认展示的评论数量，超过则分页',
-
-    '_BACKGROUND_GENERATION_'=>'后台生成',
-
-
-
-    '_SUCCESS_SETTING_'=>'设置成功'
+    
 );

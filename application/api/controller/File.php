@@ -25,7 +25,10 @@ class File extends Controller
         if($sha1){
             $pic_info = Db::name('Picture')->where(['sha1'=>$sha1])->find();
             if($pic_info){
-                $this->success('Upload successful','',$pic_info); 
+                $return['code'] = 1;
+                $return['msg'] = 'Upload successful';
+                $return['data'] = $pic_info;
+                json($return);
             }
         }
         //初始化回传信息
@@ -57,11 +60,11 @@ class File extends Controller
             //文件本地路径
             $filePath = $file->getRealPath();
         }
+
         //写入数据库
         $id = Db::name('Picture')->insertGetId($data);
         if($id){
             $data['id'] = $id;
-
             $return['code'] = 1;
             $return['msg'] = 'Upload successful';
             $return['data'] = $data;

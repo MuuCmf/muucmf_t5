@@ -723,10 +723,6 @@ class AdminListBuilder extends AdminBuilder
             $button['attr'] = $this->compileHtmlAttr($button['attr']);
         }
 
-        //生成翻页HTML代码
-        config('VAR_PAGE', 'page');
-
-
         $this->setTitle($this->_title);
         //显示页面
         $this->assign('title', $this->_title);

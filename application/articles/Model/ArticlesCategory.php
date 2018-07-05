@@ -21,7 +21,7 @@ class ArticlesCategory extends Model{
         }
 
         /* 获取所有分类 */
-        $list = $this->field($field)->where($map)->order('sort')->select();
+        $list = collection($this->field($field)->where($map)->order('sort')->select())->toArray();
         $list = list_to_tree($list, $pk = 'id', $pid = 'pid', $child = '_', $root = $id);
 
         /* 获取返回数据 */

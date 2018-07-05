@@ -1,11 +1,9 @@
-{extend name="common/main"/}
-{block name="style"}
+{extend name="admin@common/main"/}
 
-{/block}
 {block name="body"}
 <div class="builder">
     <div class="main-title">
-        <h2>{$title} {if condition="$suggest"}<span>（{$suggest}）</span>{/if}</h2>
+        <h2>{$title} {if condition="$suggest"}<small>（{$suggest}）</small>{/if}</h2>
     </div>
     <div class="with-padding">
 
@@ -24,7 +22,7 @@
                     {volist name="keyList" id="field"}
                     <div class="builder_item">
                         {php}if(in_array($field['name'],$vGroup)){{/php}
-                        {include file="builder/_key"/}
+                        {include file="admin@builder/_key"/}
                         {php}}{/php}
                     </div>
                     {/volist}
@@ -34,7 +32,7 @@
         {php}}else{{/php}
             {volist name="keyList" id="field"}
             <div class="builder_item">
-                {include file="builder/_key"/}
+                {include file="admin@builder/_key"/}
             </div>
             {/volist}
         {php}}{/php}
@@ -188,6 +186,8 @@
     <!--新版看板资源引入-->
     <link href="__ZUI__/lib/board/zui.board.min.css" rel="stylesheet">
     <script src="__ZUI__/lib/board/zui.board.min.js"></script>
-
+    {notempty name="myJs"}
+        {$myJs}
+    {/notempty}
 
 {/block}

@@ -30,7 +30,7 @@ class Admin extends Controller
         /* 读取数据库中的配置 */
         $config = cache('DB_CONFIG_DATA');
         if (!$config) {
-            $config = model('Config')->lists();
+            $config = model('admin/Config')->lists();
             cache('DB_CONFIG_DATA', $config);
         }
         Config::set($config); //动态添加配置
