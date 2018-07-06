@@ -107,11 +107,18 @@ html {
         border-radius: 10px;
     }
     .article {
+        h1 {
+            color:#03B8CF;
+        }
 
+        .icon-ok {
+            color:#18bc9c
+        }
+        .icon-remove {
+            color:red;
+        }
     }
-    .article h1 {
-        color:#03B8CF;
-    }
+
     .article-content a{
         color:#F1A325;
     }
@@ -124,12 +131,13 @@ html {
     }
     .success {
         margin:50px;
-    }
-    .success i{
-        font-size:36px;
-    }
-    .success h1{
-        
+
+        i{
+            font-size:36px;
+        }
+        h1{
+            
+        }
     }
     .error {
         color:red;

@@ -149,7 +149,7 @@ class AdminConfigBuilder extends AdminBuilder
 
     public function keyStatus($name = 'status', $title = '状态', $subtitle = null)
     {
-        $map = array(-1 => lang('_DELETE_'), 0 => lang('_DISABLE_'), 1 => lang('_ENABLE_'), 2 => lang('_UNAUDITED_'));
+        $map = array(-1 => lang('_DELETE_'), 0 => lang('_DISABLE_'), 1 => lang('_ENABLED_'), 2 => lang('_UNAUDITED_'));
         return $this->keySelect($name, $title, $subtitle, $map);
     }
 
@@ -238,7 +238,6 @@ class AdminConfigBuilder extends AdminBuilder
 
     public function keyKanban($name, $title, $subtitle = null)
     {
-
         return $this->key($name, $title, $subtitle, 'kanban');
     }
 
@@ -312,7 +311,7 @@ class AdminConfigBuilder extends AdminBuilder
      * @param  unknown $name 字段名
      * @param  unknown $title 标题
      * @param  string $subtitle 副标题（说明）
-     * @param  unknown $url 选择数据的列表页地址，U方法地址'index/index'
+     * @param  unknown $url 选择数据的列表页地址，Url方法地址'index/index'
      * @return $this
      * @author @MingYangliu <xint5288@126.com>
      */
@@ -472,7 +471,7 @@ class AdminConfigBuilder extends AdminBuilder
      * @auth 肖骏涛
      */
     public function group($name, $list = array())
-    {
+    {   
         !is_array($list) && $list = explode(',', $list);
         $this->_group[$name] = $list;
         return $this;

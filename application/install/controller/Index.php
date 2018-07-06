@@ -9,7 +9,6 @@ class Index extends Controller
     //安装首页
     public function index(){
 
-    	//dump(config());exit;
         if (is_file(ROOT_PATH . 'install.lock'))
         {
             // 已经安装过了 执行更新程序

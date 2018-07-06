@@ -106,18 +106,12 @@ function check_dirfile()
  */
 function check_func()
 {
-    $items = array(
-        array('file_get_contents', '支持', 'ok'),
-        array('mb_strlen', '支持', 'ok'),
-        array('curl_init', '支持', 'ok'),
-    );
-
-    if(function_exists('mysqli_connect')){
-        $items[] =  array('mysqli_connect', '支持', 'ok');
-    }else{
-        $items[] = array('mysql_connect', '支持', 'ok');
-    }
-
+    $items = [
+        ['file_get_contents', '支持', 'ok'],
+        ['mb_strlen', '支持', 'ok'],
+        ['curl_init', '支持', 'ok'],
+        ['finfo_open','支持','ok']
+    ];
 
     foreach ($items as &$val) {
         if (!function_exists($val[0])) {
@@ -127,7 +121,6 @@ function check_func()
             session('error', true);
         }
     }
-
     return $items;
 }
 

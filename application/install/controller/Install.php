@@ -6,19 +6,26 @@ use think\Db;
 
 class Install extends Controller
 {
-    
+    public function _initialize()
+    {
+        parent::_initialize();
+        if (is_file(ROOT_PATH . 'install.lock'))
+        {
+            // 已经安装过了 执行更新程序
+            $msg = '请删除install.lock文件后再运行安装程序!';
+            $this->error($msg);
+        }
+    }
 
     //安装第一步，检测运行所需的环境设置
     public function step1(){
         session('error', false);
         //环境检测
         $muu_env = check_env();
-        
+        //函数依赖检测
         $func = check_func();
-        
         //数据库配置文件
 		$dbConfigFile = APP_PATH . 'database.php';
-
         //目录文件读写检测
         if(is_really_writable($dbConfigFile)){
             $dirfile = check_dirfile();

@@ -31,6 +31,10 @@ class Admin extends MuuAdmin
         	1=>'选项2',
         	2=>'选项3'
         ];
+        $default_multiInput = [
+            ['type'=>'text','style'=>'width:295px;margin-right:5px'],
+            ['type'=>'select','opt'=>get_time_unit(),'style'=>'width:100px']
+        ];
 
         $builder
             ->title('DEMO设置')
@@ -38,64 +42,75 @@ class Admin extends MuuAdmin
 
         $builder
         	->title('title标题')
-        	->suggest('suggest副标题')
+        	->suggest('suggest副标题');
 
-        	->keyReadOnly('DEMO_READONLY','ReadOnly','只读文本')
-        	->keyDefault('DEMO_READONLY','ReadOnly')
-
-        	->keyReadOnlyText('DEMO_READONLYTEXT','ReadOnlyText','只读文本框')
-        	->keyDefault('DEMO_READONLYTEXT','只读文本框')
-
-        	->keyText('DEMO_TEXT', 'Text', 'Text副标题')
+        //输入类
+        $builder
+            ->keyUid('DEMO_UID','UID','UID用户ID')
+        	->keyText('DEMO_TEXT', 'Text', 'Text文本')
             ->keyDefault('DEMO_TEXT','TEXT演示')
 
-            ->keyTextArea('DEMO_TEXTAREA','TextArea')
+            ->keyTextArea('DEMO_TEXTAREA','TextArea文本域')
             ->keyDefault('DEMO_TEXTAREA',$default_textarea)
 
-            ->keyReadOnlyHtml('DEMO_READONLYHTML','ReadOnlyHtml','')
-            ->keyDefault('DEMO_READONLYHTML','<h2>只读HTML<small>小标题</small></h2>')
+            ->keyInteger('DEMO_INTEGER','Integer','Integer整数')
 
+            ->keyMultiInput('DEMO_MULTI_INPUT|DEMO_MULTI_INPUT2','MultiInput','',$default_multiInput);
+
+            
+        //选择类
+        $builder
             ->keyColor('DEMO_COLOR','Color','')
-
-            ->keyInteger('DEMO_INTEGER','Integer','')
-
             ->keyIcon('DEMO_ICON','Icon','图标')
 
-            ->keyRadio('DEMO_RADIO', 'Radio', 'Radio副标题', $default_arr)
+            ->keyRadio('DEMO_RADIO', 'Radio', 'Radio 选择框', $default_arr)
             ->keyDefault('DEMO_RADIO',0)
 
-            ->keyCheckBox('DEMO_CHECKBOX','CheckBox','CheckBox副标题',$default_arr)
+            ->keyCheckBox('DEMO_CHECKBOX','CheckBox','CheckBox 选择框',$default_arr)
 
-            ->keySelect('DEMO_SELECT','Select','select副标题',$default_arr)
+            ->keySelect('DEMO_SELECT','Select','select 选择框',$default_arr)
 
             ->keyChosen('DEMO_CHOSEN','Chosen','',$default_arr)
             ->keyDefault('DEMO_CHOSEN',0)
 
+            ->keySwitch('DEMO_SWITCH','Switch','Switch 开关')
+
+            ->keySingleUserGroup('DEMO_SINGLE_USERGROUP','SingleUserGroup','SingleUserGroup 用户权限组选择')
+            ->keyMultiUserGroup('DEMO_MULTI_USERGROUP','MultiUserGroup','MultiUserGroup 用户权限组多选')
+
+            ->keyCity('DEMO_CITY','City','City 城市联动选择')
             ->keyTime('DEMO_TIME','Time','')
+            ->keyCreateTime()
+            ->keyUpdateTime()
 
+            ->keyStatus('DEMO_STATUS','Status','status状态')
+            ->keyEditor('DEMO_EDITOR','Editor','Editor编辑器','wangeditor')
+            ->group('表单元素', [
+                'DEMO_UID',
+                'DEMO_TEXT',
+                'DEMO_INTEGER',
+                'DEMO_TEXTAREA',
+                'DEMO_MULTI_INPUT|DEMO_MULTI_INPUT2',
 
-            ->group('分组1', [
-            	'DEMO_READONLY',
-            	'DEMO_READONLYTEXT',
-            	'DEMO_TEXT',
-            	'DEMO_INTEGER',
-            	'DEMO_TEXTAREA',
-            	'DEMO_READONLYHTML',
-            	//'DEMO_COLOR',
+                'DEMO_EDITOR',
+                //'DEMO_COLOR',
             	'DEMO_ICON',
-            	'DEMO_RADIO',
-            	'DEMO_CHECKBOX',
-            	'DEMO_SELECT',
-            	'DEMO_CHOSEN',
-            	'DEMO_TIME',
-
-        	])
-            ->group('分组2', [
-            	
+                'DEMO_RADIO',
+                'DEMO_CHECKBOX',
+                'DEMO_SELECT',
+                'DEMO_CHOSEN',
+                'DEMO_SWITCH',
+                'DEMO_SINGLE_USERGROUP',
+                'DEMO_MULTI_USERGROUP',
+                'DEMO_CITY',
+                'DEMO_TIME',
+                'create_time',
+                'update_time',
+                'DEMO_STATUS'
         	]);
 
-			//上传
-			$builder
+		//上传
+		$builder
 			->keySingleImage('DEMO_SINGLEIMAGE','SingleImage','单图片上传')
 
 			->keyMultiImage('DEMO_MULTIIMAGE','MultImage','多图片上传')
@@ -108,8 +123,33 @@ class Admin extends MuuAdmin
         		'DEMO_SINGLEIMAGE',
         		'DEMO_MULTIIMAGE',
             	'DEMO_SINGFILE',
-            	//'DEMO_MULTIFILE',
+            	'DEMO_MULTIFILE',
         	]);
+
+        //只读
+        $builder
+            ->keyId('DEMO_ID','ID','ID 编号')
+            ->keyDefault('DEMO_ID','5487595412')
+            ->keyLabel('DEMO_LABEL','Label','label')
+            ->keyHidden('DEMO_HIDDEN','Hidden','只读隐藏文本')
+            ->keyReadOnly('DEMO_READONLY','ReadOnly','只读文本')
+            ->keyDefault('DEMO_READONLY','ReadOnly')
+
+            ->keyReadOnlyText('DEMO_READONLYTEXT','ReadOnlyText','只读文本框')
+            ->keyDefault('DEMO_READONLYTEXT','只读文本框')
+
+            ->keyReadOnlyHtml('DEMO_READONLYHTML','ReadOnlyHtml','')
+            ->keyDefault('DEMO_READONLYHTML','<h2>只读HTML<small>小标题</small></h2>')
+
+            ->group('只读', [
+                'DEMO_ID',
+
+                'DEMO_LABEL',
+                'DEMO_HIDDEN',
+                'DEMO_READONLY',
+                'DEMO_READONLYTEXT',
+                'DEMO_READONLYHTML',
+            ]);
 
         	//提交
         	$builder
@@ -123,9 +163,76 @@ class Admin extends MuuAdmin
      * 列表
      * @return [type] [description]
      */
-    public function list(){
+    public function listDemo()
+    {   
+        $optCategory = [
+            [
+                'id'=>1,
+                'value'=>'分类1'
+            ],
+            [
+                'id'=>2,
+                'value'=>'分类2'
+            ],
+            [
+                'id'=>3,
+                'value'=>'分类3'
+            ],
+        ];
+        $list = [
+            [
+                'id'=>1,
+                'title'=>'title',
+                'category'=>1,
+                'description'=>'description',
+                'sort'=>1,
+                'status'=>1,
+                'create_time'=>time(),
+                'update_time'=>time(),
+            ],
+            [
+                'id'=>1,
+                'title'=>'title',
+                'category'=>1,
+                'description'=>'description',
+                'sort'=>1,
+                'status'=>0,
+                'create_time'=>time(),
+                'update_time'=>time(),
+            ],
+            [
+                'id'=>1,
+                'title'=>'title',
+                'category'=>1,
+                'description'=>'description',
+                'sort'=>1,
+                'status'=>-1,
+                'create_time'=>time(),
+                'update_time'=>time(),
+            ],
+        ];
 
     	$builder=new AdminListBuilder();
+        $builder
+            ->data($list)
+            ->setSelectPostUrl(Url('DEMO/admin/index'))
+            ->select('','cate','select','','','',$optCategory)
+            
+            ->buttonNew(Url('DEMO/editArticles'))
+            ->buttonModalPopup(Url('DEMO/doAudit'),null,'审核不通过',array('data-title'=>'设置审核失败原因','target-form'=>'ids'))
+            ->keyId()
+            ->keyUid()
+            ->keyText('title','标题')
+            ->keyText('category','分类')
+            ->keyText('description','摘要')
+            ->keyText('sort','排序')
+            ->keyStatus()
+            ->keyCreateTime()
+            ->keyUpdateTime();
+
+        $builder->keyDoActionEdit('DEMO/editArticles?id=###');
+        $builder->keyDoAction('DEMO/setDel?ids=###','回收站');
+        //$builder->page($page);
 
     	$builder->display();
     }
@@ -134,7 +241,8 @@ class Admin extends MuuAdmin
      * 分类树
      * @return [type] [description]
      */
-    public function tree(){
+    public function tree()
+    {
 
     	
     }

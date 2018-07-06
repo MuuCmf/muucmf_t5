@@ -10,8 +10,13 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 // [ MuuCmf 安装入口文件 ]
+header("Content-Type: text/html;charset=utf-8");
+if (version_compare(PHP_VERSION, '5.5.0', '<'))
+    die('当前PHP版本' . PHP_VERSION . '，最低要求PHP版本5.5.0 <br/><br/>很遗憾，未能达到最低要求。本系统必须运行在PHP5.5 及以上版本。');
 // 定义应用目录
 define('APP_PATH', __DIR__ . '/../application/');
+//插件目录
+define('ADDONS_PATH', __DIR__ . '/../addons/');
 // 判断是否安装MuuCmf
 if (is_file(APP_PATH . './install.lock'))
 {

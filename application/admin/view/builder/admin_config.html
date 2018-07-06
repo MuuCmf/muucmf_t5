@@ -59,11 +59,7 @@
 
 {block name="script"}
 
-    <script type="text/javascript" src="__ZUI__/lib/datetimepicker/datetimepicker.min.js"></script>
-    <script type="text/javascript" src="__COMMON__/lib/magnific/jquery.magnific-popup.min.js"></script>
-    <script type="text/javascript" charset="utf-8" src="__COMMON__/lib/webuploader/js/webuploader.js"></script>
-
-    <script>
+<script>
     $(function () {
         $('.form-datetime').datetimepicker({
             language: "zh-CN",
@@ -91,87 +87,85 @@
             $('[name=' + fieldName + ']').val(Math.floor(timestamp / 1000));
         });
     });
-    </script>
 
-
-
-    <script>
-        $(function () {
-            //多选框数据处理
-            function implode(x, list) {
-                var result = "";
-                for (var i = 0; i < list.length; i++) {
-                    if (result == "") {
-                        result += list[i];
-                    } else {
-                        result += ',' + list[i];
-                    }
+    $(function () {
+        //多选框数据处理
+        function implode(x, list) {
+            var result = "";
+            for (var i = 0; i < list.length; i++) {
+                if (result == "") {
+                    result += list[i];
+                } else {
+                    result += ',' + list[i];
                 }
-                return result;
             }
+            return result;
+        }
 
-            $('.oneplus-checkbox').change(function (e) {
-                var fieldName = $(this).attr('data-field-name');
-                var checked = $('.oneplus-checkbox[data-field-name=' + fieldName + ']:checked');
-                var result = [];
-                for (var i = 0; i < checked.length; i++) {
-                    var checkbox = $(checked.get(i));
-                    result.push(checkbox.attr('value'));
-                }
-                result = implode(',', result);
-                $('.oneplus-checkbox-hidden[data-field-name=' + fieldName + ']').val(result);
-            });
-        })
-    </script>
- 
-    <script type="text/javascript">
-        $(function () {
-            $('.group_nav li a').click(function () {
-                $('.group_list').hide();
-                $('.group_list').eq($(".group_nav li a").index(this)).show();
-                $('.group_nav li').removeClass('active');
-                $(this).parent().addClass('active');
-            })
-        })
-        Think.setValue("type", {$info.type|default=0});
-        Think.setValue("group", {$info.group|default=0});
-    </script>
-    
-    <script>
-        $(document).ready(function () {
-            $('.popup-gallery').each(function () { // the containers for all your galleries
-                $(this).magnificPopup({
-                    delegate: 'a',
-                    type: 'image',
-                    tLoading: '{:lang("_LOADING_")}#%curr%...',
-                    mainClass: 'mfp-img-mobile',
-                    gallery: {
-                        enabled: true,
-                        navigateByImgClick: true,
-                        preload: [0, 1] // Will preload 0 - before current, and 1 after the current image
-
-                    },
-                    image: {
-                        tError: '<a href="%url%">{:lang("_PICTURE_")}#%curr%</a>{:lang("_COULD_NOT_BE_LOADED_")}',
-                        titleSrc: function (item) {
-                            /*           return item.el.attr('title') + '<small>by Marsel Van Oosten</small>';*/
-                            return '';
-                        },
-                        verticalFit: true
-                    }
-                });
-            });
-            
+        $('.oneplus-checkbox').change(function (e) {
+            var fieldName = $(this).attr('data-field-name');
+            var checked = $('.oneplus-checkbox[data-field-name=' + fieldName + ']:checked');
+            var result = [];
+            for (var i = 0; i < checked.length; i++) {
+                var checkbox = $(checked.get(i));
+                result.push(checkbox.attr('value'));
+            }
+            result = implode(',', result);
+            $('.oneplus-checkbox-hidden[data-field-name=' + fieldName + ']').val(result);
         });
-    </script>
-    <!--chosen 依赖资源引入-->
-    <script src="__ZUI__/lib/chosen/chosen.min.js"></script>
-    <!--chosenICON 依赖资源引入-->
-    <script src="__ZUI__/lib/chosenicons/zui.chosenicons.min.js"></script>
-    <!--新版看板资源引入-->
-    <script src="__ZUI__/lib/board/zui.board.min.js"></script>
-    {notempty name="myJs"}
-        {$myJs}
-    {/notempty}
+    });
+
+    $(document).ready(function () {
+        $('.popup-gallery').each(function () { // the containers for all your galleries
+            $(this).magnificPopup({
+                delegate: 'a',
+                type: 'image',
+                tLoading: '{:lang("_LOADING_")}#%curr%...',
+                mainClass: 'mfp-img-mobile',
+                gallery: {
+                    enabled: true,
+                    navigateByImgClick: true,
+                    preload: [0, 1] // Will preload 0 - before current, and 1 after the current image
+
+                },
+                image: {
+                    tError: '<a href="%url%">{:lang("_PICTURE_")}#%curr%</a>{:lang("_COULD_NOT_BE_LOADED_")}',
+                    titleSrc: function (item) {
+                        /*           return item.el.attr('title') + '<small>by Marsel Van Oosten</small>';*/
+                        return '';
+                    },
+                    verticalFit: true
+                }
+            });
+        });
+    });
+
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        $('.group_nav li a').click(function () {
+            $('.group_list').hide();
+            $('.group_list').eq($(".group_nav li a").index(this)).show();
+            $('.group_nav li').removeClass('active');
+            $(this).parent().addClass('active');
+        })
+    })
+    Think.setValue("type", {$info.type|default=0});
+    Think.setValue("group", {$info.group|default=0});
+</script>
+
+<script type="text/javascript" src="__ZUI__/lib/datetimepicker/datetimepicker.min.js"></script>
+<script type="text/javascript" src="__COMMON__/lib/magnific/jquery.magnific-popup.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="__COMMON__/lib/webuploader/js/webuploader.js"></script>
+<!--chosenICON 依赖资源引入-->
+<script type="text/javascript" src="__ZUI__/lib/chosenicons/zui.chosenicons.min.js"></script>
+<!--chosen 依赖资源引入-->
+<script type="text/javascript" src="__ZUI__/lib/chosen/chosen.min.js"></script>
+<!--新版看板资源引入-->
+<script type="text/javascript" src="__ZUI__/lib/board/zui.board.min.js"></script>
+{notempty name="myJs"}
+    {$myJs}
+{/notempty}
 
 {/block}

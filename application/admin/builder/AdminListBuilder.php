@@ -376,7 +376,7 @@ class AdminListBuilder extends AdminBuilder
 
     public function keyStatus($name = 'status', $title = '状态')
     {
-        $map = array(-1 => lang('_DELETE_'), 0 => lang('_DISABLE_'), 1 => lang('_ENABLE_'), 2 => lang('_UNAUDITED_'));
+        $map = array(-1 => lang('_DELETE_'), 0 => lang('_DISABLE_'), 1 => lang('_ENABLED_'), 2 => lang('_UNAUDITED_'));
         return $this->key($name, $title, 'status', $map);
     }
 
