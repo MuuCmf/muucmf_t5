@@ -3,37 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title> {$title|htmlspecialchars}台</title>
-    <link href="/Public/favicon.ico" type="image/x-icon" rel="shortcut icon">
-    <!--zui-->
-    <link rel="stylesheet" type="text/css" href="/Application/Admin/Static/zui/css/zui.css" media="all">
-    <link rel="stylesheet" type="text/css" href="/Application/Admin/Static/css/admin.css" media="all">
-    <link rel="stylesheet" type="text/css" href="/Application/Admin/Static/css/ext.css" media="all">
-    <!--zui end-->
-    <link rel="stylesheet" type="text/css" href="/Application/Admin/Static/css/module.css">
-    <link rel="stylesheet" type="text/css" href="/Application/Admin/Static/css/style.css" media="all">
-    <!--[if lt IE 9]>
-    <script type="text/javascript" src="/Public/js/jquery-1.10.2.min.js"></script>
-    <![endif]--><!--[if gte IE 9]><!-->
-    <script type="text/javascript" src="/Public/js/jquery-2.0.3.min.js"></script>
-    <script type="text/javascript" src="/Application/Admin/Static/js/jquery.mousewheel.js"></script>
-    <!--<![endif]-->
-
-    <script type="text/javascript">
-        var ThinkPHP = window.Think = {
-            "ROOT": "", //当前网站地址
-            "APP": "/index.php?s=", //当前项目地址
-            "PUBLIC": "/Public", //项目公共目录地址
-            "DEEP": "/", //PATHINFO分割符
-            "MODEL": ["3", "1", "html"],
-            "VAR": ["m", "c", "a"],
-            'URL_MODEL': "3"
-        }
-    </script>
 </head>
-<block name="body">
-    <link type="text/css" rel="stylesheet" href="__PUBLIC__/lib/magnific/magnific-popup.css"/>
-
-    <php>
+<body>
+    {php}
         foreach($searches as $search){
             if($_REQUEST[$search['name']])
         {
@@ -45,43 +17,35 @@
 		S('inputid',$_GET['inputid']);
 		}
 
-    </php>
+    {/php}
     <!-- 按钮工具栏 -->
     <div class="with-padding">
     	<if condition="$search">
     	<div class="fl">
     	<form id="searchForm" method="get" action="{$searchPostUrl}" class="form-dont-clear-url-param">
     	
-    	 <volist name="searches" id="search">
+    	 {volist name="searches" id="search"}
     	 	<!--判断搜索选项是TEXT还是SELECT-->
-			 <if condition="$search['type'] == 'select'">
+			 {if condition="$search['type'] == 'select'"}
 			 	<select size="1" name="{$search['name']}" class="form-control" style="width:auto;display:inline;margin-bottom:5px;">
 		      		<option value="">{$search.title}</option>
 		      		<volist name="search['arrvalue']" id="svo">
 		      			<option value="{$svo.id}" <eq name="svo.id" value="$_GET[$search['name']]">selected</eq>>{$svo.value}</option>
 		      		</volist>	
 				</select>
-			 <else/>
+			 {else/}
 			 	{$search.title}：<input style="float: none;width:80px;display:inline;margin-bottom:5px;" type="text" name="{$search['name']}" class="form-control" value="{$_GET[$search['name']]}">
-			 </if>
-    	 </volist>
+			 {/if}
+    	 {/volist}
     	<input type="submit" class="btn" style="margin-bottom:5px" value={:lang("_SEARCH_WITH_DOUBLE_")}/>
 		</form>
 		</div> 
 		</if>
         <div class="fl">
-        	<!--
-<if condition="count($searches) gt 0">
-    <button class="btn submit-btn" url="?status=-1" target-form="ids" style="padding: 6px 16px;" onclick="toggle_search()">{:lang("_SEARCH_")}</button>
-</if>.
--->
-
-            <volist name="buttonList" id="button">
+            {volist name="buttonList" id="button"}
                 <{$button.tag} {$button.attr}>{$button.title|htmlspecialchars}</{$button.tag}>&nbsp;
-            </volist>
-			
+            {/volist}
         </div>
-		
     </div>
 
     <!-- 数据表格 -->
@@ -93,23 +57,23 @@
                 <th class="row-selected row-selected">
                     
                 </th>
-                <volist name="keyList" id="field">
+                {volist name="keyList" id="field"}
                     <th>{$field.title|htmlspecialchars}</th>
-                </volist>
+                {/volist}
             </tr>
             </thead>
 
             <!-- 列表 -->
             <tbody>
            	<form name="frm"> 
-            <volist name="list" id="e">
+            {volist name="list" id="e"}
                 <tr>
                     <td><input class="ids" type="radio" value="{$e['id']}" name="ids" onclick="choseids();"> </td>
-                    <volist name="keyList" id="field">
+                    {volist name="keyList" id="field"}
                         <td>{$e[$field['name']]}</td>
-                    </volist>
+                    {/volist}
                 </tr>
-            </volist>
+            {/volist}
 			
             </tbody>
         </table>
@@ -122,10 +86,11 @@
     <!-- 分页 -->
 	
     <div class="with-padding">
-        {$pagination}
+        {$page}
     </div>
     </div>
 <body> 
+
     <script type="text/javascript" src="__STATIC__/thinkbox/jquery.thinkbox.js"></script>
 	<script> 
 				function choseids() 

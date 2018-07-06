@@ -48,27 +48,31 @@ class Articles extends Admin{
     {
         $title=$id?"编辑":"新增";
         if (request()->isPost()) {
-            if ($this->articlesCategoryModel->editData()) {
+            $data = input('');
+
+            if ($this->articlesCategoryModel->editData($data)) {
                 cache('SHOW_EDIT_BUTTON',null);
                 $this->success($title.'成功。', Url('Articles/articlesCategory'));
             } else {
                 $this->error($title.'失败!'.$this->articlesCategoryModel->getError());
             }
         } else {
+
             $builder = new AdminConfigBuilder();
 
+            $data=[];
             if ($id != 0) {
-                $data = $this->articlesCategoryModel->find($id);
+                $data = Db::name('articles_category')->where(['id'=>$id])->find();
             } else {
                 $father_category_pid=Db::name('articles_category')->where(['id'=>$pid])->value('pid');
                 if($father_category_pid!=0){
                     $this->error('分类不能超过二级！');
                 }
             }
-            if($pid!=0){
-                $categorys = Db::name('articles_category')->where(array('pid'=>0,'status'=>array('egt',0)))->select();
-            }
-            $opt = array();
+            
+            $categorys = Db::name('articles_category')->where(['pid'=>0,'status'=>['egt',0]])->select();
+
+            $opt = [];
             foreach ($categorys as $category) {
                 $opt[$category['id']] = $category['title'];
             }
@@ -77,12 +81,18 @@ class Articles extends Admin{
                 ->data($data)
                 ->keyId()
                 ->keyText('title', '标题')
-                ->keySelect('pid', '父分类', '选择父级分类', array('0' => '顶级分类') + $opt)->keyDefault('pid',$pid)
-                ->keyRadio('can_post','前台是否可投稿','',array(0=>'否',1=>'是'))->keyDefault('can_post',1)
-                ->keyRadio('need_audit','前台投稿是否需要审核','',array(0=>'否',1=>'是'))->keyDefault('need_audit',1)
-                ->keyInteger('sort','排序')->keyDefault('sort',0)
-                ->keyStatus()->keyDefault('status',1)
-                ->buttonSubmit(Url('Articles/add'))->buttonBack()
+                ->keySelect('pid', '父分类', '选择父级分类', [0 => '顶级分类'] + $opt)
+                ->keyDefault('pid',$pid)
+                ->keyRadio('can_post','前台是否可投稿','',[0=>'否',1=>'是'])
+                ->keyDefault('can_post',1)
+                ->keyRadio('need_audit','前台投稿是否需要审核','',[0=>'否',1=>'是'])
+                ->keyDefault('need_audit',1)
+                ->keyInteger('sort','排序')
+                ->keyDefault('sort',0)
+                ->keyStatus()
+                ->keyDefault('status',1)
+                ->buttonSubmit(Url('Articles/add'))
+                ->buttonBack()
                 ->display();
         }
 

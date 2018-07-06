@@ -1,8 +1,8 @@
 <?php
 namespace app\admin\controller;
 
-use OT\Database;
-use OT\File;
+use think\Db;
+use muucmf\Database;
 
 /**
  * 升级包制作规则
@@ -12,55 +12,45 @@ use OT\File;
  */
 class Update extends Admin
 {
-    protected $cloud;
+    protected $api;
     public function _initialize()
     {
-        $this->cloud = config('__CLOUD__').'/index.php?s=muucmf/sysupdate';
+        $this->api = config('muucmf.api_url').'/muucmf/sysupdate';
         parent::_initialize();
     }
 
-    /*
-    *获取本地系统版本
-    */
-    private function localVersion()
-    {
-        return config('muucmf.version');
-    }
-    /*
-    *获取云端最新系统版本
-    */
-    private function cloudVersion()
-    {
-        return File::read_file($this->cloud.'/newVersion');
-    }
+    /**
+     * 系统升级首页
+     * @return [type] [description]
+     */
     public function index()
     {
         $localVersion = $this->localVersion(); //读取本地版本号
         $cloudVersion = $this->cloudVersion();//读取云端最新版本号
 
-        if(IS_POST){
+        if(request()->isPost()){
             $result['status']=1;
             $result['info']='Success';
             $result['data']['localVersion']=$localVersion;
             $result['data']['cloudVersion']=$cloudVersion;
 
-            $this->AjaxReturn($result,'json');
+            return json($result,'json');
 
         }else{
             $result = $this->checkVersion($localVersion);//读取云端可更新版本数据
         }
-        $this->meta_title = '系统在线更新';
+        $this->setTitle('系统在线更新');
         $this->assign('localVersion',$localVersion);
         $this->assign('cloudVersion',$cloudVersion);
         $this->assign('result',$result);
-        $this->display();
+        return $this->fetch();
         
     }
 
     /*开始在线更新数据*/
     public function startUpdate()
     {   
-        if(IS_POST){
+        if(request()->isPost()){
             $this->meta_title = '系统在线更新日志';
             $this->display();
             $this->update();
@@ -77,7 +67,7 @@ class Update extends Admin
         
         $localVersion = $this->localVersion(); //获取本地版本号
             $this->showMsg('MuuCmf系统当前版本:'.$localVersion);
-            $this->showMsg('OneThink系统原始版本:'.ONETHINK_VERSION);
+            $this->showMsg('ThinkPHP系统版本:'.ONETHINK_VERSION);
             $this->showMsg('更新开始时间:'.date('Y-m-d H:i:s'));
             $this->showMsg('==========================================================================');
         $result = $this->checkVersion($localVersion); //获取远端数据
@@ -181,18 +171,33 @@ class Update extends Admin
     }
 
     /*
-    *检测云端新版本信息
+    *检测云端可更新版本信息
     */
     private function checkVersion($localVersion='')
     {   
-        $result = file_get_contents($this->cloud.'/index/enable_version/'.$localVersion);//读取云端可更新版本数据
+        $result = file_get_contents($this->api.'/muucmf/enable_version/'.$localVersion);//读取云端可更新版本数据
         $result = json_decode($result,true);//转换为数组格式
         return $result;
     }
 
+    /*
+    *获取本地系统版本
+    */
+    private function localVersion()
+    {
+        return config('muucmf.version');
+    }
+    /**
+     * 获取云端最新系统版本
+     * @return [type] [description]
+     */
+    private function cloudVersion()
+    {
+        return file_get_contents($this->api.'/muucmf/newVersion');
+    }
+
     /**
      * 获取远程数据
-     * @author huajie <banhuajie@163.com>
      */
     private function getRemoteUrl($url = '', $method = '', $param = ''){
         $opts = array(
@@ -256,7 +261,7 @@ class Update extends Admin
         $sql = str_replace("\r", "\n", $sql);
         $sql = explode(";\n", trim($sql));
         //替换表前缀
-        $orginal = C('DB_PREFIX');
+        $orginal = config('database.prefix');
         $sql = str_replace(" `{$orginal}", " `{$prefix}", $sql);
         foreach($sql as $value)
         {
@@ -301,7 +306,6 @@ class Update extends Admin
     }
     /**
      * 生成更新文件夹名
-     * @author huajie <banhuajie@163.com>
      */
     private function getUpdateFolder($newVersion){
         return 'update_'.$newVersion;

@@ -230,8 +230,8 @@ class Admin extends MuuAdmin
             ->keyCreateTime()
             ->keyUpdateTime();
 
-        $builder->keyDoActionEdit('DEMO/editArticles?id=###');
-        $builder->keyDoAction('DEMO/setDel?ids=###','回收站');
+        $builder->keyDoActionEdit('demo/editArticles?id=###');
+        $builder->keyDoAction('demo/setDel?ids=###','回收站');
         //$builder->page($page);
 
     	$builder->display();
@@ -243,8 +243,54 @@ class Admin extends MuuAdmin
      */
     public function tree()
     {
+        $builder = new AdminTreeListBuilder();
+        //demo 演示数据
+        $tree = [
+            [
+                "id" => 1,
+                "title" => "分类1",
+                "sort" => 2,
+                "pid" => 0,
+                "status" => 1,
+                '_'=>[
+                    [
+                        "id" => 55,
+                        "title" => "子分类1",
+                        "sort" => 1,
+                        "pid" => 1,
+                        "status" => 1,
+                    ],[
+                        "id" => 56,
+                        "title" => "子分类2",
+                        "sort" => 1,
+                        "pid" => 1,
+                        "status" => 1,
+                    ]
+                ]
+            ],
+            [
+                "id" => 2,
+                "title" => "分类2",
+                "sort" => 1,
+                "pid" => 0,
+                "status" => 1,
+            ],
+            [
+                "id" => 3,
+                "title" => "分类3",
+                "sort" => 1,
+                "pid" => 0,
+                "status" => 1,
+            ]
+        ];
 
-    	
+        $builder
+            ->title('分类树')
+            ->suggest('分类树演示')
+            ->buttonNew(Url('admin/add'))
+            ->data($tree)
+            ->display();
     }
+
 
 }

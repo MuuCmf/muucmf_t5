@@ -351,8 +351,7 @@ class AdminTreeListBuilder extends AdminBuilder
             $this->addDefaultCssClass($button);
             $button['attr'] = $this->compileHtmlAttr($button['attr']);
         }
-        //生成翻页HTML代码
-        config('VAR_PAGE', 'page');
+
         //设置meta标题
         $this->setTitle($this->_title);
         //显示页面

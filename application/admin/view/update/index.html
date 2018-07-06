@@ -1,5 +1,5 @@
-<extend name="Public/base"/>
-<block name="body">
+{extend name="common/main"/}
+{block name="body"}
     <div class="main-title">
         <h2>系统在线更新</h2>
     </div>
@@ -25,7 +25,7 @@
                       <label class="col-md-2 control-label">版本</label>
                       <div class="col-md-10">
                         <div class="form-control-static">
-                            <p>系统当前版本{:file_get_contents('./Data/version.ini')}</p>
+                            <p>系统当前版本{$localVersion}</p>
                             <p>可升级至版本{$result['data']['version']}</p>
                             <p>允许升级的版本{$result['data']['enable_version']}</p>
                         </div>
@@ -111,7 +111,7 @@
                     <div class="alert alert-info-inverse with-icon">
                         <i class="icon-info-sign"></i>
                         <div class="content">
-                            <h3>当前系统版本：<span id="localVer">{:file_get_contents('./Data/version.ini')}</span></h3>
+                            <h3>当前系统版本：<span id="localVer">{$localVersion}</span></h3>
                             <h3>云端最新版本：<span id="cloudVer">{$cloudVersion}</span></h3>
                         </div>
                    </div>
@@ -127,8 +127,8 @@
         </div>
     </div>
 
-</block>
-<block name="script">
+{/block}
+{block name="script"}
 <script>
     $(function(){
         $('#oneupdate').click(function(){
@@ -147,9 +147,9 @@
         });
         $('#checkVersion').click(function(){
             $('#checkVersion').html('检测中...页面即将跳转');
-            window.location.href='{:Url(Admin/update/index)}'; 
+            window.location.href='{:Url("admin/update/index")}'; 
         });
     });
 </script>
-</block>
+{/block}
 

@@ -54,11 +54,10 @@ class ArticlesCategory extends Model{
 
     public function editData($data)
     {
-        $data=$this->create();
         if($data['id']){
-            $res=$this->save($data);
+            $res=$this->save($data,['id'=>$data['id']]);
         }else{
-            $res=$this->add($data);
+            $res=$this->save($data);
         }
         return $res;
     }
