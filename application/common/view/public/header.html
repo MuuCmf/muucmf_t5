@@ -14,7 +14,7 @@
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-menu" aria-expanded="false">
                     <i class="icon icon-bars"></i>
                 </button>
-                <a class="navbar-brand" href="{:Url('Home/Index/index')}"><img src="{$logo}" class="logo" alt=""></a>
+                <a class="navbar-brand" href="{:Url('/')}"><img src="{$logo}" class="logo" alt=""></a>
             </div>
             <!-- End Header Navigation -->
             <div class="attr-nav">
@@ -57,9 +57,9 @@
                     {else/}
                         <li class="">
                             {if condition="$open_quick_login"}
-                                    <a data-login="quick_do_login" data-remote="{:Url('Ucenter/Member/quickLogin')}" data-toggle="modal">{:lang('_LOGIN_')}</a>
+                                <a data-login="quick_do_login" data-remote="{:Url('Ucenter/Member/quickLogin')}" data-toggle="modal">{:lang('_LOGIN_')}</a>
                             {else/}
-                                    <a data-login="do_login" href="{$login_url}">{:lang('_LOGIN_')}</a>
+                                <a data-login="do_login" href="{$login_url}">{:lang('_LOGIN_')}</a>
                             {/if}
                         </li>
                         {if condition="$only_open_register eq 0"}

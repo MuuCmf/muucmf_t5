@@ -7,24 +7,19 @@ use app\admin\Model\AuthGroup;
 use think\Request;
 use think\Db;
 use think\Config;
-/**
- * 后台公共控制器
- */
+
 class Admin extends Controller
 {
-
     /**
-     * 后台控制器初始化
+     * 后台基类 控制器
      */
-
     public $_seo = ['title' => '','setKeywords' => '', 'description' => ''];
 
     public $is_root;
 
     public function _initialize()
     {
-        // 获取当前用户ID
-        
+        // 判断登陆
         $this->needLogin();
         // 是否是超级管理员
         $this->is_root = is_administrator();
@@ -52,10 +47,8 @@ class Admin extends Controller
                 $this->error(lang('_VISIT_NOT_AUTH_'));
             }
         }
-        //
         // 获取插件后台管理列表
         $addons_admin = model('Admin/Addons')->getAdminList();
-        //dump($addons_admin);
         //获取本地版本
         $version = $this->localVersion();
         //获取管理员数据

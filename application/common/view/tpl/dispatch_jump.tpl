@@ -14,10 +14,10 @@
             .system-message .jump{font-size:14px}
             .system-message .jump a{color:#333}
             .system-message p{font-size:9pt;line-height:20px}
-            .system-message .btn{display:inline-block;margin-right:10px;width:138px;height:2pc;border:1px solid #44a0e8;border-radius:30px;color:#44a0e8;text-align:center;font-size:1pc;line-height:2pc;margin-bottom:5px;}
+            .system-message .btn{display:inline-block;margin-right:10px;width:138px;height:2pc;border:1px solid #44a0e8;border-radius:10px;color:#44a0e8;text-align:center;font-size:1pc;line-height:2pc;margin-bottom:5px;}
             .success .btn{border-color:#69bf4e;color:#69bf4e}
             .error .btn{border-color:#ff8992;color:#ff8992}
-            .info .btn{border-color:#3498db;color:#3498db}
+            .info .btn{border-color:#03b8cf;color:#03b8cf}
             .copyright p{width:100%;color:#919191;text-align:center;font-size:10px}
             .system-message .btn-grey{border-color:#bbb;color:#bbb}
             .clearfix:after{clear:both;display:block;visibility:hidden;height:0;content:"."}
@@ -36,8 +36,8 @@
                 This page will be re-directed in <span id="wait"><?php echo($wait);?></span>
             </p>
             <p class="clearfix">
-                <a href="javascript:history.go(-1);" class="btn btn-grey">{:lang('Go back')}</a>
-                <a href="{$url}" class="btn btn-primary">{:lang('Jump now')}</a>
+                <a href="javascript:history.go(-1);" class="btn btn-grey">{:lang('_GO_BACK_')}</a>
+                <a href="{$url}" class="btn btn-primary">{:lang('_JUMP_NOW_')}</a>
             </p>
         </div>
         <div class="copyright">

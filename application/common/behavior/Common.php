@@ -46,6 +46,11 @@ class Common
             Config::set('app_trace', false);
         }
         
+
+        // 加载插件语言包
+        Lang::load([
+            APP_PATH . 'common' . DS . 'lang' . DS . $request->langset() . DS . 'addon' . EXT,
+        ]);
         // 切换多语言
         if (Config::get('lang_switch_on') && $request->get('lang'))
         {

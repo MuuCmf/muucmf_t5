@@ -1,11 +1,11 @@
 <?php
 
-namespace Articles\Controller;
+namespace app\articles\controller;
 
-use Think\Controller;
-use Common\Controller\CommonController;
+use think\Controller;
+use app\common\Controller\Common;
 
-class IndexController extends CommonController{
+class Index extends Common{
 
     protected $articlesModel;
     protected $articlesDetailModel;

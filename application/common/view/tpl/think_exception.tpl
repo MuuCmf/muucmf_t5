@@ -1,6 +1,6 @@
 <?php
-$cdnurl = function_exists('config') ? config('view_replace_str.__CDN__') : '';
-$publicurl = function_exists('config') ? config('view_replace_str.__PUBLIC__') : '/';
+$commonurl = function_exists('config') ? config('view_replace_str.__COMMON__') : '';
+
 $debug = function_exists('config') ? config('app_debug') : false;
 
 $lang = [
@@ -38,7 +38,7 @@ $langSet == 'en' && $lang = array_combine(array_keys($lang), array_keys($lang));
         article,aside,details,figcaption,figure,footer,header,hgroup,nav,section {display:block;}
         html {font-size:16px;line-height:24px;width:100%;height:100%;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;overflow-y:scroll;overflow-x:hidden;}
         img {vertical-align:middle;max-width:100%;height:auto;border:0;-ms-interpolation-mode:bicubic;}
-        body {min-height:100%;background:#edf1f4;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-family:"Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",微软雅黑,Arial,sans-serif;}
+        body {min-height:100%;background:#f2f2f2;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-family:"Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",微软雅黑,Arial,sans-serif;}
         .clearfix {clear:both;zoom:1;}
         .clearfix:before,.clearfix:after {content:"\0020";display:block;height:0;visibility:hidden;}
         .clearfix:after {clear:both;}
@@ -52,7 +52,7 @@ $langSet == 'en' && $lang = array_combine(array_keys($lang), array_keys($lang));
         .error-page-wrapper .context p {margin:0;}
         .error-page-wrapper .context p:nth-child(n+2) {margin-top:16px;}
         .error-page-wrapper .buttons-container {margin-top:35px;overflow:hidden;}
-        .error-page-wrapper .buttons-container a {transition:text-indent .2s ease-out,color .2s linear,background-color .2s linear;text-indent:0px;font-size:14px;text-transform:uppercase;text-decoration:none;color:#fff;background-color:#2ecc71;border-radius:99px;padding:8px 0 8px;text-align:center;display:inline-block;overflow:hidden;position:relative;width:45%;}
+        .error-page-wrapper .buttons-container a {transition:text-indent .2s ease-out,color .2s linear,background-color .2s linear;text-indent:0px;font-size:14px;text-transform:uppercase;text-decoration:none;color:#fff;background-color:#03b8cf;border-radius:10px;padding:8px 0 8px;text-align:center;display:inline-block;overflow:hidden;position:relative;width:45%;}
         .error-page-wrapper .buttons-container a:hover {text-indent:15px;}
         .error-page-wrapper .buttons-container a:nth-child(1) {float:left;}
         .error-page-wrapper .buttons-container a:nth-child(2) {float:right;}
@@ -78,7 +78,7 @@ $langSet == 'en' && $lang = array_combine(array_keys($lang), array_keys($lang));
 <body class="error-page-wrapper">
 <div class="content-container">
     <div class="head-line">
-        <img src="<?=$cdnurl?>/static/common/images/error.svg" alt="" width="120"/>
+        <img src="<?=$commonurl?>/images/error.svg" alt="" width="120"/>
     </div>
     <div class="subheader">
         <?=$debug?$message:$lang['The page you are looking for is temporarily unavailable']?>
@@ -92,8 +92,8 @@ $langSet == 'en' && $lang = array_combine(array_keys($lang), array_keys($lang));
 
     </div>
     <div class="buttons-container">
-        <a href="<?=$publicurl?>"><?=$lang['Home']?></a>
-        <a href="<?=$publicurl?>"><?=$lang['Feedback']?></a>
+        <a href="/"><?=$lang['Home']?></a>
+        <a href="http://www.muucmf.cn/forum"><?=$lang['Feedback']?></a>
     </div>
 </div>
 </body>

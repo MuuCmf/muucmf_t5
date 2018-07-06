@@ -69,6 +69,8 @@ return array(
     '_SUCCESS_'=>'成功',
     '_DISABLE_' => '禁用',
     '_ENABLED_' => '启用',
+    '_GO_BACK_' => '返回',
+    '_JUMP_NOW_' => '立即跳转',
 
     /*Builder*/
     '_UNAUDITED_' => '未审核',

@@ -69,9 +69,10 @@ return array(
     '_SUCCESS_'=>'success',
     '_DISABLE_' => 'Disable',
     '_ENABLED_' => 'Enable',
+    '_GO_BACK_' => 'Go back',
+    '_JUMP_NOW_' => 'Jump now',
 
     /*Builder*/
-    
     '_UNAUDITED_' =>' Not audit',
     '_OPEN_' =>' Open',
     '_CLOSE_' =>' Close',
