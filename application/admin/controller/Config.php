@@ -68,20 +68,21 @@ class Config extends Admin
     public function edit($id = 0)
     {
         if (request()->isPost()) {
-            $Config = Db::name('Config');
             $data = input('');
-            if ($data) {
-                if ($Config->update($data)) {
-                    cache('DB_CONFIG_DATA', null);
-                    //记录行为
-                    action_log('update_config', 'config', $data['id'], is_login());
-                    $this->success(lang('_SUCCESS_UPDATE_'), Cookie('__forward__'));
-                } else {
-                    $this->error(lang('_FAIL_UPDATE_'));
-                }
+            
+            if ($data['id']) {
+                Db::name('Config')->update($data);
+                cache('DB_CONFIG_DATA', null);
+                //记录行为
+                action_log('update_config', 'config', $data['id'], is_login());
+                $this->success(lang('_SUCCESS_UPDATE_'), Cookie('__forward__'));
             } else {
-                $this->error($Config->getError());
+                $id = Db::name('Config')->insertGetId($data);
+                //记录行为
+                action_log('update_config', 'config', $id, is_login());
+                $this->success(lang('_SUCCESS_UPDATE_'), Cookie('__forward__'));
             }
+
         } else {
             $info = [];
             /* 获取数据 */
@@ -157,7 +158,7 @@ class Config extends Admin
      */
     public function sort()
     {
-        if (IS_GET) {
+        if (request()->isGet()) {
             $ids = input('get.ids');
 
             //获取排序的数据
@@ -176,7 +177,7 @@ class Config extends Admin
             $ids = input('post.ids');
             $ids = explode(',', $ids);
             foreach ($ids as $key => $value) {
-                $res = M('Config')->where(array('id' => $value))->setField('sort', $key + 1);
+                $res = Db::name('Config')->where(['id' => $value])->setField('sort', $key + 1);
             }
             if ($res !== false) {
                 $this->success(lang('_SUCCESS_SORT_').lang('_EXCLAMATION_'), Cookie('__forward__'));
@@ -280,7 +281,8 @@ class Config extends Admin
             ->keyText('SMS_PWD', lang('_SMS_PLATFORM_PASSWORD_'), lang('_SMS_PLATFORM_PASSWORD_'))
             ->keyText('SMS_SIGN', lang('_SMS_PLATFORM_SIGN_'), lang('_SMS_PLATFORM_SIGN_CONT_'));
 
-        $builder->group(lang('_SMS_CONFIGURATION_'), 'SMS_HTTP,SMS_UID,SMS_PWD,SMS_SIGN,SMS_CONTENT,SMS_HOOK,SMS_RESEND');
+        $builder
+        ->group(lang('_SMS_CONFIGURATION_'), 'SMS_HTTP,SMS_UID,SMS_PWD,SMS_SIGN,SMS_CONTENT,SMS_HOOK,SMS_RESEND');
         unset($opt);
 
         $builder->data($data);

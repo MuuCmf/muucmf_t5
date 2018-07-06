@@ -15,7 +15,7 @@ class Update extends Admin
     protected $api;
     public function _initialize()
     {
-        $this->api = config('muucmf.api_url').'/muucmf/sysupdate';
+        $this->api = config('muucmf.api_url').'/muucmf/t5update';
         parent::_initialize();
     }
 
@@ -170,12 +170,20 @@ class Update extends Admin
         $this->showMsg('在线更新全部完成，如有备份，请及时将备份文件移动至非web目录下！', 'success');
     }
 
+    /**
+     * 获取云端最新系统版本
+     * @return [type] [description]
+     */
+    private function cloudVersion()
+    {
+        return file_get_contents($this->api.'/newVersion');
+    }
     /*
     *检测云端可更新版本信息
     */
     private function checkVersion($localVersion='')
     {   
-        $result = file_get_contents($this->api.'/muucmf/enable_version/'.$localVersion);//读取云端可更新版本数据
+        $result = file_get_contents($this->api.'/index?enable_version='.$localVersion);//读取云端可更新版本数据
         $result = json_decode($result,true);//转换为数组格式
         return $result;
     }
@@ -186,14 +194,6 @@ class Update extends Admin
     private function localVersion()
     {
         return config('muucmf.version');
-    }
-    /**
-     * 获取云端最新系统版本
-     * @return [type] [description]
-     */
-    private function cloudVersion()
-    {
-        return file_get_contents($this->api.'/muucmf/newVersion');
     }
 
     /**

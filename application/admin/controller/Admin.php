@@ -26,15 +26,6 @@ class Admin extends Controller
         // 获取当前用户ID
         
         $this->needLogin();
-
-        /* 读取数据库中的配置 */
-        $config = cache('DB_CONFIG_DATA');
-        if (!$config) {
-            $config = model('admin/Config')->lists();
-            cache('DB_CONFIG_DATA', $config);
-        }
-        Config::set($config); //动态添加配置
-
         // 是否是超级管理员
         $this->is_root = is_administrator();
         

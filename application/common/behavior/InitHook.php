@@ -18,6 +18,9 @@ class InitHook {
         // 定义路由
         Route::any('addons/execute/:route', "\\muucmf\\addons\\Route@execute");
 
+        
+
+        // 加载钩子
         $data = Cache::get('hooks');
         if(!$data){
             $hooks = collection(Db::name('Hooks')->column('name,addons'))->toArray();

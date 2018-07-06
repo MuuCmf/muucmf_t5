@@ -181,7 +181,6 @@ function muucmf_hash($message, $salt = "MuuCmf")
  */
 function modC($key, $default = '', $module = '')
 {
-
     $request= request();
     $module_name=$request->module();
     $mod = $module ? $module : $module_name;
@@ -191,7 +190,7 @@ function modC($key, $default = '', $module = '')
     }
     $result = cache('conf_' . strtoupper($mod) . '_' . strtoupper($key));
     if (empty($result)) {
-        $config = db('config')->where(array('name' => '_' . strtoupper($mod) . '_' . strtoupper($key)))->find();
+        $config = db('config')->where(['name' => '_' . strtoupper($mod) . '_' . strtoupper($key)])->find();
         if (!$config) {
             $result = $default;
         } else {
