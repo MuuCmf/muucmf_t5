@@ -1,3 +1,4 @@
+
 <section class="col-md-7 connectedSortable">
     <!--N日用户注册数-->
     <div class="box">
@@ -44,7 +45,29 @@
             </div>
         </div>
     </div>
-
+    <!--7日用户行为统计-->
+    <div class="box" data-id="action_log">
+        <div class="box-header count_common_box">
+            <span class="caption-subject">7日用户行为统计</span>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-primary btn-sm" data-widget="collapse"><i class="icon icon-minus"></i></i>
+                </button>
+                <button type="button" class="btn btn-danger btn-sm" data-widget="remove"><i class="icon icon-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="box-body">
+            <div class="chart">
+                <canvas id="actionLogChart" style="width:100%;height:300px"></canvas>
+            </div>
+        </div>
+        <div class="box-footer clearfix">
+            <div class="btn-arrow-link pull-right">
+                <a href="{:Url('action/actionlog')}">查看更多</a>
+                <i class="icon-arrow-right"></i>
+            </div>
+        </div>
+    </div>
     <!--用户留存率-->
     <div class="box remain" data-id="count_remain">
         <div class="box-header count_common_box">
@@ -92,6 +115,42 @@
 </section>
 
 <section class="col-md-5 connectedSortable">
+
+    <div class="box">
+        <div class="box-header count_common_box">
+            <span class="caption-subject">官方信息</span>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-primary btn-sm" data-widget="collapse"><i class="icon icon-minus"></i></i>
+                </button>
+                <button type="button" class="btn btn-danger btn-sm" data-widget="remove"><i class="icon icon-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="box-body clearfix">
+            <div class="muu_link">
+                <div class="col-xs-6 text-center">
+                    <a class="muu_link_box" target="_blank" href="http://www.muucmf.cn/muucmf/index/document.html">
+                        <i class="icon-book"></i> {:lang('_DOCUMENT_CENTER_')}
+                    </a>
+                </div>
+                <div class="col-xs-6 text-center">
+                    <a class="muu_link_box" target="_blank" href="http://www.muucmf.cn/forum">
+                        <i class="icon-chrome"></i> {:lang('_OFFICIAL_GROUP_')}
+                    </a>
+                </div>
+                <div class="col-xs-6 text-center">
+                    <a class="muu_link_box" target="_blank" href="https://jq.qq.com/?_wv=1027&k=5k75PiH">
+                        <i class="icon icon-chat"></i> QQ 讨论群
+                    </a>
+                </div>
+                <div class="col-xs-6 text-center">
+                    <a class="muu_link_box" target="_blank" href="https://jq.qq.com/?_wv=1027&k=5k75PiH">
+                        <i class="icon icon-code-fork"></i> FORK
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="box" data-id="count_active_week">
         <div class="box-header count_common_box">
             <span class="caption-subject">周活跃用户统计</span>
@@ -186,6 +245,52 @@
         </div>
     </div>
 
+    <div class="box">
+        <div class="box-header count_common_box">
+            <span class="caption-subject">系统信息</span>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-primary btn-sm" data-widget="collapse"><i class="icon icon-minus"></i></i>
+                </button>
+                <button type="button" class="btn btn-danger btn-sm" data-widget="remove"><i class="icon icon-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="box-body">
+            <div class="portlet-body">
+                <table class="table table-bordered table-striped ">
+                    <tr>
+                        <th>{:lang('_SERVER_OS_')}</th>
+                        <td>{$Think.const.PHP_OS}</td>
+                    </tr>
+                    <tr>
+                        <th>{:lang('_THINKPHP_VERSION_')}</th>
+                        <td>{$Think.VERSION}</td>
+                    </tr>
+                    <tr>
+                        <th>{:lang('_RUNTIME_ENVIR_')}</th>
+                        <td>{$_SERVER['SERVER_SOFTWARE']}</td>
+                    </tr>
+                    <tr>
+                        <th>{:lang('_MYSQL_VERSION_')}</th>
+                        {php}
+                            $system_info_mysql = db()->query("select version() as v;");
+                        {/php}
+                        <td>{$system_info_mysql.0.v}</td>
+                    </tr>
+                    <tr>
+                        <th>{:lang('_LIMIT_UPLOAD_')}</th>
+                        <td>{:ini_get('upload_max_filesize')}
+
+                           {:lang('_MODIFY_HOW_TO_')}</td>
+                    </tr>
+                    <tr>
+                        <th>{:lang('_MUUCMF_VERSION_')}</th>
+                        <td data-id="version" data-value="{$version}">{$version}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
 </section>
 
 

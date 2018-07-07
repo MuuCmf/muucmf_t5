@@ -33,11 +33,15 @@ class Index extends Admin
             
             $this->setTitle(lang('_INDEX_MANAGE_'));
             $this->getRegUser();
+            $this->getActionLog();
             $this->getUserCount();
             $this->getOtherCount();
             return $this->fetch();
         }
     }
+
+
+
     private function getOtherCount(){
         $countModel=model('Count');
         //用户流失
@@ -137,6 +141,46 @@ class Index extends Admin
 
         $this->assign('count_day',$count_day);
         $this->assign('regMember', $regMember);
+    }
+
+    /**
+     * 最近N日用户行为数据
+     * @return [type] [description]
+     */
+    private function getActionLog()
+    {
+        $today = date('Y-m-d', time());
+        $today = strtotime($today);
+        $count_day = 7;//默认一周
+
+        $week = [];
+        $actionLogData = [];
+        //每日用户行为数量
+        for ($i = $count_day; $i--; $i >= 0) {
+            $day = $today - $i * 86400;
+            $day_after = $today - ($i - 1) * 86400;
+            $week_map = [
+                'Mon' => lang('_MON_'), 
+                'Tue' => lang('_TUES_'), 
+                'Wed' => lang('_WEDNES_'), 
+                'Thu' => lang('_THURS_'), 
+                'Fri' => lang('_FRI_'), 
+                'Sat' => lang('_SATUR_'), 
+                'Sun' => lang('_SUN_')
+            ];
+            $week[] = date('m月d日 ', $day) . $week_map[date('D', $day)];
+
+            $map['status']=1;
+            $map['create_time']=[['>=',$day],['<=',$day_after],'and'];
+            $user = Db::name('action_log')->where($map)->count() * 1;
+            $actionLogData[] = $user;
+        }
+
+        $actionLog['days'] = $week;
+        $actionLog['data'] = $actionLogData;
+        $actionLog = json_encode($actionLog);
+
+        $this->assign('actionLog', $actionLog);
     }
 
 }

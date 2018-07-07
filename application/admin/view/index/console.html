@@ -69,64 +69,6 @@
         <div class="sortblock clearfix">
             {include file="index/_count_file"/}
         </div>
-    </div>   
-    <div class="index-content-box">
-        <div class="with-padding-lg">
-            <div class="col-xs-12">
-                <div class="bd">
-                
-                    <div class="col-xs-6 text-center">
-                        <a class="with-padding-lg bg-info index-block-box" target="_blank" href="http://www.muucmf.cn/muucmf/index/document.html">
-                            <i class="icon-book"></i> {:lang('_DOCUMENT_CENTER_')}</a>
-                    </div>
-                    <div class="col-xs-6 text-center">
-                        <a class="with-padding-lg bg-warning index-block-box" target="_blank" href="http://www.muucmf.cn/forum">
-                            <i class="icon-chrome"></i> {:lang('_OFFICIAL_GROUP_')}
-                        </a>
-                    </div>
-
-                    <div class="portlet-title">
-                        <div class="caption text-center">
-                            <span class="caption-subject">系统信息</span>
-                        </div>
-                    </div>
-                    <div class="portlet-body">
-                        <table class="table table-bordered table-striped ">
-                            <tr>
-                                <th>{:lang('_SERVER_OS_')}</th>
-                                <td>{$Think.const.PHP_OS}</td>
-                            </tr>
-                            <tr>
-                                <th>{:lang('_THINKPHP_VERSION_')}</th>
-                                <td>{$Think.VERSION}</td>
-                            </tr>
-                            <tr>
-                                <th>{:lang('_RUNTIME_ENVIR_')}</th>
-                                <td>{$_SERVER['SERVER_SOFTWARE']}</td>
-                            </tr>
-                            <tr>
-                                <th>{:lang('_MYSQL_VERSION_')}</th>
-                                {php}
-                                    $system_info_mysql = db()->query("select version() as v;");
-                                {/php}
-                                <td>{$system_info_mysql.0.v}</td>
-                            </tr>
-                            <tr>
-                                <th>{:lang('_LIMIT_UPLOAD_')}</th>
-                                <td>{:ini_get('upload_max_filesize')}
-
-                                   {:lang('_MODIFY_HOW_TO_')}</td>
-                            </tr>
-                            <tr>
-                                <th>{:lang('_MUUCMF_VERSION_')}</th>
-                                <td data-id="version" data-value="{$version}">{$version}</td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
 
     <div class="modal fade" id="settingCount">
@@ -154,6 +96,8 @@
         </div>
     </div>
 </div>
+
+<div id="state"></div>
 {/block}
 
 {block name="script"}
@@ -268,6 +212,23 @@ $(function(){
             }
         ]
     }
+
+    //用户行为数据
+    var actionLog={$actionLog};
+    var actionLogChartData={
+        labels: actionLog.days,
+        datasets: [
+            {
+                fillColor: "rgba(23,182,200,0.2)",
+                strokeColor: "rgba(23,182,200,1)",
+                pointColor: "rgba(23,182,200,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(220,220,220,1)",
+                data: actionLog.data
+            }
+        ]
+    }
     var refreshChart=function($tag){
         switch ($tag){
             case 'reg_member':
@@ -282,31 +243,32 @@ $(function(){
             case 'count_active_month':
                 var lineChartCanvas = $("#monthActiveChart").lineChart(monthLineChartData, options);
                 break;
+            case 'actionLog':
+                var actionLogChartCanvas = $("#actionLogChart").lineChart(actionLogChartData, options);
+                break;
             default :;
         }
     }
     refreshChart('reg_member');
+    refreshChart('actionLog');
     refreshChart('count_active_day');
     refreshChart('count_active_week');
     refreshChart('count_active_month');
-});
 
-$(function(){
     // Make the dashboard widgets sortable Using jquery UI
     $('.connectedSortable').sortable({
       placeholder         : 'sort-highlight',
       connectWith         : '.connectedSortable',
       handle              : '.box-header',
+      opacity             : 0.6,
       forcePlaceholderSize: true,
-      zIndex              : 999999
+      zIndex              : 999999,
     });
 
     $('.connectedSortable .box-header').css('cursor', 'move');
-
 });
-</script>
-<!--ChartJS 图表 End-->
 
+</script>
 
 {/block}   
     
