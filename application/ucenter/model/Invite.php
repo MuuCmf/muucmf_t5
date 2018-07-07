@@ -1,7 +1,7 @@
 <?php
 namespace app\ucenter\Model;
 
-use Think\Model;
+use think\Model;
 
 class Invite extends Model
 {

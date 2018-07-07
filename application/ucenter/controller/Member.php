@@ -189,23 +189,23 @@ class Member extends Controller
         if (request()->isPost()) {
             $aType = input('get.type', '', 'text');
             $aCode = input('post.code', '', 'text');
-            $result['status'] = 0;
+            $result['code'] = 0;
             if (!mb_strlen($aCode)) {
-                $result['info'] = lang('_INFO_PLEASE_INPUT_').lang('_EXCLAMATION_');
-                $this->ajaxReturn($result);
+                $result['msg'] = lang('_INFO_PLEASE_INPUT_').lang('_EXCLAMATION_');
+                return json($result);
             }
             $invite = model('Ucenter/Invite')->getByCode($aCode);
             if ($invite) {
                 if ($invite['end_time'] > time()) {
-                    $result['status'] = 1;
-                    $result['url'] = Url('Ucenter/Member/register', array('code' => $aCode, 'type' => $aType));
+                    $result['code'] = 1;
+                    $result['url'] = Url('Ucenter/Member/register', ['code' => $aCode, 'type' => $aType]);
                 } else {
-                    $result['info'] = lang('_INFO_INV_CODE_EXPIRED_');
+                    $result['msg'] = lang('_INFO_INV_CODE_EXPIRED_');
                 }
             } else {
-                $result['info'] = lang('_INFO_NOT_EXIST_');
+                $result['msg'] = lang('_INFO_NOT_EXIST_');
             }
-            $this->ajaxReturn($result);
+            return json($result);
         } else {
            return $this->fetch();
         }

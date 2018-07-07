@@ -1,18 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 15-3-25
- * Time: 上午10:19
- * @author 郑钟良<zzl@ourstu.com>
- */
+namespace app\ucenter\controller;
 
-namespace Ucenter\Controller;
+use think\Db;
+use think\Controller;
 
-
-use Think\Controller;
-
-class InviteController extends BaseController
+class Invite extends Base
 {
     protected $mInviteModel;
     protected $mInviteTypeModel;
@@ -22,15 +14,14 @@ class InviteController extends BaseController
     public function _initialize()
     {
         parent::_initialize();
-        $this->mInviteModel=D('Ucenter/Invite');
-        $this->mInviteTypeModel=D('Ucenter/InviteType');
-        $this->mInviteBuyLogModel=D('Ucenter/InviteBuyLog');
-        $this->mInviteUserInfoModel=D('Ucenter/InviteUserInfo');
+        $this->mInviteModel=model('Ucenter/Invite');
+        $this->mInviteTypeModel=model('Ucenter/InviteType');
+        $this->mInviteBuyLogModel=model('Ucenter/InviteBuyLog');
+        $this->mInviteUserInfoModel=model('Ucenter/InviteUserInfo');
     }
 
     /**
      * 邀请码类型列表页
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function index()
     {
@@ -39,7 +30,7 @@ class InviteController extends BaseController
         $this->assign('invite_type_list',$typeList);
         $this->defaultTabHash('invite');
         $this->assign('type','index');
-        $this->display();
+        return $this->fetch();
     }
 
     /**
@@ -59,7 +50,7 @@ class InviteController extends BaseController
         $this->assign('type_list',$typeList);
         $this->defaultTabHash('invite');
         $this->assign('type','invite');
-        $this->display();
+        return $this->fetch();
     }
 
     /**
@@ -73,7 +64,7 @@ class InviteController extends BaseController
             $aNum=I('post.exchange_num',0,'intval');
             $this->_checkCanBuy($aTypeId,$aNum);
             $inviteType=$this->mInviteTypeModel->where(array('id'=>$aTypeId))->find();
-            D('Ucenter/Score')->setUserScore(array(is_login()),$aNum*$inviteType['pay_score'],$inviteType['pay_score_type'],'dec','',0,L('_INV_QUOTA_2_'));//扣积分
+            model('Ucenter/Score')->setUserScore(array(is_login()),$aNum*$inviteType['pay_score'],$inviteType['pay_score_type'],'dec','',0,L('_INV_QUOTA_2_'));//扣积分
 
             $result=$this->mInviteBuyLogModel->buy($aTypeId,$aNum);
             if($result){
@@ -89,7 +80,7 @@ class InviteController extends BaseController
             $can_buy_num=$this->_getCanBuyNum($aId);
             $this->assign('can_buy_num',$can_buy_num);
             $this->assign('id',$aId);
-            $this->display();
+            return $this->fetch();
         }
     }
 
@@ -133,7 +124,7 @@ class InviteController extends BaseController
             }
             $this->assign('invite_type',$inviteType);
             $this->assign('id',$aId);
-            $this->display('create');
+            return $this->fetch('create');
         }
     }
 
@@ -146,12 +137,12 @@ class InviteController extends BaseController
         $aId=I('post.id',0,'intval');
         $result=$this->mInviteModel->backCode($aId);
         if($result){
-            $data['status']=1;
+            $data['code']=1;
         }else{
-            $data['info']=L('_FAIL_RETURN_').L('_EXCLAMATION_');
-            $data['status']=0;
+            $data['msg']=L('_FAIL_RETURN_').L('_EXCLAMATION_');
+            $data['code']=0;
         }
-        $this->ajaxReturn($data);
+        return json($data);
     }
 
     /**
@@ -205,7 +196,7 @@ class InviteController extends BaseController
             $inviteType['auth_groups']=explode(',',$inviteType['auth_groups']);
             $map['group_id']=array('in',$inviteType['auth_groups']);
             $map['uid']=is_login();
-            if(!D('AuthGroupAccess')->where($map)->count()){
+            if(!model('AuthGroupAccess')->where($map)->count()){
                 $result['info']=L('_INFO_AUTHORITY_LACK_').L('_EXCLAMATION_');
                 $this->ajaxReturn($result);
             }

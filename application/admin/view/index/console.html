@@ -229,22 +229,24 @@ $(function(){
             }
         ]
     }
+
+    var regMember,dayActiveChart,weekActiveChart,monthActiveList,actionLogChart;
     var refreshChart=function($tag){
         switch ($tag){
             case 'reg_member':
-                var lineChartCanvas = $("#regMember").lineChart(regMemberChartData,options);
+                regMember = $("#regMember").lineChart(regMemberChartData,options);
                 break;
             case 'count_active_day':
-                var lineChartCanvas = $("#dayActiveChart").lineChart(dayLineChartData,options);
+                dayActiveChart = $("#dayActiveChart").lineChart(dayLineChartData,options);
                 break;
             case 'count_active_week':
-                var lineChartCanvas = $("#weekActiveChart").lineChart(weekLineChartData, options);
+                weekActiveChart = $("#weekActiveChart").lineChart(weekLineChartData, options);
                 break;
             case 'count_active_month':
-                var lineChartCanvas = $("#monthActiveChart").lineChart(monthLineChartData, options);
+                monthActiveChart = $("#monthActiveChart").lineChart(monthLineChartData, options);
                 break;
             case 'actionLog':
-                var actionLogChartCanvas = $("#actionLogChart").lineChart(actionLogChartData, options);
+                actionLogChart = $("#actionLogChart").lineChart(actionLogChartData, options);
                 break;
             default :;
         }
@@ -263,6 +265,7 @@ $(function(){
       opacity             : 0.6,
       forcePlaceholderSize: true,
       zIndex              : 999999,
+
     });
 
     $('.connectedSortable .box-header').css('cursor', 'move');
