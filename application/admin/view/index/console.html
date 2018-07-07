@@ -65,27 +65,26 @@
         </div>
     </div>
     
-    <div class="index-content-box">
-
-        <div class="with-padding-lg">
-            <div class="count clearfix">
-                {include file="index/_count_file"/}
-
-                <div class="col-xs-6 text-center">
-                    <a class="with-padding-lg bg-info index-block-box" target="_blank" href="http://www.muucmf.cn/muucmf/index/document.html">
-                        <i class="icon-book"></i> {:lang('_DOCUMENT_CENTER_')}</a>
-                </div>
-                <div class="col-xs-6 text-center">
-                    <a class="with-padding-lg bg-warning index-block-box" target="_blank" href="http://www.muucmf.cn/forum">
-                        <i class="icon-chrome"></i> {:lang('_OFFICIAL_GROUP_')}
-                    </a>
-                </div>
-            </div>
+    <div class="index-content-box">    
+        <div class="sortblock clearfix">
+            {include file="index/_count_file"/}
         </div>
+    </div>   
+    <div class="index-content-box">
         <div class="with-padding-lg">
             <div class="col-xs-12">
                 <div class="bd">
-                <div class="count_common_box">
+                
+                    <div class="col-xs-6 text-center">
+                        <a class="with-padding-lg bg-info index-block-box" target="_blank" href="http://www.muucmf.cn/muucmf/index/document.html">
+                            <i class="icon-book"></i> {:lang('_DOCUMENT_CENTER_')}</a>
+                    </div>
+                    <div class="col-xs-6 text-center">
+                        <a class="with-padding-lg bg-warning index-block-box" target="_blank" href="http://www.muucmf.cn/forum">
+                            <i class="icon-chrome"></i> {:lang('_OFFICIAL_GROUP_')}
+                        </a>
+                    </div>
+
                     <div class="portlet-title">
                         <div class="caption text-center">
                             <span class="caption-subject">系统信息</span>
@@ -125,12 +124,11 @@
                         </table>
                     </div>
                 </div>
-                </div>
             </div>
-
         </div>
+
     </div>
-    
+
     <div class="modal fade" id="settingCount">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
@@ -159,7 +157,8 @@
 {/block}
 
 {block name="script"}
-
+<!-- jQuery UI 1.11.4 -->
+<script src="__LIB__/jquery-ui/jquery-ui.min.js"></script>
 <!-- ChartJS 1.0.1 -->
 <script src="__ZUI__/lib/chart/zui.chart.min.js"></script>
 <script>
@@ -291,7 +290,23 @@ $(function(){
     refreshChart('count_active_week');
     refreshChart('count_active_month');
 });
+
+$(function(){
+    // Make the dashboard widgets sortable Using jquery UI
+    $('.connectedSortable').sortable({
+      placeholder         : 'sort-highlight',
+      connectWith         : '.connectedSortable',
+      handle              : '.box-header',
+      forcePlaceholderSize: true,
+      zIndex              : 999999
+    });
+
+    $('.connectedSortable .box-header').css('cursor', 'move');
+
+});
 </script>
 <!--ChartJS 图表 End-->
+
+
 {/block}   
     
