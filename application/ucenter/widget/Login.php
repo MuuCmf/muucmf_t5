@@ -15,7 +15,7 @@ class Login extends Controller
             }
         }
         $this->assign('login_type', $type);
-        $ph = array();
+        $ph = [];
         check_login_type('username') && $ph[] = lang('_USERNAME_');
         check_login_type('email') && $ph[] = lang('_EMAIL_');
         check_login_type('mobile') && $ph[] = lang('_PHONE_');
@@ -46,7 +46,7 @@ class Login extends Controller
             $res['info']=lang('_INFO_TYPE_NOT_OPENED_').lang('_PERIOD_');
         }
         //用户登录验证
-        $uid = model('UcenterMember')->login($username, $aPassword, $aUnType);
+        $uid = model('ucenter/UcenterMember')->login($username, $aPassword, $aUnType);
 
         if (0 < $uid) { //登录成功
             

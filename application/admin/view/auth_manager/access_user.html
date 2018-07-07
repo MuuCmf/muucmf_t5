@@ -9,7 +9,7 @@
         <div class="clearfix">
             <div class="col-xs-10">
                 <ul class="nav nav-secondary">
-                    <li><a href="{:Url('AuthManager/access',array('group_name'=>input('group_name') ,'group_id'=> input('group_id')))}">{:lang("_MANAGEMENT_BACKGROUND_AUTHORIZATION_")}</a></li>
+                    <li><a href="{:Url('AuthManager/access',['group_name'=>input('group_name') ,'group_id'=> input('group_id')])}">{:lang("_MANAGEMENT_BACKGROUND_AUTHORIZATION_")}</a></li>
                     <li class="active"><a href="javascript:;">{:lang("_FRONT_DESK_ACCESS_AUTHORIZATION_")}</a></li>
                     <li><a href="{:Url('AuthManager/user',array('group_name'=>input('group_name') ,'group_id'=> input('group_id')))}">{:lang("_MEMBER_DELEGATION_")}</a></li>
 
@@ -18,7 +18,7 @@
             <div class="col-xs-2 text-right">
                     <select name="group" class="form-control">
                         {volist name="auth_group" id="vo"}
-                            <option value="{:Url('AuthManager/access',array('group_id'=>$vo['id'],'group_name'=>$vo['title']))}" {eq name="vo['id']" value="$this_group['id']"}selected{/eq} >{$vo.title}</option>
+                            <option value="{:Url('AuthManager/accessuser',['group_id'=>$vo['id'],'group_name'=>$vo['title']])}" {eq name="vo['id']" value="$this_group['id']"}selected{/eq} >{$vo.title}</option>
                         {/volist}
                     </select>
             </div>
@@ -34,10 +34,12 @@
 						<dl class="checkmod">
 							<dt class="hd">
 								<label class="checkbox">
-                                    <input class="auth_rules rules_all" type="checkbox" name="rules[]" value="{php} 
+                                    <input class="auth_rules rules_all" type="checkbox" name="rules[]" value="
+                                    {php} 
                                     if(!empty($main_rules)) {
                                         echo $main_rules[$node['url']];
-                                    }{/php}">{$node.alias}{:lang("_MODULAR_")}
+                                    }{/php}
+                                    ">{$node.alias}{:lang("_MODULAR_")}
                                 </label>
 							</dt>
 							<dd class="bd">
@@ -84,11 +86,6 @@
 			    </form>
 			</div>
 
-			<!-- 成员授权 -->
-			<div class="tab-pane"></div>
-
-			<!-- 分类 -->
-			<div class="tab-pane"></div>
 		</div>
 	</div>
 
@@ -96,6 +93,28 @@
 {block name="script"}
 <script>
     $(function(){
+
+        var rules = [{$this_group.rules}];
+        $('.auth_rules').each(function(){
+            if( $.inArray( parseInt(this.value,10),rules )>-1 ){
+                $(this).prop('checked',true);
+            }
+            if(this.value==''){
+                $(this).closest('span').remove();
+            }
+        });
+
+        //全选节点
+        $('.rules_all').on('change',function(){
+            $(this).closest('dl').find('dd').find('input').prop('checked',this.checked);
+        });
+        $('.rules_row').on('change',function(){
+            $(this).closest('.rule_check').find('.child_row').find('input').prop('checked',this.checked);
+        });
+
+        $('select[name=group]').change(function(){
+            location.href = this.value;
+        });
 
         $('[data-toggle="del"]').click(function(){
             var sure=confirm('{:lang("_QUERY_DEL_AUTH_NODE_")}');

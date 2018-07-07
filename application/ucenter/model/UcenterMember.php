@@ -10,6 +10,18 @@ use app\common\model\Member;
  */
 class UcenterMember extends Model
 {
+    protected $autoWriteTimestamp = true;
+    // 定义时间戳字段名
+    protected $createTime = 'reg_time';
+    protected $updateTime = 'update_time';
+    //自动完成
+    protected $insert = ['reg_ip'];
+    protected $update = ['update_time'];
+
+    protected function setRegIpAttr()
+    {
+        return request()->ip(1);
+    }
     /**
      * 注册一个新用户
      * @param  string $username 用户名

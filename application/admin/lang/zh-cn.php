@@ -37,6 +37,7 @@ return array(
     '_USER_INCREASE_TODAY_' => '今日新增用户数',
     '_USER_COUNT_' => '总用户数',
     '_USER_ONLINE_' =>'在线用户',
+    '_USER_LOGIN_TODAY_' =>'今日登陆用户数',
     '_SETTINGS_' => '设置',
     '_DOCUMENT_CENTER_' => '文档中心',
     '_OFFICIAL_GROUP_' => '官方社群',

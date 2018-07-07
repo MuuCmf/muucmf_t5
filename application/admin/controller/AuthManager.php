@@ -449,13 +449,12 @@ class AuthManager extends Admin
             $aId = input('id', 0, 'intval');
             $aOldRule = input('post.old_rules', '', 'text');
             $aRules = input('post.rules/a', array());
-
-
             $rules = $this->getMergedRules($aOldRule, $aRules);
-            $authGroupModel = Db::name('AuthGroup');
-            $group = $authGroupModel->find($aId);
+            
+            $group = Db::name('AuthGroup')->find($aId);
             $group['rules'] = $rules;
-            $result = $authGroupModel->save($group);
+            
+            $result = Db::name('AuthGroup')->update($group);
             if ($result) {
                 $this->success(lang('_RIGHT_TO_SAVE_SUCCESS_'));
             } else {
@@ -464,7 +463,7 @@ class AuthManager extends Admin
         }
 
         $this->updateRules();
-        $auth_group = Db::name('AuthGroup')->where(array('status' => array('egt', '0'), 'type' => AuthGroup::TYPE_ADMIN))
+        $auth_group = Db::name('AuthGroup')->where(['status' => ['egt', '0'], 'type' => AuthGroup::TYPE_ADMIN])
             ->field('id,id,title,rules')->select();
 
         $node_list = $this->getNodeListFromModule(model('Common/Module')->getAll());

@@ -2,12 +2,22 @@
 <div class="col-md-12">
     <div class="count_common_box">
         <div class="with-padding-lg" style="position: relative">
-            <button class="btn  pull-right" data-toggle="modal" data-target="#settingCount"
-                    style="position: absolute;right: 15px;z-index: 999">
-                <i class="icon-cog"></i>
-                {:lang('_SETTINGS_')}
-            </button>
-            <div id="myChart" height="400"></div>
+            <div class="portlet-title">
+                <div class="caption">
+                    <span class="caption-subject font-blue bold uppercase">
+                        {:lang('_USER_INCREASE_RECENT_',array('count_day'=>$count_day))}
+                    </span>
+                    <button class="btn pull-right" data-toggle="modal" data-target="#settingCount">
+                        <i class="icon-cog"></i>
+                        {:lang('_SETTINGS_')}
+                    </button>
+                </div>    
+            </div>
+            <div class="portlet-body">
+                <div class="chart" style="height: 300px;">
+                    <canvas id="regMember" style="width:100%;max-height:300px"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 </div>

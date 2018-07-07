@@ -82,7 +82,6 @@ class Member extends Controller
                 $this->error(lang('_ERROR_INV_ILLEGAL_').lang('_EXCLAMATION_'));
             }
 
-
             /* 注册用户 */
             $ucenterMemberModel = new UcenterMember;
             $code_id = $uid=$ucenterMemberModel->register($aUsername, $aNickname, $aPassword, $email, $mobile, $aUnType);

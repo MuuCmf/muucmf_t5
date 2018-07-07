@@ -3,7 +3,7 @@ namespace app\common\model;
 
 use think\model;
 
-class file extends model;
+class File extends model;
 
     /**
      * 下载指定文件
