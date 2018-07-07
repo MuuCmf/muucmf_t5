@@ -35,6 +35,11 @@ class Common
         {
             Config::set('app_trace', true);
         }
+        // app_debug 开发者调试模式
+        if (Config::get('DEVELOP_MODE'))
+        {
+            Config::set('app_debug', true);
+        }
         // 如果是开发模式那么将异常模板修改成官方的
         if (Config::get('app_debug'))
         {

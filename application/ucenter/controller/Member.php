@@ -47,7 +47,7 @@ class Member extends Controller
 
             /* 检测验证码 */
             if (check_verify_open('reg')) {
-                if (!check_verify($aVerify)) {
+                if (!check_verify($aVerify,1)) {
                     $this->error(lang('_ERROR_VERIFY_CODE_').lang('_PERIOD_'));
                 }
             }
@@ -165,8 +165,8 @@ class Member extends Controller
         }
         
         if ($aStep == 'finish') {
-            model('Member')->login($aUid, false, $aRoleId);
-
+            //用户之前已经登陆，无需任何操作
+            //model('Member')->login($aUid, false, $aRoleId);
         }
         //取得站点LOGO
         $logo = get_cover(modC('LOGO',0,'Config'),'path');
@@ -269,10 +269,10 @@ class Member extends Controller
         if (request()->isPost()) {
             $result = controller('ucenter/Login', 'widget')->doLogin();
 
-            if ($result['status']) {
-                $this->success($result['info'], Input('post.from', Url('index/index/index'), 'text'));
+            if ($result['code'] == 1) {
+                $this->success($result['msg'], Input('post.from', Url('index/index/index'), 'text'));
             } else {
-                $this->error($result['info']);
+                $this->error($result['msg']);
             }
         } else { //显示登录页面
             return $this->fetch();
@@ -304,12 +304,6 @@ class Member extends Controller
         } else {
             $this->redirect('member/login');
         }
-    }
-
-    /* 验证码，用于登录和注册 */
-    public function verify()
-    {
-        captcha_src();
     }
 
     /* 用户密码找回首页 */
@@ -443,7 +437,7 @@ class Member extends Controller
      */
     public function changeEmail()
     {
-        $aEmail = input('post.email', '', 'op_t');
+        $aEmail = input('post.email', '', 'text');
         $aUid = session('temp_login_uid');
 
         if (Db::name('UcenterMember')->where(['id' => $aUid])->value('status') != 3) {
@@ -490,7 +484,7 @@ class Member extends Controller
      */
     public function saveAvatar()
     {
-        $redirect_url = session('temp_login_uid') ? Url('Ucenter/member/step', ['step' => get_next_step('change_avatar')]) : $_SERVER["HTTP_REFERER"];
+        $redirect_url = Url('Ucenter/member/step', ['step' => get_next_step('change_avatar')]);
 
         $aCrop = input('post.crop', '', 'text');
         $aUid = session('temp_login_uid') ? session('temp_login_uid') : is_login();
@@ -518,9 +512,9 @@ class Member extends Controller
      */
     public function doActivate()
     {
-        $aAccount = input('get.account', '', 'op_t');
-        $aVerify = input('get.verify', '', 'op_t');
-        $aType = input('get.type', '', 'op_t');
+        $aAccount = input('get.account', '', 'text');
+        $aVerify = input('get.verify', '', 'text');
+        $aType = input('get.type', '', 'text');
         $aUid = input('get.uid', 0, 'intval');
         $check = model('Verify')->checkVerify($aAccount, $aType, $aVerify, $aUid);
         if ($check) {
@@ -686,13 +680,13 @@ class Member extends Controller
      */
     public function set_tag()
     {
-        $result = controller('Ucenter/RegStep', 'Widget')->do_set_tag();
+        $result = controller('Ucenter/RegStep', 'widget')->do_set_tag();
         if ($result['status']) {
             $result['url'] = Url('Ucenter/member/step', array('step' => get_next_step('set_tag')));
         } else {
             !isset($result['info']) && $result['info'] = lang('_ERROR_INFO_SAVE_NONE_');
         }
-        $this->ajaxReturn($result);
+        return json($result);
     }
 
     /**

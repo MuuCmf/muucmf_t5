@@ -2,6 +2,7 @@
 use app\admin\model\AuthRule;
 use think\Db;
 use muucmf\Auth;
+use think\captcha\Captcha;
 /**
  * 用户相关公共函数库
  */
@@ -408,4 +409,42 @@ function match_users($content)
 function user_md5($str, $key = '')
 {
     return '' === $str ? '' : md5(sha1($str) . $key);
+}
+
+/**
+ * 验证码开关
+ * @param  [type] $open [description]
+ * @return [type]       [description]
+ */
+function check_verify_open($open)
+{
+    $config = Config('VERIFY_OPEN');
+
+    if ($config) {
+        $config = explode(',', $config);
+        if (in_array($open, $config)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * 检测验证码
+ * @param  integer $id 验证码ID
+ * @return boolean     检测结果
+ */
+function check_verify($code, $id = 1)
+{
+    $captcha = new Captcha();
+    return $captcha->check($code, $id);
+}
+/**
+ * 生成验证码
+ * @return [type] [description]
+ */
+function get_verify()
+{
+    captcha_src();
+    
 }

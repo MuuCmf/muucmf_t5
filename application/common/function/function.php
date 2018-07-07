@@ -12,7 +12,6 @@ require_once(APP_PATH . '/common/function/file.php');
 require_once(APP_PATH . '/common/function/limit.php');
 require_once(APP_PATH . '/common/function/message.php');
 require_once(APP_PATH . '/common/function/parse.php');
-require_once(APP_PATH . '/common/function/pagination.php');
 require_once(APP_PATH . '/common/function/query_user.php');
 require_once(APP_PATH . '/common/function/role.php');
 require_once(APP_PATH . '/common/function/seo.php');
@@ -882,23 +881,7 @@ function get_data_field_id($map = null, $field = null, $table = null, $yesnoid =
         return $list;
     }
 }
-/**
- * 验证码开关
- * @param  [type] $open [description]
- * @return [type]       [description]
- */
-function check_verify_open($open)
-{
-    $config = Config('VERIFY_OPEN');
 
-    if ($config) {
-        $config = explode(',', $config);
-        if (in_array($open, $config)) {
-            return true;
-        }
-    }
-    return false;
-}
 
 /**
  * convert_url_query  转换url参数为数组

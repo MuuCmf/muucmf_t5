@@ -229,17 +229,7 @@ function extra_menu($extra_menu, &$base_menu)
     }
 }
 
-/**
- * 检测验证码
- * @param  integer $id 验证码ID
- * @return boolean     检测结果
- * @author 麦当苗儿 <zuojiazi@vip.qq.com>
- */
-function check_verify($code, $id = 1)
-{
-    $verify = new \Think\Verify();
-    return $verify->check($code, $id);
-}
+
 
 // 分析枚举类型配置值 格式 a:名称1,b:名称2
 function parse_config_attr($string)

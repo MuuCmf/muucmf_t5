@@ -208,7 +208,7 @@
                                 </div>
                                 <div class="col-xs-8 lg_lf_fm_verify">
                                     <img class="verifyimg reloadverify img-responsive" alt="点击切换"
-                                         src="{:captcha_src()}"
+                                         src="{:captcha_src(1)}"
                                          style="cursor:pointer; height:43px">
                                 </div>
                                 <div class="col-xs-12 Validform_checktip text-warning lg_lf_fm_tip"></div>
@@ -250,7 +250,10 @@
         {/if}
     </div>
 </div>
-{include file="common@public/js"/}
+<script src="__COMMON__/lib/zui/js/zui.min.js"></script>
+<script src="__COMMON__/lib/qtip/jquery.qtip.min.js"></script>
+<script src="__COMMON__/lib/placeholder/placeholder.js"></script>
+<script src="__COMMON__/js/main.min.js"></script>
 {block name="script"}
     <script type="text/javascript">
         $(function(){

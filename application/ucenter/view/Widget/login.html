@@ -40,7 +40,7 @@
                                    errormsg="{:lang('_MI_CODE_NULL_')}" nullmsg="{:lang('_MI_CODE_NULL_')}" datatype="*5-5" name="verify">
                         </div>
                         <div class="col-xs-8 lg_lf_fm_verify">
-                            <img class="verifyimg reloadverify" alt="{:lang('_MI_ALT_')}" src="{:captcha_src()}"
+                            <img class="verifyimg reloadverify" alt="{:lang('_MI_ALT_')}" src="{:captcha_src(1)}"
                                  style="cursor:pointer;height:43px;max-width: 100%">
                         </div>
                         <div class="col-xs-11 Validform_checktip text-warning lg_lf_fm_tip col-sm-offset-1"></div>
@@ -152,7 +152,7 @@
                     }
                 } else {
                     toast.error(data.msg, "{:lang('_TIP_GENTLE_')}");
-                    //self.find(".Validform_checktip").text(data.info);
+                    //self.find(".Validform_checktip").text(data.msg);
                     //刷新验证码
                     $(".reloadverify").click();
                 }

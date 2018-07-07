@@ -31,10 +31,14 @@ class Login extends Controller
         $aRemember = input('param.remember', 0, 'intval');//默认记住登录 0：不记住；1：记住
 
         if(empty($aUsername)) $this->error(lang('_MI_USERNAME_'));
+        if(empty($aPassword)) $this->error(lang('_PW_INPUT_ERROR_'));
         /* 检测验证码 */
+        
         if (check_verify_open('login')) {
-            if (!check_verify($aVerify)) {
-                $res['info']=lang('_INFO_VERIFY_CODE_INPUT_ERROR_').lang('_PERIOD_');
+            if (!check_verify($aVerify,1)) {
+
+                $res['code']=0;
+                $res['msg']=lang('_INFO_VERIFY_CODE_INPUT_ERROR_').lang('_PERIOD_');
                 return $res;
             }
         }
@@ -43,7 +47,7 @@ class Login extends Controller
         check_username($aUsername, $email, $mobile, $aUnType);
         //echo $aUnType;exit;
         if (!check_reg_type($aUnType)) {
-            $res['info']=lang('_INFO_TYPE_NOT_OPENED_').lang('_PERIOD_');
+            $res['msg']=lang('_INFO_TYPE_NOT_OPENED_').lang('_PERIOD_');
         }
         //用户登录验证
         $uid = model('ucenter/UcenterMember')->login($username, $aPassword, $aUnType);
@@ -58,27 +62,27 @@ class Login extends Controller
             if ($Member->login($uid, $aRemember == 1)) { //登录用户
                 //TODO:跳转到登录前页面
                 
-                $res['status']=1;
-                $res['info']=lang('_WELCOME_RETURN_');
+                $res['code']=1;
+                $res['msg']=lang('_WELCOME_RETURN_');
                 $res['uid']=$uid;
             } else {
-                $res['status']=0;
-                $res['info']=$Member->getError();
+                $res['code']=0;
+                $res['msg']=$Member->getError();
             }
 
         } else { //登录失败
             switch ($uid) {
                 case -1:
-                    $res['status']=0;
-                    $res['info']= lang('_INFO_USER_FORBIDDEN_');
+                    $res['code']=0;
+                    $res['msg']= lang('_INFO_USER_FORBIDDEN_');
                     break; //系统级别禁用
                 case -2:
-                    $res['status']=0;
-                    $res['info']= lang('_INFO_PW_ERROR_').lang('_EXCLAMATION_');
+                    $res['code']=0;
+                    $res['msg']= lang('_INFO_PW_ERROR_').lang('_EXCLAMATION_');
                     break;
                 default:
-                    $res['status']=0;
-                    $res['info']= $uid;
+                    $res['code']=0;
+                    $res['msg']= $uid;
                     break; // 0-接口参数错误（调试阶段使用）
             }
         }
