@@ -166,12 +166,12 @@
                 if(ret.code==1){
                     toast.success("{:lang('_SUCCESS_UPLOAD_')}{:lang('_PERIOD_')}");
                     $('#file_list_{$field.name}').html(
-                        '<div class="file_item" data-id="'+ret.data.id+'">'+
-                            '<span>'+ret.data.name+'</span>'+
+                        '<div class="file_item" data-id="'+ret.data[0].id+'">'+
+                            '<span>'+ret.data[0].name+'</span>'+
                             '<a class="remove"><i class="icon-trash"></i></a>'+
                         '</div>'
                     );
-                   $('#file_upload_{$field.name}').val(ret.data.id);
+                   $('#file_upload_{$field.name}').val(ret.data[0].id);
                 }else{
                     toast.error("{:lang('_FAIL_UPLOAD_')}{:lang('_PERIOD_')}"+ret.msg);
                 }
@@ -214,7 +214,6 @@
             <div class="btns">
                 <div id="picker">{:lang('_FILE_SELECT_')}</div>
             </div>
-
         </div>
         <input name="{$field.name}" id="file_upload_{$field.name}" type="hidden" value="{$field.value}">
         <script>
@@ -243,12 +242,12 @@
                     if(ret.code==1){
                         toast.success("{:lang('_SUCCESS_UPLOAD_')}{:lang('_PERIOD_')}");
                         $('#file_list_{$field.name}').append(
-                            '<div class="file_item" data-id="'+ret.data.id+'">'+
-                                '<span>'+ret.data.name+'</span>'+
+                            '<div class="file_item" data-id="'+ret.data[0].id+'">'+
+                                '<span>'+ret.data[0].name+'</span>'+
                                 '<a class="remove"><i class="icon-trash"></i></a>'+
                             '</div>'
                         );
-                        upAttachVal($('#file_upload_{$field.name}'),'add',ret.data.id);
+                        upAttachVal($('#file_upload_{$field.name}'),'add',ret.data[0].id);
                     }else{
                         toast.error("{:lang('_FAIL_UPLOAD_')}{:lang('_PERIOD_')}"+ret.msg);
                     }
@@ -321,7 +320,7 @@
                     server: "{:Url('api/file/uploadPicture',array('session_id'=>session_id()))}",
                     // 选择文件的按钮。可选。
                     // 内部根据当前运行是创建，可能是input元素，也可能是flash.
-                    pick: '#upload_single_image_{$field.name}',
+                    pick: {id:'#upload_single_image_{$field.name}',multiple: false},
                     // 只允许选择图片文件
                     accept: {
                         title: 'Images',
@@ -336,10 +335,10 @@
                 /*上传成功**/
                 uploader_{$field.name}.on('uploadSuccess', function (file, data) {
                     if (data.code) {
-                        $("[name='{$field.name}']").val(data.data.id);
+                        $("[name='{$field.name}']").val(data.data[0].id);
                         $("[name='{$field.name}']").parent().find('.upload-pre-item').html(
-                                ' <div class="each"><a href="'+ data.data.path+'" title={:lang("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}><img src="'+ data.data.path+'"></a><div class="text-center opacity del_btn" ></div>' +
-                                        '<div onclick="admin_image.removeImage($(this),'+data.data.id+')"  class="text-center del_btn">{:lang("_DELETE_")}</div></div>'
+                                ' <div class="each"><a href="'+ data.data[0].path+'" title={:lang("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}><img src="'+ data.data[0].path+'"></a><div class="text-center opacity del_btn" ></div>' +
+                                        '<div onclick="admin_image.removeImage($(this),'+data.data[0].id+')"  class="text-center del_btn">{:lang("_DELETE_")}</div></div>'
                         );
                         //重启webuploader,可多次上传
                         uploader_{$field.name}.reset();
@@ -420,19 +419,19 @@
                     var ids = $("[name='{$field.name}']").val();
                     ids = ids.split(',');
 
-                  if( ids.indexOf(data.data.id) == -1){
-                        var rids = admin_image.upAttachVal('add',data.data.id, $("[name='{$field.name}']"));
+                  if( ids.indexOf(data.data[0].id) == -1){
+                        var rids = admin_image.upAttachVal('add',data.data[0].id, $("[name='{$field.name}']"));
                       if(rids.length>limit){
                           updateAlert({:lang('_EXCEED_THE_PICTURE_LIMIT_WITH_SINGLE_')});
                           return;
                       }
                       $("[name='{$field.name}']").parent().find('.upload-pre-item').append(
                             '<div class="each">'+
-                            '<a href="'+ data.data.path+'" data-toggle="lightbox" title={:lang("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>'+
-                            '<img src="'+ data.data.path+'">'+
+                            '<a href="'+ data.data[0].path+'" data-toggle="lightbox" title={:lang("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>'+
+                            '<img src="'+ data.data[0].path+'">'+
                             '</a>'+
                             '<div class="text-center opacity del_btn" ></div>' +
-                                '<div onclick="admin_image.removeImage($(this),'+data.data.id+')"  class="text-center del_btn">{:lang("_DELETE_")}</div>'+
+                                '<div onclick="admin_image.removeImage($(this),'+data.data[0].id+')"  class="text-center del_btn">{:lang("_DELETE_")}</div>'+
                             '</div>'
                         );
                     }else{

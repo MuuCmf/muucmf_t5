@@ -49,13 +49,13 @@
             $text1.val(html)
         }
         //上传图片
-        editor.customConfig.uploadImgServer = '{:Url("Home/File/uploadPicture")}'  // 上传图片到服务器
+        editor.customConfig.uploadImgServer = '{:Url("api/File/uploadPicture")}'  // 上传图片到服务器
         editor.customConfig.uploadImgHooks = {
         customInsert: function (insertImg, result, editor) {
                 // result 必须是一个 JSON 格式字符串！！！否则报错
                 // 图片上传并返回结果，自定义插入图片的事件（而不是编辑器自动插入图片！！！）
                 // insertImg 是插入图片的函数，editor 是编辑器对象，result 是服务器端返回的结果
-                for(var i in result.data){  
+                for(var i in result.data){
                     var url =result.data[i].path;
                     insertImg(url);
                 }  

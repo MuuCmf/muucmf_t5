@@ -19,7 +19,7 @@ return [
         //最大可上传大小
         'maxsize'   => 50*1024*1024,
         //可上传的文件类型
-        'mimetype'  => 'zip,rar,xls,xlsx,doc,docx',
+        'mimetype'  => 'zip,rar,xls,xlsx,doc,docx,pdf',
     ],
     
 ];

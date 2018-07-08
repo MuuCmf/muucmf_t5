@@ -85,6 +85,7 @@ class Admin extends MuuAdmin
 
             ->keyStatus('DEMO_STATUS','Status','status状态')
             ->keyEditor('DEMO_EDITOR','Editor','Editor编辑器','wangeditor')
+            ->keyEditor('DEMO_EDITOR2','Editor','Editor编辑器','')
             ->group('表单元素', [
                 'DEMO_UID',
                 'DEMO_TEXT',
@@ -93,6 +94,7 @@ class Admin extends MuuAdmin
                 'DEMO_MULTI_INPUT|DEMO_MULTI_INPUT2',
 
                 'DEMO_EDITOR',
+                'DEMO_EDITOR2',
                 //'DEMO_COLOR',
             	'DEMO_ICON',
                 'DEMO_RADIO',
