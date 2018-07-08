@@ -111,7 +111,7 @@ class Announce extends Admin{
                 ->keyText('link','链接')
                 ->keyEditor('content','内容','','wangeditor')
                 ->keyTime('end_time','有效期至')
-                ->keyBool('is_force','是否强制推送')
+                ->keyBool('is_force','是否强制推送','用户打开页面会自动弹出')
                 ->keyText('sort','排序','前台数值大的先展示')
                 ->keyCreateTime()
                 ->keyStatus()

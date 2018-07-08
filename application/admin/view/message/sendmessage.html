@@ -1,4 +1,4 @@
-<script type="text/javascript" src="__PUBLIC__/js/jquery-2.0.3.min.js"></script>
+
 
 <div>
     <style>
@@ -15,51 +15,51 @@
             margin-top: 5px;;
         }
     </style>
-    <form id="migration" action="__SELF__" method="post" class="ajax-form">
+    <form id="migration" action="{:Url()}" method="post" class="ajax-form">
 
-        <php>if(empty($users)){</php>
+        {PHP}if(empty($users)){{/php}
         <div>
             <label><input type="checkbox" value="systemMessage" name="sendType[]" checked>系统消息</label>&nbsp;&nbsp;
             <label><input type="checkbox" value="systemEmail" name="sendType[]">邮件</label>&nbsp;&nbsp;
             <label><input type="checkbox" value="mobileMessage" name="sendType[]">手机短信</label><br/>
            {:lang("_USER_GROUP:_")}{:lang("_COLON_")}
-            <volist name="groups" id="one_group">
+            {volist name="groups" id="one_group"}
                 <label style="margin-right: 5px">
                     <input type="checkbox" name="user_group[]" value="{$one_group['id']}"
-                    <if condition="$aUserGroup eq $one_group['id'] or $aUserGroup eq 0">checked</if>
+                    {if condition="$aUserGroup eq $one_group['id'] or $aUserGroup eq 0"}checked{/if}
                     style="cursor:pointer;">
                     {$one_group['value']}
                 </label>
-            </volist>
+            {/volist}
         </div>
         <div>
            {:lang("_USER_IDENTITY_")}{:lang("_COLON_")}
-            <volist name="roles" id="one_role">
+            {volist name="roles" id="one_role"}
                 <label style="margin-right: 5px">
                     <input type="checkbox" name="user_role[]" value="{$one_role['id']}"
-                    <if condition="$aRole eq $one_role['id'] or $aRole eq 0 ">checked</if>
+                    {if condition="$aRole eq $one_role['id'] or $aRole eq 0 "}checked{/if}
                     style="cursor:pointer;">
                     {$one_role['value']}
                 </label>
-            </volist>
+            {/volist}
 
         </div>
-        <php>}else{</php>
+        {php}}else{{/php}
 
         <div>
             <label><input type="checkbox" value="systemMessage" name="sendType[]" checked>系统消息</label>&nbsp;&nbsp;
             <label><input type="checkbox" value="systemEmail" name="sendType[]">邮件</label>&nbsp;&nbsp;
             <label><input type="checkbox" value="mobileMessage" name="sendType[]">手机短信</label><br/>
            {:lang("_USER_")}{:lang("_COLON_")}
-            <volist name="users" id="one_user">
+            {volist name="users" id="one_user"}
                 <label style="margin-right: 10px">
                        [{$one_user['uid']}]{$one_user['nickname']}
                 </label>
-            </volist>
+            {/volist}
         <input type="hidden" name="uids" value="{$uids}">
         </div>
 
-        <php>}</php>
+        {php}}{/php}
         <div class="form-group clearfix">
             <input type="text" name="title" class="form-control" placeholder={:lang("_THE_TITLE_OF_AN_INCOMING_MESSAGE_WITH_DOUBLE_")}>
         </div>
@@ -70,7 +70,7 @@
 
 
         <div class="form-group">
-            {:W('Common/Ueditor/editor',array('content','content','','100%','200px','','',array('is_load_script'=>1,'zIndex'=>1050)))}
+            {:widget('Common/wangeditor/editor',array('content','content','','100%','200px','','',array('is_load_script'=>1,'zIndex'=>1050)))}
 
         </div>
 
@@ -100,8 +100,3 @@
         });
     });
 </script>
-<script type="text/javascript" src="__JS__/common.js"></script>
-<script type="text/javascript" src="__JS__/com/com.toast.class.js"></script>
-<script type="text/javascript" src="__ZUI__/js/zui.js"></script>
-<script type="text/javascript" charset="utf-8" src="__PUBLIC__/lib/ueditor/ueditor.config.js"></script>
-<script type="text/javascript" charset="utf-8" src="__PUBLIC__/lib/ueditor/ueditor.all.min.js"></script>

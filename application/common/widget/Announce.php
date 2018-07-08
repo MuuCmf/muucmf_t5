@@ -14,10 +14,12 @@ class Announce extends Controller
         $is_show=cookie('announce_un_show_now');
 
         if(!$is_show){
+
             $announce=$this->_getAnnounce();
-            
-            $this->assign('announce',$announce);
-            return $this->fetch('common@widget/announce');
+            if($announce){
+                $this->assign('announce',$announce);
+                return $this->fetch('common@widget/announce');
+            }
         }
         return true;
     }
@@ -25,13 +27,12 @@ class Announce extends Controller
     /**
      * 获取可展示的公告
      * @return null
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function _getAnnounce()
     {
         $list=cache('Announce_list');
 
-        if($list==null){//当前所有公告的列表
+        if($list==null){//当前所有可展示公告的列表
             $map['status']=1;
             $map['is_force']=1;
             $map['end_time']=['gt',time()];
@@ -97,7 +98,6 @@ class Announce extends Controller
             }
             cache('Announce_list',$list);
         }
-        
         return $announce;
     }
 

@@ -241,10 +241,10 @@ class Message extends Model
      */
     private function _initUserMessageSession($uids, $type)
     {
-        $messageTypeModel = M('MessageType');
+        
         $map['uid'] = array('in', $uids);
         $map['type'] = $type;
-        $already_uids = $messageTypeModel->where($map)->field('uid')->select();
+        $already_uids = Db::name('MessageType')->where($map)->field('uid')->select();
 
         $already_uids = array_column($already_uids, 'uid');
 
@@ -260,7 +260,7 @@ class Message extends Model
         unset($val);
 
         if (count($dataList)) {
-            $messageTypeModel->addAll($dataList);
+            Db::name('MessageType')->insertAll($dataList);
         }
         return true;
     }
@@ -285,7 +285,7 @@ class Message extends Model
         $data_content['type'] = $type;
         $data_content['create_time'] = time();
         $data_content['status'] = 1;
-        $message_id = Db::name('message_content')->insert($data_content);
+        $message_id = Db::name('message_content')->insertGetId($data_content);
         return $message_id;
     }
 
@@ -332,7 +332,9 @@ class Message extends Model
      */
     public function getHaventReadMessageCount($uid)
     {
-        $count = $this->where('to_uid=' . $uid . ' and  is_read=0')->count();
+        $map['to_uid']=$uid;
+        $map['is_read']=0;
+        $count = $this->where($map)->count();
         return $count;
     }
     /**设置某消息为已读
@@ -340,7 +342,7 @@ class Message extends Model
     */
     public function readMessage($message_id)
     {
-        return $this->where(array('id' => $message_id))->setField('is_read', 1);
+        return $this->where(['id' => $message_id])->setField('is_read', 1);
     }
     /*设置某个用户的所有消息为已读*/
     public function setAllReaded($uid, $message_session = '')
@@ -360,7 +362,10 @@ class Message extends Model
      */
     public function getHaventToastMessage($uid)
     {
-        $messages = Db::name('message')->where('to_uid=' . $uid . ' and  is_read=0  and last_toast=0')->order('id desc')->limit(99999)->select();
+        $map['to_uid']=$uid;
+        $map['is_read']=0;
+        $map['last_toast']=0;
+        $messages = Db::name('message')->where($map)->order('id desc')->limit(99999)->select();
         $this->_initMessage($messages);
         return $messages;
     }
@@ -371,7 +376,9 @@ class Message extends Model
     public function setAllToasted($uid)
     {
         $now = time();
-        Db::name('message')->where('to_uid=' . $uid . ' and last_toast=0')->setField('last_toast', $now);
+        $map['to_uid']=$uid;
+        $map['last_toast']=0;
+        Db::name('message')->where($map)->setField('last_toast', $now);
     }
 
     /**
@@ -544,10 +551,10 @@ class Message extends Model
      * 根据类型标识获取类型详细信息
      * @param $type
      * @return mixed
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function getInfo($type)
     {
+        if(empty($type) || $type=='') $type='common_system';
         $allType = $this->getAllMessageType();
         return $allType[$type];
     }

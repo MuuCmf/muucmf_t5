@@ -158,6 +158,7 @@ class AdminListBuilder extends AdminBuilder
         //$attr中可选参数，data-title：模态框标题，target-form：要传输的数据
         $attr['modal-url'] = $this->addUrlParam($url, $params);
         $attr['data-role'] = 'modal_popup';
+        $attr['class']='btn btn-warning';
         return $this->button($title, $attr);
     }
 
@@ -765,9 +766,11 @@ class AdminListBuilder extends AdminBuilder
             if ($key['type'] == $from) {
                 $key['type'] = $to;
                 foreach ($this->_data as &$data) {
+                if(is_array($data)){
                     $value = &$data[$key['name']];
                     $value = $convertFunction($value, $key, $data);
                     unset($value);
+                }  
                 }
                 unset($data);
             }

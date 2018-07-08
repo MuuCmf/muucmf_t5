@@ -32,14 +32,14 @@
      * 检查是否有新的消息
      */
      var checkMessage = function() {
-        $.get(Url('ucenter/Common/getInformation'), {}, function (msg) {
+        $.get(Url('ucenter/Message/getInformation'), {}, function (msg) {
             
-            if (msg.message_count!=0) {
+            if (msg.messages.length!=0) {
                 paly_ios_sound();
                 toast.info('有新消息~');
             }
 
-            $('[data-role="now-message-num"]').html(msg.message_count);
+            $('[data-role="now-message-num"]').text(msg.message_count);
             if(msg.message_count==0){
                 $('[data-role="now-message-num"]').hide();
             }else{

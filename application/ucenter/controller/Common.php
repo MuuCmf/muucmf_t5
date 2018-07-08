@@ -99,38 +99,7 @@ class Common extends Controller
 
     }
 
-    /**检测消息
-     * 返回系统的消息
-     */
-    public function getInformation()
-    {
 
-        $message = model('common/Message');
-        //取到所有没有提示过的信息
-        $message_count = $message->getHaventReadMessageCount(is_login());
-        $haventToastMessages = $message->getHaventToastMessage(is_login());
-
-        $message->setAllToasted(is_login()); //消息中心推送
-        //读取到推送之后，自动删除此推送来防止反复推送。
-
-        exit(json_encode(array('message_count'=>$message_count,'messages' => $haventToastMessages)));
-    }
-
-    /**设置全部的系统消息为已读
-     */
-    public function setAllMessageReaded()
-    {
-        model('Message')->setAllReaded(is_login());
-    }
-
-    /**设置某条系统消息为已读
-     * @param $message_id
-     */
-    public function readMessage($message_id)
-    {
-        exit(json_encode(array('status' => model('Common/Message')->readMessage($message_id))));
-
-    }
 
     /**
      * 用户修改封面
@@ -225,58 +194,6 @@ class Common extends Controller
             $this->ajaxReturn(array('status' => 0, 'info' =>  L("_CANCEL_")." ".L("_FOLLOWERS_")." ".L("_FAIL_")));
         }
     }
-
-
-    /**
-     * atWhoJson
-     * @author:陈一枭
-     */
-    public function atWhoJson()
-    {
-        exit(json_encode($this->getAtWhoUsersCached()));
-    }
-
-    private function getAtWhoUsersCached()
-    {
-        $cacheKey = 'at_who_users';
-        $atusers = cache($cacheKey);
-        if (empty($atusers[get_uid()])) {
-            $atusers[get_uid()] = $this->getAtWhoUsers();
-            cache($cacheKey, $atusers, 600);
-        }
-        return $atusers[get_uid()];
-    }
-
-    /**
-     * getAtWhoUsers  获取@列表
-     * @return array
-     * @author:陈一枭
-     */
-    private function getAtWhoUsers()
-    {
-        //获取能AT的人，UID列表
-        $uid = get_uid();
-        $follows = Db::name('Follow')->where(array('who_follow' => $uid, 'follow_who' => $uid, '_logic' => 'or'))->select();
-        $uids = array();
-        foreach ($follows as &$e) {
-            $uids[] = $e['who_follow'];
-            $uids[] = $e['follow_who'];
-        }
-        unset($e);
-        $uids = array_unique($uids);
-
-        //加入拼音检索
-        $users = array();
-        foreach ($uids as $uid) {
-            $user = query_user(array('nickname', 'id', 'avatar32'), $uid);
-            $user['search_key'] = $user['nickname'] . D('PinYin')->Pinyin($user['nickname']);
-            $users[] = $user;
-        }
-
-        //返回at用户列表
-        return $users;
-    }
-
 
     public function getVideo(){
         $aLink = input('post.link');

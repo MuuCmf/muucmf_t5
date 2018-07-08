@@ -64,7 +64,7 @@
 
     {/volist}
             <tr><td></td>
-                <td><input type="submit" class="btn" value={:lang("_DETERMINATION_WITH_DOUBLE_")}/> <button class="btn ajax-post btn" onclick="toggle_search()">{:lang("_CLOSE_")}</button></td>
+                <td><input type="submit" class="btn" value={:lang("_DETERMINATION_WITH_DOUBLE_")}/> <button class="btn ajax-post btn-warning" onclick="toggle_search()">{:lang("_CLOSE_")}</button></td>
                 <td></td>
             </tr>
     </table>
@@ -79,7 +79,7 @@
     <div class="button-box clearfix">
     <div class="fl">
         {if condition="count($searches) gt 0"}
-            <button class="btn submit-btn" url="?status=-1" target-form="ids" style="padding: 6px 16px;" onclick="toggle_search()">
+            <button class="btn btn-info submit-btn" url="?status=-1" target-form="ids" style="padding: 6px 16px;" onclick="toggle_search()">
                 {:lang("_SEARCH_")}
             </button>
         {/if}

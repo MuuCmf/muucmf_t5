@@ -1,6 +1,7 @@
 <?php
 namespace app\admin\controller;
 
+use think\Db;
 use app\admin\builder\AdminConfigBuilder;
 use app\admin\builder\AdminListBuilder;
 
@@ -11,7 +12,7 @@ class Message extends Admin
 {
 
 
-    public function userList($page=1,$r=20)
+    public function userList($r=20)
     {
         $aSearch1 = input('get.user_search1','');
         $aSearch2 = input('get.user_search2',0,'intval');
@@ -25,87 +26,73 @@ class Message extends Admin
         if($user_order==2){
             $order = 'login desc';
         }
-        
-        $map = array();
-
+        $map['status'] = 1;;
         if (empty($aSearch1) && empty($aSearch2)) {
-
-
             $aUserGroup = input('get.user_group', 0, 'intval');
             $aRole = input('get.role', 0, 'intval');
-
 
             if (!empty($aRole) || !empty($aUserGroup)) {
                 $uids = $this->getUids($aUserGroup, $aRole);
                 $map['uid'] = array('in', $uids);
             }
-
-
-            $user = D('member')->where($map)->order($order)->page($page, $r)->field('uid,nickname,login,last_login_time,last_login_ip')->select();
-            foreach ($user as &$v) {
-                $v['id'] = $v['uid'];
-                $v['last_login_ip'] = long2ip($v['last_login_ip']);
-                $v['mobile'] = query_user('mobile',$v['id'])['mobile'];
-            }
-            unset($v);
-            $totalCount = D('member')->where($map)->count();
         } else {
-
             $uids = $this->getUids_sc($aSearch1, $aSearch2);
             $map['uid'] = array('in', $uids);
-
-            $user = D('member')->where($map)->order($order)->page($page, $r)->field('uid,nickname,login,last_login_time,last_login_ip')->select();
-            foreach ($user as &$v) {
-                $v['id'] = $v['uid'];
-                $v['last_login_ip'] = long2ip($v['last_login_ip']);
-                $v['mobile'] = query_user('mobile',$v['id'])['mobile'];
-            }
-            unset($v);
-            $totalCount = D('member')->where($map)->count();
-
-
         }
-        $r = 20;
+        $user = Db::name('member')->where($map)->order($order)->field('uid,nickname,login,last_login_time,last_login_ip')->paginate(20);
+        // 获取分页显示
+        $page = $user->render();
+        // 转为数组
+        $user = $user->toArray()['data'];
 
-        $role = D('Role')->selectByMap(array('status' => 1));
-        $user_role = array(array('id' => 0, 'value' => L('_ALL_')));
+        foreach ($user as &$v) {
+            $v['id'] = $v['uid'];
+            $v['last_login_ip'] = long2ip($v['last_login_ip']);
+            $user_info = query_user(['mobile','email'],$v['uid']);
+            $v['mobile'] = $user_info['mobile'];
+            $v['email'] = $user_info['email'];
+        }
+        unset($v);
+
+        $role = model('Role')->selectByMap(array('status' => 1));
+        $user_role = array(array('id' => 0, 'value' => lang('_ALL_')));
         foreach ($role as $key => $v) {
             array_push($user_role, array('id' => $v['id'], 'value' => $v['title']));
         }
 
-        $group = D('AuthGroup')->getGroups();
+        $group = model('AuthGroup')->getGroups();
 
-        $user_group = array(array('id' => 0, 'value' => L('_ALL_')));
+        $user_group = array(array('id' => 0, 'value' => lang('_ALL_')));
         foreach ($group as $key => $v) {
             array_push($user_group, array('id' => $v['id'], 'value' => $v['title']));
         }
 
-        $order_array = array(array('id'=>'0','value'=>L('_DEFAULT_')),array('id'=>'1','value'=>L('_LAST_LOGIN_TIME_')),array('id'=>'2','value'=>L('_LOGIN_COUNT_')));
+        $order_array = array(array('id'=>'0','value'=>lang('_DEFAULT_')),array('id'=>'1','value'=>lang('_LAST_LOGIN_TIME_')),array('id'=>'2','value'=>lang('_LOGIN_COUNT_')));
 
         $builder = new AdminListBuilder();
-        $builder->title(L('_"MASS_USER_LIST"_'));
-        $builder->meta_title = L('_"MASS_USER_LIST"_');
+        $builder->title(lang('_"MASS_USER_LIST"_'));
 
-        $builder->setSelectPostUrl(Url('Message/userList'))
+        $builder
+            ->setSelectPostUrl(Url('Message/userList'))
             ->setSearchPostUrl(Url('Message/userList'))
             ->select('排序：','user_order','select','排序','','',$order_array)
-            ->select(L('_USER_GROUP:_'), 'user_group', 'select', L('_FILTER_ACCORDING_TO_USER_GROUP_'), '', '', $user_group)
-            ->select(L('_IDENTITY_'), 'role', 'select', L('_FILTER_ACCORDING_TO_USER_IDENTITY_'), '', '', $user_role)
-            ->search('','user_search1','',L('_SEARCH_ACCORDING_TO_USERS_NICKNAME_'),'','','')
-            ->search('','user_search2','',L('_SEARCH_ACCORDING_TO_USER_ID_'),'','','');
-        $builder->buttonModalPopup(Url('Message/sendMessage'), array('user_group' => $aUserGroup, 'role' => $aRole), L('_SEND_A_MESSAGE_'), array('data-title' => L('_MASS_MESSAGE_'), 'target-form' => 'ids', 'can_null' => 'true'));
+            ->select(lang('_USER_GROUP:_'), 'user_group', 'select', lang('_FILTER_ACCORDING_TO_USER_GROUP_'), '', '', $user_group)
+            ->select(lang('_IDENTITY_'), 'role', 'select', lang('_FILTER_ACCORDING_TO_USER_IDENTITY_'), '', '', $user_role)
+            ->search('','user_search1','',lang('_SEARCH_ACCORDING_TO_USERS_NICKNAME_'),'','','')
+            ->search('','user_search2','',lang('_SEARCH_ACCORDING_TO_USER_ID_'),'','','');
+        $builder->buttonModalPopup(Url('Message/sendMessage'), array('user_group' => $aUserGroup, 'role' => $aRole), lang('_SEND_A_MESSAGE_'), array('data-title' => lang('_MASS_MESSAGE_'), 'target-form' => 'ids', 'can_null' => 'true'));
 
-        //$builder->buttonModalPopup(Url('Message/sendMobileMessage'), array('user_group' => $aUserGroup),L('_SNS_SEND_'), array('data-title' => L('_SNS_SEND_'), 'target-form' => 'ids', 'can_null' => 'true'));
+        //$builder->buttonModalPopup(Url('Message/sendMobileMessage'), array('user_group' => $aUserGroup),lang('_SNS_SEND_'), array('data-title' => lang('_SNS_SEND_'), 'target-form' => 'ids', 'can_null' => 'true'));
 
-        $builder->keyText('uid', L('_USER_ID_'))
-                ->keyText('nickname', L('_"NICKNAME"_'))
-                ->keyText('mobile',L('_CELL_PHONE_NUMBER_'))
-                ->keyText('login', L('_LOGIN_COUNT_'))
-                ->keyTime('last_login_time', L('_LAST_LOGIN_TIME_'))
-                ->keyText('last_login_ip', L('_LOGIN_IP_LAST_TIME_'));
-                  //dump($user);exit;
+        $builder->keyText('uid', lang('_USER_ID_'))
+                ->keyText('nickname', lang('_"NICKNAME"_'))
+                ->keyText('mobile',lang('_CELL_PHONE_NUMBER_'))
+                ->keyText('login', lang('_LOGIN_COUNT_'))
+                ->keyTime('last_login_time', lang('_LAST_LOGIN_TIME_'))
+                ->keyText('last_login_ip', lang('_LOGIN_IP_LAST_TIME_'));
+
         $builder->data($user);
-        $builder->pagination($totalCount, $r);
+        $builder->page($page);
         $builder->display();
 
 
@@ -115,14 +102,14 @@ class Message extends Admin
     {
         $uids = array();
         if (!empty($user_group)) {
-            $users = D('auth_group_access')->where(array('group_id' => $user_group))->field('uid')->select();
+            $users = Db::name('auth_group_access')->where(array('group_id' => $user_group))->field('uid')->select();
             $group_uids = getSubByKey($users, 'uid');
             if ($group_uids) {
                 $uids = $group_uids;
             }
         }
         if (!empty($role)) {
-            $users = D('user_role')->where(array('role_id' => $role))->field('uid')->select();
+            $users = Db::name('user_role')->where(array('role_id' => $role))->field('uid')->select();
             $role_uids = getSubByKey($users, 'uid');
             if ($role_uids) {
                 $uids = $role_uids;
@@ -139,14 +126,14 @@ class Message extends Admin
     {
         $uids = array();
         if (!empty($search_nn)) {
-            $users = D('member')->where(array('nickname' => $search_nn))->field('uid')->select();
+            $users = Db::name('member')->where(array('nickname' => $search_nn))->field('uid')->select();
             $uids_nn = getSubByKey($users, 'uid');
             if ($uids_nn) {
                 $uids = $uids_nn;
             }
         }
         if (!empty($search_id)) {
-            $users = D('member')->where(array('uid' => $search_id))->field('uid')->select();
+            $users = Db::name('member')->where(array('uid' => $search_id))->field('uid')->select();
             $uids_id = getSubByKey($users, 'uid');
             if ($uids_id) {
                 $uids = $uids_id;
@@ -161,16 +148,16 @@ class Message extends Admin
     public function sendMessage()
     {
 
-        if (IS_POST) {
-            $aSendType=input('post.sendType','','text');
+        if (request()->isPost()) {
+            $aSendType=input('post.sendType/a',array());
             $aUids = input('post.uids');
-            $aUserGroup = input('post.user_group');
-            $aUserRole = input('post.user_role');
+            $aUserGroup = input('post.user_group/a');
+            $aUserRole = input('post.user_role/a');
             $aTitle = input('post.title', '', 'text');
             $aContent = input('post.content', '', 'html');
             $aUrl = input('post.url', '', 'text');
-            $aArgs = input('post.args', '', 'text');
-            $args = array();
+            $aArgs = input('post.args/a', '', 'text');
+            $args = [];
             // 转换成数组
             if ($aArgs) {
                 $array = explode('/', $aArgs);
@@ -180,19 +167,19 @@ class Message extends Admin
             }
 
             if (empty($aTitle)) {
-                $this->error(L('_PLEASE_ENTER_THE_MESSAGE_HEADER_'));
+                $this->error(lang('_PLEASE_ENTER_THE_MESSAGE_HEADER_'));
             }
             if (empty($aContent)) {
-                $this->error(L('_PLEASE_ENTER_THE_MESSAGE_CONTENT_'));
+                $this->error(lang('_PLEASE_ENTER_THE_MESSAGE_CONTENT_'));
             }
             // 以权限组或身份发送消息
             if(empty($aUids)){
                 if (empty($aUserGroup) && empty($aUserRole)) {
-                    $this->error(L('_PLEASE_SELECT_A_USER_GROUP_OR_AN_IDENTITY_GROUP_OR_USER_'));
+                    $this->error(lang('_PLEASE_SELECT_A_USER_GROUP_OR_AN_IDENTITY_GROUP_OR_USER_'));
                 }
 
-                $role_count = D('Role')->where(array('status' => 1))->count();
-                $group_count = D('AuthGroup')->where(array('status' => 1))->count();
+                $role_count = Db::name('Role')->where(array('status' => 1))->count();
+                $group_count = Db::name('AuthGroup')->where(array('status' => 1))->count();
                 if ($role_count == count($aUserRole)) {
                     $aUserRole = 0;
                 }
@@ -200,13 +187,13 @@ class Message extends Admin
                     $aUserGroup = 0;
                 }
                 if (!empty($aUserRole)) {
-                    $uids = D('user_role')->where(array('role_id' => array('in', $aUserRole)))->field('uid')->select();
+                    $uids = Db::name('user_role')->where(['role_id' => ['in', $aUserRole]])->field('uid')->select();
                 }
                 if (!empty($aUserGroup)) {
-                    $uids = D('auth_group_access')->where(array('group_id' => array('in', $aUserGroup)))->field('uid')->select();
+                    $uids = Db::name('auth_group_access')->where(['group_id' => ['in', $aUserGroup]])->field('uid')->select();
                 }
                 if (empty($aUserRole) && empty($aUserGroup)) {
-                    $uids = D('Member')->where(array('status' => 1))->field('uid')->select();
+                    $uids = Db::name('Member')->where(['status' => 1])->field('uid')->select();
                 }
                 $to_uids = getSubByKey($uids, 'uid');
             }else{
@@ -215,37 +202,37 @@ class Message extends Admin
             }
 
             if(in_array('systemMessage',$aSendType)){
-                $resMessage=D('Message')->sendMessageWithoutCheckSelf($to_uids, $aTitle, $aContent, $aUrl, $args);
+                $resMessage=model('Message')->sendMessageWithoutCheckSelf($to_uids, $aTitle, $aContent, $aUrl, $args);
                 if($resMessage!==true){
                     $this->error('发送失败');
                 }
             }
             if(in_array('systemEmail',$aSendType)){
-                $resEmail=D('Message')->sendEmail($to_uids, $aTitle, $aContent, $aUrl, $args);
+                $resEmail=model('Message')->sendEmail($to_uids, $aTitle, $aContent, $aUrl, $args);
                 if($resEmail!==true){
                     $this->error($resEmail);
                 }
             }
             if(in_array('mobileMessage',$aSendType)){
-                $resMobile=D('Message')->sendMobileMessage($to_uids, $aTitle, $aContent, $aUrl, $args);
+                $resMobile=model('Message')->sendMobileMessage($to_uids, $aTitle, $aContent, $aUrl, $args);
                 if($resMobile!==true){
                     $this->error($resMobile);
                 }
             }
             $result['status'] = 1;
-            $result['info'] = L('_SEND_');
-            $this->ajaxReturn($result);
+            $result['info'] = lang('_SEND_');
+            return json($result);
         } else {
-            $aUids = input('get.ids');
+            $aUids = input('get.ids/a');
             $aUserGroup = input('get.user_group', 0, 'intval');
             $aRole = input('get.role', 0, 'intval');
             if (empty($aUids)) {
-                $role = D('Role')->selectByMap(array('status' => 1));
+                $role = model('Role')->selectByMap(array('status' => 1));
                 $roles = array();
                 foreach ($role as $key => $v) {
                     array_push($roles, array('id' => $v['id'], 'value' => $v['title']));
                 }
-                $group = D('AuthGroup')->getGroups();
+                $group = model('AuthGroup')->getGroups();
                 $groups = array();
                 foreach ($group as $key => $v) {
                     array_push($groups, array('id' => $v['id'], 'value' => $v['title']));
@@ -256,40 +243,39 @@ class Message extends Admin
                 $this->assign('aRole', $aRole);
             } else {
                 $uids = implode(',',$aUids);
-                $users = D('Member')->where(array('uid'=>array('in',$aUids)))->field('uid,nickname')->select();
+                $users = model('Member')->where(['uid'=>['in',$aUids]])->field('uid,nickname')->select();
                 $this->assign('users', $users);
                 $this->assign('uids', $uids);
             }
-            $this->display('sendmessage');
+            return $this->fetch('sendmessage');
         }
     }
     public function sendMobileMessage(){
-        if (IS_POST) {
+        if (request()->isPost()) {
             $aUids = input('post.uids');
             $aUserGroup = input('post.user_group');
             $aContent = input('post.content', '', 'html');
 
             if (empty($aContent)) {
-                $this->error(L('_PLEASE_ENTER_THE_MESSAGE_CONTENT_'));
+                $this->error(lang('_PLEASE_ENTER_THE_MESSAGE_CONTENT_'));
             }
             // 以权限组或身份发送消息
             if(empty($aUids)){
                 if (empty($aUserGroup)) {
-                    $this->error(L('_PLEASE_SELECT_A_USER_GROUP_OR_AN_IDENTITY_GROUP_OR_USER_'));
+                    $this->error(lang('_PLEASE_SELECT_A_USER_GROUP_OR_AN_IDENTITY_GROUP_OR_USER_'));
                 }
 
-                $group_count = D('AuthGroup')->where(array('status' => 1))->count();
+                $group_count = Db::name('AuthGroup')->where(['status' => 1])->count();
                 
                 if (!empty($aUserGroup)) {
-                    $uids = D('auth_group_access')->where(array('group_id' => array('in', $aUserGroup)))->field('uid')->select();
+                    $uids = Db::name('auth_group_access')->where(['group_id' => ['in', $aUserGrou]])->field('uid')->select();
                 }
                 $to_uids = getSubByKey($uids, 'uid');
             }else{
                 // 用uid发送消息
                 $to_uids = explode(',',$aUids);
             }
-            $user_moblie = UcenterMember()->where(array('id'=>array('in',$to_uids)))->field('id,mobile')->select();
-            //dump($user_moblie);exit;
+            $user_moblie = Db::name('UcenterMember')->where(['id'=>['in',$to_uids]])->field('id,mobile')->select();
 
             //开始循环发送短信
             $success_num = 0; //初始个发送成功数
@@ -304,9 +290,9 @@ class Message extends Admin
                 }
             }
             //返回成功信息
-            $result['status'] = 1;
-            $result['info'] = L('_SEND_').','.$success_num.'条';
-            $this->ajaxReturn($result);
+            $result['code'] = 1;
+            $result['msg'] = lang('_SEND_').','.$success_num.'条';
+            return json($result);
         } else {
             $aUids = input('get.ids');
             $aUserGroup = input('get.user_group', 0, 'intval');

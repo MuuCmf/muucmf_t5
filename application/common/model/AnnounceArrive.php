@@ -23,12 +23,6 @@ class AnnounceArrive extends Model{
         return $res;
     }
 
-    public function getDataByMap($map)
-    {
-        $data=$this->where($map)->find();
-        return $data;
-    }
-
     /**
      * 设置全部公告到达某人
      * @param int $uid
@@ -74,7 +68,12 @@ class AnnounceArrive extends Model{
         $this->error='没有可设置公告！';
         return false;
     }
-
+    
+    public function getDataByMap($map)
+    {
+        $data=$this->where($map)->find();
+        return $data;
+    }
     /**
      * 获取已读列表
      * @param $map

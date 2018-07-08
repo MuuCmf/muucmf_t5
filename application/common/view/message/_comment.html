@@ -14,7 +14,7 @@
                     <div class="from_con clearfix">
                         <h3 class="text-ellipsis">{$data.from.title}</h3>
                         <p class="text-ellipsis">{$data.from.description}</p>
-                        <a <if condition="$data['content']['web_url'] neq ''">href="{$data['content']['web_url']}"</if> title="">
+                        <a {if condition="$data['content']['web_url'] neq ''"}href="{$data['content']['web_url']}"{/if} title="">
                         原文地址
                         </a>
                     </div>
