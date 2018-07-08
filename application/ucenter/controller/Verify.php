@@ -2,6 +2,7 @@
 namespace app\ucenter\controller;
 
 use think\Controller;
+use think\Db;
 
 class Verify extends Controller
 {
@@ -10,65 +11,65 @@ class Verify extends Controller
      */
     public function sendVerify()
     {
-        $aAccount = $cUsername = I('post.account', '', 'op_t');
-        $aType = I('post.type', '', 'op_t');
+        $aAccount = $cUsername = input('post.account', '', 'text');
+        $aType = input('post.type', '', 'text');
         $aType = $aType == 'mobile' ? 'mobile' : 'email';
-        $aAction = I('post.action', 'config', 'op_t');//member或config或find:找回密码操作
+        $aAction = input('post.action', 'config', 'text');//member或config或find:找回密码操作
         if (!check_reg_type($aType)) {
-            $str = $aType == 'mobile' ? L('_PHONE_') : L('_EMAIL_');
-            $this->error($str . L('_ERROR_OPTIONS_CLOSED_').L('_EXCLAMATION_'));
+            $str = $aType == 'mobile' ? lang('_PHONE_') : lang('_EMAIL_');
+            $this->error($str . lang('_ERROR_OPTIONS_CLOSED_').lang('_EXCLAMATION_'));
         }
 
 
         if (empty($aAccount)) {
-            $this->error(L('_ERROR_ACCOUNT_CANNOT_EMPTY_'));
+            $this->error(lang('_ERROR_ACCOUNT_CANNOT_EMPTY_'));
         }
         check_username($cUsername, $cEmail, $cMobile);
         $time = time();
         if($aType == 'mobile'){
             $resend_time =  modC('SMS_RESEND','60','USERCONFIG');
             if($time <= session('verify_time')+$resend_time ){
-                $this->error(L('_ERROR_WAIT_1_').($resend_time-($time-session('verify_time'))).L('_ERROR_WAIT_2_'));
+                $this->error(lang('_ERROR_WAIT_1_').($resend_time-($time-session('verify_time'))).lang('_ERROR_WAIT_2_'));
             }
         }
 
 
         if ($aType == 'email' && empty($cEmail)) {
-            $this->error(L('_ERROR__EMAIL_'));
+            $this->error(lang('_ERROR__EMAIL_'));
         }
         if ($aType == 'mobile' && empty($cMobile)) {
-            $this->error(L('_ERROR_PHONE_'));
+            $this->error(lang('_ERROR_PHONE_'));
         }
         
-        $checkIsExist = UCenterMember()->where(array($aType => $aAccount))->find();
+        $checkIsExist = Db::name('UcenterMember')->where([$aType => $aAccount])->find();
         //判断是否是已存在用户，由于部分操作需要向存在的用户发送验证，在这里做判断
         if($aAction==='find'){
             if (!$checkIsExist) {
-                $str = $aType == 'mobile' ? L('_PHONE_') : L('_EMAIL_');
-                $this->error(L('_ERROR_USED_1_') . $str . L('_ERROR_USED_3_').L('_EXCLAMATION_'));//还未注册的数据返回错误
+                $str = $aType == 'mobile' ? lang('_PHONE_') : lang('_EMAIL_');
+                $this->error(lang('_ERROR_USED_1_') . $str . lang('_ERROR_USED_3_').lang('_EXCLAMATION_'));//还未注册的数据返回错误
             }
         }else{
             if ($checkIsExist) {
-                $str = $aType == 'mobile' ? L('_PHONE_') : L('_EMAIL_');
-                $this->error(L('_ERROR_USED_1_') . $str . L('_ERROR_USED_2_').L('_EXCLAMATION_'));//已被占用的数据返回错误
+                $str = $aType == 'mobile' ? lang('_PHONE_') : lang('_EMAIL_');
+                $this->error(lang('_ERROR_USED_1_') . $str . lang('_ERROR_USED_2_').lang('_EXCLAMATION_'));//已被占用的数据返回错误
             }
         }
 
-        $verify = D('Verify')->addVerify($aAccount, $aType);
+        $verify = model('Verify')->addVerify($aAccount, $aType);
         if (!$verify) {
-            $this->error(L('_ERROR_FAIL_SEND_').L('_EXCLAMATION_'));
+            $this->error(lang('_ERROR_FAIL_SEND_').lang('_EXCLAMATION_'));
         }
         if($aAction==='find'){
-            $res =  A('Ucenter/'.ucfirst('Member'))->doSendVerify($aAccount, $verify, $aType);
+            $res =  controller('ucenter/'.ucfirst('Member'))->doSendVerify($aAccount, $verify, $aType);
         }else{
-            $res =  A(ucfirst($aAction))->doSendVerify($aAccount, $verify, $aType);
+            $res =  controller(ucfirst($aAction))->doSendVerify($aAccount, $verify, $aType);
         }
         
         if ($res === true) {
             if($aType == 'mobile'){
                 session('verify_time',$time);
             }
-            $this->success(L('_ERROR_SUCCESS_SEND_'));
+            $this->success(lang('_ERROR_SUCCESS_SEND_'));
         } else {
             $this->error($res);
         }

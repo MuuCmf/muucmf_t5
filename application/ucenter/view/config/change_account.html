@@ -38,19 +38,18 @@
             var account =$this.parents('.center_info').find('#account').val();
             var type = $this.parents('.center_info').find('[name="type"]').val();
             $.post("{:Url('ucenter/verify/sendVerify')}", {account: account, type: type,action:'config'}, function (res) {
-                if(res.status){
-
+                toast.hideLoading();
+                if(res.code==1){
                     DecTime.obj = $this
                     DecTime.time = "{: modC('SMS_RESEND','60','USERCONFIG')}";
                     $this.attr('disabled',true)
                     DecTime.dec_time();
 
-                    toast.success(res.info);
+                    toast.success(res.msg);
                 }
                 else{
-                    toast.error(res.info);
+                    toast.error(res.msg);
                 }
-                toast.hideLoading();
             })
         })
     })

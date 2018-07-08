@@ -284,7 +284,6 @@ class Config extends Base
         $aTab = input('get.tab', '', 'text');
         $aNickname = input('post.nickname', '', 'text');
         $aSex = input('post.sex', 0, 'intval');
-        $aEmail = input('post.email', '', 'text');
         $aSignature = input('post.signature', '', 'text');
         $aCommunity = input('post.community', 0, 'intval');
         $aDistrict = input('post.district', 0, 'intval');
@@ -304,23 +303,20 @@ class Config extends Base
             $user['nickname'] = $aNickname;
             $user['sex'] = $aSex;
             $user['signature'] = $aSignature;
-            $user['uid'] = get_uid();
+            //$user['uid'] = get_uid();
 
-            $rs_member = Db::name('Member')->save($user);
+            $rs_member = Db::name('Member')->where(['uid'=>get_uid()])->update($user);
 
-            $ucuser['id'] = get_uid();
-            $rs_ucmember = Db::name('UCenterMember')->save($ucuser);
-            clean_query_user_cache(get_uid(), array('nickname', 'sex', 'signature', 'email', 'pos_province', 'pos_city', 'pos_district', 'pos_community'));
+            //$rs_ucmember = Db::name('UCenterMember')->where(['id'=>get_uid()])->update($ucuser);
+            clean_query_user_cache(get_uid(), ['nickname', 'sex', 'signature', 'email', 'pos_province', 'pos_city', 'pos_district', 'pos_community']);
 
             //TODO tox 清空缓存
 
-            cache('at_who_users',null);
-
-            if ($rs_member || $rs_ucmember) {
+            if ($rs_member) {
                 $this->success(lang('_SUCCESS_SETTINGS_').lang('_PERIOD_'));
 
             } else {
-                $this->success(lang('_DATA_UNMODIFIED_').lang('_PERIOD_'));
+                $this->error(lang('_DATA_UNMODIFIED_').lang('_PERIOD_'));
             }
 
         } else {

@@ -835,7 +835,6 @@ function build_auth_key()
  * @param int $some n天
  * @param null $day 当前时间
  * @return int|null
- * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
  */
 function get_some_day($some = 30, $day = null)
 {
