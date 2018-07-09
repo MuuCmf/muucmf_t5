@@ -86,28 +86,27 @@ class Follow extends Model
     }
 
 
-    public function getFans($uid, $page, $fields, &$totalCount)
+    public function getFans($uid, $fields)
     {
         $map['follow_who'] = $uid;
-        $fans = $this->where($map)->field('who_follow')->order('create_time desc')->page($page, 10)->select();
-        $totalCount = $this->where($map)->field('who_follow')->order('create_time desc')->count();
-        foreach ($fans as &$user) {
-            $user['user'] = query_user($fields, $user['who_follow']);
-        }
-        unset($user);
+        $fans = $this->where($map)->field('who_follow')->order('create_time desc')->paginate(10)->each(
+            function($item,$key){
+                $item->user = query_user($fields, $item->who_follow);
+            }
+        );
+
         return $fans;
     }
 
-    public function getFollowing($uid, $page, $fields, &$totalCount)
+    public function getFollowing($uid, $fields)
     {
         $map['who_follow'] = $uid;
-        $fans = $this->where($map)->field('follow_who')->order('create_time desc')->page($page, 10)->select();
-        $totalCount = $this->where($map)->field('follow_who')->order('create_time desc')->count();
+        $fans = $this->where($map)->field('follow_who')->order('create_time desc')->paginate(10)->each(
+            function($item,$key){
+                $item->user = query_user($fields, $item->who_follow);
+            }
+        );
 
-        foreach ($fans as &$user) {
-            $user['user'] = query_user($fields, $user['follow_who']);
-        }
-        unset($user);
         return $fans;
     }
 

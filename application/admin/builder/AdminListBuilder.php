@@ -574,8 +574,12 @@ class AdminListBuilder extends AdminBuilder
 
         //uid转换成text
         $this->convertKey('uid', 'text', function ($value) {
+
             $value = query_user(array('nickname', 'uid', 'space_url'), $value);
-            return "<a href='" . $value['space_url'] . "' target='_blank'>[{$value['uid']}]" . $value['nickname'] . '</a>';
+            if(!empty($value['uid'])){
+                return "<a href='" . $value['space_url'] . "' target='_blank'>[{$value['uid']}]" . $value['nickname'] . '</a>';
+            }
+            return '';
         });
 
         //nickname转换成text

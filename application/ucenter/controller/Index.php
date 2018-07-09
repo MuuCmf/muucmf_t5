@@ -86,7 +86,6 @@ class Index extends Base
 
     /**获取用户扩展信息
      * @param null $uid
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function getExpandInfo($uid = null, $profile_group_id = null)
     {
@@ -100,7 +99,6 @@ class Index extends Base
     /**扩展信息分组列表获取
      * @param null $uid
      * @return mixed
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function _profile_group_list($uid = null)
     {
@@ -140,7 +138,6 @@ class Index extends Base
      * @param null $id
      * @param null $uid
      * @return null
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function _info_list($id = null, $uid = null)
     {
@@ -293,14 +290,13 @@ class Index extends Base
         $this->assign('follow_default', $follow_default);
     }
 
-    public function fans($uid = null, $page = 1)
+    public function fans($uid = null)
     {
         $uid = isset($uid) ? $uid : is_login();
 
         $this->assign('tab', 'fans');
-        $fans = model('Follow')->getFans($uid, $page, array('avatar128', 'uid', 'nickname', 'fans', 'following', 'weibocount', 'space_url', 'title'), $totalCount);
+        $fans = model('Follow')->getFans($uid, ['avatar128', 'uid', 'nickname', 'fans', 'following', 'space_url', 'title']);
         $this->assign('fans', $fans);
-        $this->assign('totalCount', $totalCount);
 
         return $this->fetch();
     }
@@ -309,9 +305,10 @@ class Index extends Base
     {
         $uid = isset($uid) ? $uid : is_login();
 
-        $following = model('Follow')->getFollowing($uid, $page, array('avatar128', 'uid', 'nickname', 'fans', 'following', 'weibocount', 'space_url', 'title'), $totalCount);
+        $following = model('Follow')->getFollowing($uid,['avatar128', 'uid', 'nickname', 'fans', 'following', 'weibocount', 'space_url', 'title']);
+        
         $this->assign('following', $following);
-        $this->assign('totalCount', $totalCount);
+
         $this->assign('tab', 'following');
 
         return $this->fetch();

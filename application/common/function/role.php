@@ -1,27 +1,20 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 15-3-13
- * Time: 下午5:28
- * @author 郑钟良<zzl@ourstu.com>
- */
-
-
-
-
-/**
  * 获取当前用户登录的角色的标识
  * @return int 角色id
- * @author 郑钟良<zzl@ourstu.com>
  */
 function get_login_role()
 {
     $user = session('user_auth');
+    
     if (empty($user)) {
         return 0;
     } else {
-        return session('user_auth_sign') == data_auth_sign($user) ? $user['role_id'] : 0;
+        if(empty($user['role_id'])){
+            return 0;
+        }else{
+           return session('user_auth_sign') == data_auth_sign($user) ? $user['role_id'] : 0; 
+        }
     }
 }
 

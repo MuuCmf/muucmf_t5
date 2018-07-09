@@ -56,7 +56,7 @@ class Action extends Admin {
      * @param  integer $p [description]
      * @return [type]     [description]
      */
-    public function scoreLog($r=20,$p=1){
+    public function scoreLog($r=20){
 
         if(input('type')=='clear'){
             Db::name('ScoreLog')->where(['id'=>['>',0]])->delete();
@@ -79,6 +79,7 @@ class Action extends Admin {
             $scoreTypes=model('Ucenter/Score')->getTypeListByIndex();
 
             foreach ($scoreLog as &$v) {
+                if(empty($v['uid'])) $v['uid'] = 0;
                 $v['adjustType']=$v['action']=='inc'?'增加':'减少';
                 $v['scoreType']=$scoreTypes[$v['type']]['title'];
                 $class=$v['action']=='inc'?'text-success':'text-danger';

@@ -73,8 +73,8 @@
                                 </div>
                             </div>
                         {/volist}
-                        <div class="pull-right">
-                            {:getPagination($totalCount)}
+                        <div class="page">
+                            {$following->render()}
                         </div>
                     </div>
                 </div>
