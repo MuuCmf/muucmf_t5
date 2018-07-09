@@ -1026,15 +1026,7 @@ function check_sms_hook_is_exist($driver){
     }
 }
 
-function render_picture_path($path)
-{
-    $path = get_pic_src($path);
-    if ($_SERVER['HTTPS'] != "on") {
-         return is_bool(strpos($path, 'http://')) ? 'http://' . str_replace('//', '/', $_SERVER['HTTP_HOST'] . '/' . $path) : $path;
-    }else{
-         return is_bool(strpos($path, 'https://')) ? 'https://' . str_replace('//', '/', $_SERVER['HTTP_HOST'] . '/' . $path) : $path;
-    }
-}
+
 
 
 function get_area_name($id)

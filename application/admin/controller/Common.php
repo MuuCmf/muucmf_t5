@@ -14,10 +14,10 @@ class Common extends Controller
         if (request()->isPost()) {
             $result = controller('ucenter/Login', 'widget')->doLogin();
 
-            if ($result['status']) {
-                $this->success($result['info'], Input('post.from', Url('admin/index/index'), 'text'));
+            if ($result['code']==1) {
+                $this->success($result['msg'], Input('post.from', Url('admin/index/index'), 'text'));
             } else {
-                $this->error($result['info']);
+                $this->error($result['msg']);
             }
         } else { //显示登录页面
             return $this->fetch();

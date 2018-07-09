@@ -71,9 +71,9 @@ str;
             ->keyRadio('OPEN_WECHAT_AUTH',lang('_OPEN_WECHAT_AUTH_SWITCH_'),lang('_OPEN_WECHAT_AUTH_SWITCH_INFO_'),array(0 => lang('_OFF_'), 1 => lang('_OPEN_')))
 
             //邮件验证配置
-            ->keyEditor('REG_EMAIL_VERIFY', lang('_MAILBOX_VERIFICATION_TEMPLATE_'), lang('_PLEASE_EMAIL_VERIFY_'))
+            ->keyEditor('REG_EMAIL_VERIFY', lang('_MAILBOX_VERIFICATION_TEMPLATE_'), lang('_PLEASE_EMAIL_VERIFY_'),'wangeditor')
             //邮箱验证
-            ->keyEditor('REG_EMAIL_ACTIVATE', lang('_MAILBOX_ACTIVATION_TEMPLATE_'), lang('_PLEASE_USER_ACTIVE_'))
+            ->keyEditor('REG_EMAIL_ACTIVATE', lang('_MAILBOX_ACTIVATION_TEMPLATE_'), lang('_PLEASE_USER_ACTIVE_'),'wangeditor')
 
             //短信验证内容
             ->keyTextArea('SMS_CONTENT', lang('_MESSAGE_CONTENT_'), lang('_MSG_VERICODE_ACCOUNT_'))

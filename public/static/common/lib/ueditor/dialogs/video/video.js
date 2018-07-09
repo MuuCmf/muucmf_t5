@@ -121,7 +121,7 @@
         if(!url) return false;
         if ( !checkNum( [width, height] ) ) return false;
         editor.execCommand('insertvideo', {
-            url: (url),
+            url: convert_url(url),
             width: width.value,
             height: height.value,
             align: align
@@ -164,32 +164,23 @@
         }
         return property;
     }
-
-    function getcookie(objname){//获取指定名称的cookie的值
-        var arrstr = document.cookie.split("; ");
-        for(var i = 0;i < arrstr.length;i ++){
-            var temp = arrstr[i].split("=");
-            if(temp[0] == objname) return unescape(temp[1]);
-        }
-    }
-
     function convert_url(url){
         if ( !url ) return '';
-        if(url.indexOf('.swf') >=0){
-            return '';
-        }
-        var rs='';
-        $.ajax({
-            url: getcookie('video_get_info'),
-            async: false,//改为同步方式
-            type: "POST",
-            data: { link: url },
-            success: function (res) {
-                rs =  res.data.flash_url
-            }
-        });
-        return rs;
+        url = utils.trim(url)
+            .replace(/v\.youku\.com\/v_show\/id_([\w\-=]+)\.html/i, 'player.youku.com/player.php/sid/$1/v.swf')
+            .replace(/(www\.)?youtube\.com\/watch\?v=([\w\-]+)/i, "www.youtube.com/v/$2")
+            .replace(/youtu.be\/(\w+)$/i, "www.youtube.com/v/$1")
+            .replace(/v\.ku6\.com\/.+\/([\w\.]+)\.html.*$/i, "player.ku6.com/refer/$1/v.swf")
+            .replace(/www\.56\.com\/u\d+\/v_([\w\-]+)\.html/i, "player.56.com/v_$1.swf")
+            .replace(/www.56.com\/w\d+\/play_album\-aid\-\d+_vid\-([^.]+)\.html/i, "player.56.com/v_$1.swf")
+            .replace(/v\.pps\.tv\/play_([\w]+)\.html.*$/i, "player.pps.tv/player/sid/$1/v.swf")
+            .replace(/www\.letv\.com\/ptv\/vplay\/([\d]+)\.html.*$/i, "i7.imgs.letv.com/player/swfPlayer.swf?id=$1&autoplay=0")
+            .replace(/www\.tudou\.com\/programs\/view\/([\w\-]+)\/?/i, "www.tudou.com/v/$1")
+            .replace(/v\.qq\.com\/cover\/[\w]+\/[\w]+\/([\w]+)\.html/i, "static.video.qq.com/TPout.swf?vid=$1")
+            .replace(/v\.qq\.com\/.+[\?\&]vid=([^&]+).*$/i, "static.video.qq.com/TPout.swf?vid=$1")
+            .replace(/my\.tv\.sohu\.com\/[\w]+\/[\d]+\/([\d]+)\.shtml.*$/i, "share.vrs.sohu.com/my/v.swf&id=$1");
 
+        return url;
     }
 
     /**
@@ -279,6 +270,8 @@
 
         var conUrl = convert_url(url);
 
+        conUrl = utils.unhtmlForUrl(conUrl);
+
         $G("preview").innerHTML = '<div class="previewMsg"><span>'+lang.urlError+'</span></div>'+
         '<embed class="previewVideo" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer"' +
             ' src="' + conUrl + '"' +
@@ -293,8 +286,8 @@
     function insertUpload(){
         var videoObjs=[],
             uploadDir = editor.getOpt('videoUrlPrefix'),
-            width = $G('upload_width').value || 420,
-            height = $G('upload_height').value || 280,
+            width = parseInt($G('upload_width').value, 10) || 420,
+            height = parseInt($G('upload_height').value, 10) || 280,
             align = findFocus("upload_alignment","name") || 'none';
         for(var key in uploadVideoList) {
             var file = uploadVideoList[key];

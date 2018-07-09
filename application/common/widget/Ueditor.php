@@ -13,44 +13,56 @@ class Ueditor extends Controller
         $this->assign('default',$default);
         $this->assign('width',$width);
         $this->assign('style',$style);
+
+        $url = Url("api/file/ueditor");
+
         if($config=='mini'){
-            $config="{toolbars:[
+            $config="
+                toolbars:[
                         [
-                                'source','|',
-                                'bold',
-                                'italic',
-                                'underline',
-                                'fontsize',
-                                'forecolor',
-                                'fontfamily',
-                                'blockquote',
-                                'backcolor','|',
-                                'insertimage',
-                                'insertcode',
-                                'link',
-                                'emotion',
-                                'scrawl',
-                                'wordimage'
+                            'source','|',
+                            'bold',
+                            'italic',
+                            'underline',
+                            'fontsize',
+                            'forecolor',
+                            'fontfamily',
+                            'blockquote',
+                            'backcolor','|',
+                            'insertimage',
+                            'insertcode',
+                            'link',
+                            'emotion',
+                            'scrawl',
+                            'wordimage'
                         ]
                 ],
                 autoHeightEnabled: false,
-                autoFloatEnabled: true,
+                autoFloatEnabled: false,
+                initialFrameWidth: null,
                 initialFrameHeight: 350
-            }";
+            ";
         }
         if($config == 'all') {
-            $config='{}';
+            $config="";
         }
         if($config == '') {
-            $config='{
+            $config="
                 autoHeightEnabled: false,
-                autoFloatEnabled: true,
-                initialFrameHeight: 350}';
+                autoFloatEnabled: false,
+                initialFrameWidth: null,
+                initialFrameHeight: 350
+            ";
         }
+
+        $UMconfig = "{
+            serverUrl :'$url',
+            $config
+        }";
+
         
-        $this->assign('config',$config);
+        $this->assign('config',$UMconfig);
         $this->assign('param',$param);
-        cookie('video_get_info',Url('Api/Public/getVideo'));
 
         echo $this->fetch('common@widget/ueditor');
     }

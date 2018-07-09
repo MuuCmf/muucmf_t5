@@ -11,9 +11,9 @@
         <ul class="nav nav-primary">
             {volist name="Think.config.CONFIG_GROUP_LIST" id="group"}
 
-                <li
-                {eq name="id" value="$key"}class="active"{/eq}
-                ><a href="{:Url('?id='.$key)}">{$group}{:lang("_TO_CONFIGURE_")}</a></li>
+                <li {eq name="id" value="$key"}class="active"{/eq}>
+                    <a href="{:Url('?id='.$key)}">{$group}{:lang("_TO_CONFIGURE_")}</a>
+                </li>
 
             {/volist}
         </ul>
@@ -56,8 +56,7 @@
                                 </select>
                             {/case}
                             {case value="5"}<!--增加富文本和非明文-->
-
-                                {:widget('Common/Ueditor/editor',array($config['name'],'config['.$config['name'].']',$config['value'],'500px','300px'))}
+                                {:widget('common/wangeditor/editor',array($config['name'],'config['.$config['name'].']',$config['value'],'mini'))}
                             {/case}
                             {case value="6"}
                                 <input type="password" class="text input-large form-control" style="width:400px;" name="config[{$config.name}]" autoComplete="off"
@@ -91,7 +90,7 @@
                                             // sw{:lang("_F_FILE_PATH_")}
                                             swf: 'Uploader.swf',
                                             // 文件接收服务端。
-                                            server: "{:Url('File/uploadPicture',array('session_id'=>session_id()))}",
+                                            server: "{:Url('api/File/uploadPicture',array('session_id'=>session_id()))}",
                                             // 选择文件的按钮。可选。
                                             // 内部根据当前运行是创建，可能是input元素，{:lang("_AND_IT_COULD_BE_FLASH_")}.
                                             pick: '#upload_single_image_{$config.name}',

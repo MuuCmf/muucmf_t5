@@ -30,18 +30,20 @@
                                 <input type="password" name="password"  class="form-control" placeholder={:lang("_PASSWORD_WITH_DOUBLE_")}>
                             </div>
 
-                            {if condition="config('app_debug') eq false"}
-                                <div class="input-group password">
-                                    <span class="input-group-addon"><i class="icon-ok"></i></span>
-                                    <input type="text" name="verify"  class="form-control" placeholder={:lang("_VERIFICATION_CODE_WITH_DOUBLE_")}  autocomplete="off">
-                                    <span class="input-group-btn">
-                                    <button  class="btn btn-default reloadverify" type="button"><i class="icon-refresh"></i></button>
-                                    </span>
-                                </div>
-                                <div>
-                                    <img class="verifyimg reloadverify" alt={:lang("_CLICK_SWITCH_WITH_DOUBLE_")} src="{:Url('Public/verify')}">
-                                </div>
-                            {/if}
+                        {if condition="check_verify_open('login')"}
+                        <div class="pull-left">
+                            <div class="input-group verifycode">
+                                <span class="input-group-addon"><i class="icon-ok"></i></span>
+                                <input type="text" name="verify"  class="form-control" placeholder={:lang("_VERIFICATION_CODE_WITH_DOUBLE_")}  autocomplete="off">
+                                <span class="input-group-btn">
+                                <button  class="btn btn-default reloadverify" type="button"><i class="icon-refresh"></i></button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="pull-right">
+                            <img class="verifyimg reloadverify pull-right" alt={:lang("_CLICK_SWITCH_WITH_DOUBLE_")} src="{:captcha_src(1)}">
+                        </div>
+                        {/if}
 
                         </div>
                         <div class="login_btn_panel">

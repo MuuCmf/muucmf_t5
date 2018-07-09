@@ -26,7 +26,7 @@
     /* 涂鸦图片上传配置项 */
     "scrawlActionName": "uploadscrawl", /* 执行上传涂鸦的action名称 */
     "scrawlFieldName": "upfile", /* 提交的图片表单名称 */
-    "scrawlPathFormat": "/Uploads/Editor/Scrawl/{yyyy}-{mm}-{dd}/{time}{rand:6}", /* 上传保存路径,可以自定义保存路径和文件名格式 */
+    "scrawlPathFormat": "/ueditor/php/upload/image/{yyyy}{mm}{dd}/{time}{rand:6}", /* 上传保存路径,可以自定义保存路径和文件名格式 */
     "scrawlMaxSize": 2048000, /* 上传大小限制，单位B */
     "scrawlUrlPrefix": "", /* 图片访问路径前缀 */
     "scrawlInsertAlign": "none",
@@ -63,18 +63,16 @@
     "fileUrlPrefix": "", /* 文件访问路径前缀 */
     "fileMaxSize": 51200000, /* 上传大小限制，单位B，默认50MB */
     "fileAllowFiles": [
-        ".jpg",".gif",".png",".jpeg",".zip",".rar",".tar",".gz",".7z",".doc",".docx",".txt",".xml",".xlsx",".xls",".ppt",".pptx",".pdf"
-
-/*        ".png", ".jpg", ".jpeg", ".gif", ".bmp",
+        ".png", ".jpg", ".jpeg", ".gif", ".bmp",
         ".flv", ".swf", ".mkv", ".avi", ".rm", ".rmvb", ".mpeg", ".mpg",
         ".ogg", ".ogv", ".mov", ".wmv", ".mp4", ".webm", ".mp3", ".wav", ".mid",
         ".rar", ".zip", ".tar", ".gz", ".7z", ".bz2", ".cab", ".iso",
-        ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".pdf", ".txt", ".md", ".xml"*/
+        ".doc", ".docx", ".xls", ".xlsx", ".ppt", ".pptx", ".pdf", ".txt", ".md", ".xml"
     ], /* 上传文件格式显示 */
 
     /* 列出指定目录下的图片 */
     "imageManagerActionName": "listimage", /* 执行图片管理的action名称 */
-    "imageManagerListPath": "/Uploads/Editor/Picture/", /* 指定要列出图片的目录 */
+    "imageManagerListPath": "/ueditor/php/upload/image/", /* 指定要列出图片的目录 */
     "imageManagerListSize": 20, /* 每次列出文件数量 */
     "imageManagerUrlPrefix": "", /* 图片访问路径前缀 */
     "imageManagerInsertAlign": "none", /* 插入的图片浮动方式 */
