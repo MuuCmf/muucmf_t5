@@ -97,7 +97,6 @@ class Index extends Admin
         $count['login_users'] = $login_users;
         $count['total_user'] = Db::name('UcenterMember')->where(['status' => 1])->count();
         $count['today_action_log'] = Db::name('ActionLog')->where('status=1 and create_time>=' . $start)->count();
-        $count['now_inline']=Db::name('Session')->count()*1;
         
         $this->assign('count', $count);
     }

@@ -19,6 +19,9 @@ class Install extends Controller
 
     //安装第一步，检测运行所需的环境设置
     public function step1(){
+        //初始session
+        session('db_config',null);
+        session('admin_info',null);
         session('error', false);
         //环境检测
         $muu_env = check_env();
@@ -31,15 +34,11 @@ class Install extends Controller
             $dirfile = check_dirfile();
             $this->assign('dirfile', $dirfile);
         }
-
         session('step', 1);
         if(isset($muu_env)){
-        	//dump($muu_env);
         	$this->assign('muu_env', $muu_env);
         }
-        
         $this->assign('func', $func);
-
         return $this->fetch();
     }
 
@@ -88,22 +87,15 @@ class Install extends Controller
             	//完整数据库配置
 	            $dbconfig['database'] = $dbname;
 	            $dbconfig['prefix']   = $db[6];
-	            //存储至cookie
-	            cookie('db_config',$dbconfig);
+	            //暂存数据库配置
+	            session('db_config',$dbconfig);
                 session('step',2);
-                //dump($dbconfig);exit;
             }
 
             //跳转到数据库安装页面
             $this->redirect('step3');
         } else {
                 session('error') && $this->error('环境检测没有通过，请调整环境后重试！');
-
-                $step = session('step');
-                if($step != 1 && $step != 2){
-                   // $this->redirect('step1');
-                }
-
                 session('step', 2);
                 return $this->fetch();
 
@@ -119,7 +111,7 @@ class Install extends Controller
         echo $this->fetch();
 
         //连接数据库
-        $dbconfig = cookie('db_config');
+        $dbconfig = session('db_config');
         $db_instance = Db::connect($dbconfig);
         //创建数据表
 

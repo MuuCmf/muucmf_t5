@@ -158,6 +158,7 @@ function write_config($config, $auth)
 
         //检测能否成功写入数据库配置
         $result = @file_put_contents($dbConfigFile, $db_conf);
+
         //写入数据库配置提示消息
         if ($result) {
             show_msg('数据库配置写入成功');
@@ -183,7 +184,7 @@ function create_tables($db_instance, $prefix = '')
     $sql = explode(";\n", $sql);
     
     //替换表前缀
-    $orginal = 'muu_';
+    $orginal = 'muucmf_';
     $sql = str_replace(" `{$orginal}", " `{$prefix}", $sql);
 
     //开始安装
