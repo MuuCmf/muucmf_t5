@@ -3,6 +3,8 @@ namespace app\common\behavior;
 
 use think\Config;
 use think\Db;
+use think\Hook;
+use think\Cache;
 use think\Lang;
 
 class Common
@@ -10,24 +12,49 @@ class Common
 
     public function moduleInit(&$request)
     {
-        //动态添加系统配置,非模块配置
-        $config = cache('DB_CONFIG_DATA');
-        if (!$config) {
-            $map['status'] = 1;
-            $map['group']=['>',0];
-            $data = Db::name('Config')->where($map)->field('type,name,value')->select();
-            
-            foreach ($data as $value) {
-                $config[$value['name']] = self::parse($value['type'], $value['value']);
+        if(strtolower(request()->module())!='install'){
+            //动态添加系统配置,非模块配置
+            $config = Cache::get('DB_CONFIG_DATA');
+            if (!$config) {
+                $map['status'] = 1;
+                $map['group']=['>',0];
+                $data = Db::name('Config')->where($map)->field('type,name,value')->select();
+                
+                foreach ($data as $value) {
+                    $config[$value['name']] = self::parse($value['type'], $value['value']);
+                }
+                Cache::set('DB_CONFIG_DATA', $config);
             }
-            cache('DB_CONFIG_DATA', $config);
+            Config::set($config); //动态添加配置
         }
-        Config::set($config); //动态添加配置
         // 判断站点是否关闭
         if (strtolower(request()->module()) != 'install' && strtolower(request()->module()) != 'admin') {
             if (!Config::get('WEB_SITE_CLOSE')) {
                 header("Content-Type: text/html; charset=utf-8");
                 echo Config::get('WEB_SITE_CLOSE_HINT');exit;
+            }
+        }
+        // 非install模块加载钩子
+        if(strtolower(request()->module())!='install'){  
+            // 加载钩子
+            $data = Cache::get('hooks');
+            if(!$data){
+                $hooks = collection(Db::name('Hooks')->column('name,addons'))->toArray();
+
+                foreach ($hooks as $key => $value) {
+                    
+                    $map['status']  =   1;
+                    $names          =   explode(',',$value);
+                    $map['name']    =   ['in',$names];
+                    $data = Db::name('Addons')->where($map)->column('id,name');
+                    if($data){
+                        $addons = array_filter(array_map('get_addon_class', $data));
+                        Hook::add($key,$addons);
+                    }
+                }
+                Cache::set('hooks',Hook::get());
+            }else{
+                Hook::import($data,false);
             }
         }
         // app_trace 调试模式后台设置
@@ -36,7 +63,7 @@ class Common
             Config::set('app_trace', true);
         }
         // app_debug 开发者调试模式
-        if (Config::get('DEVELOP_MODE'))
+        if (Config::get('develop_mode'))
         {
             Config::set('app_debug', true);
         }
@@ -51,7 +78,6 @@ class Common
             Config::set('app_trace', false);
         }
         
-
         // 加载插件语言包
         Lang::load([
             APP_PATH . 'common' . DS . 'lang' . DS . $request->langset() . DS . 'addon' . EXT,

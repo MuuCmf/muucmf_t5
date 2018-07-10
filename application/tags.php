@@ -16,7 +16,9 @@ return [
         'app\\common\\behavior\\InitHook',
     ],
     // 应用开始
-    'app_begin'    => [],
+    'app_begin'    => [
+
+    ],
     // 模块初始化
     'module_init'  => [
         'app\\common\\behavior\\Common',
