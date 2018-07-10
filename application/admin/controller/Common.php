@@ -41,7 +41,7 @@ class Common extends Controller
      */
     public function clear_cache(){
 
-        $dirname = '/runtime/';
+        $dirname = ROOT_PATH.'runtime/';
 
         //echo $dirname;exit;
 

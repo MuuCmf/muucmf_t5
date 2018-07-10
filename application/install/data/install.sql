@@ -4905,11 +4905,12 @@ CREATE TABLE IF NOT EXISTS `muucmf_schedule` (
   `intro` varchar(500) NOT NULL,
   `lever` int(11) NOT NULL COMMENT '优先级',
   `status` tinyint(4) NOT NULL,
-  `create_time` int(11) NOT NULL
+  `create_time` int(11) NOT NULL,
+  `update_time` int(11) NOT NULL,
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
-INSERT INTO `muucmf_schedule` (`id`, `method`, `args`, `type`, `type_value`, `start_time`, `end_time`, `intro`, `lever`, `status`, `create_time`) VALUES
-(1, 'Admin/Count->dayCount', '', 3, 'Daily=02:20', 1493571600, 2145888000, '执行了数据统计', 0, 1, 1469167281);
+INSERT INTO `muucmf_schedule` (`id`, `method`, `args`, `type`, `type_value`, `start_time`, `end_time`, `intro`, `lever`, `status`, `create_time`, `update_time`) VALUES
+(1, 'Admin/Count->dayCount', '', 3, 'Daily=02:20', 1493571600, 2145888000, '执行了数据统计', 0, 1, 1469167281,1469167281);
 
 ALTER TABLE `muucmf_schedule`
   ADD PRIMARY KEY (`id`);

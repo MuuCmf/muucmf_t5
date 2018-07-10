@@ -1,23 +1,27 @@
 <div style="">
-    <php>
-
+    {php}
+    $schedule = $param['schedule'];
+    if(!empty($schedule)){
         $schedule = $param['schedule'];
-        if($schedule['type'] == 1){
-        $type_value = date('Y-m-d h:i',$schedule['type_value'] );
-        }
-        else{
-        $type_value =$schedule['type_value'];
-        }
-    </php>
-
+            if($schedule['type'] == 1){
+            $type_value = date('Y-m-d h:i',$schedule['type_value'] );
+            }
+            else{
+            $type_value =$schedule['type_value'];
+            }
+    }else{
+        $schedule['type'] = 0;
+        $type_value='';
+    }
+    {/php}
     <input name="type_value" type="text" class="text input-large form-control" style="width: 400px"
            value="{$type_value}"/>
 
-    <p style="color: #999;<if condition="$schedule['type'] neq 1 and !empty($schedule['type']) ">display:none</if>">格式为：2016-01-22 11:50</p>
+    <p style="color: #999;{if condition="$schedule['type'] neq 1 and !empty($schedule['type']) "}display:none{/if}">格式为：2016-01-22 11:50</p>
 
-    <p style="color: #999;<if condition="$schedule['type'] neq 2">display:none</if>">以分为单位相乘，每隔多少分钟执行一次，如<span style='color: red'>60*24</span> 表示每隔24小时执行；ps：会有执行时间的误差。</p>
+    <p style="color: #999;{if condition="$schedule['type'] neq 2"}display:none{/if}">以分为单位相乘，每隔多少分钟执行一次，如<span style='color: red'>60*24</span> 表示每隔24小时执行；ps：会有执行时间的误差。</p>
 
-    <p style="color: #999;<if condition="$schedule['type'] neq 3">display:none</if>">
+    <p style="color: #999;{if condition="$schedule['type'] neq 3"}display:none{/if}">
         “Hourly=30” 表示每个小时的30分执行；<br>
         “Daily=09:30” 表示每天的09:30执行；<br>
         “Weekly=5|09:20” 表示每个星期五09：20执行。<br>
@@ -75,11 +79,11 @@
     })
 </script>
 
-<php> if($schedule['type'] == 1 || empty($schedule)){</php>
+{php} if($schedule['type'] == 1 || empty($schedule)){{/php}
 <script>
     $(function () {
         $input.datetimepicker(option);
     })
 
 </script>
-<php>}</php>
+{php}}{/php}

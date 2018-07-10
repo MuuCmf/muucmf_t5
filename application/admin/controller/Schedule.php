@@ -4,12 +4,8 @@ namespace app\admin\controller;
 use app\admin\builder\AdminConfigBuilder;
 use app\admin\builder\AdminListBuilder;
 use app\admin\builder\AdminSortBuilder;
+use think\Db;
 
-/**
- * Class ScheduleController  计划任务
- * @package Admin\Controller
- * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
- */
 class Schedule extends Admin
 {
     /**
@@ -18,23 +14,25 @@ class Schedule extends Admin
      */
     public function scheduleList()
     {
-        $model = model('Common/Schedule');
-        $list = $model->getScheduleList();
+        $list = model('Common/Schedule')->getScheduleList();
+
         foreach ($list as &$v) {
             list($type, $value) = $this->getTypeAndValue($v['type'], $v['type_value']);
             $v['type_text'] = $type;
             $v['type_value_text'] = $value;
-            $v['next_run'] = $model->calculateNextTime($v);
-            $v['last_run'] = $model->getLastUpdate($v['id']);
+            $v['next_run'] = model('Common/Schedule')->calculateNextTime($v);
+            $v['last_run'] = model('Common/Schedule')->getLastUpdate($v['id']);
         }
         unset($v);
+
+        
         //显示页面
-        $btn_attr = $model->checkIsRunning() ? array('style' => 'font-weight:700') : array('style' => 'font-weight:700');
+        $btn_attr = model('Common/Schedule')->checkIsRunning() ? array('style' => 'font-weight:700') : array('style' => 'font-weight:700');
         $btn_attr['class'] = 'ajax-post btn-info';
         $btn_attr[' hide-data'] = 'true';
         $btn_attr['href'] = Url('Schedule/run');
         //控制运行按钮文字
-        if($model->checkIsRunning()){
+        if(model('Common/Schedule')->checkIsRunning()){
             $btn_info = 'Running（点击停止）';
         }else{
             $btn_info = 'Stop（点击运行）';
@@ -46,15 +44,14 @@ class Schedule extends Admin
             ->button($btn_info, $btn_attr)
             ->setStatusUrl(Url('setScheduleStatus'));
 
-        $btn_attr['style'] = 'font-weight:700';
-        $btn_attr['href'] = Url('Schedule/reRun');
-        $btn_attr['class'] = 'btn-warning ajax-post re_run';
-        $btn_attr['onclick'] = 'javascript:$(this).text("重启中，请不要做其他操作...")';
-        $builder->button('重启计划任务', $btn_attr);
-
-
+            $btn_attr['style'] = 'font-weight:700';
+            $btn_attr['href'] = Url('Schedule/reRun');
+            $btn_attr['class'] = 'btn-warning ajax-post re_run';
+            $btn_attr['onclick'] = 'javascript:$(this).text("重启中，请不要做其他操作...")';
         $builder
-            ->buttonNew(U('Schedule/editSchedule'))
+            ->button('重启计划任务', $btn_attr);
+        $builder
+            ->buttonNew(Url('Schedule/editSchedule'))
             ->buttonDelete()
             ->keyId()
             ->keyText('method', '执行方法')
@@ -68,7 +65,7 @@ class Schedule extends Admin
             //->keyCreateTime()
             ->keyStatus()
             ->keyDoActionEdit('editSchedule?id=###')
-            ->keyDoActionModalPopup('showLog?id=###', '查看日志', '日志', array('data-title' => '日志'))
+            ->keyDoActionModalPopup('showLog?id=###', '查看日志', '日志', ['data-title' => '日志'])
             ->data($list)
             ->display();
     }
@@ -132,7 +129,7 @@ class Schedule extends Admin
             $aStartTime = $data['start_time'] = input('post.start_time', 0, 'intval');
             $aEndTime = $data['end_time'] = input('post.end_time', 0, 'intval');
             $aIntro = $data['intro'] = input('post.intro', '', 'text');
-            $aLevel = $data['level'] = input('post.level', '', 'text');
+            $aLever = $data['lever'] = input('post.lever', '', 'text');
 
             if (empty($aMethod)) {
                 $this->error('请填写执行方法');
@@ -159,10 +156,11 @@ class Schedule extends Admin
             if ($aType == 1) {
                 $data['type_value'] = strtotime($data['type_value']);
             }
+
             $res = model('Schedule')->editSchedule($data);
 
             if ($res) {
-                $this->success(($aId == 0 ? '添加' : '编辑') . '成功', U('scheduleList'));
+                $this->success(($aId == 0 ? '添加' : '编辑') . '成功', Url('scheduleList'));
             } else {
                 $this->error(($aId == 0 ? '添加' : '编辑') . '失败');
             }
@@ -172,11 +170,12 @@ class Schedule extends Admin
 
             if ($aId != 0) {
                 $tip = '编辑';
-                $schedule = model('Schedule')->find($aId);
-                $schedule['type_key'] = $schedule['type']; //当name为type时select有点错误。不知道为什么，用其他变量替换  駿濤
+                $schedule = Db::name('Schedule')->find($aId);
+                $schedule['type_key'] = $schedule['type']; //当name为type时select有点错误。不知道为什么，用其他变量替换
+
             } else {
                 $tip = '新增';
-                $schedule = array();
+                $schedule = [];
             }
             $builder
                 ->title($tip . '计划任务')
@@ -185,7 +184,7 @@ class Schedule extends Admin
                 ->keyText('args', "执行参数", "url的写法，如 <span style='color: red'>a=1&b=2</span> ")
 
                 ->keySelect('type_key', '类型', '计划任务的类型', array(1 => '执行一次', 2 => '每隔一段时间执行', 3 => '每个时间点执行'))
-                ->keyUserDefined('type_value', '设定时间', '', T('Admin@Schedule/edit'), array('schedule' => $schedule))
+                ->keyUserDefined('type_value', '设定时间', '', 'Admin@Schedule/edit', ['schedule' => $schedule])
                 ->keyTime('start_time', '开始时间')
                 ->keyTime('end_time', '结束时间')
                 ->keyTextArea('intro', '介绍', '该介绍将会被写入日志')
@@ -257,11 +256,11 @@ class Schedule extends Admin
      * @author:大蒙
      */
     private function _run()
-    { 
+    {  
+        $time = time();
+        $url = Url('api/Schedule/runSchedule', ['time' => $time, 'token' => md5($time . config('database.auth_key'))]);
         $SSL = substr($url, 0, 8) == "https://" ? true : false;  
         $CA = true; //HTTPS时是否进行严格认证 
-        $time = time();
-        $url = U('Home/Public/runSchedule', array('time' => $time, 'token' => md5($time . C('DATA_AUTH_KEY'))), true, true);
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_TIMEOUT, 1);  //设置过期时间为1秒，防止进程阻塞
