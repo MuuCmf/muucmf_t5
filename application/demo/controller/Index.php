@@ -22,5 +22,10 @@ class Index extends Common
     	return $this->fetch();
     }
 
+    public function addon() 
+    {
+        hook('demoTest',['id'=>100]);//自定义
+        return $this->fetch();
+    }
 
 }

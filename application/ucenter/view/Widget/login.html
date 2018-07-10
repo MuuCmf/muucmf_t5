@@ -61,11 +61,16 @@
                     </div>
                 </div>
             </div>
-            <input name="from" type="hidden" value="{php}echo $_SERVER['HTTP_REFERER']{/php}">
+            
             {php}
-                session('login_http_referer',$_SERVER['HTTP_REFERER']);
+                if(!empty($_SERVER['HTTP_REFERER'])){
+                    $referer = $_SERVER['HTTP_REFERER'];
+                }else{
+                    $referer = Url('index/index/index');
+                }
+                session('login_http_referer',$referer);
             {/php}
-
+            <input name="from" type="hidden" value="{$referer}">
             <div class="form-group">
                 <button type="submit" class="btn btn-block btn-warning btn-lg">{:lang('_LOGIN_SPACE_')}</button>
             </div>

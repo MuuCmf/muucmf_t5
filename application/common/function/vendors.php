@@ -19,6 +19,7 @@
  * @Return: array
  */
 use Vendor\PHPMailer;
+use think\Db;
 
 function get_city_by_ip($ip)
 {
@@ -74,7 +75,7 @@ function send_mail($to = '', $subject = '', $body = '', $name = '', $attachment 
  */
 function sae_mail($to = '', $subject = '', $body = '', $name = '')
 {
-    $site_name = modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config');
+    $site_name = modconfig('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config');
     if ($to == '') {
         $to = config('MAIL_SMTP_CE'); //邮件地址为空时，默认使用后台默认邮件测试地址
     }
@@ -89,11 +90,11 @@ function sae_mail($to = '', $subject = '', $body = '', $name = '')
     }
     $mail = new SaeMail();
     $mail->setOpt(array(
-        'from' => C('MAIL_SMTP_USER'),
+        'from' => config('MAIL_SMTP_USER'),
         'to' => $to,
-        'smtp_host' => C('MAIL_SMTP_HOST'),
-        'smtp_username' => C('MAIL_SMTP_USER'),
-        'smtp_password' => C('MAIL_SMTP_PASS'),
+        'smtp_host' => config('MAIL_SMTP_HOST'),
+        'smtp_username' => config('MAIL_SMTP_USER'),
+        'smtp_password' => config('MAIL_SMTP_PASS'),
         'subject' => $subject,
         'content' => $body,
         'content_type' => 'HTML'
@@ -110,7 +111,7 @@ function is_sae()
 
 function is_local()
 {
-    return strtolower(C('PICTURE_UPLOAD_DRIVER')) == 'local' ? true : false;
+    return strtolower(config('PICTURE_UPLOAD_DRIVER')) == 'local' ? true : false;
 }
 
 /**
@@ -119,7 +120,7 @@ function is_local()
 function send_mail_local($to = '', $subject = '', $body = '', $name = '', $attachment = null)
 {
     $from_email = config('MAIL_SMTP_USER');
-    $from_name = modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config');
+    $from_name = modconfig('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config');
     $reply_email = '';
     $reply_name = '';
 
@@ -143,13 +144,13 @@ function send_mail_local($to = '', $subject = '', $body = '', $name = '', $attac
         $to = config('MAIL_SMTP_CE'); //邮件地址为空时，默认使用后台默认邮件测试地址
     }
     if ($name == '') {
-        $name = modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config'); //发送者名称为空时，默认使用网站名称
+        $name = modconfig('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config'); //发送者名称为空时，默认使用网站名称
     }
     if ($subject == '') {
-        $subject = modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config'); //邮件主题为空时，默认使用网站标题
+        $subject = modconfig('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config'); //邮件主题为空时，默认使用网站标题
     }
     if ($body == '') {
-        $body = modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config'); //邮件内容为空时，默认使用网站描述
+        $body = modconfig('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config'); //邮件内容为空时，默认使用网站描述
     }
     $mail->AddReplyTo($replyEmail, $replyName);
     $mail->Subject = $subject;
@@ -177,12 +178,11 @@ function muucmf_hash($message, $salt = "MuuCmf")
 /**获取模块的后台设置
  * @param        $key 获取模块的配置
  * @param string $default 默认值
- * @param string $module 模块名，不设置用当前模块名
+ * @param string $module 模块名，不设置用当前模块名（admin模块采用控制器名）
  */
 function modC($key, $default = '', $module = '')
 {
-    $request= request();
-    $module_name=$request->module();
+    $module_name=request()->module();
     $mod = $module ? $module : $module_name;
     
     if($mod=="install"){
@@ -190,11 +190,16 @@ function modC($key, $default = '', $module = '')
     }
     $result = cache('conf_' . strtoupper($mod) . '_' . strtoupper($key));
     if (empty($result)) {
-        $config = db('config')->where(['name' => '_' . strtoupper($mod) . '_' . strtoupper($key)])->find();
+        $config = Db::name('config')->where(['name' => '_' . strtoupper($mod) . '_' . strtoupper($key)])->find();
+
         if (!$config) {
             $result = $default;
         } else {
-            $result = $config['value'];
+            if($config['value']==''){
+                $result = $default;
+            }else{
+                $result = $config['value'];
+            } 
         }
         cache('conf_' . strtoupper($mod) . '_' . strtoupper($key), $result, 3600);
     }
@@ -210,13 +215,13 @@ function modC($key, $default = '', $module = '')
 function sendSMS($mobile, $content)
 {
 
-    $sms_hook = modC('SMS_HOOK','none','CONFIG');
+    $sms_hook = modconfig('SMS_HOOK','none','CONFIG');
     $sms_hook =  check_sms_hook_is_exist($sms_hook);
     if($sms_hook == 'none'){
         return lang('_THE_ADMINISTRATOR_HAS_NOT_CONFIGURED_THE_SMS_SERVICE_PROVIDER_INFORMATION_PLEASE_CONTACT_THE_ADMINISTRATOR_');
     }
     //根据电信基础运营商的规定，每条短信必须附加短信签名，否则将无法正常发送。这里将后台设置的短信签名与内容拼接成发送内容
-    $sms_sign = modC('SMS_SIGN','','CONFIG');
+    $sms_sign = modconfig('SMS_SIGN','','CONFIG');
     $content = $sms_sign.$content;
 
     $name = get_addon_class($sms_hook);

@@ -79,61 +79,43 @@ CREATE TABLE IF NOT EXISTS `muucmf_addons` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='插件表' AUTO_INCREMENT=15 ;
 
 INSERT INTO `muucmf_addons` (`id`, `name`, `title`, `description`, `status`, `config`, `author`, `version`, `create_time`, `has_adminlist`) VALUES
-(9, 'SuperLinks', '合作单位', '合作单位', 1, '{"random":"1"}', '苏南 newsn.net', '0.1', 1432792019, 1),
-(11, 'LocalComment', '本地评论', '本地评论插件，不依赖社会化评论平台', 1, '{"can_guest_comment":"0"}', 'caipeichao', '0.1', 1432792035, 0),
-(12, 'ChinaCity', '中国省市区三级联动', '每个系统都需要的一个中国省市区三级联动插件。想天-駿濤修改，将镇级地区移除', 1, 'null', 'i友街', '2.0', 1432792040, 0),
-(13, 'Recommend', '推荐关注', '可选择多种方法推荐用户', 1, '{"howToRecommend":"1","howManyRecommend":"1","recommendUser":"1"}', '嘉兴想天信息科技有限公司', '0.1', 1432792055, 1),
-(14, 'SyncLogin', '同步登陆', '同步登陆', 1, '{"type":null,"meta":"","bind":"0","QqKEY":"","QqSecret":"","SinaKEY":"","SinaSecret":"","WeixinKEY":"","WeixinSecret":""}', 'xjw129xjt', '0.1', 1432792112, 0);
+(3, 'chinacity', '中国省市区三级联动', '每个系统都需要的一个中国省市区三级联动插件。想天-駿濤修改，将镇级地区移除', 1, 'null', 'muucmf', '2.0', 0, 0),
+(46, 'demo', 'demo测试', '这就是个案例', 1, '{"can_show":"0","title":"0","select":"0"}', 'muucmf', '1.0.0', 0, 1);
 
-DROP TABLE IF EXISTS `muucmf_articles`;
-CREATE TABLE IF NOT EXISTS `muucmf_articles` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增ID',
-  `uid` int(11) NOT NULL,
-  `title` varchar(50) NOT NULL COMMENT '标题',
-  `keywords` varchar(255) NOT NULL COMMENT '关键字，多个用,分割',
-  `description` varchar(200) NOT NULL COMMENT '描述',
-  `category` int(11) NOT NULL COMMENT '分类',
-  `status` tinyint(2) NOT NULL COMMENT '状态',
-  `reason` varchar(100) NOT NULL COMMENT '审核失败原因',
-  `sort` int(5) NOT NULL COMMENT '排序',
-  `position` int(4) NOT NULL COMMENT '定位，展示位',
-  `cover` int(11) NOT NULL COMMENT '封面',
-  `view` int(10) NOT NULL COMMENT '阅读量',
-  `comment` int(10) NOT NULL COMMENT '评论量',
-  `collection` int(10) NOT NULL COMMENT '收藏量',
-  `source` varchar(200) NOT NULL COMMENT '来源url',
-  `create_time` int(11) NOT NULL,
-  `update_time` int(11) NOT NULL,
+
+DROP TABLE IF EXISTS `muucmf_adv_pos`;
+CREATE TABLE IF NOT EXISTS `muucmf_adv_pos` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `name` varchar(50) NOT NULL,
+  `title` char(80) NOT NULL DEFAULT '' COMMENT '广告位置名称',
+  `path` varchar(100) NOT NULL COMMENT '所在路径 模块/控制器/方法',
+  `type` int(11) unsigned NOT NULL DEFAULT '1' COMMENT '广告位类型 \r\n1.单图\r\n2.多图\r\n3.文字链接\r\n4.代码',
+  `status` tinyint(2) NOT NULL DEFAULT '1' COMMENT '状态（0：禁用，1：正常）',
+  `data` varchar(500) NOT NULL COMMENT '额外的数据',
+  `width` char(20) NOT NULL DEFAULT '' COMMENT '广告位置宽度',
+  `height` char(20) NOT NULL DEFAULT '' COMMENT '广告位置高度',
+  `margin` varchar(50) NOT NULL COMMENT '边缘',
+  `padding` varchar(50) NOT NULL COMMENT '留白',
+  `theme` varchar(50) NOT NULL DEFAULT 'all' COMMENT '适用主题，默认为all，通用',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COMMENT='文章';
+) ENGINE=MyISAM AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='广告位置表';
 
-DROP TABLE IF EXISTS `muucmf_articles_category`;
-CREATE TABLE IF NOT EXISTS `muucmf_articles_category` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增ID',
-  `title` varchar(20) NOT NULL,
-  `pid` int(11) NOT NULL,
-  `can_post` tinyint(4) NOT NULL COMMENT '前台可投稿',
-  `need_audit` tinyint(4) NOT NULL COMMENT '前台投稿是否需要审核',
-  `sort` tinyint(4) NOT NULL,
-  `status` tinyint(4) NOT NULL,
+DROP TABLE IF EXISTS `muucmf_adv`;
+CREATE TABLE IF NOT EXISTS `muucmf_adv` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `title` char(80) NOT NULL DEFAULT '' COMMENT '广告名称',
+  `pos_id` int(11) NOT NULL COMMENT '广告位置',
+  `data` text NOT NULL COMMENT '图片地址',
+  `click_count` int(11) NOT NULL COMMENT '点击量',
+  `url` varchar(500) NOT NULL COMMENT '链接地址',
+  `sort` int(3) unsigned NOT NULL DEFAULT '0' COMMENT '排序',
+  `status` tinyint(2) NOT NULL DEFAULT '1' COMMENT '状态（0：禁用，1：正常）',
+  `create_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '开始时间',
+  `start_time` int(11) DEFAULT NULL,
+  `end_time` int(11) unsigned DEFAULT '0' COMMENT '结束时间',
+  `target` varchar(20) DEFAULT '_blank',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='文章分类';
-
-INSERT INTO `muucmf_articles_category` (`id`, `title`, `pid`, `can_post`, `need_audit`, `sort`, `status`) VALUES
-(1, '早期创业', 0, 1, 1, 1, 1),
-(2, '独角兽', 0, 1, 1, 3, 1),
-(3, '投融资', 0, 1, 1, 2, 1),
-(4, '火木动态', 0, 1, 1, 0, 1),
-(5, '锐观察', 0, 1, 1, 4, 1),
-(6, '技术创新', 0, 1, 1, 5, 1);
-
-DROP TABLE IF EXISTS `muucmf_articles_detail`;
-CREATE TABLE IF NOT EXISTS `muucmf_articles_detail` (
-  `articles_id` int(11) NOT NULL,
-  `content` text NOT NULL COMMENT '内容',
-  `template` varchar(50) NOT NULL COMMENT '模板',
-PRIMARY KEY (`articles_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='文章详情';
+) ENGINE=MyISAM AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='广告表';
 
 DROP TABLE IF EXISTS `muucmf_announce`;
 CREATE TABLE IF NOT EXISTS `muucmf_announce` (
@@ -241,22 +223,9 @@ CREATE TABLE IF NOT EXISTS `muucmf_auth_rule` (
 
 INSERT INTO `muucmf_auth_rule` (`id`, `module`, `type`, `name`, `title`, `status`, `condition`) VALUES
 (1, 'admin', 2, 'Admin/Index/index', '首页', 1, ''),
-(2, 'admin', 2, 'Admin/Article/mydocument', '资讯', -1, ''),
 (3, 'admin', 2, 'Admin/User/index', '用户', 1, ''),
 (4, 'admin', 2, 'Admin/Addons/index', '插件', -1, ''),
 (5, 'admin', 2, 'Admin/Config/group', '系统', 1, ''),
-(7, 'admin', 1, 'Admin/article/add', '新增', -1, ''),
-(8, 'admin', 1, 'Admin/article/edit', '编辑', -1, ''),
-(9, 'admin', 1, 'Admin/article/setStatus', '改变状态', -1, ''),
-(10, 'admin', 1, 'Admin/article/update', '保存', -1, ''),
-(11, 'admin', 1, 'Admin/article/autoSave', '保存草稿', -1, ''),
-(12, 'admin', 1, 'Admin/article/move', '移动', -1, ''),
-(13, 'admin', 1, 'Admin/article/copy', '复制', -1, ''),
-(14, 'admin', 1, 'Admin/article/paste', '粘贴', -1, ''),
-(15, 'admin', 1, 'Admin/article/permit', '还原', -1, ''),
-(16, 'admin', 1, 'Admin/article/clear', '清空', -1, ''),
-(17, 'admin', 1, 'Admin/article/index', '文档列表', -1, ''),
-(18, 'admin', 1, 'Admin/article/recycle', '回收站', -1, ''),
 (19, 'admin', 1, 'Admin/User/addaction', '新增用户行为', 1, ''),
 (20, 'admin', 1, 'Admin/User/editaction', '编辑用户行为', 1, ''),
 (21, 'admin', 1, 'Admin/User/saveAction', '保存用户行为', 1, ''),
@@ -335,7 +304,6 @@ INSERT INTO `muucmf_auth_rule` (`id`, `module`, `type`, `name`, `title`, `status
 (96, 'admin', 1, 'Admin/Category/move', '移动', -1, ''),
 (97, 'admin', 1, 'Admin/Category/merge', '合并', -1, ''),
 (98, 'admin', 1, 'Admin/Config/menu', '后台菜单管理', -1, ''),
-(99, 'admin', 1, 'Admin/Article/mydocument', '内容', -1, ''),
 (100, 'admin', 1, 'Admin/Menu/index', '菜单管理', 1, ''),
 (101, 'admin', 1, 'Admin/other', '其他', -1, ''),
 (102, 'admin', 1, 'Admin/Menu/add', '新增', 1, ''),
@@ -344,20 +312,6 @@ INSERT INTO `muucmf_auth_rule` (`id`, `module`, `type`, `name`, `title`, `status
 (108, 'admin', 1, 'Admin/User/updatePassword', '修改密码', 1, ''),
 (109, 'admin', 1, 'Admin/User/updateNickname', '修改昵称', 1, ''),
 (110, 'admin', 1, 'Admin/action/edit', '查看行为日志', 1, ''),
-(205, 'admin', 1, 'Admin/think/add', '新增数据', -1, ''),
-(111, 'admin', 2, 'Admin/article/index', '文档列表', -1, ''),
-(112, 'admin', 2, 'Admin/article/add', '新增', -1, ''),
-(113, 'admin', 2, 'Admin/article/edit', '编辑', -1, ''),
-(114, 'admin', 2, 'Admin/article/setStatus', '改变状态', -1, ''),
-(115, 'admin', 2, 'Admin/article/update', '保存', -1, ''),
-(116, 'admin', 2, 'Admin/article/autoSave', '保存草稿', -1, ''),
-(117, 'admin', 2, 'Admin/article/move', '移动', -1, ''),
-(118, 'admin', 2, 'Admin/article/copy', '复制', -1, ''),
-(119, 'admin', 2, 'Admin/article/paste', '粘贴', -1, ''),
-(120, 'admin', 2, 'Admin/article/batchOperate', '导入', -1, ''),
-(121, 'admin', 2, 'Admin/article/recycle', '回收站', -1, ''),
-(122, 'admin', 2, 'Admin/article/permit', '还原', -1, ''),
-(123, 'admin', 2, 'Admin/article/clear', '清空', -1, ''),
 (124, 'admin', 2, 'Admin/User/add', '新增用户', -1, ''),
 (125, 'admin', 2, 'Admin/User/action', '用户行为', -1, ''),
 (126, 'admin', 2, 'Admin/User/addAction', '新增用户行为', -1, ''),
@@ -448,27 +402,14 @@ INSERT INTO `muucmf_auth_rule` (`id`, `module`, `type`, `name`, `title`, `status
 (212, 'admin', 1, 'Admin/Config/sort', '排序', 1, ''),
 (213, 'admin', 1, 'Admin/Menu/sort', '排序', 1, ''),
 (214, 'admin', 1, 'Admin/Channel/sort', '排序', 1, ''),
-(215, 'admin', 1, 'Admin/Category/operate/type/move', '移动', -1, ''),
-(216, 'admin', 1, 'Admin/Category/operate/type/merge', '合并', -1, ''),
-(217, 'admin', 1, 'Admin/Forum/forum', '板块管理', -1, ''),
-(218, 'admin', 1, 'Admin/Forum/post', '帖子管理', -1, ''),
-(219, 'admin', 1, 'Admin/Forum/editForum', '编辑／发表帖子', -1, ''),
-(220, 'admin', 1, 'Admin/Forum/editPost', 'edit pots', -1, ''),
-(221, 'admin', 2, 'Admin//Admin/Forum/index', '讨论区', -1, ''),
-(222, 'admin', 2, 'Admin//Admin/Weibo/index', '微博', -1, ''),
-(223, 'admin', 1, 'Admin/Forum/sortForum', '排序', -1, ''),
 (224, 'admin', 1, 'Admin/SEO/editRule', '新增、编辑', 1, ''),
 (225, 'admin', 1, 'Admin/SEO/sortRule', '排序', 1, ''),
 (226, 'admin', 1, 'Admin/SEO/index', 'SEO规则管理', 1, ''),
-(227, 'admin', 1, 'Admin/Forum/editReply', '新增 编辑', -1, ''),
-(228, 'admin', 1, 'Admin/Weibo/editComment', '编辑回复', 1, ''),
-(229, 'admin', 1, 'Admin/Weibo/editWeibo', '编辑微博', 1, ''),
 (230, 'admin', 1, 'Admin/SEO/ruleTrash', 'SEO规则回收站', 1, ''),
 (231, 'admin', 1, 'Admin/Rank/userList', '查看用户', 1, ''),
 (232, 'admin', 1, 'Admin/Rank/userRankList', '用户头衔列表', 1, ''),
 (233, 'admin', 1, 'Admin/Rank/userAddRank', '关联新头衔', 1, ''),
 (234, 'admin', 1, 'Admin/Rank/userChangeRank', '编辑头衔关联', 1, ''),
-
 (239, 'admin', 1, 'Admin/Rank/index', '头衔列表', 1, ''),
 (242, 'admin', 1, 'Admin/Rank/editRank', '添加头衔', 1, ''),
 
@@ -496,7 +437,6 @@ INSERT INTO `muucmf_auth_rule` (`id`, `module`, `type`, `name`, `title`, `status
 (318, 'admin', 1, 'Admin/AuthManager/accessUser', '前台权限管理', 1, ''),
 (319, 'admin', 1, 'Admin/User/changeGroup', '转移用户组', 1, ''),
 (320, 'admin', 1, 'Admin/AuthManager/deleteNode', '删除权限节点', 1, ''),
-(321, 'admin', 1, 'Admin/Issue/config', '专辑设置', -1, ''),
 (322, 'admin', 2, 'Admin/module/lists', '云平台', -1, ''),
 
 (346, 'admin', 1, 'Admin/UserConfig/index', '用户配置', 1, ''),
@@ -563,27 +503,11 @@ INSERT INTO `muucmf_auth_rule` (`id`, `module`, `type`, `name`, `title`, `status
 (407, 'admin', 1, 'Admin/role/configusertag', '可拥有标签配置', 1, ''),
 (408, 'admin', 1, 'Admin/Module/edit', '编辑模块', 1, ''),
 (409, 'admin', 1, 'Admin/Config/website', '网站信息', 1, ''),
-(410, 'admin', 1, 'Admin/Theme/setTheme', '使用主题', 1, ''),
-(411, 'admin', 1, 'Admin/Theme/lookTheme', '查看主题', 1, ''),
-(412, 'admin', 1, 'Admin/Theme/packageDownload', '主题打包下载', 1, ''),
-(413, 'admin', 1, 'Admin/Theme/delete', '卸载删除主题', 1, ''),
-(414, 'admin', 1, 'Admin/Theme/add', '上传安装主题', 1, ''),
-(415, 'admin', 2, 'Admin/Home/config', '网站主页', 1, ''),
-(416, 'admin', 1, 'Admin/Home/config', '基本设置', 1, ''),
-(417, 'admin', 1, 'Admin/Weibo/topic', '话题管理', 1, ''),
-(418, 'admin', 1, 'Admin/Weibo/setWeiboTop', '置顶微博', 1, ''),
-(419, 'admin', 1, 'Admin/Weibo/setWeiboStatus', '设置微博状态', 1, ''),
-(420, 'admin', 1, 'Admin/Weibo/setCommentStatus', '设置微博评论状态', 1, ''),
-(421, 'admin', 1, 'Admin/Weibo/setTopicTop', '设置置顶话题', 1, ''),
-(422, 'admin', 1, 'Admin/Weibo/delTopic', '删除话题', 1, ''),
-(423, 'admin', 1, 'Admin/People/config', '基本设置', 1, ''),
 (424, 'admin', 1, 'Admin/Cloud/index', '云市场', 1, ''),
 (425, 'admin', 2, 'Admin/authorize/ssoSetting', '授权', 1, ''),
 (426, 'admin', 2, 'Admin/Role/index', '角色', 1, ''),
-(427, 'admin', 1, 'Admin/Theme/tpls', '主题管理', 1, ''),
 (428, 'admin', 2, 'Admin/ActionLimit/limitList', '安全', 1, ''),
 (429, 'admin', 2, 'Admin/Cloud/index', '云市场', 1, ''),
-(430, 'admin', 2, 'Admin/People/config', '会员展示', 1, ''),
 (431, 'admin', 1, 'Admin/Index/index', '后台入口', 1, '');
 
 DROP TABLE IF EXISTS `muucmf_avatar`;
@@ -618,8 +542,8 @@ CREATE TABLE IF NOT EXISTS `muucmf_channel` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
 INSERT INTO `muucmf_channel` (`id`, `pid`, `title`, `url`, `sort`, `create_time`, `update_time`, `status`, `target`, `color`, `band_color`, `band_text`, `icon`) VALUES
-(1, 0, '首页', 'Home/Index/index', 1, 0, 0, 1, 0, '#000000', '#000000', '', ''),
-(2, 0, '文章', 'Articles/index/index', 2, 0, 0, 1, 0, '#000000', '#000000', '', '');
+(1, 0, '首页', 'index/index/index', 0, 0, 0, 1, 0, '', '#000000', '', ''),
+(2, 0, '模块开发演示', 'demo/Index/index', 1, 0, 0, 1, 0, '', '#000000', '', '');
 
 DROP TABLE IF EXISTS `muucmf_user_nav`;
 CREATE TABLE IF NOT EXISTS `muucmf_user_nav` (
@@ -640,14 +564,6 @@ CREATE TABLE IF NOT EXISTS `muucmf_user_nav` (
 INSERT INTO `muucmf_user_nav` VALUES ('1', '个人主页', 'ucenter/Index/index', '0', '0', '0', '1', '0', '', '', '', '');
 INSERT INTO `muucmf_user_nav` VALUES ('2', '用户设置', 'ucenter/config/index', '0', '0', '0', '1', '0', '', '', '', '');
 
-
-DROP TABLE IF EXISTS `muucmf_checkin`;
-CREATE TABLE IF NOT EXISTS `muucmf_checkin` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `uid` int(11) NOT NULL,
-  `create_time` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 DROP TABLE IF EXISTS `muucmf_config`;
 CREATE TABLE IF NOT EXISTS `muucmf_config` (
@@ -671,32 +587,32 @@ CREATE TABLE IF NOT EXISTS `muucmf_config` (
 
 INSERT INTO `muucmf_config` (`id`, `name`, `type`, `title`, `group`, `extra`, `remark`, `create_time`, `update_time`, `status`, `value`, `sort`) VALUES
 (100, 'WEB_SITE_CLOSE', 4, '关闭站点', 1, '0:关闭,1:开启', '站点关闭后其他用户不能访问，管理员可以正常访问', 1378898976, 1379235296, 1, '1', 11),
-(101, 'CONFIG_TYPE_LIST', 3, '配置类型列表', 4, '', '主要用于数据解析和页面表单的生成', 1378898976, 1379235348, 1, '0:数字\r\n1:字符\r\n2:文本\r\n3:数组\r\n4:枚举\r\n8:多选框', 8),
+(101, 'CONFIG_TYPE_LIST', 3, '配置类型列表', 4, '', '主要用于数据解析和页面表单的生成', 1378898976, 1379235348, 1, '0:数字\r\n1:字符\r\n2:文本\r\n3:数组\r\n4:枚举\r\n8:多选框', 10),
 (102, 'CONFIG_GROUP_LIST', 3, '配置分组', 4, '', '配置分组', 1379228036, 1384418383, 1, '1:基本\r\n2:内容\r\n3:用户\r\n4:系统\r\n5:邮件', 15),
-(103, 'HOOKS_TYPE', 3, '钩子的类型', 4, '', '类型 1-用于扩展显示内容，2-用于扩展业务处理', 1379313397, 1379313407, 1, '1:视图\r\n2:控制器', 17),
-(104, 'AUTH_CONFIG', 3, 'Auth配置', 4, '', '自定义Auth.class.php类配置', 1379409310, 1379409564, 1, 'AUTH_ON:1\r\nAUTH_TYPE:2', 20),
+(103, 'HOOKS_TYPE', 3, '钩子的类型', 4, '', '类型 1-用于扩展显示内容，2-用于扩展业务处理', 1379313397, 1379313407, 1, '1:视图\r\n2:控制器', 14),
+(104, 'AUTH_CONFIG', 3, 'Auth配置', 4, '', '自定义Auth.class.php类配置', 1379409310, 1379409564, 1, 'AUTH_ON:1\r\nAUTH_TYPE:2', 16),
 (105, 'LIST_ROWS', 0, '后台每页记录数', 2, '', '后台数据每页显示记录数', 1379503896, 1380427745, 1, '10', 24),
 (107, 'CODEMIRROR_THEME', 4, '预览插件的CodeMirror主题', 4, '3024-day:3024 day\r\n3024-night:3024 night\r\nambiance:ambiance\r\nbase16-dark:base16 dark\r\nbase16-light:base16 light\r\nblackboard:blackboard\r\ncobalt:cobalt\r\neclipse:eclipse\r\nelegant:elegant\r\nerlang-dark:erlang-dark\r\nlesser-dark:lesser-dark\r\nmidnight:midnight', '详情见CodeMirror官网', 1379814385, 1384740813, 1, 'ambiance', 13),
-(108, 'DATA_BACKUP_PATH', 1, '数据库备份根路径', 4, '', '路径必须以 / 结尾', 1381482411, 1381482411, 1, './Data/Backup', 16),
+(108, 'DATA_BACKUP_PATH', 1, '数据库备份根路径', 4, '', '路径必须以 / 结尾', 1381482411, 1381482411, 1, '../data/backup', 16),
 (109, 'DATA_BACKUP_PART_SIZE', 0, '数据库备份卷大小', 4, '', '该值用于限制压缩后的分卷最大长度。单位：B；建议设置20M', 1381482488, 1381729564, 1, '20971520', 18),
 (110, 'DATA_BACKUP_COMPRESS', 4, '数据库备份文件是否启用压缩', 4, '0:不压缩\r\n1:启用压缩', '压缩备份文件需要PHP环境支持gzopen,gzwrite函数', 1381713345, 1381729544, 1, '1', 22),
 (111, 'DATA_BACKUP_COMPRESS_LEVEL', 4, '数据库备份文件压缩级别', 4, '1:普通\r\n4:一般\r\n9:最高', '数据库备份文件的压缩级别，该配置在开启压缩时生效', 1381713408, 1381713408, 1, '9', 25),
-(112, 'DEVELOP_MODE', 4, '开启开发者模式', 4, '0:关闭\r\n1:开启', '是否开启开发者模式', 1383105995, 1383291877, 1, '1', 26),
+(112, 'DEVELOP_MODE', 4, '开启开发者模式', 4, '0:关闭\r\n1:开启', '是否开启开发者模式', 1383105995, 1383291877, 1, '1', 8),
 (113, 'ALLOW_VISIT', 3, '不受限控制器方法', 0, '', '', 1386644047, 1386644741, 1, '0:article/draftbox\r\n1:article/mydocument\r\n2:Category/tree\r\n3:Index/verify\r\n4:file/upload\r\n5:file/download\r\n6:user/updatePassword\r\n7:user/updateNickname\r\n8:user/submitPassword\r\n9:user/submitNickname\r\n10:file/uploadpicture', 2),
 (114, 'DENY_VISIT', 3, '超管专限控制器方法', 0, '', '仅超级管理员可访问的控制器方法', 1386644141, 1386644659, 1, '0:Addons/addhook\r\n1:Addons/edithook\r\n2:Addons/delhook\r\n3:Addons/updateHook\r\n4:Admin/getMenus\r\n5:Admin/recordList\r\n6:AuthManager/updateRules\r\n7:AuthManager/tree', 3),
 (115, 'ADMIN_ALLOW_IP', 2, '后台允许访问IP', 4, '', '多个用逗号分隔，如果不配置表示不限制IP访问', 1387165454, 1387165553, 1, '', 27),
-(116, 'SHOW_PAGE_TRACE', 4, '是否显示页面Trace', 4, '0:关闭\r\n1:开启', '是否显示页面Trace信息', 1387165685, 1387165685, 1, '0', 7),
-(117, 'MAIL_TYPE', 4, '邮件类型', 5, '1:SMTP 模块发送\r\n2:mail() 函数发送', '如果您选择了采用服务器内置的 Mail 服务，您不需要填写下面的内容', 1388332882, 1388931416, 1, '1', 0),
+(116, 'SHOW_PAGE_TRACE', 4, '是否显示页面Trace', 4, '0:关闭\r\n1:开启', '是否显示页面app_trace信息', 1387165685, 1387165685, 1, '1', 7),
+(117, 'MAIL_TYPE', 4, '邮件类型', 5, '1:SMTP 模块发送\r\n2:mail() 函数发送', '如果您选择了采用服务器内置的 Mail 服务，您不需要填写下面的内容', 1388332882, 1388931416, 1, '1', 1),
 (118, 'MAIL_SMTP_HOST', 1, 'SMTP 服务器', 5, '', 'SMTP服务器', 1388332932, 1388332932, 1, '', 0),
 (119, 'MAIL_SMTP_PORT', 0, 'SMTP服务器端口', 5, '', '默认25', 1388332975, 1388332975, 1, '25', 0),
 (120, 'MAIL_SMTP_USER', 1, 'SMTP服务器用户名', 5, '', '填写完整用户名', 1388333010, 1388333010, 1, '', 0),
 (121, 'MAIL_SMTP_PASS', 6, 'SMTP服务器密码', 5, '', '填写您的密码', 1388333057, 1389187088, 1, '', 0),
 (122, 'MAIL_USER_PASS', 5, '密码找回模板', 0, '', '支持HTML代码', 1388583989, 1388672614, 1, '密码找回111223333555111', 0),
 (123, 'PIC_FILE_PATH', 1, '图片文件保存根目录', 4, '', '图片文件保存根目录./目录/', 1388673255, 1388673255, 1, './Uploads/', 0),
-(124, 'COUNT_DAY', 0, '后台首页统计用户增长天数', 0, '', '默认统计最近半个月的用户数增长情况', 1420791945, 1420876261, 1, '2', 0),
+(124, 'COUNT_DAY', 0, '后台首页统计用户增长天数', 4, '', '默认统计最近半个月的用户数增长情况', 1420791945, 1420876261, 1, '10', 0),
 (125, 'MAIL_USER_REG', 5, '注册邮件模板', 3, '', '支持HTML代码', 1388337307, 1389532335, 1, '<a href="http://www.hoomuu.cn" target="_blank">点击进入</a><span style="color:#E53333;">当您收到这封邮件，表明您已注册成功，以上为您的用户名和密码。。。。祝您生活愉快····</span>', 55),
 (126, 'USER_NAME_BAOLIU', 1, '保留用户名和昵称', 3, '', '禁止注册用户名和昵称，包含这些即无法注册,用" , "号隔开，用户只能是英文，下划线_，数字等', 1388845937, 1388845937, 1, '管理员,测试,admin,垃圾', 0),
-(128, 'VERIFY_OPEN', 8, '验证码配置', 4, 'reg:注册显示\r\nlogin:登陆显示\r\nreset:密码重置', '验证码配置', 1388500332, 1405561711, 1, '', 0),
+(128, 'VERIFY_OPEN', 8, '验证码配置', 4, 'reg:注册显示\r\nlogin:登陆显示\r\nreset:密码重置', '验证码配置', 1388500332, 1405561711, 1, 'reg,login', 0),
 (129, 'VERIFY_TYPE', 4, '验证码类型', 4, '1:中文\r\n2:英文\r\n3:数字\r\n4:英文+数字', '验证码类型', 1388500873, 1405561731, 1, '4', 0),
 (130, 'NO_BODY_TLE', 2, '空白说明', 2, '', '空白说明', 1392216444, 1392981305, 1, '呵呵，暂时没有内容哦！！', 0),
 (131, 'USER_RESPASS', 5, '密码找回模板', 3, '', '密码找回文本', 1396191234, 1396191234, 1, '<span style="color:#009900;">请点击以下链接找回密码，如无反应，请将链接地址复制到浏览器中打开(下次登录前有效)</span>', 0),
@@ -708,27 +624,62 @@ INSERT INTO `muucmf_config` (`id`, `name`, `type`, `title`, `group`, `extra`, `r
 (138, 'SESSION_PREFIX', 1, '网站前台session前缀', 1, '', '当多个网站在同一个根域名下请保证每个网站的前缀不同', 1436923664, 1436923664, 1, 'muucmf', 20),
 (139, 'COOKIE_PREFIX', 1, '网站前台cookie前缀', 1, '', '当多个网站在同一个根域名下请保证每个网站的前缀不同', 1436923664, 1436923664, 1, 'muucmf_', 21),
 (140, 'MAIL_SMTP_CE', 1, '邮件发送测试', 5, '', '填写测试邮件地址', 1388334529, 1388584028, 1, '', 11),
-
-(1000, '_USERCONFIG_REG_SWITCH', 0, '', 0, '', '', 1427094903, 1427094903, 1, 'username', 0),
-(1001, '_CONFIG_WEB_SITE_NAME', 0, '', 0, '', '', 1427339647, 1427339647, 1, 'MuuCmf后端开发框架', 0),
-(1002, '_CONFIG_ICP', 0, '', 0, '', '', 1427339647, 1427339647, 1, '京ICP备12345XXX号', 0),
-(1003, '_CONFIG_LOGO', 0, '', 0, '', '', 1427339647, 1427339647, 1, '', 0),
-(1004, '_CONFIG_QRCODE', 0, '', 0, '', '', 1427339647, 1427339647, 1, '', 0),
-(1005, '_CONFIG_ABOUT_US', 0, '', 0, '', '', 1427339647, 1427339647, 1, '<style>.common-aboutus .aboutus{margin:10px auto;width:100px}.common-aboutus .aboutus ul{list-style:none}.common-aboutus .aboutus ul li{padding:10px;list-style:none}</style><div class="row"><div class="col-xs-6"><img src="/Public/images/logo.png" class="logo" alt="MuuCmf开源PHP后端开发框架"><p>MuuCmf是一个将CMS和Framework两个概念完美结合的内容管理系统，提供了丰富的系统功能。开发人员只需要专注于业务系统的开发，或通过MuuCmf应用商店下载你需要的模块实现更快部署...。</p><p>软件和方案集成咨询</p><h3>18618380435</h3><p>技术支持邮箱</p><h3>support@hoomuu.cn</h3></div><div class="col-xs-6"><div class="aboutus text-center"><h2>关于我们</h2><ul class="list-padding"><li><a>MuuCmf简介</a></li><li><a>招兵买马</a></li><li><a>BLOG</a></li><li><a>媒体报道</a></li><li><a>服务条款</a></li></ul></div></div></div>', 0),
-(1006, '_CONFIG_SUBSCRIB_US', 0, '', 0, '', '', 1427339647, 1427339647, 1, '<div class="text-center"><h2>移动端访问</h2></div><div class="text-center"><img src="/Public/images/qrcode.png" width="200px"></div>', 0),
-(1007, '_CONFIG_COPY_RIGHT', 0, '', 0, '', '', 1427339647, 1427339647, 1, 'Copyright ©2013-2014 <a href="http://www.hoomuu.cn" target="_blank">北京火木科技有限公司</a>', 0),
-(1008, '_HOME_LOGO', 0, '', 0, '', '', 1432791820, 1432791820, 1, '', 0),
-(1009, '_HOME_ENTER_URL', 0, '', 0, '', '', 1432791820, 1432791820, 1, '', 0),
-(1010, '_HOME_BLOCK', 0, '', 0, '', '', 1432791820, 1432791820, 1, '[{"data-id":"disable","title":"禁用","items":[]},{"data-id":"enable","title":"启用","items":[{"data-id":"slider","title":"轮播"},{"data-id":"Weibo","title":"微博"},{"data-id":"People","title":"会员展示"}]}]', 0),
-(1011, '_HOME_PIC1', 0, '', 0, '', '', 1432791820, 1432791820, 1, '', 0),
-(1012, '_HOME_URL1', 0, '', 0, '', '', 1432791820, 1432791820, 1, '', 0),
-(1013, '_HOME_TITLE1', 0, '', 0, '', '', 1432791820, 1432791820, 1, '', 0),
-(1014, '_HOME_PIC2', 0, '', 0, '', '', 1432791820, 1432791820, 1, '', 0),
-(1015, '_HOME_URL2', 0, '', 0, '', '', 1432791820, 1432791820, 1, '', 0),
-(1016, '_HOME_TITLE2', 0, '', 0, '', '', 1432791820, 1432791820, 1, '', 0),
-(1017, '_HOME_PIC3', 0, '', 0, '', '', 1432791820, 1432791820, 1, '', 0),
-(1018, '_HOME_URL3', 0, '', 0, '', '', 1432791820, 1432791820, 1, '', 0),
-(1019, '_HOME_TITLE3', 0, '', 0, '', '', 1432791820, 1432791820, 1, '', 0);
+(1000, '_USERCONFIG_REG_SWITCH', 0, '', 0, '', '', 1531177781, 1531177781, 1, 'username,email,mobile', 0),
+(1001, '_CONFIG_WEB_SITE_NAME', 0, '', 0, '', '', 1530883729, 1530883729, 1, 'MuuCmf后端开发框架', 0),
+(1002, '_CONFIG_ICP', 0, '', 0, '', '', 1530883729, 1530883729, 1, '京ICP备12345XXXx号', 0),
+(1003, '_CONFIG_LOGO', 0, '', 0, '', '', 1530883729, 1530883729, 1, '', 0),
+(1004, '_CONFIG_QRCODE', 0, '', 0, '', '', 1530883729, 1530883729, 1, '', 0),
+(1005, '_CONFIG_ABOUT_US', 0, '', 0, '', '', 1530883729, 1530883729, 1, '<style>.common-aboutus .aboutus{margin:10px auto;width:100px}.common-aboutus .aboutus ul{list-style:none}.common-aboutus .aboutus ul li{padding:10px;list-style:none}</style><div class="row"><div class="col-xs-6"><img src="/static/common/images/logo.png" class="logo" alt="MuuCmf开源PHP后端开发框架"><p>MuuCmf是一个将CMS和Framework两个概念完美结合的内容管理系统，提供了丰富的系统功能。开发人员只需要专注于业务系统的开发，或通过MuuCmf应用商店下载你需要的模块实现更快部署...。</p><p>软件和方案集成咨询</p><h3>18618380435</h3><p>技术支持邮箱</p><h3>support@hoomuu.cn</h3></div><div class="col-xs-6"><div class="aboutus text-center"><h2>关于我们</h2><ul class="list-padding"><li><a>MuuCmf简介</a></li><li><a>招兵买马</a></li><li><a>BLOG</a></li><li><a>媒体报道</a></li><li><a>服务条款</a></li></ul></div></div></div>', 0),
+(1006, '_CONFIG_SUBSCRIB_US', 0, '', 0, '', '', 1530883729, 1530883729, 1, '<div class="text-center"><h2>移动端访问</h2></div><div class="text-center"><img src="/static/common/images/qrcode.png" width="200px"></div>', 0),
+(1007, '_CONFIG_COPY_RIGHT', 0, '', 0, '', '', 1530883729, 1530883729, 1, 'Copyright ©2018-2022 <a href="http://www.muucmf.cn" target="_blank">北京火木科技有限公司</a>', 0),
+(10038, '_ARTICLES_ARTICLES_SHOW_DESCRIPTION', 0, '', 0, '', '', 1530753405, 1530753405, 1, '模块简单描述', 0),
+(10036, '_ARTICLES_ARTICLES_SHOW_POSITION', 0, '', 0, '', '', 1530753405, 1530753405, 1, '1:幻灯展示\r\n2:首页推荐\r\n4:栏目推荐', 0),
+(10037, '_ARTICLES_ARTICLES_SHOW_TITLE', 0, '', 0, '', '', 1530753405, 1530753405, 1, '热门资讯', 0),
+(10035, '_HOME_BLOCK', 0, '', 0, '', '', 1530755196, 1530755196, 1, '[{"id":"disable","title":"禁用","items":[]},{"id":"enable","title":"启用","items":[{"id":"slider","title":"轮播"}]}]', 0),
+(10034, '_HOME_HOME_INDEX_TYPE', 0, '', 0, '', '', 1530755196, 1530755196, 1, 'static_home', 0),
+(10000, '_USERCONFIG_EMAIL_VERIFY_TYPE', 0, '', 0, '', '', 1531177781, 1531177781, 1, '0', 0),
+(10001, '_USERCONFIG_MOBILE_VERIFY_TYPE', 0, '', 0, '', '', 1531177781, 1531177781, 1, '0', 0),
+(10002, '_USERCONFIG_NEW_USER_FOLLOW', 0, '', 0, '', '', 1531177781, 1531177781, 1, '', 0),
+(10003, '_USERCONFIG_NEW_USER_FANS', 0, '', 0, '', '', 1531177781, 1531177781, 1, '', 0),
+(10004, '_USERCONFIG_NEW_USER_FRIENDS', 0, '', 0, '', '', 1531177781, 1531177781, 1, '', 0),
+(10020, '_USERCONFIG_REG_STEP', 0, '', 0, '', '', 1531177781, 1531177781, 1, '[{"id":"disable","title":"\\u7981\\u7528","items":[{"id":"expand_info","title":"\\u586b\\u5199\\u6269\\u5c55\\u8d44\\u6599"},{"id":"set_tag","title":"\\u9009\\u62e9\\u4e2a\\u4eba\\u6807\\u7b7e"}]},{"id":"enable","title":"\\u542f\\u7528","items":[{"id":"change_avatar","title":"\\u4fee\\u6539\\u5934\\u50cf"}]}]', 0),
+(10006, '_USERCONFIG_REG_CAN_SKIP', 0, '', 0, '', '', 1531177781, 1531177781, 1, 'change_avatar', 0),
+(10007, '_USERCONFIG_OPEN_QUICK_LOGIN', 0, '', 0, '', '', 1531177781, 1531177781, 1, '1', 0),
+(10008, '_USERCONFIG_LOGIN_SWITCH', 0, '', 0, '', '', 1531177781, 1531177781, 1, 'username,email,mobile', 0),
+(10009, '_USERCONFIG_OPEN_WECHAT_AUTH', 0, '', 0, '', '', 1531177781, 1531177781, 1, '0', 0),
+(10010, '_USERCONFIG_SMS_CONTENT', 0, '', 0, '', '', 1531177781, 1531177781, 1, '您的验证码为{$verify}验证码，账号为{$account}', 0),
+(10011, '_USERCONFIG_SMS_RESEND', 0, '', 0, '', '', 1531177781, 1531177781, 1, '60', 0),
+(10012, '_USERCONFIG_LEVEL', 0, '', 0, '', '', 1531177781, 1531177781, 1, '0:Lv1 实习\r\n50:Lv2 试用\r\n100:Lv3 转正\r\n200:Lv4 助理\r\n400:Lv5 经理\r\n800:Lv6 董事\r\n1600:Lv7 董事长', 0),
+(10013, '_USERCONFIG_NICKNAME_MIN_LENGTH', 0, '', 0, '', '', 1531177781, 1531177781, 1, '2', 0),
+(10014, '_USERCONFIG_NICKNAME_MAX_LENGTH', 0, '', 0, '', '', 1531177781, 1531177781, 1, '32', 0),
+(10015, '_USERCONFIG_USERNAME_MIN_LENGTH', 0, '', 0, '', '', 1531177781, 1531177781, 1, '2', 0),
+(10016, '_USERCONFIG_USERNAME_MAX_LENGTH', 0, '', 0, '', '', 1531177781, 1531177781, 1, '32', 0),
+(10017, '_USERCONFIG_REG_EMAIL_ACTIVATE', 0, '', 0, '', '', 1531177781, 1531177781, 1, '<p>您在{$title}的激活链接为<a href="{$url}" target="_blank">激活</a>，或者请复制链接：{$url}到浏览器打开。</p>', 0),
+(10018, '_USERCONFIG_REG_EMAIL_VERIFY', 0, '', 0, '', '', 1531177781, 1531177781, 1, '<p>您的验证码为{$verify}验证码，账号为{$account}。</p>', 0),
+(10021, '_MESSAGE_MESSAGE_TYPE_TPL', 0, '', 0, '', '', 1530334430, 1530334430, 1, 'type1', 0),
+(10022, '_INVITE_REGISTER_TYPE', 0, '', 0, '', '', 1530364001, 1530364001, 1, 'normal,invite', 0),
+(10023, '_CONFIG_PICTURE_UPLOAD_DRIVER', 0, '', 0, '', '', 1530415267, 1530415267, 1, 'local', 0),
+(10024, '_CONFIG_DOWNLOAD_UPLOAD_DRIVER', 0, '', 0, '', '', 1530415267, 1530415267, 1, 'local', 0),
+(10025, '_CONFIG_SMS_HOOK', 0, '', 0, '', '', 1530415267, 1530415267, 1, 'none', 0),
+(10026, '_CONFIG_SMS_UID', 0, '', 0, '', '', 1530415267, 1530415267, 1, '', 0),
+(10027, '_CONFIG_SMS_PWD', 0, '', 0, '', '', 1530415267, 1530415267, 1, '', 0),
+(10028, '_CONFIG_SMS_SIGN', 0, '', 0, '', '', 1530415267, 1530415267, 1, '', 0),
+(10029, '_CONFIG_JUMP_BACKGROUND', 0, '', 0, '', '', 1530883729, 1530883729, 1, '', 0),
+(10030, '_CONFIG_SUCCESS_WAIT_TIME', 0, '', 0, '', '', 1530883729, 1530883729, 1, '2', 0),
+(10031, '_CONFIG_ERROR_WAIT_TIME', 0, '', 0, '', '', 1530883729, 1530883729, 1, '5', 0),
+(10032, '_CONFIG_GET_INFORMATION', 0, '', 0, '', '', 1530883729, 1530883729, 1, '1', 0),
+(10033, '_CONFIG_GET_INFORMATION_INTERNAL', 0, '', 0, '', '', 1530883729, 1530883729, 1, '10', 0),
+(10039, '_ARTICLES_ARTICLES_SHOW_COUNT', 0, '', 0, '', '', 1530753405, 1530753405, 1, '4', 0),
+(10040, '_ARTICLES_ARTICLES_SHOW_TYPE', 0, '', 0, '', '', 1530753405, 1530753405, 1, '0', 0),
+(10041, '_ARTICLES_ARTICLES_SHOW_ORDER_FIELD', 0, '', 0, '', '', 1530753405, 1530753405, 1, 'view', 0),
+(10042, '_ARTICLES_ARTICLES_SHOW_ORDER_TYPE', 0, '', 0, '', '', 1530753405, 1530753405, 1, 'desc', 0),
+(10043, '_ARTICLES_ARTICLES_SHOW_CACHE_TIME', 0, '', 0, '', '', 1530753405, 1530753405, 1, '600', 0),
+(10044, '_ARTICLES_INDEX_LOCAL_COMMENT_CAN_GUEST', 0, '', 0, '', '', 1530753405, 1530753405, 1, '1', 0),
+(10045, '_ARTICLES_INDEX_LOCAL_COMMENT_ORDER', 0, '', 0, '', '', 1530753405, 1530753405, 1, '0', 0),
+(10046, '_ARTICLES_INDEX_LOCAL_COMMENT_COUNT', 0, '', 0, '', '', 1530753405, 1530753405, 1, '10', 0),
+(10050, '_INDEX_CONFIG_INDEX_TYPE', 0, '', 0, '', '', 1531180866, 1531180866, 1, 'static_index', 0),
+(10051, '_INDEX_BLOCK', 0, '', 0, '', '', 1531180866, 1531180866, 1, '[{"id":"disable","title":"\\u7981\\u7528","items":[{"id":"slider","title":"\\u8f6e\\u64ad"}]},{"id":"enable","title":"\\u542f\\u7528","items":[]}]', 0),
+(10052, '_INDEX_CONFIG_STATIC_TPL', 0, '', 0, '', '', 1531180866, 1531180866, 1, '', 0);
 
 DROP TABLE IF EXISTS `muucmf_count_active`;
 CREATE TABLE IF NOT EXISTS `muucmf_count_active` (
@@ -4431,9 +4382,7 @@ INSERT INTO `muucmf_hooks` (`id`, `name`, `description`, `type`, `update_time`, 
 (38, 'pageHeader', '页面header钩子，一般用于加载插件CSS文件和代码', 1, 0, ''),
 (39, 'pageFooter', '页面footer钩子，一般用于加载插件JS文件和JS代码', 1, 0, 'SuperLinks'),
 (40, 'adminEditor', '后台内容编辑页编辑器', 1, 1378982734, 'EditorForAdmin'),
-(41, 'AdminIndex', '首页小格子个性化显示', 1, 1382596073, 'SiteStat,SyncLogin,DevTeam,SystemInfo,LocalComment'),
 (42, 'topicComment', '评论提交方式扩展钩子。', 1, 1380163518, ''),
-(43, 'app_begin', '应用开始', 2, 1384481614, 'Iswaf'),
 (44, 'checkIn', '签到', 1, 1395371353, 'CheckIn'),
 (45, 'Rank', '签到排名钩子', 1, 1395387442, 'Rank_checkin'),
 (46, 'support', '赞', 1, 1398264759, 'Support'),
@@ -4441,7 +4390,7 @@ INSERT INTO `muucmf_hooks` (`id`, `name`, `description`, `type`, `update_time`, 
 (49, 'repost', '转发钩子', 1, 1403668286, ''),
 (50, 'syncLogin', '第三方登陆位置', 1, 1403700579, 'SyncLogin'),
 (51, 'syncMeta', '第三方登陆meta接口', 1, 1403700633, 'SyncLogin'),
-(52, 'J_China_City', '每个系统都需要的一个中国省市区三级联动插件。', 1, 1403841931, 'ChinaCity'),
+(52, 'Chinacity', '每个系统都需要的一个中国省市区三级联动插件。', 1, 1403841931, 'chinacity'),
 (54, 'imageSlider', '图片轮播钩子', 1, 1407144022, ''),
 (55, 'superLinks', '友情链接插件', 1, 1407156413, 'SuperLinks'),
 (59, 'userConfig', '用户配置页面钩子', 1, 1417137557, 'SyncLogin'),
@@ -4456,7 +4405,8 @@ INSERT INTO `muucmf_hooks` (`id`, `name`, `description`, `type`, `update_time`, 
 (69, 'filterHtmlContent', '渲染富文本', 2, 1441951420, ''),
 (70, 'parseContent', '解析内容', 2, 1445828128, 'Sensitive'),
 (71, 'tool', '返回顶部，右下角工具栏', 1, 1445828128, ''),
-(72, 'Login_after', '登陆完成后钩子', 2, 1516929650, '');
+(72, 'Login_after', '登陆完成后钩子', 2, 1516929650, ''),
+(10001, 'demoTest', '测试插件钩子', 1, 0, 'test,demo');
 
 DROP TABLE IF EXISTS `muucmf_invite`;
 CREATE TABLE IF NOT EXISTS `muucmf_invite` (
@@ -4754,12 +4704,6 @@ INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `tip`, `
 ('169', '可拥有标签配置', '2', 14, 'Role/configusertag', 1, '', '', 0, '', ''),
 ('170', '编辑模块', '107', 0, 'Module/edit', 1, '', '模块管理', 0, '', ''),
 ('171', '网站信息', '74', 2, 'Config/website', 0, '', '系统设置', 0, '', ''),
-('172', '主题管理', '105', 6, 'Theme/tpls', 0, '', '本地', 0, '', ''),
-('173', '使用主题', '105', 8, 'Theme/setTheme', 1, '', '本地', 0, '', ''),
-('174', '查看主题', '105', 9, 'Theme/lookTheme', 1, '', '本地', 0, '', ''),
-('175', '主题打包下载', '105', 10, 'Theme/packageDownload', 1, '', '本地', 0, '', ''),
-('176', '卸载删除主题', '105', 11, 'Theme/delete', 1, '', '本地', 0, '', ''),
-('177', '上传安装主题', '105', 12, 'Theme/add', 1, '', '本地', 0, '', ''),
 ('197', '运营', '0', 4, 'Operation/index', 0, '', '', 0, 'laptop', ''),
 ('198', '群发消息用户列表', '197', 4, 'message/userList', 0, '', '群发消息', 0, '', ''),
 ('199', '群发消息', '197', 5, 'message/sendMessage', 1, '', '群发消息', 0, '', ''),
@@ -4773,7 +4717,7 @@ INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `tip`, `
 ('228', '编辑广告位', '225', 0, 'Adv/editPos', 1, '', '', 0, '', ''),
 ('229', '设置广告位状态', '225', 0, 'Adv/setPosStatus', 1, '', '', 0, '', ''),
 ('230', '广告排期', '226', 0, 'Adv/schedule', 1, '', '', 0, '', ''),
-('231', '用户导航', '74', 0, 'Channel/user', 0, '', '导航管理', 0, '', 'Core'),
+('231', '用户导航', '74', 0, 'Channel/user', 0, '', '导航管理', 0, '', ''),
 ('232', '积分日志', '113', 0, 'Action/scoreLog', 0, '', '积分管理', 0, '', ''),
 ('10311', '公告列表', '197', 0, 'announce/announcelist', 0, '', '公告管理', 0, '', ''),
 ('10312', '发布公告', '197', 0, 'announce/add', 0, '', '公告管理', 0, '', ''),
@@ -4781,40 +4725,16 @@ INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `tip`, `
 ('10451', '设置公告状态', '10311', 0, 'Announce/setStatus', 0, '', '公告管理', 0, '', ''),
 ('10313', '应用商店', '105', 0, 'Appcloud/index', 0, '', '云端', 0, '', ''),
 ('10314', '系统升级', '105', 0, 'Update/index', 0, '', '云端', 0, '', ''),
-('10332', '编辑、新增系统升级补丁', '10331', 0, 'Muucmf/editSysupdate', 0, '', '', 0, '', 'Expand'),
 ('10333', '系统升级流程', '10314', 0, 'Update/startupdate', 0, '', '', 0, '', ''),
 ('10337', '消息类型列表', '197', 0, 'message/messagetypelist', 0, '', '消息设置', 0, '', ''),
 ('10339', '消息设置', '197', 0, 'message/config', 0, '', '消息设置', 0, '', ''),
 ('10458', '扩展设置', '74', 3, 'Config/expandConfig', 0, '', '系统设置', 0, '', ''),
-('10000', '网站主页2', '0', 0, 'Home/config', 1, '', '', 0, 'home', ''),
-('10001', '基本设置', '10000', 0, 'Home/config', 0, '', '设置', 0, '', 'Home'),
-('10277', '编辑、添加分类', '10275', 0, 'Articles/add', 0, '', '', 0, '', 'Articles'),
-('10276', '设置分类状态', '10275', 0, 'Articles/setStatus', 0, '', '', 0, '', 'Articles'),
-('10274', '基础配置', '10266', 0, 'Articles/config', 0, '', '文章配置', 0, '', 'Articles'),
-('10275', '分类管理', '10266', 0, 'Articles/articlesCategory', 0, '', '文章管理', 0, '', 'Articles'),
-('10273', '回收站', '10266', 0, 'Articles/recycle', 0, '', '文章管理', 0, '', 'Articles'),
-('10272', '审核失败', '10270', 0, 'Articles/doAudit', 0, '', '', 0, '', 'Articles'),
-('10271', '审核通过', '10270', 0, 'Articles/setArticlesStatus', 0, '', '', 0, '', 'Articles'),
-('10270', '审核列表', '10266', 0, 'Articles/audit', 0, '', '文章管理', 0, '', 'Articles'),
-('10278', '开发者工具', '0', 0, 'Devtool/module', 1, '', '', 0, '', 'Devtool'),
-('10279', '模块打包向导', '10278', 0, 'Devtool/module', 0, '', '模块工具', 0, '', 'Devtool'),
-('10280', '替换文件', '10279', 0, 'Devtool/replace', 1, '', '', 0, '', 'Devtool'),
-('10281', '下载压缩包', '10279', 0, 'Devtool/download', 1, '', '', 0, '', 'Devtool'),
-('10282', '获取表记录脚本', '10279', 0, 'Devtool/backup_rows', 1, '', '', 0, '', 'Devtool'),
-('10283', '第五步', '10279', 0, 'Devtool/module5', 1, '', '', 0, '', 'Devtool'),
-('10284', '第四步', '10279', 0, 'Devtool/module4', 1, '', '', 0, '', 'Devtool'),
-('10285', '第二步', '10279', 0, 'Devtool/module2', 1, '', '', 0, '', 'Devtool'),
-('10286', '第三步', '10279', 0, 'Devtool/module3', 1, '', '', 0, '', 'Devtool'),
-('10287', '第一步', '10279', 0, 'Devtool/module1', 1, '', '', 0, '', 'Devtool'),
-('351EF635-E887-9966-70EF-4C1238BE19F0', '关于我们', '0', 0, 'About/index', 1, '', '', 0, '', 'About'),
-('6E3C9358-EEDB-509D-2D5D-E2A9BCE28E91', '内容管理', '351EF635-E887-9966-70EF-4C1238BE19F0', 0, 'About/index', 0, '', '内容管理', 0, '', 'About'),
-('227CFD90-8C97-7EA8-D317-C45B1E4B24EF', '分类管理', '351EF635-E887-9966-70EF-4C1238BE19F0', 0, 'About/aboutCategory', 0, '', '内容管理', 0, '', 'About'),
-('AA737653-EE3A-8FC2-D0F5-67230900F3BC', '反馈管理', '351EF635-E887-9966-70EF-4C1238BE19F0', 0, 'About/feedback', 0, '', '反馈管理', 0, '', ''),
-('5F5530B5-6589-3EF2-4335-0F59E81357D5', '基础配置', '351EF635-E887-9966-70EF-4C1238BE19F0', 0, 'about/config', 0, '', '配置管理', 0, '', ''),
-('57D2577F-543B-2D2F-7073-E5EFB6855421', '编辑单页文章', '6E3C9358-EEDB-509D-2D5D-E2A9BCE28E91', 0, 'About/editAbout', 0, '', '内容管理', 0, '', 'About'),
-('EEDFF208-5CFE-2AF3-3D36-77F53F200D03', '设置内容状态', '6E3C9358-EEDB-509D-2D5D-E2A9BCE28E91', 0, 'setAboutStatus', 0, '', '内容管理', 0, '', 'About'),
-('06EAD4C7-4A84-DE2F-6464-11D025F83EF1', '编辑分类', '227CFD90-8C97-7EA8-D317-C45B1E4B24EF', 0, 'About/editCategory', 0, '', '内容管理', 0, '', 'About'),
-('21C795A0-3D56-D4CB-9FB4-7774F488CD35', '设置分类状态', '227CFD90-8C97-7EA8-D317-C45B1E4B24EF', 0, 'About/setCategoryStatus', 0, '', '内容管理', 0, '', 'About'),
+('10001', '基本设置', '10000', 0, 'index/Admin/config', 0, '', '设置', 0, '', 'index'),
+('BD914EA5-C77D-7118-399B-2E19DEB1D44B', '基础配置', 'BD56C46E-C9B0-D24A-C7F9-93831C04820D', 0, 'index/admin/config', 0, '', '', 0, '', 'index'),
+('B7135ED2-C7EA-4232-F61E-BC521D606AE2', 'Demo', '0', 1, 'demo/admin/index', 1, '', '', 0, '', 'demo'),
+('C2E64010-AC80-DF22-5C53-53A709B6F914', '表单演示', 'B7135ED2-C7EA-4232-F61E-BC521D606AE2', 0, 'demo/Admin/config', 0, '', '', 0, '', 'demo'),
+('A5CD3728-FB33-F213-0CD0-075F1A5BF756', '列表演示', 'B7135ED2-C7EA-4232-F61E-BC521D606AE2', 0, 'demo/Admin/listDemo', 0, '', '', 0, '', 'demo'),
+('9BE37DD3-641B-1CF0-BE1D-52A38F7BE6C4', '分类树', 'B7135ED2-C7EA-4232-F61E-BC521D606AE2', 0, 'demo/admin/tree', 0, '', '', 0, '', 'demo'),
 ('8C87F66E-4A84-7A4F-0B80-BA6A4A4C87C7', '计划任务', '74', 0, 'schedule/schedulelist', 0, '', '计划任务', 0, '', ''),
 ('321A7323-8C14-D79D-9AE6-5F57F1CAB212', '查看日志', '8C87F66E-4A84-7A4F-0B80-BA6A4A4C87C7', 0, 'Schedule/showLog', 0, '', '计划任务', 0, '', ''),
 ('3DB48266-6033-AA7D-3127-2E9F8618D05E', '清空日志', '8C87F66E-4A84-7A4F-0B80-BA6A4A4C87C7', 0, 'admin/schedule/clearLog', 0, '', '计划任务', 0, '', ''),
@@ -4824,8 +4744,7 @@ INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `tip`, `
 ('A985703F-0F39-F114-5784-A693F55D5310', '留存率数据', '197', 0, 'count/remain', 0, '', '数据统计', 0, '', ''),
 ('0AAED4DF-55D3-03DA-5860-3ABAEC00096D', '活跃用户数据', '197', 0, 'count/active', 0, '', '数据统计', 0, '', ''),
 ('CCAE3F89-4E09-1912-9F3B-453E0A265A62', '在线用户', '197', 0, 'count/nowuserlist', 0, '', '数据统计', 0, '', ''),
-('9DE8F2CA-913A-B828-E4F3-BF4EFE8CB5D2', 'Restful', '0', 0, 'Restful/config', 1, '', '', 0, '', 'Restful'),
-('5B70CCBA-7245-92D0-A1F0-2C46B3765E7D', '基础配置', '9DE8F2CA-913A-B828-E4F3-BF4EFE8CB5D2', 0, 'Restful/config', 0, '', '基础配置', 0, '', 'Restful');
+('BD56C46E-C9B0-D24A-C7F9-93831C04820D', '首页', '0', 0, 'index/index/index', 1, '', '', 0, '', 'index');
 
 DROP TABLE IF EXISTS `muucmf_message`;
 CREATE TABLE IF NOT EXISTS `muucmf_message` (
@@ -4888,13 +4807,11 @@ CREATE TABLE IF NOT EXISTS `muucmf_module` (
   KEY `name_2` (`name`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='模块管理表' AUTO_INCREMENT=12 ;
 
-INSERT INTO `muucmf_module` (`id`, `name`, `alias`, `version`, `is_com`, `show_nav`, `summary`, `developer`, `website`, `entry`, `is_setup`, `sort`, `icon`, `can_uninstall`, `admin_entry`) VALUES
-(1, 'Home', '主页', '1.0.0', 0, 1, '通用首页模块，系统共用控制器放置于该模块下', '北京火木科技有限公司', 'http://www.hoomuu.cn', 'Home/index/index', 1, 0, 'home', 0, 'Admin/Home/config'),
-(34, 'Ucenter', '用户中心', '1.0.0', 0, 0, '用户中心模块，系统核心模块', '北京火木科技有限公司', 'http://www.hoomuu.cn', 'Ucenter/index/index', 1, 0, 'user', 0, ''),
-(26, 'Articles', '文章', '1.0.0', 0, 1, '增强版文章模块，用户可前台投稿', '北京火木科技有限公司', 'http://www.hoomuu.cn', 'Articles/index/index', 1, 0, 'th-list', 1, 'Admin/Articles/index'),
-(42, 'About', '关于我们', '1.0.0', 0, 1, '关于我们模块，可以用于展示公司介绍等', '北京火木科技有限公司', 'http://www.hoomuu.cn', 'About/Index/index', 1, 0, 'file-text', 1, 'Admin/About/index'),
-(43, 'Devtool', '开发者工具', '1.0.0', 0, 1, '开发者工具，主要提供给开发者使用，包含了模块打包工具', '北京火木科技有限公司', 'http://www.hoomuu.cn', '', 1, 0, 'wrench', 1, 'Admin/Devtool/module'),
-(44, 'Restful', 'RestfulApi接口', '0.1.0', 1, 0, '为移动应用、微信应用等提供RESTFUL接口服务', '北京火木科技有限公司', 'http://www.hoomuu.cn', 'Restful/Index/Index', 1, 0, 'random', 1, 'Admin/Restful/config');
+INSERT INTO `muucmf_module` (`id`, `name`, `alias`, `version`, `is_com`, `show_nav`, `summary`, `developer`, `website`, `entry`, `is_setup`, `sort`, `icon`, `can_uninstall`, `admin_entry`, `auth_role`) VALUES
+(4, 'index', '首页', '1.0.0', 0, 0, '系统主页，系统核心模块', '北京火木科技有限公司', 'http://www.muucmf.com', 'index/index/index', 1, 0, 'home', 0, 'admin/index/index', ''),
+(3, 'ucenter', '用户中心', '1.0.0', 0, 0, '用户中心模块，系统核心模块', '北京火木科技有限公司', 'http://www.muucmf.com', 'ucenter/index/index', 1, 0, 'home', 0, 'admin/index/index', ''),
+(12, 'articles', '文章', '1.0.0', 0, 1, '增强版文章模块，用户可前台投稿', '北京火木科技有限公司', 'http://www.muucmf.cn', 'articles/index/index', 0, 0, 'th-list', 1, 'admin/Articles/index', ''),
+(11, 'demo', '模块开发演示', '1.0.0', 0, 1, '模块开发演示', '北京火木科技有限公司', 'http://www.muucmf.cn', 'demo/Index/index', 1, 0, 'th-list', 1, 'demo/Admin/index', '');
 
 DROP TABLE IF EXISTS `muucmf_picture`;
 CREATE TABLE IF NOT EXISTS `muucmf_picture` (
@@ -4933,25 +4850,6 @@ CREATE TABLE IF NOT EXISTS `muucmf_rank_user` (
   `is_show` tinyint(4) NOT NULL COMMENT '是否显示在昵称右侧（必须有图片才可）',
   `create_time` int(11) NOT NULL,
   `status` tinyint(2) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
-DROP TABLE IF EXISTS `muucmf_report`;
-CREATE TABLE IF NOT EXISTS `muucmf_report` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `url` varchar(500) NOT NULL,
-  `uid` int(11) NOT NULL,
-  `reason` varchar(50) NOT NULL,
-  `content` text NOT NULL,
-  `data` text NOT NULL,
-  `type` varchar(50) NOT NULL,
-  `create_time` int(11) NOT NULL,
-  `updata_time` int(11) NOT NULL,
-  `status` tinyint(4) NOT NULL,
-  `handle_status` tinyint(4) NOT NULL,
-  `handle_result` text NOT NULL,
-  `handle_uid` int(11) NOT NULL,
-  `handle_time` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
@@ -5042,105 +4940,6 @@ INSERT INTO `muucmf_seo_rule` (`id`, `title`, `app`, `controller`, `action`, `st
 (1000, '整站标题', '', '', '', 1, '', '', '', 7, '-'),
 (1001, '用户中心', 'Ucenter', 'index', 'index', 1, '{$user_info.username|text}的个人主页', '{$user_info.username|text}的个人主页', '{$user_info.nickname|op_t}的个人主页', 3, '-'),
 (1002, '网站首页', 'Home', 'Index', 'index', 1, '', '', '', 0, '-');
-
-
-DROP TABLE IF EXISTS `muucmf_sso_app`;
-CREATE TABLE IF NOT EXISTS `muucmf_sso_app` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `title` varchar(50) NOT NULL,
-  `url` varchar(255) NOT NULL,
-  `path` varchar(255) NOT NULL,
-  `status` tinyint(4) NOT NULL,
-  `create_time` int(11) NOT NULL,
-  `config` text NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
-DROP TABLE IF EXISTS `muucmf_session`;
-CREATE TABLE IF NOT EXISTS `muucmf_session` (
-  `session_id` varchar(225) NOT NULL,
-  `session_expire` int(11) NOT NULL,
-  `session_data` text NOT NULL,
-  PRIMARY KEY (`session_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-DROP TABLE IF EXISTS `muucmf_super_links`;
-CREATE TABLE IF NOT EXISTS `muucmf_super_links` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `type` int(1) NOT NULL DEFAULT '1' COMMENT '类别（1：图片，2：普通）',
-  `title` char(80) NOT NULL DEFAULT '' COMMENT '站点名称',
-  `cover_id` int(10) NOT NULL COMMENT '图片ID',
-  `link` char(140) NOT NULL DEFAULT '' COMMENT '链接地址',
-  `level` int(3) unsigned NOT NULL DEFAULT '0' COMMENT '优先级',
-  `status` tinyint(2) NOT NULL DEFAULT '1' COMMENT '状态（0：禁用，1：正常）',
-  `create_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '添加时间',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='友情连接表' AUTO_INCREMENT=5 ;
-
-DROP TABLE IF EXISTS `muucmf_support`;
-CREATE TABLE IF NOT EXISTS `muucmf_support` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `appname` varchar(20) NOT NULL COMMENT '应用名',
-  `row` int(11) NOT NULL COMMENT '应用标识',
-  `uid` int(11) NOT NULL COMMENT '用户',
-  `create_time` int(11) NOT NULL COMMENT '发布时间',
-  `table` varchar(20) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='支持的表' AUTO_INCREMENT=1 ;
-
-DROP TABLE IF EXISTS `muucmf_sync_login`;
-CREATE TABLE IF NOT EXISTS `muucmf_sync_login` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `uid` int(11) NOT NULL,
-  `type_uid` varchar(255) NOT NULL,
-  `type` varchar(255) NOT NULL,
-  `oauth_token` varchar(255) NOT NULL,
-  `oauth_token_secret` varchar(255) NOT NULL,
-  `is_sync` tinyint(4) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
-DROP TABLE IF EXISTS `muucmf_talk`;
-CREATE TABLE IF NOT EXISTS `muucmf_talk` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `create_time` int(11) NOT NULL,
-  `uids` varchar(100) NOT NULL,
-  `update_time` int(11) NOT NULL,
-  `status` tinyint(4) NOT NULL,
-  `title` varchar(50) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='会话表' AUTO_INCREMENT=1 ;
-
-DROP TABLE IF EXISTS `muucmf_talk_message`;
-CREATE TABLE IF NOT EXISTS `muucmf_talk_message` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `content` varchar(500) NOT NULL,
-  `uid` int(11) NOT NULL,
-  `create_time` int(11) NOT NULL,
-  `talk_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='聊天消息表' AUTO_INCREMENT=1 ;
-
-DROP TABLE IF EXISTS `muucmf_talk_message_push`;
-CREATE TABLE IF NOT EXISTS `muucmf_talk_message_push` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `uid` int(11) NOT NULL,
-  `source_id` int(11) NOT NULL COMMENT '来源消息id',
-  `create_time` int(11) NOT NULL COMMENT '创建时间',
-  `status` tinyint(4) NOT NULL,
-  `talk_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=gbk COMMENT='状态，0为未提示，1为未点击，-1为已点击' AUTO_INCREMENT=1 ;
-
-DROP TABLE IF EXISTS `muucmf_talk_push`;
-CREATE TABLE IF NOT EXISTS `muucmf_talk_push` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `uid` int(11) NOT NULL COMMENT '接收推送的用户id',
-  `source_id` int(11) NOT NULL COMMENT '来源id',
-  `create_time` int(11) NOT NULL,
-  `status` tinyint(4) NOT NULL COMMENT '状态，0为未提示，1为未点击，-1为已点击',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='对话推送表' AUTO_INCREMENT=1 ;
 
 DROP TABLE IF EXISTS `muucmf_ucenter_admin`;
 CREATE TABLE IF NOT EXISTS `muucmf_ucenter_admin` (
@@ -5268,20 +5067,6 @@ CREATE TABLE IF NOT EXISTS `muucmf_verify` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
-DROP TABLE IF EXISTS `muucmf_version`;
-CREATE TABLE IF NOT EXISTS `muucmf_version` (
-  `title` varchar(50) NOT NULL COMMENT '版本名',
-  `create_time` int(11) NOT NULL COMMENT '发布时间',
-  `update_time` int(11) NOT NULL COMMENT '更新的时间',
-  `log` text NOT NULL COMMENT '更新日志',
-  `url` varchar(150) NOT NULL COMMENT '链接到的远程文章',
-  `number` int(11) NOT NULL COMMENT '序列号，一般用日期数字标示',
-  `name` varchar(50) NOT NULL COMMENT '版本号',
-  `is_current` tinyint(4) NOT NULL,
-  PRIMARY KEY (`name`),
-  KEY `id` (`number`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='自动更新表';
-
 DROP TABLE IF EXISTS `muucmf_score_log`;
 CREATE TABLE IF NOT EXISTS `muucmf_score_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -5307,36 +5092,3 @@ CREATE TABLE IF NOT EXISTS `muucmf_ucenter_user_link` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
-DROP TABLE IF EXISTS `muucmf_adv_pos`;
-CREATE TABLE IF NOT EXISTS `muucmf_adv_pos` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `name` varchar(50) NOT NULL,
-  `title` char(80) NOT NULL DEFAULT '' COMMENT '广告位置名称',
-  `path` varchar(100) NOT NULL COMMENT '所在路径 模块/控制器/方法',
-  `type` int(11) unsigned NOT NULL DEFAULT '1' COMMENT '广告位类型 \r\n1.单图\r\n2.多图\r\n3.文字链接\r\n4.代码',
-  `status` tinyint(2) NOT NULL DEFAULT '1' COMMENT '状态（0：禁用，1：正常）',
-  `data` varchar(500) NOT NULL COMMENT '额外的数据',
-  `width` char(20) NOT NULL DEFAULT '' COMMENT '广告位置宽度',
-  `height` char(20) NOT NULL DEFAULT '' COMMENT '广告位置高度',
-  `margin` varchar(50) NOT NULL COMMENT '边缘',
-  `padding` varchar(50) NOT NULL COMMENT '留白',
-  `theme` varchar(50) NOT NULL DEFAULT 'all' COMMENT '适用主题，默认为all，通用',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='广告位置表';
-
-DROP TABLE IF EXISTS `muucmf_adv`;
-CREATE TABLE IF NOT EXISTS `muucmf_adv` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `title` char(80) NOT NULL DEFAULT '' COMMENT '广告名称',
-  `pos_id` int(11) NOT NULL COMMENT '广告位置',
-  `data` text NOT NULL COMMENT '图片地址',
-  `click_count` int(11) NOT NULL COMMENT '点击量',
-  `url` varchar(500) NOT NULL COMMENT '链接地址',
-  `sort` int(3) unsigned NOT NULL DEFAULT '0' COMMENT '排序',
-  `status` tinyint(2) NOT NULL DEFAULT '1' COMMENT '状态（0：禁用，1：正常）',
-  `create_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '开始时间',
-  `start_time` int(11) DEFAULT NULL,
-  `end_time` int(11) unsigned DEFAULT '0' COMMENT '结束时间',
-  `target` varchar(20) DEFAULT '_blank',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='广告表';

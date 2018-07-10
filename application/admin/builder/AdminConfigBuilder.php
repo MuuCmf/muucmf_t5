@@ -494,7 +494,17 @@ class AdminConfigBuilder extends AdminBuilder
         if (request()->isPost()) {
             $success = false;
             foreach (input() as $k => $v) {
-                $config['name'] = '_' . strtoupper(request()->controller()) . '_' . strtoupper($k);
+
+                if(request()->module()=='admin') 
+                {   //admin模块配置命名已控制器判断
+                    $config['name'] = '_' . strtoupper(request()->controller()) . '_' . strtoupper($k);
+                    $cache_tag = 'conf_' . strtoupper(request()->controller()) . '_' . strtoupper($k);
+                }else{
+                    //应用模块已模块名判断
+                    $config['name'] = '_' . strtoupper(request()->module()) . '_' . strtoupper($k);
+                    $cache_tag = 'conf_' . strtoupper(request()->module()) . '_' . strtoupper($k);
+                }
+                
                 $config['type'] = 0;
                 $config['title'] = '';
                 $config['group'] = 0;
@@ -517,9 +527,10 @@ class AdminConfigBuilder extends AdminBuilder
                     Db::name('config')->insert($config);
                     $success = 1;
                 }
-                $tag = 'conf_' . strtoupper(request()->controller()) . '_' . strtoupper($k);
-                cache($tag, null);
+                //清理缓存
+                cache($cache_tag, null);
             }
+
             if ($success) {
                 if ($this->_callback) {
                     $str = $this->_callback;
@@ -541,10 +552,23 @@ class AdminConfigBuilder extends AdminBuilder
 
 
         } else {
-            $configs = Db::name('Config')->where(['name' => array('like', '_' . strtoupper(request()->controller()) . '_' . '%')])->limit(999)->select();
-            $data = array();
+
+            if(request()->module()=='admin') 
+            {   //admin模块配置命名已控制器判断
+                $where = ['name' => ['like', '_' . strtoupper(request()->controller()) . '_' . '%']];
+            }else{
+                //应用模块已模块名判断
+                $where = ['name' => ['like', '_' . strtoupper(request()->module()) . '_' . '%']];
+            }
+
+            $configs = Db::name('Config')->where($where)->limit(999)->select();
+            $data = [];
             foreach ($configs as $k => $v) {
-                $key = str_replace('_' . strtoupper(request()->controller()) . '_', '', strtoupper($v['name']));
+                if(request()->module()=='admin') {
+                    $key = str_replace_limit('_' . strtoupper(request()->controller()) . '_', '', strtoupper($v['name']), 1);
+                }else{
+                    $key = str_replace_limit('_' . strtoupper(request()->module()) . '_', '', strtoupper($v['name']), 1);
+                }
                 $data[$key] = $v['value'];
             }
             return $data;
