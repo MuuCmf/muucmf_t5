@@ -26,7 +26,7 @@ function is_login()
  * @return [type] [description]
  */
 function _need_login(){
-    return model('Common/Member')->need_login();
+    return model('common/Member')->need_login();
 }
 /**
  * 获取登陆用户uid;
@@ -43,7 +43,7 @@ function get_uid()
  */
 function get_username($uid = 0)
 {
-    return model('Common/Member')->get_username($uid);
+    return model('common/Member')->get_username($uid);
 }
 
 /**
@@ -53,7 +53,7 @@ function get_username($uid = 0)
  */
 function get_nickname($uid = 0)
 {
-    return model('Common/Member')->get_nickname($uid);
+    return model('common/Member')->get_nickname($uid);
 }
 
 /**
@@ -185,7 +185,7 @@ function get_auth_user($rule = '')
         $auth_rule = explode(',', $v['rules']);
         if (in_array($rule['id'], $auth_rule)) {
             $gid = $v['id'];
-            $temp_uids =(array) Db::name('AuthGroupAccess')->where(array('group_id' => $gid))->getField('uid');
+            $temp_uids =(array) Db::name('AuthGroupAccess')->where(['group_id' => $gid])->getField('uid');
             if ($temp_uids !== null) {
                 $uids = array_merge($uids, $temp_uids);
             }
@@ -315,7 +315,7 @@ function get_next_step($now_step =''){
         }
     }
 
-    if(!in_array($return,array_keys(controller('Ucenter/RegStep','Widget')->mStep)) || empty($return)){
+    if(!in_array($return,array_keys(controller('ucenter/RegStep','widget')->mStep)) || empty($return)){
         $return = 'finish';
     }
     return $return;

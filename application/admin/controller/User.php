@@ -223,8 +223,8 @@ class User extends Admin
                 if ($val == $value[$key]) {
                     continue;
                 }
-                model('Ucenter/Score')->addScoreLog($data['id'], cut_str('score', $key, 'l'), 'to', $val, '', 0, get_nickname(is_login()) . lang('_BACKGROUND_ADJUSTMENT_'));
-                model('Ucenter/Score')->cleanUserCache($data['id'], cut_str('score', $key, 'l'));
+                model('ucenter/Score')->addScoreLog($data['id'], cut_str('score', $key, 'l'), 'to', $val, '', 0, get_nickname(is_login()) . lang('_BACKGROUND_ADJUSTMENT_'));
+                model('ucenter/Score')->cleanUserCache($data['id'], cut_str('score', $key, 'l'));
             }
             unset($key, $val);
             $rs_score = true;
@@ -334,7 +334,7 @@ class User extends Admin
             }
 
             /* 积分设置 */
-            $field = model('Ucenter/Score')->getTypeList(['status' => 1]);
+            $field = model('ucenter/Score')->getTypeList(['status' => 1]);
 
             $score_key = [];
             foreach ($field as $vf) {
@@ -478,7 +478,7 @@ class User extends Admin
      */
     private function _resetUserRole($uid = 0, $haveRole = [])
     {
-        $memberModel = model('Common/Member');
+        $memberModel = model('common/Member');
         $map['uid'] = $uid;
         //先清除原
         //Db::name('UserRole')->where($map)->delete();
@@ -988,7 +988,7 @@ class User extends Admin
     {
         //读取数据
         $map = array('status' => array('GT', -1));
-        $model = model('Ucenter/Score');
+        $model = model('ucenter/Score');
         $list = $model->getTypeList($map);
 
         //显示页面
@@ -1028,7 +1028,7 @@ class User extends Admin
 
     public function delType($ids)
     {
-        $model = model('Ucenter/Score');
+        $model = model('ucenter/Score');
         $res = $model->delType($ids);
         if ($res) {
             $this->success(lang('_DELETE_SUCCESS_'));
@@ -1040,7 +1040,7 @@ class User extends Admin
     public function editScoreType()
     {
         $aId = input('id', 0, 'intval');
-        $model = model('Ucenter/Score');
+        $model = model('ucenter/Score');
         if (request()->isPost()) {
             $data['title'] = input('post.title', '', 'text');
             $data['status'] = input('post.status', 1, 'intval');

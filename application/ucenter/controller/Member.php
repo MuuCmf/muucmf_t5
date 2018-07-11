@@ -114,7 +114,7 @@ class Member extends Controller
                 }
                 $this->success('注册成功', $step_url);
             } else { //注册失败，显示错误信息
-                $this->error(model('member')->showRegError($code_id));
+                $this->error(model('Member')->showRegError($code_id));
             }
         } else {
             //显示注册表单
@@ -188,7 +188,7 @@ class Member extends Controller
                 $result['msg'] = lang('_INFO_PLEASE_INPUT_').lang('_EXCLAMATION_');
                 return json($result);
             }
-            $invite = model('Ucenter/Invite')->getByCode($aCode);
+            $invite = model('ucenter/Invite')->getByCode($aCode);
             if ($invite) {
                 if ($invite['end_time'] > time()) {
                     $result['code'] = 1;
@@ -217,22 +217,22 @@ class Member extends Controller
                     $result['info'] = lang('_INFO_PLEASE_INPUT_').lang('_EXCLAMATION_');
                     $this->ajaxReturn($result);
                 }
-                $invite = model('Ucenter/Invite')->getByCode($aCode);
+                $invite = model('ucenter/Invite')->getByCode($aCode);
                 if ($invite) {
                     if ($invite['end_time'] > time()) {
                         $map['id'] = $invite['invite_type'];
                         $map['roles'] = array('like', '%[' . $aRoleId . ']%');
-                        $invite_type = model('Ucenter/InviteType')->getSimpleData($map);
+                        $invite_type = model('ucenter/InviteType')->getSimpleData($map);
                         if ($invite_type) {
-                            $roleUser = Db::name('UserRole')->where(array('uid' => $uid, 'role_id' => $aRoleId))->find();
+                            $roleUser = Db::name('UserRole')->where(['uid' => $uid, 'role_id' => $aRoleId])->find();
                             if ($roleUser) {
                                 $result['info'] = lang('_INFO_INV_ROLE_POSSESS_').lang('_EXCLAMATION_');
                             } else {
-                                $memberModel = model('Common/Member');
+                                $memberModel = model('common/Member');
 
                                 $memberModel->logout();
                                 $this->initInviteUser($uid, $aCode, $aRoleId);
-                                model('UcenterMember')->initRoleUser($aRoleId, $uid);
+                                model('ucenter/UcenterMember')->initRoleUser($aRoleId, $uid);
                                 clean_query_user_cache($uid,array('avatar64','avatar128','avatar32','avatar256','avatar512','rank_link'));
                                 $memberModel->login($uid, false, $aRoleId); //登陆
                                 $result['status'] = 1;
@@ -478,7 +478,7 @@ class Member extends Controller
      */
     public function saveAvatar()
     {
-        $redirect_url = Url('Ucenter/member/step', ['step' => get_next_step('change_avatar')]);
+        $redirect_url = Url('ucenter/member/step', ['step' => get_next_step('change_avatar')]);
 
         $aCrop = input('post.crop', '', 'text');
         $aUid = session('temp_login_uid') ? session('temp_login_uid') : is_login();
@@ -487,7 +487,7 @@ class Member extends Controller
         if (empty($aCrop)) {
             $this->success(lang('_SUCCESS_SAVE_').lang('_EXCLAMATION_'),$redirect_url );
         }
-        $returnPath = controller('Ucenter/UploadAvatar', 'widget')->cropPicture($aCrop,$aPath);
+        $returnPath = controller('ucenter/UploadAvatar', 'widget')->cropPicture($aCrop,$aPath);
 
         $driver = modC('PICTURE_UPLOAD_DRIVER','local','config');
         
@@ -513,7 +513,7 @@ class Member extends Controller
         $check = model('Verify')->checkVerify($aAccount, $aType, $aVerify, $aUid);
         if ($check) {
             set_user_status($aUid, 1);
-            $this->success(lang('_SUCCESS_ACTIVE_'), Url('Ucenter/member/step', array('step' => get_next_step('start'))));
+            $this->success(lang('_SUCCESS_ACTIVE_'), Url('ucenter/member/step', array('step' => get_next_step('start'))));
         } else {
             $this->error(lang('_FAIL_ACTIVE_').lang('_EXCLAMATION_'));
         }
@@ -614,7 +614,7 @@ class Member extends Controller
         if ($uid && $aRoleId != get_login_role()) {
             $roleUser = Db::name('UserRole')->where(['uid' => $uid, 'role_id' => $aRoleId])->find();
             if ($roleUser) {
-                $memberModel = model('Common/Member');
+                $memberModel = model('common/Member');
                 $memberModel->logout();
                 clean_query_user_cache($uid, array('avatar64', 'avatar128', 'avatar32', 'avatar256', 'avatar512', 'rank_link'));
                 $result = $memberModel->login($uid, false, $aRoleId);
@@ -642,9 +642,9 @@ class Member extends Controller
                 $data['info'] = lang('_INFO_INV_ROLE_POSSESS_');
                 $this->ajaxReturn($data);
             } else {
-                $memberModel = model('Common/Member');
+                $memberModel = model('common/Member');
                 $memberModel->logout();
-                model('UcenterMember')->initRoleUser($aRoleId, $uid);
+                model('ucenter/UcenterMember')->initRoleUser($aRoleId, $uid);
                 clean_query_user_cache($uid, array('avatar64', 'avatar128', 'avatar32', 'avatar256', 'avatar512', 'rank_link'));
                 $memberModel->login($uid, false, $aRoleId); //登陆
             }
@@ -655,12 +655,12 @@ class Member extends Controller
     }
 
 
-    /**修改用户扩展信息
-     * @author 郑钟良<zzl@ourstu.com>
+    /**
+     * 修改用户扩展信息
      */
     public function edit_expandinfo()
     {
-        $result = controller('Ucenter/RegStep', 'Widget')->edit_expandinfo();
+        $result = controller('ucenter/RegStep', 'widget')->edit_expandinfo();
         if ($result['status']) {
             $this->success(lang('_SUCCESS_SAVE_'), session('temp_login_uid') ? Url('Ucenter/member/step', array('step' => get_next_step('expand_info'))) : 'refresh');
         } else {
@@ -674,9 +674,9 @@ class Member extends Controller
      */
     public function set_tag()
     {
-        $result = controller('Ucenter/RegStep', 'widget')->do_set_tag();
+        $result = controller('ucenter/RegStep', 'widget')->do_set_tag();
         if ($result['status']) {
-            $result['url'] = Url('Ucenter/member/step', array('step' => get_next_step('set_tag')));
+            $result['url'] = Url('ucenter/member/step', array('step' => get_next_step('set_tag')));
         } else {
             !isset($result['info']) && $result['info'] = lang('_ERROR_INFO_SAVE_NONE_');
         }
@@ -699,19 +699,19 @@ class Member extends Controller
         }
 
         if (in_array('invite', $register_type) && $aCode != '') { //邀请注册开启且有邀请码
-            $invite = model('Ucenter/Invite')->getByCode($aCode);
+            $invite = model('ucenter/Invite')->getByCode($aCode);
             if ($invite) {
                 if ($invite['end_time'] <= time()) {
                     $this->error(lang('_ERROR_EXPIRED_').lang('_EXCLAMATION_'));
                 } else { //获取注册角色
                     $map['id'] = $invite['invite_type'];
-                    $invite_type = model('Ucenter/InviteType')->getSimpleData($map);
+                    $invite_type = model('ucenter/InviteType')->getSimpleData($map);
                     if ($invite_type) {
                         if (count($invite_type['roles'])) {
                             //角色
                             $map_role['status'] = 1;
                             $map_role['id'] = array('in', $invite_type['roles']);
-                            $roleList = model('Admin/Role')->selectByMap($map_role, 'sort asc', 'id,title');
+                            $roleList = model('admin/Role')->selectByMap($map_role, 'sort asc', 'id,title');
                             if (!count($roleList)) {
                                 $this->error(lang('_ERROR_ROLE_').lang('_EXCLAMATION_'));
                             }
@@ -720,7 +720,7 @@ class Member extends Controller
                             //角色
                             $map_role['status'] = 1;
                             $map_role['invite'] = 0;
-                            $roleList = model('Admin/Role')->selectByMap($map_role, 'sort asc', 'id,title');
+                            $roleList = model('admin/Role')->selectByMap($map_role, 'sort asc', 'id,title');
                             //角色end
                         }
                         $this->assign('code', $aCode);
@@ -746,7 +746,7 @@ class Member extends Controller
                 //角色
                 $map_role['status'] = 1;
                 $map_role['invite'] = 0;
-                $roleList = model('Admin/Role')->selectByMap($map_role, 'sort asc', 'id,title');
+                $roleList = model('admin/Role')->selectByMap($map_role, 'sort asc', 'id,title');
                 //角色end
             } else {
                 //（只开启了邀请注册）
@@ -768,10 +768,10 @@ class Member extends Controller
         if ($code == '') {
             return true;
         }
-        $invite = model('Ucenter/Invite')->getByCode($code);
+        $invite = model('ucenter/Invite')->getByCode($code);
         if ($invite['end_time'] >= time()) {
             $map['id'] = $invite['invite_type'];
-            $invite_type = model('Ucenter/InviteType')->getSimpleData($map);
+            $invite_type = model('ucenter/InviteType')->getSimpleData($map);
             if ($invite_type) {
                 return true;
             }
@@ -793,9 +793,9 @@ class Member extends Controller
             $data['inviter_id'] = abs($invite['uid']);
             $data['uid'] = $uid;
             $data['invite_id'] = $invite['id'];
-            $result = model('Ucenter/InviteLog')->addData($data, $role);
+            $result = model('ucenter/InviteLog')->addData($data, $role);
             if ($result) {
-                model('Ucenter/InviteUserInfo')->addSuccessNum($invite['invite_type'], abs($invite['uid']));
+                model('ucenter/InviteUserInfo')->addSuccessNum($invite['invite_type'], abs($invite['uid']));
 
                 $invite_info['already_num'] = $invite['already_num'] + 1;
                 if ($invite_info['already_num'] == $invite['can_num']) {
@@ -804,14 +804,14 @@ class Member extends Controller
                 $inviteModel->where(array('id' => $invite['id']))->save($invite_info);
 
                 $map['id'] = $invite['invite_type'];
-                $invite_type = model('Ucenter/InviteType')->getSimpleData($map);
+                $invite_type = model('ucenter/InviteType')->getSimpleData($map);
                 if ($invite_type['is_follow']) {
-                    $followModel = model('Common/Follow');
+                    $followModel = model('common/Follow');
                     $followModel->addFollow($uid, abs($invite['uid']),1);
                     $followModel->addFollow(abs($invite['uid']), $uid,1);
                 }
                 if ($invite['uid'] > 0) {
-                    model('Ucenter/Score')->setUserScore(array($invite['uid']), $invite_type['income_score'], $invite_type['income_score_type'], 'inc', '', 0, lang('_ERROR_BONUS_'));
+                    model('ucenter/Score')->setUserScore(array($invite['uid']), $invite_type['income_score'], $invite_type['income_score_type'], 'inc', '', 0, lang('_ERROR_BONUS_'));
                 }
             }
         }

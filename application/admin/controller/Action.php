@@ -77,7 +77,7 @@ class Action extends Admin {
             //转数组处理
             $scoreLog = $scoreLog->toArray()['data'];
 
-            $scoreTypes=model('Ucenter/Score')->getTypeListByIndex();
+            $scoreTypes=model('ucenter/Score')->getTypeListByIndex();
 
             foreach ($scoreLog as &$v) {
                 if(empty($v['uid'])) $v['uid'] = 0;
@@ -224,7 +224,7 @@ class Action extends Admin {
 
         $this->assign('_list', $list);
 
-        $module = model('Common/Module')->getAll();
+        $module = model('common/Module')->getAll();
         foreach ($module as $key => $v) {
             if ($v['is_setup'] == 0) {
                 unset($module[$key]);
@@ -280,7 +280,7 @@ class Action extends Admin {
         }
 
         $this->assign('data', $data);
-        $module = model('Module')->getAll();
+        $module = model('common/Module')->getAll();
         $this->assign('module', $module);
 
         $this->setTitle(lang('_EDITING_BEHAVIOR_'));
@@ -293,9 +293,9 @@ class Action extends Admin {
      */
     public function saveAction()
     {
-        $res = model('Action')->updateAction();
+        $res = model('common/Action')->updateAction();
         if (!$res) {
-            $this->error(model('Action')->getError());
+            $this->error(model('common/Action')->getError());
         } else {
             $this->success($res['id'] ? lang('_UPDATE_SUCCESS_') : lang('_NEW_SUCCESS_'), Cookie('__forward__'));
         }

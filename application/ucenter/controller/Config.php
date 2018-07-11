@@ -46,7 +46,7 @@ class Config extends Base
                 if ($role_ids) {
                     $role_ids = array_column($role_ids, 'role_id');
                     $map_can['status'] = 1;
-                    $map_can['id'] = array('in', $role_ids);
+                    $map_can['id'] = ['in', $role_ids];
                     if (Db::name('role')->where($map_can)->count()) {
                         $have = 1;
                     }
@@ -76,8 +76,8 @@ class Config extends Base
             $new_password = input('post.new_password','','text');
             $confirm_password = input('post.confirm_password','','text');
             //调用接口
-            $UcenterMemberModel = model('UcenterMember');
-            $resCode = $UcenterMemberModel->changePassword($old_password, $new_password, $confirm_password);
+            $ucenterMemberModel = model('ucenterMember');
+            $resCode = $ucenterMemberModel->changePassword($old_password, $new_password, $confirm_password);
 
             if ($resCode>0) {
 
@@ -97,7 +97,7 @@ class Config extends Base
     public function score()
     {
 
-        $scoreModel = model('Ucenter/Score');
+        $scoreModel = model('ucenter/Score');
 
         $scores = $scoreModel->getTypeList(['status'=>1]);
         foreach ($scores as &$v) {
@@ -121,15 +121,11 @@ class Config extends Base
         $self = query_user(array('score', 'title'));
 
         $this->assign('self', $self);
-
-        $action = model('admin/action')->getAction(['status' => 1]);
-
+        $action = model('common/Action')->getAction(['status' => 1]);
         $action_module = [];
         
         foreach ($action as &$v) {
-            
             $v['rule_array'] = unserialize($v['rule']);
-
             if(is_array($v['rule_array'])){
                 foreach ($v['rule_array'] as &$o) {
                     if (is_numeric($o['rule'])) {
@@ -138,7 +134,6 @@ class Config extends Base
                     $o['score'] = model('Score')->getType(['id' => $o['field']]);
                 }
             }
-            
             if ($v['rule_array'] != false) {
                 $action_module[$v['module']]['action'][] = $v;
             }
@@ -149,9 +144,9 @@ class Config extends Base
             if (empty($a['action'])) {
                 unset($action_module[$key]);
             }
-            $a['module'] = model('Common/Module')->getModule($key);
+            $a['module'] = model('common/Module')->getModule($key);
         }
-
+        unset($a);
         $this->assign('action_module', $action_module);
         $this->_assignSelf();
         $this->_setTab('score');
@@ -239,7 +234,7 @@ class Config extends Base
 
     public function tag()
     {
-        $userTagLinkModel = model('Ucenter/UserTagLink');
+        $userTagLinkModel = model('ucenter/UserTagLink');
         if (request()->isPost()) {
             $aTagIds = input('post.tag_ids', '', 'text');
             $result = $userTagLinkModel->editData($aTagIds);
@@ -250,7 +245,7 @@ class Config extends Base
             }
 
         } else {
-            $userTagModel = model('Ucenter/UserTag');
+            $userTagModel = model('ucenter/UserTag');
             $map = getRoleConfigMap('user_tag', get_login_role());
             $ids = Db::name('RoleConfig')->where($map)->value('value');
             if ($ids) {
@@ -409,7 +404,7 @@ class Config extends Base
 
         $map['email'] = $email;
         $map['id'] = array('neq', get_uid());
-        $had = Db::name('UcenterMember')->where($map)->count();
+        $had = Db::name('ucenterMember')->where($map)->count();
         if ($had) {
             $this->error(lang('_ERROR_EMAIL_USED_').lang('_PERIOD_'));
         }
@@ -752,7 +747,7 @@ class Config extends Base
      */
     private function _accountInfo()
     {
-        $info = Db::name('UcenterMember')->field('id,username,email,mobile,type')->find(is_login());
+        $info = Db::name('ucenterMember')->field('id,username,email,mobile,type')->find(is_login());
         $this->assign('accountInfo', $info);
     }
 
@@ -794,15 +789,15 @@ class Config extends Base
         $uid = get_uid();
         
         //判断用户是否已设置用户名
-        $username = Db::name('UcenterMember')->where(array('id' => $uid))->getField('username');
+        $username = Db::name('ucenterMember')->where(array('id' => $uid))->getField('username');
         if (empty($username)) {
             //判断修改的用户名是否已存在
-            $id = $mUcenter->where(array('username' => $aUsername))->getField('id');
+            $id = $mucenter->where(array('username' => $aUsername))->getField('id');
             if ($id) {
                 $this->error(lang('_ERROR_USERNAME_EXIST_').lang('_EXCLAMATION_'));
             } else {
                 //修改用户名
-                $rs = Db::name('UcenterMember')->where(array('id' => $uid))->save(array('username' => $aUsername));
+                $rs = Db::name('ucenterMember')->where(array('id' => $uid))->save(array('username' => $aUsername));
                 if (!$rs) {
                     $this->error(lang('_FAIL_SETTINGS_').lang('_EXCLAMATION_'));
                 }
@@ -875,7 +870,7 @@ class Config extends Base
         if (!$res) {
             $this->error(lang('_FAIL_VERIFY_'));
         }
-        Db::name('UcenterMember')->where(['id' => $aUid])->save(array($aType => $aAccount));
+        Db::name('ucenterMember')->where(['id' => $aUid])->save(array($aType => $aAccount));
         $this->success(lang('_SUCCESS_VERIFY_'), U('ucenter/config/index'));
 
     }

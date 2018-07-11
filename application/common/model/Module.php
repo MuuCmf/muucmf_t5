@@ -91,7 +91,7 @@ class Module extends Model
      */
     public function reloadModule($name)
     {
-        $module = $this->where(array('name' => $name))->find();
+        $module = $this->where(['name' => $name])->find();
         if (empty($module)) {
             $this->error = lang('_MODULE_INFORMATION_DOES_NOT_EXIST_WITH_PERIOD_');
             return false;
@@ -231,17 +231,23 @@ class Module extends Model
     public function getModule($name)
     {
         $module = $this->where(['name'=>$name])->find();
-        
 
+        if($name=='admin'){
+            return false;
+        }
+        
         if ($module === false || $module == null) {
             $m = $this->getInfo($name);
 
             if(empty($m['can_uninstall'])){
-
-                if($m['is_com']==1){
-                    $m['can_uninstall'] = 1;
+                if(!empty($m['is_com'])){
+                    if($m['is_com']==1){
+                        $m['can_uninstall'] = 1;
+                    }else{
+                        $m['can_uninstall'] = 0;
+                    }
                 }else{
-                    $m['can_uninstall'] = 0;
+                    $m['can_uninstall'] = 1;
                 }
             }
 

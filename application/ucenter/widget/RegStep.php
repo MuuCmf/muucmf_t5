@@ -56,13 +56,13 @@ class RegStep extends Controller
         $ids=Db::name('RoleConfig')->where($map)->value('value');
         if($ids){
             $ids=explode(',',$ids);
-            $tag_list=model('Ucenter/UserTag')->getTreeListByIds($ids);
+            $tag_list=model('ucenter/UserTag')->getTreeListByIds($ids);
             $this->assign('tag_list',$tag_list);
         }
         if(!count($tag_list)){
-            redirect(Url('Ucenter/member/step', array('step' => get_next_step('set_tag'))));
+            redirect(Url('ucenter/member/step', array('step' => get_next_step('set_tag'))));
         }
-        $myTags=model('Ucenter/UserTagLink')->getUserTag($aUid);
+        $myTags=model('ucenter/UserTagLink')->getUserTag($aUid);
         $this->assign('my_tag',$myTags);
         $my_tag_ids=array_column($myTags,'id');
         $my_tag_ids=implode(',',$my_tag_ids);
@@ -73,7 +73,7 @@ class RegStep extends Controller
     {
         
         $aTagIds=input('post.tag_ids','','text');
-        $result=model('Ucenter/UserTagLink')->editData($aTagIds);
+        $result=model('ucenter/UserTagLink')->editData($aTagIds);
         if($result){
             $res['status']=1;
         }else{

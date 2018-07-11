@@ -6,11 +6,11 @@
  * Time: PM1:13
  */
 
-namespace Ucenter\Controller;
+namespace app\ucenter\controller;
 
-use Think\Controller;
+use think\Controller;
 
-class SystemController extends BaseController
+class System extends Base
 {
     public function _initialize(){
         parent::_initialize();
@@ -45,22 +45,22 @@ class SystemController extends BaseController
             $html = $OCApi->ocSynLogout();
         }
 
-        exit(json_encode(array('message' =>L('_SUCCESS_LOGOUT_').L('_PERIOD_'),'url' => U('Home/Index/index'),'html'=>$html)));
+        exit(json_encode(array('message' =>lang('_SUCCESS_LOGOUT_').lang('_PERIOD_'),'url' => Url('Home/Index/index'),'html'=>$html)));
         //显示页面
-        //$this->success($result['message'], U('Home/Index/index'));
+        //$this->success($result['message'], Url('Home/Index/index'));
     }
 
     public function changePassword()
     {
         $this->defaultTabHash('change-password');
-        $this->display();
+        return $this->fetch();
     }
 
 
     public function changeSignature()
     {
         $this->defaultTabHash('change-signature');
-        $this->display();
+        return $this->fetch();
     }
 
     public function doChangeSignature($signature)
@@ -76,7 +76,7 @@ class SystemController extends BaseController
     public function changeEmail()
     {
         $this->defaultTabHash('change-email');
-        $this->display();
+        return $this->fetch();
     }
 
     public function doChangeEmail($email)
@@ -94,7 +94,7 @@ class SystemController extends BaseController
         //确认用户已经绑定手机
         $profile = callApi('User/getProfile');
         if (!$profile['mobile']) {
-            $this->error(L('_ERROR_PHONE_NOT_BIND_'), U('Ucenter/Index/index'));
+            $this->error(lang('_ERROR_PHONE_NOT_BIND_'), Url('ucenter/Index/index'));
         }
 
         //发送验证码到已经绑定的手机上
@@ -103,7 +103,7 @@ class SystemController extends BaseController
 
         //显示页面
         $this->defaultTabHash('index');
-        $this->display();
+        return $this->fetch();
     }
 
     public function doUnbindMobile($verify)
@@ -114,14 +114,14 @@ class SystemController extends BaseController
             $this->error($result['message']);
         }
         //显示成功消息
-        $this->success($result['message'], U('Ucenter/Index/index'));
+        $this->success($result['message'], Url('ucenter/Index/index'));
     }
 
     public function bindMobile()
     {
         //显示页面
         $this->defaultTabHash('index');
-        $this->display();
+        return $this->fetch();
     }
 
     public function doBindMobile($mobile)
@@ -141,37 +141,25 @@ class SystemController extends BaseController
         $this->ensureApiSuccess($result);
 
         //显示成功消息
-        $this->success($result['message'], U('Ucenter/Index/index'));
+        $this->success($result['message'], Url('ucenter/Index/index'));
     }
-
-    public function unbookmark($favorite_id)
-    {
-        //调用API取消收藏
-        $result = callApi('User/deleteFavorite', array($favorite_id));
-        $this->ensureApiSuccess($result);
-
-        //返回结果
-        $this->success($result['message']);
-    }
-
-
 
     public function fans($page = 1)
     {
 
         $this->assign('tab', 'fans');
-        $fans = D('Follow')->getFans(is_login(), $page, array('avatar128', 'id', 'nickname', 'fans', 'following', 'weibocount', 'space_url','title'),$totalCount);
+        $fans = model('Follow')->getFans(is_login(), $page, array('avatar128', 'id', 'nickname', 'fans', 'following', 'weibocount', 'space_url','title'),$totalCount);
         $this->assign('fans', $fans);
         $this->assign('totalCount',$totalCount);
-        $this->display();
+        return $this->fetch();
     }
 
     public function following($page=1)
     {
-        $following = D('Follow')->getFollowing(is_login(), $page, array('avatar128', 'id', 'nickname', 'fans', 'following', 'weibocount', 'space_url','title'),$totalCount);
+        $following = model('Follow')->getFollowing(is_login(), $page, array('avatar128', 'id', 'nickname', 'fans', 'following', 'weibocount', 'space_url','title'),$totalCount);
         $this->assign('following',$following);
         $this->assign('totalCount',$totalCount);
         $this->assign('tab', 'following');
-        $this->display();
+        return $this->fetch();
     }
 }

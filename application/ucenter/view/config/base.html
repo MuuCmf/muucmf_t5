@@ -10,7 +10,7 @@
 {include file="common@public/header"/}
     <div class="main-wrapper">
     <!--用户设置顶部-->
-        <div class="config_header bg-primary">
+        <div class="config_header">
             <div class="user-info-panel text-center margin_bottom_10">
                 <div>
                     <img class="img-circle" src="{$self.avatar128}">
@@ -27,9 +27,7 @@
                 <div class=" col-md-3" >
                     <div>
                         <nav class="menu" data-ride="menu">
-                            <a class="btn btn-warning btn-lg btn-block" href="{$self.space_url}">
-                                <i class="icon-user"></i> {:lang('_PERSONAL_PAGE_')}
-                            </a>
+
                             <ul id="treeMenu" class="tree tree-menu side-menu" data-ride="tree">
                                 <li id="info"><a href="{:Url('index')}"><i class="icon-th"></i>
                                     {:lang('_SETTINGS_DATA_')}</a></li>

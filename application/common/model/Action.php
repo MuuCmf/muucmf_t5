@@ -71,7 +71,8 @@ class Action extends Model
         $result = collection($this->where($map)->select())->toArray();
         foreach ($result as &$v) {
         	if($v['module']=='' || empty($v['module'])) {
-        		$v['module'] = 'muucmf';
+        		//默认系统行为模块名
+        		$v['module'] = 'admin';
         	}
         }
         unset($v);

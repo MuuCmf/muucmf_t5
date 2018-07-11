@@ -39,7 +39,7 @@ class Message extends Base
      */
     public function readMessage($message_id)
     {
-        exit(json_encode(array('status' => model('Common/Message')->readMessage($message_id))));
+        exit(json_encode(array('status' => model('common/Message')->readMessage($message_id))));
 
     }
     /**
@@ -86,7 +86,7 @@ class Message extends Base
         unset($v);
 
         //获取含TAB的消息类型详情
-        $messageType = model('Common/Message')->getInfo($tab);
+        $messageType = model('common/Message')->getInfo($tab);
         //获取用户消息类型列表
 
         $this->assign('tpl',$tpl);
@@ -113,7 +113,7 @@ class Message extends Base
         }
         $user = query_user(['id', 'nickname', 'space_url']);
         //发送消息
-        $message = model('Common/Message')->sendMessage($to_uid, '你有一封私信', $user['nickname'].':' . $content, 'Ucenter/Index/index', array('uid' => is_login()));
+        $message = model('common/Message')->sendMessage($to_uid, '你有一封私信', $user['nickname'].':' . $content, 'Ucenter/Index/index', array('uid' => is_login()));
         if ($message) {
             return json(['code' => 1, 'msg' => "发送" .lang('_SUCCESS_')]);
         } else {
@@ -127,7 +127,7 @@ class Message extends Base
      */
     public function messageTypeList()
     {
-        $messageTypeList=model('Common/Message')->getMyMessageTypeList();
+        $messageTypeList=model('common/Message')->getMyMessageTypeList();
         $this->assign('message_type_list',$messageTypeList);
         $type_tpl=modC('MESSAGE_TYPE_TPL','type3','Message');
         echo $this->fetch('ucenter@message/msg_type_tpl/'.$type_tpl);
@@ -139,7 +139,7 @@ class Message extends Base
      **/
     private function _messageTpl($message_type='common_system')
     {     
-        $messageTpl=model('Common/Message')->getAllMessageType();//获取所有消息类型
+        $messageTpl=model('common/Message')->getAllMessageType();//获取所有消息类型
         
         if(empty($message_type) || $message_type=='') $message_type='common_system';
 

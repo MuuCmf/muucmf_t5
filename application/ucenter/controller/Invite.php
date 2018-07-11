@@ -14,10 +14,10 @@ class Invite extends Base
     public function _initialize()
     {
         parent::_initialize();
-        $this->mInviteModel=model('Ucenter/Invite');
-        $this->mInviteTypeModel=model('Ucenter/InviteType');
-        $this->mInviteBuyLogModel=model('Ucenter/InviteBuyLog');
-        $this->mInviteUserInfoModel=model('Ucenter/InviteUserInfo');
+        $this->mInviteModel=model('ucenter/Invite');
+        $this->mInviteTypeModel=model('ucenter/InviteType');
+        $this->mInviteBuyLogModel=model('ucenter/InviteBuyLog');
+        $this->mInviteUserInfoModel=model('ucenter/InviteUserInfo');
     }
 
     /**
@@ -64,7 +64,7 @@ class Invite extends Base
             $aNum=I('post.exchange_num',0,'intval');
             $this->_checkCanBuy($aTypeId,$aNum);
             $inviteType=$this->mInviteTypeModel->where(array('id'=>$aTypeId))->find();
-            model('Ucenter/Score')->setUserScore(array(is_login()),$aNum*$inviteType['pay_score'],$inviteType['pay_score_type'],'dec','',0,L('_INV_QUOTA_2_'));//扣积分
+            model('ucenter/Score')->setUserScore(array(is_login()),$aNum*$inviteType['pay_score'],$inviteType['pay_score_type'],'dec','',0,L('_INV_QUOTA_2_'));//扣积分
 
             $result=$this->mInviteBuyLogModel->buy($aTypeId,$aNum);
             if($result){
