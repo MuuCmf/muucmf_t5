@@ -34,6 +34,7 @@ class Common
                 echo Config::get('WEB_SITE_CLOSE_HINT');exit;
             }
         }
+
         // 非install模块加载钩子
         if(strtolower(request()->module())!='install'){  
             // 加载钩子
@@ -57,6 +58,7 @@ class Common
                 Hook::import($data,false);
             }
         }
+
         // app_trace 调试模式后台设置
         if (Config::get('show_page_trace'))
         {
@@ -78,10 +80,6 @@ class Common
             Config::set('app_trace', false);
         }
         
-        // 加载插件语言包
-        Lang::load([
-            APP_PATH . 'common' . DS . 'lang' . DS . $request->langset() . DS . 'addon' . EXT,
-        ]);
         // 切换多语言
         if (Config::get('lang_switch_on') && $request->get('lang'))
         {

@@ -20,7 +20,7 @@ class Role extends Admin
     public function _initialize()
     {
         parent::_initialize();
-        $this->roleModel = model("Admin/Role");
+        $this->roleModel = model("admin/Role");
     }
 
     //身份基本信息及配置 start

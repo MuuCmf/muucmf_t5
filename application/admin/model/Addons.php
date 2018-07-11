@@ -51,7 +51,7 @@ class Addons extends Model
             $this->error = lang('_PERFORM_A_PLUG__IN__OPERATION_FAILED_') . session('addons_install_error');
             return false;
         }
-        $addonsModel = model('Addons');
+        
         $data = (array)$info;
 
         if ($addons->admin == 1 || $addons->admin == true) {
@@ -60,19 +60,19 @@ class Addons extends Model
             $data['has_adminlist'] = 0;
         }
         if (!$data) {
-            $this->error = $addonsModel->getError();
+            $this->error = $this->getError();
             return false;
         }
-        if ($addonsModel->save($data)) {
+        if ($this->save($data)) {
             $config = ['config' => json_encode($addons->getConfig())];
-            $addonsModel->save($config,['name'=>$name]);
+            $this->save($config,['name'=>$name]);
 
             $hooks_update = model('Hooks')->updateHooks($name);
             if ($hooks_update) {
                 cache('hooks', null);
                 return true;
             } else {
-                $addonsModel->where(['name'=>$name])->delete();
+                $this->where(['name'=>$name])->delete();
                 $this->error = lang('_THE_UPDATE_HOOK_IS_FAILED_PLEASE_TRY_TO_REINSTALL_');
                 return false;
             }

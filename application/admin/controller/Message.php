@@ -55,7 +55,7 @@ class Message extends Admin
         }
         unset($v);
 
-        $role = model('Role')->selectByMap(array('status' => 1));
+        $role = model('role')->selectByMap(array('status' => 1));
         $user_role = array(array('id' => 0, 'value' => lang('_ALL_')));
         foreach ($role as $key => $v) {
             array_push($user_role, array('id' => $v['id'], 'value' => $v['title']));
@@ -228,7 +228,7 @@ class Message extends Admin
             $aUserGroup = input('get.user_group', 0, 'intval');
             $aRole = input('get.role', 0, 'intval');
             if (empty($aUids)) {
-                $role = model('Role')->selectByMap(array('status' => 1));
+                $role = model('role')->selectByMap(array('status' => 1));
                 $roles = array();
                 foreach ($role as $key => $v) {
                     array_push($roles, array('id' => $v['id'], 'value' => $v['title']));
@@ -299,7 +299,7 @@ class Message extends Admin
             $aUserGroup = input('get.user_group', 0, 'intval');
             $aRole = input('get.role', 0, 'intval');
             if (empty($aUids)) {
-                $role = model('Role')->selectByMap(array('status' => 1));
+                $role = model('admin/Role')->selectByMap(array('status' => 1));
                 $roles = array();
                 foreach ($role as $key => $v) {
                     array_push($roles, array('id' => $v['id'], 'value' => $v['title']));

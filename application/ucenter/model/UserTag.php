@@ -5,23 +5,11 @@ use think\Model;
 
 class UserTag extends Model {
 
-    /*
-    protected $_validate = array(
-        array('title', 'require', '标题不能为空。', self::EXISTS_VALIDATE, 'regex', self::MODEL_BOTH),
-        array('title', '', '标题已经存在。', self::VALUE_VALIDATE, 'unique', self::MODEL_BOTH),
-    );
-
-    protected $_auto = array(
-        array('status', '1', self::MODEL_INSERT),
-    );
-    */
-
     /**
      * 获得分类树
      * @param int $id
      * @param bool $field
      * @return array
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function getTree($id = 0, $field = true){
         /* 获取当前分类信息 */
@@ -74,7 +62,6 @@ class UserTag extends Model {
         } else { //否则返回所有分类
             $info = $list;
         }
-
         return $info;
     }
 
@@ -83,18 +70,17 @@ class UserTag extends Model {
      * @param string $ids
      * @param bool $field
      * @return array|null
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function getTreeListByIds($ids='',$field = true)
     {
         if($ids!=''){
             !is_array($ids)&&$ids=explode(',',$ids);
-            $list_tags=$this->where(array('id'=>array('in',$ids),'status'=>1,'pid'=>array('neq',0)))->field($field)->order('sort')->select();
+            $list_tags=$this->where(['id'=>['in',$ids],'status'=>1,'pid'=>['neq',0]])->field($field)->order('sort')->select();
             
             if(count($list_tags)){
                 $cate_ids=array_column($list_tags,'pid');
                 array_unique($cate_ids);
-                $cate_list=$this->where(array('id'=>array('in',$cate_ids),'status'=>1,'pid'=>0))->field($field)->order('sort')->select();
+                $cate_list=$this->where(['id'=>['in',$cate_ids],'status'=>1,'pid'=>0])->field($field)->order('sort')->select();
                 if(count($cate_list)){
                     $list=array_merge($list_tags,$cate_list);
                     $list=list_to_tree($list,$pk='id',$pid='pid',$child='tag_list');
@@ -110,11 +96,10 @@ class UserTag extends Model {
      * @param $id
      * @param bool $field
      * @return mixed
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function info($id, $field = true){
         /* 获取分类信息 */
-        $map = array();
+        $map = [];
         if(is_numeric($id)){ //通过ID查询
             $map['id'] = $id;
         } else { //通过标识查询

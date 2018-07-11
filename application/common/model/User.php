@@ -496,7 +496,7 @@ class User Extends Model
     {
     //读取等级数据
         if (in_array('title', $fields)) {
-            $titleModel = model('Ucenter/Title');
+            $titleModel = model('ucenter/Title');
             $title = $titleModel->getTitleByScore($user_data['score1']);
             $user_data['title'] = $title;
             $this->write_query_user_cache($uid, 'title', $title);

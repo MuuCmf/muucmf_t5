@@ -743,7 +743,7 @@ class User extends Admin
             );
         } else {
             $id = input('id');
-            $roleOptions = model('Role')->selectByMap(array('status' => array('gt', -1)), 'id asc', 'id,title');
+            $roleOptions = model('role')->selectByMap(array('status' => array('gt', -1)), 'id asc', 'id,title');
 
             $builder = new AdminConfigBuilder();
             if ($id != 0) {

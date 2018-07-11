@@ -12,7 +12,7 @@ class Addons extends Admin
     public function _initialize()
     {
         $this->assign('_extra_menu', array(
-            lang('_ALREADY_INSTALLED_IN_THE_BACKGROUND_') => model('Addons')->getAdminList(),
+            lang('_ALREADY_INSTALLED_IN_THE_BACKGROUND_') => model('admin/Addons')->getAdminList(),
         ));
         parent::_initialize();
     }
@@ -39,7 +39,7 @@ class Addons extends Admin
     public function index()
     {
         $type = input('get.type', 'all', 'text');
-        $list = model('Addons')->getList('');
+        $list = model('admin/Addons')->getList('');
         $request = (array)input('request.');
 
         if ($type == 'yes') {//已安装的
@@ -158,7 +158,7 @@ class Addons extends Admin
     public function install()
     {
         $addon_name = trim(input('addon_name'));
-        $addonsModel = model('Addons');
+        $addonsModel = model('admin/Addons');
         $rs = $addonsModel->install($addon_name);
         if ($rs === true) {
             $this->success(lang('_INSTALL_PLUG-IN_SUCCESS_'));
@@ -277,26 +277,6 @@ class Addons extends Admin
         
     }
 
-    public function execute($_addons = null, $_controller = null, $_action = null)
-    {
-        if (config('URL_CASE_INSENSITIVE')) {
-            $_addons = ucfirst(parse_name($_addons, 1));
-            $_controller = parse_name($_controller, 1);
-        }
-
-        $TMPL_PARSE_STRING = config('TMPL_PARSE_STRING');
-        $TMPL_PARSE_STRING['__ADDONROOT__'] = __ROOT__ . "/Addons/{$_addons}";
-        config('TMPL_PARSE_STRING', $TMPL_PARSE_STRING);
-
-
-        if (!empty($_addons) && !empty($_controller) && !empty($_action)) {
-
-            $Addons = A("Addons://{$_addons}/{$_controller}")->$_action();
-        } else {
-            $this->error(lang('_NO_SPECIFIED_PLUG-IN_NAME,_CONTROLLER_OR_OPERATION_'));
-        }
-    }
-
     public function del($id = '', $name)
     {
         $ids = array_unique((array)input('ids', 0));
@@ -314,7 +294,7 @@ class Addons extends Admin
             $this->error(lang('_THE_PLUGIN_LIST_INFORMATION_IS_NOT_CORRECT_'));
         extract($param);
         if (isset($model)) {
-            $addonModel = D("Addons://{$name}/{$model}");
+            $addonModel = model("Addons://{$name}/{$model}");
             if (!$addonModel)
                 $this->error(lang('_MODEL_CANNOT_BE_REAL_'));
         }

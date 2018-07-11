@@ -13,12 +13,13 @@ class Admin extends Controller
     /**
      * 后台基类 控制器
      */
-    public $_seo = ['title' => '','setKeywords' => '', 'description' => ''];
+    public $_seo;
 
     public $is_root;
 
     public function _initialize()
-    {
+    {   
+        $this->_seo = ['title' => '','setKeywords' => '', 'description' => ''];
         // 判断登陆
         $this->needLogin();
         // 是否是超级管理员
@@ -47,13 +48,14 @@ class Admin extends Controller
                 $this->error(lang('_VISIT_NOT_AUTH_'));
             }
         }
+        
         // 获取插件后台管理列表
-        $addons_admin = model('Admin/Addons')->getAdminList();
+        $addons_admin = model('admin/Addons')->getAdminList();
         //获取本地版本
         $version = $this->localVersion();
         //获取管理员数据
         $auth_user = query_user(['nickname','username','sex','avatar32','title','fans', 'following','signature'],is_login());
-
+        
         $this->assign('seo', $this->_seo);
         $this->assign('__AUTH_USER__',$auth_user);
         $this->assign('__MANAGE_COULD__',$this->checkRule('admin/module/lists',array('in','1,2')));

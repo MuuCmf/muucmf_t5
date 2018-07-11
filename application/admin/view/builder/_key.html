@@ -477,11 +477,11 @@
 
     {/case}
     {case value="ueditor"}
-            {:widget('common/Ueditor/editor',array($field['name'],$field['name'],$field['value'],$field['config'],$field['style'],$field['param'],$field['width']))}
+            {:widget('common/ueditor/editor',array($field['name'],$field['name'],$field['value'],$field['config'],$field['style'],$field['param'],$field['width']))}
     {/case}
 
     {case value="wangeditor"}
-            {:widget('Common/Wangeditor/editor',array($field['name'],$field['name'],$field['value'],$field['config'],$field['style'],$field['param'],$field['width']))}
+            {:widget('common/wangeditor/editor',array($field['name'],$field['name'],$field['value'],$field['config'],$field['style'],$field['param'],$field['width']))}
     {/case}
     {case value="textarea"}
         <textarea name="{$field.name}" class="text input-large form-control">{$field.value|htmlspecialchars}</textarea>
