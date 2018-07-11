@@ -1,6 +1,7 @@
 <?php
 namespace app\admin\controller;
 
+use app\admin\controller\Admin;
 use think\Db;
 
 class Count extends Admin{

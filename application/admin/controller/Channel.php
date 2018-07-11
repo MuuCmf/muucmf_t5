@@ -1,6 +1,7 @@
 <?php
 namespace app\admin\Controller;
 
+use app\admin\controller\Admin;
 use think\Db;
 /**
  * 后台频道控制器

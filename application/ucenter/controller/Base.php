@@ -1,8 +1,4 @@
 <?php
-/**
- * 基础公共控制器
- */
-
 namespace app\ucenter\controller;
 
 use think\Controller;

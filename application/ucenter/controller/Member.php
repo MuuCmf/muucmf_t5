@@ -1,7 +1,4 @@
 <?php
-/**
- * 放置用户登陆注册
- */
 namespace app\ucenter\controller;
 
 use think\Controller;
@@ -9,15 +6,12 @@ use think\Db;
 use app\ucenter\model\UcenterMember;
 use app\common\Model\FollowModel;
 
-//require_once APP_PATH . 'user/config.php';
-
 /**
  * 用户控制器
  * 包括用户中心，用户登录及注册
  */
 class Member extends Controller
 {
-
     /**
      * register  注册页面
      */

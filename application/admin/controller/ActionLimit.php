@@ -1,7 +1,7 @@
 <?php
-
 namespace app\admin\controller;
 
+use app\admin\controller\Admin;
 use think\Db;
 use app\admin\builder\AdminConfigBuilder;
 use app\admin\builder\AdminListBuilder;

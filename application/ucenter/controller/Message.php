@@ -3,6 +3,7 @@ namespace app\Ucenter\controller;
 
 use think\Controller;
 use think\Db;
+use app\ucenter\controller\Base;
 
 class Message extends Base
 {

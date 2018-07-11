@@ -1,6 +1,7 @@
 <?php
 namespace app\admin\controller;
 
+use app\admin\controller\Admin;
 use think\Db;
 use think\Request;
 use app\admin\builder\AdminConfigBuilder;

@@ -1,6 +1,7 @@
 <?php
 namespace app\admin\controller;
 
+use app\admin\controller\Admin;
 use think\Db;
 /**
  * 扩展后台插件管理页面

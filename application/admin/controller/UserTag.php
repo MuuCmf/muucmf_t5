@@ -1,6 +1,7 @@
 <?php
 namespace app\admin\Controller;
 
+use app\admin\controller\Admin;
 use app\admin\builder\AdminConfigBuilder;
 use app\admin\builder\AdminListBuilder;
 use app\admin\builder\AdminTreeListBuilder;
