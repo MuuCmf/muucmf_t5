@@ -165,7 +165,7 @@ function write_config($config, $auth)
             return '';
         } else {
             show_msg('数据库配置写入失败！', 'error');
-            return '由于您的环境不可写，请复制下面的配置文件内容覆盖到相关的配置文件，然后再登录后台。<p>' . APP_PATH . '/database.php</p>
+            return '由于您的环境不可写，请复制下面的配置文件内容覆盖到相关的配置文件，然后再登录后台。<p>' . APP_PATH . 'database.php</p>
             <textarea class="form-control" rows="15" name="" >' . $db_conf . '</textarea>';
         }
     }

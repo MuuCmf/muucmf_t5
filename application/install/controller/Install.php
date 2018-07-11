@@ -22,6 +22,7 @@ class Install extends Controller
         //初始session
         session('db_config',null);
         session('admin_info',null);
+        session('config_file',null);
         session('error', false);
         //环境检测
         $muu_env = check_env();

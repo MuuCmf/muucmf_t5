@@ -4895,7 +4895,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_role_group` (
 
 DROP TABLE IF EXISTS `muucmf_schedule`;
 CREATE TABLE IF NOT EXISTS `muucmf_schedule` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `method` varchar(100) NOT NULL,
   `args` varchar(500) NOT NULL,
   `type` tinyint(4) NOT NULL,
@@ -4907,15 +4907,11 @@ CREATE TABLE IF NOT EXISTS `muucmf_schedule` (
   `status` tinyint(4) NOT NULL,
   `create_time` int(11) NOT NULL,
   `update_time` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 INSERT INTO `muucmf_schedule` (`id`, `method`, `args`, `type`, `type_value`, `start_time`, `end_time`, `intro`, `lever`, `status`, `create_time`, `update_time`) VALUES
 (1, 'Admin/Count->dayCount', '', 3, 'Daily=02:20', 1493571600, 2145888000, '执行了数据统计', 0, 1, 1469167281,1469167281);
-
-ALTER TABLE `muucmf_schedule`
-  ADD PRIMARY KEY (`id`);
-ALTER TABLE `muucmf_schedule`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 
 DROP TABLE IF EXISTS `muucmf_seo_rule`;
 CREATE TABLE IF NOT EXISTS `muucmf_seo_rule` (
@@ -4932,10 +4928,6 @@ CREATE TABLE IF NOT EXISTS `muucmf_seo_rule` (
   `summary` varchar(500) NOT NULL COMMENT 'seo变量介绍',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=10000 ;
-
---
--- 转存表中的数据 `muucmf_seo_rule`
---
 
 INSERT INTO `muucmf_seo_rule` (`id`, `title`, `app`, `controller`, `action`, `status`, `seo_keywords`, `seo_description`, `seo_title`, `sort`, `summary`) VALUES
 (1000, '整站标题', '', '', '', 1, '', '', '', 7, '-'),
