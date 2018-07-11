@@ -9,19 +9,11 @@ use app\admin\builder\AdminListBuilder;
 class Invite extends Admin
 {
     protected $inviteModel;
-    protected $inviteTypeModel;
-    protected $inviteBuyLogModel;
-    protected $inviteLogModel;
-    protected $inviteUserInfoModel;
 
     public function _initialize()
     {
         parent::_initialize();
-        $this->inviteModel=model('Ucenter/Invite');
-        //$this->inviteTypeModel=model('Ucenter/InviteType');
-        //$this->inviteBuyLogModel=model('Ucenter/InviteBuyLog');
-        //$this->inviteLogModel=model('Ucenter/InviteLog');
-        //$this->inviteUserInfoModel=model('Ucenter/InviteUserInfo');
+        $this->inviteModel=model('ucenter/Invite');
     }
 
     /**
