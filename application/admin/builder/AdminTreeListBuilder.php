@@ -158,13 +158,13 @@ class AdminTreeListBuilder extends AdminBuilder
 
     public function keyStatus($name = 'status', $title = '状态')
     {
-        $map = array(-1 => L('DELETE'), 0 => L('DISABLE'), 1 => L('ENABLE'), 2 => L('_UNAUDITED_'));
+        $map = array(-1 => lang('DELETE'), 0 => lang('DISABLE'), 1 => lang('ENABLE'), 2 => lang('_UNAUDITED_'));
         return $this->key($name, $title, 'status', $map);
     }
 
     public function keyYesNo($name, $title)
     {
-        $map = array(0 => L('_NOT_'), 1 => L('YES'));
+        $map = array(0 => lang('_NOT_'), 1 => lang('YES'));
         return $this->keymap($name, $title, $map);
     }
 
@@ -256,13 +256,13 @@ class AdminTreeListBuilder extends AdminBuilder
      * @param $totalCount
      * @param $listRows
      * @return $this
-     */
+    
     public function pagination($totalCount, $listRows)
     {
         $this->_pagination = array('totalCount' => $totalCount, 'listRows' => $listRows);
         return $this;
     }
-
+     */
     public function data($list)
     {
         $this->_data = $list;
@@ -340,7 +340,7 @@ class AdminTreeListBuilder extends AdminBuilder
         //如果html为空
         $this->convertKey('html', 'html', function ($value) {
             if ($value === '') {
-                return '<span style="color:#bbb;">'.L('_EMPTY_BRACED_').'</span>';
+                return '<span style="color:#bbb;">'.lang('_EMPTY_BRACED_').'</span>';
             }
             return $value;
         });
@@ -389,8 +389,8 @@ class AdminTreeListBuilder extends AdminBuilder
     public function doSetStatus($model, $ids, $status)
     {
         $ids = is_array($ids) ? $ids : explode(',', $ids);
-        M($model)->where(array('id' => array('in', $ids)))->save(array('status' => $status));
-        $this->success(L('success_setting'), $_SERVER['HTTP_REFERER']);
+        Db::name($model)->where(['id' => ['in', $ids]])->update(['status' => $status]);
+        $this->success(lang('success_setting'), $_SERVER['HTTP_REFERER']);
     }
 
     private function convertKey($from, $to, $convertFunction)

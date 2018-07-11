@@ -247,11 +247,11 @@ class Admin extends Controller
     /**
      * 设置一条或者多条数据的状态
      */
-    public function setStatus($Model)
-    {
+    public function setStatus()
+    {   
+        $ids = input('ids/a');
+        $status = input('status');
         if(empty($Model)) $Model = request()->controller();
-        $ids = input('request.ids/a');
-        $status = input('request.status');
         if (empty($ids)) {
             $this->error(lang('_PLEASE_CHOOSE_THE_DATA_TO_BE_OPERATED_'));
         }

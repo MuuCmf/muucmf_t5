@@ -27,13 +27,13 @@ class UserTag extends Admin
         $attr['class'] = 'btn ajax-post';
         $attr['target-form'] = 'ids';
 
-        $tree = $this->userTagModel->getTree(0, 'id,title,sort,pid,status');
+        $tree = $this->userTagModel->getTree(0,'id,title,sort,pid,status');
 
         $builder
             ->title(lang('_USER_TAG_MANAGER_'))
             ->suggest(lang('_USER_TAG_MANAGER_VICE_'))
             ->buttonNew(Url('UserTag/add'))
-            ->button(lang('_RECYCLE_BIN_'),array('href'=>Url('UserTag/TagTrash')))
+            ->button(lang('_RECYCLE_BIN_'),['href'=>Url('UserTag/TagTrash')])
             ->data($tree)
             ->display();
     }
@@ -72,7 +72,7 @@ class UserTag extends Admin
                     }
                 }
             } else {
-                $category = array('pid' => $pid, 'status' => 1);
+                $category = ['pid' => $pid, 'status' => 1];
                 $father_category_pid=$this->userTagModel->where(['id'=>$pid])->value('pid');
                 if($father_category_pid!=0){
                     $this->error(lang('_ERROR_CATEGORY_HIR_LIMIT_').lang('_EXCLAMATION_'));
@@ -90,7 +90,7 @@ class UserTag extends Admin
             $builder
             ->keyId()
             ->keyText('title', lang('_TITLE_'))
-            ->keySelect('pid', lang('_FATHER_CLASS_'), lang('_FATHER_CLASS_SELECT_'), array('0' => lang('_TOP_CLASS_')) + $opt)
+            ->keySelect('pid', lang('_FATHER_CLASS_'), lang('_FATHER_CLASS_SELECT_'), [0 => lang('_TOP_CLASS_')] + $opt)
             ->keyStatus()
             ->data($category)
             ->buttonSubmit(Url('UserTag/add'))
@@ -112,8 +112,8 @@ class UserTag extends Admin
         $list = $this->userTagModel->where($map)->paginate(20);
         $page = $list->render();
         //显示页面
-
-        $builder->title(lang('_TRASH_TAG_CATEGORY_'))
+        $builder
+            ->title(lang('_TRASH_TAG_CATEGORY_'))
             ->setStatusUrl(Url('setStatus'))->buttonRestore()->buttonDeleteTrue(Url('UserTag/userTagClear'))
             ->keyId()
             ->keyText('title', lang('_TITLE_'))
@@ -128,21 +128,4 @@ class UserTag extends Admin
         $builder=new AdminListBuilder();
         $builder->doDeleteTrue('UserTag',$ids);
     }
-
-    /**
-     * 设置商品分类状态：删除=-1，禁用=0，启用=1
-     * @param $ids
-     * @param $status
-     */
-    public function setStatusThis($ids, $status)
-    {
-        $builder = new AdminListBuilder();
-        if($status==-1){
-            $id = array_unique((array)$ids);
-            $rs=Db::name('UserTag')->where(['pid' => ['in', $id]])->save(['status' => $status]);
-        }
-        $builder->doSetStatus('UserTag', $ids, $status);
-    }
-
-    //分类、标签end
 } 
