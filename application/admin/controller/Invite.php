@@ -56,7 +56,7 @@ class Invite extends Admin
         $builder=new AdminListBuilder();
         $builder->title(lang('_INVITE_CODE_TYPE_LIST_'))
             ->buttonNew(Url('Invite/edit'))
-            ->button(lang('_DELETE_'),array('class' => 'btn ajax-post confirm', 'url' => Url('Invite/setStatus', array('status' => -1)), 'target-form' => 'ids', 'confirm-info' => lang('_DELETE_CONFIRM_')))
+            ->button(lang('_DELETE_'),array('class' => 'btn ajax-post confirm', 'url' => Url('Invite/setDel', array('status' => -1)), 'target-form' => 'ids', 'confirm-info' => lang('_DELETE_CONFIRM_')))
             ->keyId()
             ->keyTitle()
             ->keyText('length',lang('_INVITE_CODE_LENGTH_'))
@@ -188,7 +188,7 @@ class Invite extends Admin
      * @param $status
      * @author 郑钟良<zzl@ourstu.com>
      */
-    public function setStatus($ids,$status=-1)
+    public function setDel($ids,$status=-1)
     {
         $ids=is_array($ids)?$ids:explode(',',$ids);
         //删除邀请码类型，真删除
