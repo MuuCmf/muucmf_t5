@@ -1,15 +1,15 @@
 {extend name="common/base"/}
 
 {block name="header"}
-    <li class="active"><span>1</span>安装协议</li>
-    <li class="active"><span>2</span>环境检测</li>
-    <li class="active"><span>3</span>创建数据库</li>
-    <li class="active"><span>4</span>安装</li>
-    <li><span>5</span>完成</li>
+    <li class="active"><span>1</span>{:lang('Protocols')}</li>
+    <li class="active"><span>2</span>{:lang('Detection')}</li>
+    <li class="active"><span>3</span>{:lang('Database')}</li>
+    <li class="active"><span>4</span>{:lang('Install')}</li>
+    <li><span>5</span>{:lang('Complete')}</li>
 {/block}
 
 {block name="body"}
-    <h1>安装</h1>
+    <h1>{:lang('Install')}</h1>
     <div id="show-list" class="install-database">
     </div>
     <script type="text/javascript">
@@ -25,7 +25,7 @@
 {/block}
 
 {block name="footer"}
-    <button id="obtn" class="btn btn-warning btn-large btn-block disabled">正在安装，请稍候...</button>
+    <button id="obtn" class="btn btn-warning btn-large btn-block disabled">{:lang('It\'s in installation. Just a moment, please...')}</button>
     <script type="text/javascript">
         var obtn   = document.getElementById('obtn');
 

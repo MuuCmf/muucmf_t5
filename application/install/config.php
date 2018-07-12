@@ -10,7 +10,7 @@ return [
         '__LIB__'    => '/static/common/lib',
         '__ZUI__'    => '/static/common/lib/zui',
         
-		'__NAME__'=>'MuuCmf T5开源管理框架',
+		'__NAME__'=>'MuuCmf T5开源开发框架',
         '__COMPANY__'=>'北京火木科技有限公司',
         '__WEBSITE__'=>'www.muucmf.cn',
         '__COMPANY_WEBSITE__'=>'www.hoomuu.cn'

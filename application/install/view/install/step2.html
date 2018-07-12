@@ -1,11 +1,11 @@
 {extend name="common/base"/}
 
 {block name="header"}
-    <li class="active"><span>1</span>安装协议</li>
-    <li class="active"><span>2</span>环境检测</li>
-    <li class="active"><span>3</span>创建数据库</li>
-    <li><span>4</span>安装</li>
-    <li><span>5</span>完成</li>
+    <li class="active"><span>1</span>{:lang('Protocols')}</li>
+    <li class="active"><span>2</span>{:lang('Detection')}</li>
+    <li class="active"><span>3</span>{:lang('Database')}</li>
+    <li><span>4</span>{:lang('Install')}</li>
+    <li><span>5</span>{:lang('Complete')}</li>
 {/block}
 
 {block name="body"}
@@ -132,7 +132,7 @@
 
 {block name="footer"}
     <button id="submit" type="button" class="btn btn-primary btn-large  btn-block" onclick="$('form').submit();return false;">
-        下一步
+        {:lang('NEXT')}
     </button>
-    <a class="btn btn-large btn-block btn-default" style="background: white;" href="{:Url('Install/step1')}">上一步</a>
+    <a class="btn btn-large btn-block btn-default" style="background: white;" href="{:Url('Install/step1')}">{:lang('PREVIOUS')}</a>
 {/block}

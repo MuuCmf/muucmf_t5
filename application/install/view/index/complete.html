@@ -1,16 +1,16 @@
 {extend name="common/base"/}
 {block name="header"}
-    <li class="active"><span>1</span>安装协议</li>
-    <li class="active"><span>2</span>环境检测</li>
-    <li class="active"><span>3</span>创建数据库</li>
-    <li class="active"><span>4</span>安装</li>
-    <li class="active"><span>5</span>完成</li>
+    <li class="active"><span>1</span>{:lang('Protocols')}</li>
+    <li class="active"><span>2</span>{:lang('Detection')}</li>
+    <li class="active"><span>3</span>{:lang('Database')}</li>
+    <li class="active"><span>4</span>{:lang('Install')}</li>
+    <li class="active"><span>5</span>{:lang('Complete')}</li>
 {/block}
 
 {block name="body"}
     <div class="success">
-        <h1 class="text-center">安装完成</h1>
-        <p class="text-center">点击下方按钮即可进入相应页面</p>
+        <h1 class="text-center">{:lang('Install')} {:lang('Complete')}</h1><!--install complecte-->
+        <p class="text-center">{:lang('Click the button to enter the page')}</p>
     </div>
 	{present name="info"}
 	{$info}
@@ -18,6 +18,6 @@
 {/block}
 
 {block name="footer"}
-    <a class="btn btn-primary btn-primary btn-block btn-large" target="_blank" href="/admin">登录后台</a>
-    <a class="btn btn-warning btn-block btn-large" target="_blank" href="/index">访问首页</a>
+    <a class="btn btn-primary btn-primary btn-block btn-large" target="_blank" href="/admin">{:lang('Login Admin')}</a>
+    <a class="btn btn-warning btn-block btn-large" target="_blank" href="/index">{:lang('Browse the home page')}</a>
 {/block}

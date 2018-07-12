@@ -1,14 +1,14 @@
 {extend name="common/base"/}
 
 {block name="header"}
-    <li class="active"><span>1</span>安装协议</li>
-    <li class="active"><span>2</span>环境检测</li>
-    <li><span>3</span>创建数据库</li>
-    <li><span>4</span>安装</li>
-    <li><span>5</span>完成</li>
+    <li class="active"><span>1</span>{:lang('Protocols')}</li>
+    <li class="active"><span>2</span>{:lang('Detection')}</li>
+    <li><span>3</span>{:lang('Database')}</li>
+    <li><span>4</span>{:lang('Install')}</li>
+    <li><span>5</span>{:lang('Complete')}</li>
 {/block}
 {block name="body"}
-    <h1>环境检测</h1>
+    <h1>{:lang('Detection')}</h1>
     <table class="table">
         <caption>
             <h2>运行环境检查</h2>
@@ -74,6 +74,6 @@
 {/block}
 
 {block name="footer"}
-    <a class="btn btn-block btn-primary btn-large" href="{:Url('Install/step2')}">下一步</a>
-    <a class="btn btn-default btn-block btn-large" style="background: white;" href="{:Url('Index/index')}">上一步</a>
+    <a class="btn btn-block btn-primary btn-large" href="{:Url('Install/step2')}">{:lang('NEXT')}</a>
+    <a class="btn btn-default btn-block btn-large" style="background: white;" href="{:Url('Index/index')}">{:lang('PREVIOUS')}</a>
 {/block}

@@ -110,7 +110,8 @@ function check_func()
         ['file_get_contents', '支持', 'ok'],
         ['mb_strlen', '支持', 'ok'],
         ['curl_init', '支持', 'ok'],
-        ['finfo_open','支持','ok']
+        //['finfo_open','支持','ok'],
+        ['pathinfo','支持','ok']
     ];
 
     foreach ($items as &$val) {
