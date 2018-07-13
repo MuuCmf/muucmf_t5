@@ -2,8 +2,8 @@
 namespace app\admin\controller;
 
 use app\admin\controller\Admin;
-use app\admin\Model\AuthRule;
-use app\admin\Model\AuthGroup;
+use app\admin\model\AuthRule;
+use app\admin\model\AuthGroup;
 use think\Db;
 
 /**

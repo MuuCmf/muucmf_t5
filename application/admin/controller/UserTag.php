@@ -82,11 +82,9 @@ class UserTag extends Admin
                     $opt[$cate['id']] = $cate['title'];
                 }
             }
-            if($pid!=0){
-                $builder->title(lang('_TAG_ADD_'));
-            }else{
-                $builder->title(lang('_CATEGORY_ADD_'));
-            }
+
+            $builder->title(lang('_TAG_ADD_'));
+
             $builder
             ->keyId()
             ->keyText('title', lang('_TITLE_'))

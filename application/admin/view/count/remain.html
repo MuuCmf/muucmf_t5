@@ -1,13 +1,12 @@
-<extend name="Public/base"/>
-<block name="style">
-    <link rel="stylesheet" href="__JS__/daterangepicker/daterangepicker-bs3.css">
-</block>
-<block name="script">
+{extend name="common/main"/}
+{block name="style"}
+    <link rel="stylesheet" href="__ZUI__/lib/datetimepicker/datetimepicker.min.css">
+{/block}
+{block name="script"}
     <!-- daterange picker -->
     <script src="__ZUI__/lib/chart/zui.chart.min.js"></script>
     <!-- daterange picker -->
-    <script src="__JS__/daterangepicker/moment.min.js"></script>
-    <script src="__JS__/daterangepicker/daterangepicker.js"></script>
+    <script src="__ZUI__/lib/datetimepicker/datetimepicker.min.js"></script>
     
     <script>
         var startDate="{$options.startDate}",
@@ -27,8 +26,9 @@
                 endDate:endDate,
                 maxDate:endDate
             });
+            
             $('#reservation').on('apply.daterangepicker',function(ev, picker) {
-                $.post("__SELF__", {startDate:picker.startDate.format('YYYY-MM-DD'),endDate:picker.endDate.format('YYYY-MM-DD')}, function (msg) {
+                $.post("{:Url()}", {startDate:picker.startDate.format('YYYY-MM-DD'),endDate:picker.endDate.format('YYYY-MM-DD')}, function (msg) {
                     $('#remain_data').html(msg);
                     change_show_day();
                     if(msg.status==0){
@@ -48,13 +48,16 @@
             });
         }
     </script>
-</block>
-<block name="body">
-    <include file="_top_nav"/>
-    <div class="col-md-9">
+{/block}
+{block name="body"}
+    <div class="main-title">
+        <h2>新注册用户前8日留存率统计</h2>
+    </div>
+    {include file="count/_top_nav"/}
+    <div class="clearfix with-padding">
+        <div class="col-md-9">
         <div class="box box-info remain">
             <div class="box-header with-border">
-                <h3 class="box-title">新注册用户前8日留存率统计</h3>
                 <div class="box-tools pull-right">
                     <div class="checkbox_block">
                         <label class="day1_label"><input type="checkbox" name="day_show[]" value="day1" checked/>次日</label>
@@ -81,15 +84,15 @@
                     </tr>
                     </thead>
                     <tbody id="remain_data">
-                        <include file="_remain_data"/>
+                        {include file="count/_remain_data"/}
                     </tbody>
                 </table>
 
             </div>
             <!-- /.box-body -->
         </div>
-    </div>
-    <div class="col-md-3">
+        </div>
+        <div class="col-md-3">
         <div class="box remain">
             <div class="box-header with-border">
                 <h4 class="box-title">前8日留存率统计标准（以2016-7-16为例）</h3>
@@ -149,5 +152,6 @@
             </div>
             <!-- /.box-body -->
         </div>
+        </div>
     </div>
-</block>
+{/block}

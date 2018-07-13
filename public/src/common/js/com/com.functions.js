@@ -81,4 +81,33 @@ function friendlyDate(sTime, cTime) {
     }
 }
 
+/**
+ * 处理ajax返回结果
+ */
+function handleAjax(a) {
+    //如果需要跳转的话，消息的末尾附上即将跳转字样
+    if (a.url) {
+        a.msg += '，页面即将跳转～';
+    }
+
+    //弹出提示消息
+    if (a.code) {
+        toast.success(a.msg, '温馨提示');
+    } else {
+        toast.error(a.msg, '温馨提示');
+    }
+
+    //需要跳转的话就跳转
+    var interval = 1500;
+    if (a.url == "refresh") {
+        setTimeout(function () {
+            location.href = location.href;
+        }, interval);
+    } else if (a.url) {
+        setTimeout(function () {
+            location.href = a.url;
+        }, interval);
+    }
+}
+
 

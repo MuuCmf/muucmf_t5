@@ -1,4 +1,4 @@
-    <!-- 头部 -->
+<!-- 头部 -->
 <!--[if lt IE 8]>
 <div class="alert alert-danger" style="margin-bottom: 0">{:lang('_TIP_BROWSER_DEPRECATED_1_')} <strong>{:lang('_TIP_BROWSER_DEPRECATED_2_')}</strong>
     {:lang('_TIP_BROWSER_DEPRECATED_3_')} <a target="_blank"
@@ -46,8 +46,8 @@
 
 
                                 {:hook('personalMenus')}
-                                {if condition="check_auth('Admin/Index/index')"}
-                                    <li><a href="{:Url('Admin/Index/index')}" target="_blank"><span
+                                {if condition="check_auth('admin/Index/index')"}
+                                    <li><a href="{:Url('admin/Index/index')}" target="_blank"><span
                                             class="glyphicon glyphicon-dashboard"></span>&nbsp;&nbsp;{:lang('_MANAGE_BACKGROUND_')}</a>
                                     </li>
                                 {/if}

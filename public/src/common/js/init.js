@@ -1,9 +1,4 @@
 $(function () {
-    $('input,area').placeholder();//修复ieplace holder
-    follower.bind_follow();
-});
-
-$(function () {
     /**
      * ajax-post
      * 将链接转换为ajax请求，并交给handleAjax处理
@@ -81,34 +76,7 @@ $(function () {
     
 });
 
-/**
- * 处理ajax返回结果
- */
-function handleAjax(a) {
-    //如果需要跳转的话，消息的末尾附上即将跳转字样
-    if (a.url) {
-        a.msg += '，页面即将跳转～';
-    }
 
-    //弹出提示消息
-    if (a.code) {
-        toast.success(a.msg, '温馨提示');
-    } else {
-        toast.error(a.msg, '温馨提示');
-    }
-
-    //需要跳转的话就跳转
-    var interval = 1500;
-    if (a.url == "refresh") {
-        setTimeout(function () {
-            location.href = location.href;
-        }, interval);
-    } else if (a.url) {
-        setTimeout(function () {
-            location.href = a.url;
-        }, interval);
-    }
-}
 /**
  * 绑定回到顶部
  */
@@ -186,25 +154,4 @@ var follower = {
     }
 }
 
-
-/**
- * 更新附件表单值
- * @return void
- */
-var upAttachVal = function (type, attachId, obj) {
-    var $attach_ids = obj;
-    var attachVal = $attach_ids.val();
-    var attachArr = attachVal.split(',');
-    var newArr = [];
-    for (var i in attachArr) {
-        if (attachArr[i] !== '' && attachArr[i] !== attachId.toString()) {
-            newArr.push(attachArr[i]);
-        }
-    }
-    type === 'add' && newArr.push(attachId);
-    $attach_ids.val(newArr.join(','));
-    return newArr;
-}
-
-
-
+follower.bind_follow();

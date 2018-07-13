@@ -1,20 +1,17 @@
 {extend name="common/main"/}
 
 {block name="body"}
+    <div class="main-title">
+        <h2>用户流失率</h2>
+    </div>
     {include file="count/_top_nav"/}
     <div class="clearfix with-padding">
     <div class="box box-info">
-        <div class="box-header with-border">
-            <h3 class="box-title">用户流失率</h3>
-            <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-toggle="modal" data-target="#settingCount">
-                    <i class="icon icon-spin icon-cog"></i>
-                    <!--设置-->
-                </button>
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="icon icon-minus"></i>
-                </button>
-                <!--<button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>-->
-            </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-toggle="modal" data-target="#settingCount">
+                <i class="icon icon-spin icon-cog"></i> 设置
+                <!--设置-->
+            </button>
         </div>
         <div class="box-body">
             <table id="table-data" class="table table-bordered table-striped table-hover">
@@ -88,7 +85,7 @@
     <script>
         var before_lost_long="{$lost_long}";
         $('[data-role=saveCountSetting]').click(function () {
-            $.post("__SELF__", {lost_long: $('[name=lost_long]').val()}, function (msg) {
+            $.post("{:Url()}", {lost_long: $('[name=lost_long]').val()}, function (msg) {
                 if(msg.status!=1){
                     $('[name=lost_long]').val(before_lost_long);
                 }else{
@@ -100,6 +97,3 @@
         })
     </script>
 {/block}
-<block name="modal">
-    
-</block>

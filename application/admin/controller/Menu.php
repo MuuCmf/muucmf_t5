@@ -241,7 +241,6 @@ class Menu extends Admin {
                     $map['pid'] = $pid;
                 }
             }
-            dump($map);
             $list = Db::name('Menu')->where($map)->field('id,title')->order('sort asc')->select();
 
             $this->assign('list', $list);
@@ -252,7 +251,7 @@ class Menu extends Admin {
             $ids = input('post.ids');
             $ids = explode(',', $ids);
             foreach ($ids as $key=>$value){
-                $res = Db::name('Menu')->where(array('id'=>$value))->setField('sort', $key+1);
+                $res = Db::name('Menu')->where(['id'=>$value])->setField('sort', $key+1);
             }
             if($res !== false){
                 $this->success(lang('_SORT_OF_SUCCESS_'));

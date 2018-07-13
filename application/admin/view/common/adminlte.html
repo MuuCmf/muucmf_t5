@@ -20,6 +20,17 @@
 
 <link rel="stylesheet" href="__CSS__/muucmf_plugins.min.css">
 {block name="style"}{/block}
+<script>
+    //全局内容的定义
+    var cookie_config={
+        "prefix":"{:Config('COOKIE_PREFIX')}"
+    }
+    var Config={
+        'GET_INFORMATION':{:modC('GET_INFORMATION',1,'Config')},
+        'GET_INFORMATION_INTERNAL':{:modC('GET_INFORMATION_INTERNAL',10,'Config')}*1000
+    }
+    var MID = "{:is_login()}";
+</script>
 </head>
 <body class="hold-transition skin-blue sidebar-mini fixed">
 <div class="wrapper">
@@ -39,6 +50,8 @@
 <!-- ./wrapper -->
 <script src="__COMMON__/lib/jquery-2.1.1/jquery.min.js"></script>
 <script src="__LIB__/bootstrap/bootstrap.min.js"></script>
-<script src="__JS__/main.min.js"></script>
+<script src="__JS__/adminlte.min.js"></script>
+<!-- 调用消息部件-->
+{:widget('common/Message/render')}
 </body>
 </html>

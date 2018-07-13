@@ -1,16 +1,12 @@
 {extend name="common/main"/}
-
-
 {block name="style"}
-    <link rel="stylesheet" href="__LIB__/datetimepicker/datetimepicker.min.css">
+    <link rel="stylesheet" href="__ZUI__/lib/datetimepicker/datetimepicker.min.css">
 {/block}
 {block name="script"}
     <!-- ChartJS 1.0.1 -->
     <script src="__ZUI__/lib/chart/zui.chart.min.js"></script>
     <!-- daterange picker -->
-    
-    <script src="__ZUI__/daterangepicker/moment.min.js"></script>
-    <script src="__ZUI__/daterangepicker/daterangepicker.js"></script>
+    <script src="__ZUI__/lib/datetimepicker/datetimepicker.min.js"></script>
 
     <script>
         $(function () {
@@ -41,46 +37,32 @@
                 var options = {
                 ///Boolean - 是否在图表上显示网格
                 scaleShowGridLines : true,
-
                 //String - 网格线条颜色
                 scaleGridLineColor : "rgba(0,0,0,.05)",
-
                 //Number - 网格宽度
                 scaleGridLineWidth : 1,
-
                 //Boolean - 是否显示水平坐标，即X轴
                 scaleShowHorizontalLines: true,
-
                 //Boolean - 是否显示垂直坐标，即Y轴
                 scaleShowVerticalLines: true,
-
                 //Boolean - 是否显示为平滑曲线
                 bezierCurve : true,
-
                 //Number - 平滑曲线时所使用的贝塞尔曲线参数
                 bezierCurveTension : 0.4,
-
                 //Boolean - 是否显示顶点
                 pointDot : true,
-
                 //Number - 顶点半径，单位像素
                 pointDotRadius : 4,
-
                 //Number - 顶点描边线条宽度，单位像素
                 pointDotStrokeWidth : 1,
-
                 //Number - 检测鼠标点击所使用依据的半径大小，单位像素
                 pointHitDetectionRadius : 20,
-
                 //Boolean - 是否
                 datasetStroke : true,
-
                 //Number - 数据集线条宽度，单位为像素
                 datasetStrokeWidth : 2,
-
                 //Boolean - 是否用颜色来填充数据集
                 datasetFill : true,
-
                 }; // 图表配置项，可以留空来使用默认的配置
 
                 var myLineChart = $("#activeChart").lineChart(data,options);
@@ -118,7 +100,7 @@
                 var type="{$type}";
                 $('[name="type_show"]').click(function(){
                     type=$(this).val();
-                    $.post("__SELF__", {type:type,startDate:startDate,endDate:endDate}, function (msg) {
+                    $.post("{:Url()}", {type:type,startDate:startDate,endDate:endDate}, function (msg) {
                         if(msg.status==1){
                             console.log(msg);
                             setLineChartData(msg);
@@ -129,7 +111,7 @@
                     });
                 });
 
-            $('#reservation').daterangepicker({
+            $('#reservation').datetimepicker({
                 locale:{
                     applyLabel: '确定',
                     cancelLabel: '取消',
@@ -145,7 +127,7 @@
             });
 
             $('#reservation').on('apply.daterangepicker',function(ev, picker) {
-                $.post("__SELF__", {type:type,startDate:picker.startDate.format('YYYY-MM-DD'),endDate:picker.endDate.format('YYYY-MM-DD')}, function (msg) {
+                $.post("{:Url()}", {type:type,startDate:picker.startDate.format('YYYY-MM-DD'),endDate:picker.endDate.format('YYYY-MM-DD')}, function (msg) {
                     if(msg.status==1){
                         startDate=picker.startDate.format('YYYY-MM-DD');
                         endDate=picker.endDate.format('YYYY-MM-DD');
@@ -160,14 +142,15 @@
     </script>
 {/block}
 {block name="body"}
-    <include file="_top_nav"/>
-    <!-- /.col (LEFT) -->
+    
+    <div class="main-title">
+        <h2>活跃用户统计</h2>
+    </div>
+    {include file="count/_top_nav"/}
     <div class="clearfix with-padding">
         <!-- LINE CHART -->
         <div class="box box-info">
             <div class="box-header with-border">
-                <h3 class="box-title">活跃用户统计</h3>
-
                 <div class="box-tools pull-right">
                     <button type="button" class="btn" data-remote="{:Url('Count/setActiveAction')}" data-toggle="modal">
                         <i class="icon icon-cog"></i> 设置
