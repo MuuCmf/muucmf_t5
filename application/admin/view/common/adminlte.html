@@ -14,10 +14,14 @@
 <link rel="stylesheet" href="__LIB__/Ionicons/css/ionicons.min.css">
 <!-- Theme style -->
 <link rel="stylesheet" href="__CSS__/AdminLTE.min.css">
-<link rel="stylesheet" href="__CSS__/muucmf_skin_theme.min.css">
+<!-- AdminLTE Skins. Choose a skin from the css/skins
+       folder instead of downloading all of them to reduce the load. -->
+<link rel="stylesheet" href="__CSS__/skins/_all-skins.min.css">
+
+<link rel="stylesheet" href="__CSS__/muucmf_plugins.min.css">
 {block name="style"}{/block}
 </head>
-<body class="hold-transition skin-blue skin-muucmf sidebar-mini fixed">
+<body class="hold-transition skin-blue sidebar-mini fixed">
 <div class="wrapper">
 
   {include file="common/header" /}
@@ -27,8 +31,12 @@
   <!-- Content Wrapper. Contains page content -->
   {include file="common/content" /}
   <!-- /.content-wrapper -->
-  {include file="common/footer" /}
+  
+  <!-- Control Sidebar -->
+  {include file="common/control_sidebar" /}
+  <div class="control-sidebar-bg"></div>
 </div>
+<!-- ./wrapper -->
 <script src="__COMMON__/lib/jquery-2.1.1/jquery.min.js"></script>
 <script src="__LIB__/bootstrap/bootstrap.min.js"></script>
 <script src="__JS__/main.min.js"></script>
