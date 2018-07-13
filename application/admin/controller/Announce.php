@@ -123,11 +123,7 @@ class Announce extends Admin{
         }
     }
 
-    public function setStatus($ids,$status=1)
-    {
-        $builder=new AdminListBuilder();
-        $builder->doSetStatus('Announce',$ids,$status);
-    }
+
 
     public function edit()
     {
