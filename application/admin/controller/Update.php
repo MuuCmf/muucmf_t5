@@ -274,7 +274,7 @@ class Update extends Admin
                 $msg = '数据表'.$name.'写入数据';
             }
             
-            if(Db::query(trim($value));){
+            if(Db::query(trim($value))){
                 $this->showMsg($msg .'...成功');
             }else{
                 $this->showMsg($msg .'...失败','error');
