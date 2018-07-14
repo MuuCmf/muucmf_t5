@@ -266,7 +266,7 @@ class Action extends Model
 	        //设置积分 //执行数据库操作
 	        $res = $Model->where(['uid' => is_login(), 'status' => 1])->setField($field, $newScore);
 
-	        $scoreModel= model('Ucenter/Score');
+	        $scoreModel= model('ucenter/Score');
 
 	        $scoreModel->cleanUserCache(is_login(),$rule['field']);
 

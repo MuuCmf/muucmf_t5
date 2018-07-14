@@ -39,7 +39,7 @@ class Follow extends Model
          */
         $user = query_user(array('id', 'nickname', 'space_url'));
         $this->cache($follow['who_follow'], $follow['follow_who'], null);
-        model('Message')->sendMessage($uid, lang('_FANS_NUMBER_INCREASED_'), $user['nickname'] . lang('_CONCERN_YOU_WITH_PERIOD_'), 'Ucenter/Index/index', array('uid' => is_login()),is_login(),'Ucenter');
+        model('Message')->sendMessage($uid, lang('_FANS_NUMBER_INCREASED_'), $user['nickname'] . lang('_CONCERN_YOU_WITH_PERIOD_'), 'ucenter/Index/index', array('uid' => is_login()),is_login(),'Ucenter');
         return $this->add($follow);
     }
 
@@ -183,7 +183,7 @@ class Follow extends Model
             }
         }
         //发送消息
-        model('Message')->sendMessage($follow_who, lang('_FANS_NUMBER_INCREASED_'), $content, 'Ucenter/Index/index', array('uid' => $who_follow), $who_follow);
+        model('Message')->sendMessage($follow_who, lang('_FANS_NUMBER_INCREASED_'), $content, 'ucenter/Index/index', array('uid' => $who_follow), $who_follow);
 
         return $this->save($follow);
     }

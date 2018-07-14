@@ -35,7 +35,7 @@ class Common extends Controller
         //获取用户封面path
         $map = getUserConfigMap('user_cover', '', $uid);
         $map['role_id'] = 0;
-        $model = model('Ucenter/UserConfig');
+        $model = model('ucenter/UserConfig');
         $cover = $model->findData($map);
         if ($cover) {
             $userProfile['cover_path'] = getThumbImageById($cover['value'], 344, 100);
@@ -44,7 +44,7 @@ class Common extends Controller
         }
         //个人标签
         $userProfile['tags'] = '';
-        $userTagLinkModel = model('Ucenter/UserTagLink');
+        $userTagLinkModel = model('ucenter/UserTagLink');
         $myTags = $userTagLinkModel->getUserTag($uid);
         if (count($myTags)) {
             $userProfile['tags'] = lang('_PERSONAL_TAB_').L('_COLON_').'<span>';

@@ -559,7 +559,7 @@ class Role extends Admin
             $score = Db::name('RoleConfig')->where($map)->find();
             $score['value'] = json_decode($score['value'],true);
             //获取member表中积分字段$score_keys
-            $score_keys = model('Ucenter/Score')->getTypeList(['status' => ['GT', 0]]);
+            $score_keys = model('ucenter/Score')->getTypeList(['status' => ['GT', 0]]);
 
             $post_key = '';
             foreach ($score_keys as &$val) {
@@ -735,7 +735,7 @@ class Role extends Admin
             $mRole_list = $this->roleModel->field('id,title')->select();
             $fields = Db::name('RoleConfig')->where($map)->value('value');
 
-            $tag_list=model('Ucenter/UserTag')->getTreeList();
+            $tag_list=model('ucenter/UserTag')->getTreeList();
 
             $this->assign('tag_list',$tag_list);
             $this->assign('role_list', $mRole_list);

@@ -110,7 +110,7 @@ class Member extends Controller
                     $step_url = Url('index/Index/index');
                 }else{
                     //构建注册步骤URL
-                    $step_url = Url('Ucenter/member/step', ['step' => get_next_step('start')]);
+                    $step_url = Url('ucenter/member/step', ['step' => get_next_step('start')]);
                 }
                 $this->success('注册成功', $step_url);
             } else { //注册失败，显示错误信息
@@ -192,7 +192,7 @@ class Member extends Controller
             if ($invite) {
                 if ($invite['end_time'] > time()) {
                     $result['code'] = 1;
-                    $result['url'] = Url('Ucenter/Member/register', ['code' => $aCode, 'type' => $aType]);
+                    $result['url'] = Url('ucenter/Member/register', ['code' => $aCode, 'type' => $aType]);
                 } else {
                     $result['msg'] = lang('_INFO_INV_CODE_EXPIRED_');
                 }
@@ -236,7 +236,7 @@ class Member extends Controller
                                 clean_query_user_cache($uid,array('avatar64','avatar128','avatar32','avatar256','avatar512','rank_link'));
                                 $memberModel->login($uid, false, $aRoleId); //登陆
                                 $result['status'] = 1;
-                                $result['url'] = Url('Ucenter/Member/register', array('code' => $aCode));
+                                $result['url'] = Url('ucenter/Member/register', array('code' => $aCode));
                             }
                         } else {
                             $result['info'] = lang('_INFO_INV_HIGH_LEVEL_NEEDED_').lang('_EXCLAMATION_');
@@ -281,7 +281,7 @@ class Member extends Controller
     public function quickLogin()
     {
         if (request()->isPost()) {
-            $result = controller('Ucenter/Login', 'Widget')->doLogin();
+            $result = controller('ucenter/Login', 'Widget')->doLogin();
             $this->ajaxReturn($result);
         } else { 
             //显示登录弹出框
@@ -530,7 +530,7 @@ class Member extends Controller
             $this->error(lang('_EMPTY_CANNOT_').lang('_EXCLAMATION_'));
         }
         check_username($aAccount, $email, $mobile, $aUnType);
-        $mUcenter = new UCenterMember;
+        $mUcenter = new UcenterMember;
         switch ($aType) {
             case 'username':
                 empty($aAccount) && $this->error(lang('_ERROR_USERNAME_FORMAT_').lang('_EXCLAMATION_'));
@@ -556,7 +556,7 @@ class Member extends Controller
                     $this->error(lang('_ERROR_EMAIL_EXIST_'));
                 }
 
-                $id = $mUcenter->where(array('email' => $email))->getField('id');
+                $id = $mUcenter->where(array('email' => $email))->value('id');
                 if ($id) {
 
                     $this->error(lang('_ERROR_EMAIL_EXIST_'));
@@ -564,7 +564,7 @@ class Member extends Controller
                 break;
             case 'mobile':
                 empty($mobile) && $this->error(lang('_ERROR_PHONE_FORMAT_'));
-                $id = $mUcenter->where(array('mobile' => $mobile))->getField('id');
+                $id = $mUcenter->where(array('mobile' => $mobile))->value('id');
                 if ($id) {
                     $this->error(lang('_ERROR_PHONE_EXIST_'));
                 }
@@ -575,7 +575,6 @@ class Member extends Controller
 
     /**
      * checkNickname  ajax验证昵称是否符合要求
-     * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
      */
     public function checkNickname()
     {
@@ -662,7 +661,7 @@ class Member extends Controller
     {
         $result = controller('ucenter/RegStep', 'widget')->edit_expandinfo();
         if ($result['status']) {
-            $this->success(lang('_SUCCESS_SAVE_'), session('temp_login_uid') ? Url('Ucenter/member/step', array('step' => get_next_step('expand_info'))) : 'refresh');
+            $this->success(lang('_SUCCESS_SAVE_'), session('temp_login_uid') ? Url('ucenter/member/step', array('step' => get_next_step('expand_info'))) : 'refresh');
         } else {
             !isset($result['info']) && $result['info'] = lang('_ERROR_INFO_SAVE_NONE_');
             $this->error($result['info']);

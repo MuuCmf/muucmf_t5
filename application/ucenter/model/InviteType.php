@@ -149,17 +149,15 @@ class InviteType extends Model
         $map['auth_groups']=array('like',$group_ids);
         $map['status']=1;
         $list=$this->where($map)->select();
-        $scoreTypeModel=D('UcenterScoreType');
-        $roleModel=D('Role');
-        $inviteUserInfoModel=D('Ucenter/InviteUserInfo');
-        $showRole=$roleModel->where(array('status'=>1))->count();
+        
+        $showRole=Db::name('Role')->where(['status'=>1])->count();
         foreach($list as &$val){
             if($showRole){//网站超过1个角色
                 if ($val['roles'] != '') {
                     $val['roles']=str_replace('[','',$val['roles']);
                     $val['roles']=str_replace(']','',$val['roles']);
                     $val['roles'] = $val['roles_show'] = explode(',', $val['roles']);
-                    $role_list = $roleModel->where(array('id' => array('in', $val['roles_show'])))->field('id,title')->select();
+                    $role_list = Db::name('Role')->where(array('id' => array('in', $val['roles_show'])))->field('id,title')->select();
                     $role_list = array_combine(array_column($role_list, 'id'), $role_list);
                     foreach ($val['roles_show'] as &$vl) {
                         $vl = $role_list[$vl]['title'];
@@ -168,12 +166,12 @@ class InviteType extends Model
                     $val['roles_show'] = implode(',', $val['roles_show']);
                 }
             }
-            $scoreTypes = $scoreTypeModel->where(array('id' => array('in', array($val['pay_score_type'], $val['income_score_type']))))->field('id,title,unit')->select();
+            $scoreTypes = Db::name('UcenterScoreType')->where(['id' => ['in', [$val['pay_score_type'], $val['income_score_type']]]])->field('id,title,unit')->select();
             $scoreTypes = array_combine(array_column($scoreTypes, 'id'), $scoreTypes);
             $val['pay'] = $scoreTypes[$val['pay_score_type']]['title'] . ' ' . $val['pay_score'] . ' ' . $scoreTypes[$val['pay_score_type']]['unit'];
             $val['income'] = $scoreTypes[$val['income_score_type']]['title'] . ' ' . $val['income_score'] . ' ' . $scoreTypes[$val['income_score_type']]['unit'];
-            $val['cycle'] ='每 '. unitTime_to_showUnitTime($val['cycle_time']).L('_UP_TO_BUY_').$val['cycle_num'].L('_PLACES_');
-            $userInfo=$inviteUserInfoModel->getInfo(array('uid'=>is_login(),'invite_type'=>$val['id']));
+            $val['cycle'] ='每 '. unitTime_to_showUnitTime($val['cycle_time']).lang('_UP_TO_BUY_').$val['cycle_num'].lang('_PLACES_');
+            $userInfo=model('ucenter/InviteUserInfo')->getInfo(array('uid'=>is_login(),'invite_type'=>$val['id']));
             if($userInfo){
                 $val['can_num']=$userInfo['num'];
                 $val['already_num']=$userInfo['already_num'];

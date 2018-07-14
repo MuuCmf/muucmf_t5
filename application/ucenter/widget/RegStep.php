@@ -90,7 +90,7 @@ class RegStep extends Controller
     {
         $profile_group_list = $this->_profile_group_list($uid);
         if(!count($profile_group_list)){
-            redirect(Url('Ucenter/member/step', ['step' => get_next_step('expand_info')]));
+            redirect(Url('ucenter/member/step', ['step' => get_next_step('expand_info')]));
         }
         foreach ($profile_group_list as &$v) {
             $v['fields']=$this->_info_list($v['id']);;

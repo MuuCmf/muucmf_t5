@@ -58,14 +58,14 @@
                     {else/}
                         <li class="">
                             {if condition="$open_quick_login"}
-                                <a data-login="quick_do_login" data-remote="{:Url('Ucenter/Member/quickLogin')}" data-toggle="modal">{:lang('_LOGIN_')}</a>
+                                <a data-login="quick_do_login" data-remote="{:Url('ucenter/Member/quickLogin')}" data-toggle="modal">{:lang('_LOGIN_')}</a>
                             {else/}
                                 <a data-login="do_login" href="{$login_url}">{:lang('_LOGIN_')}</a>
                             {/if}
                         </li>
                         {if condition="$only_open_register eq 0"}
                         <li class="">
-                            <a data-role="do_register" href="{:Url('Ucenter/Member/register')}">{:lang('_REGISTER_')}</a>
+                            <a data-role="do_register" href="{:Url('ucenter/Member/register')}">{:lang('_REGISTER_')}</a>
                         </li>
                         {/if}
                     {/if}

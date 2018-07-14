@@ -1,5 +1,5 @@
 <?php
-namespace app\Ucenter\controller;
+namespace app\ucenter\controller;
 
 use think\Controller;
 use think\Db;
@@ -113,7 +113,7 @@ class Message extends Base
         }
         $user = query_user(['id', 'nickname', 'space_url']);
         //发送消息
-        $message = model('common/Message')->sendMessage($to_uid, '你有一封私信', $user['nickname'].':' . $content, 'Ucenter/Index/index', array('uid' => is_login()));
+        $message = model('common/Message')->sendMessage($to_uid, '你有一封私信', $user['nickname'].':' . $content, 'ucenter/Index/index', array('uid' => is_login()));
         if ($message) {
             return json(['code' => 1, 'msg' => "发送" .lang('_SUCCESS_')]);
         } else {

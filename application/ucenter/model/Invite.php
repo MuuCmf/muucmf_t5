@@ -16,7 +16,7 @@ class Invite extends Model
     {
         $map['status'] = 1;
         $map['id'] = $data['invite_type'];
-        $invite_type = model('Ucenter/InviteType')->getSimpleList($map, 'length,time');
+        $invite_type = model('ucenter/InviteType')->getSimpleList($map, 'length,time');
         $data['end_time'] = unitTime_to_time($invite_type[0]['time'], '+');
         $data['uid'] = -is_login(); //管理员后台生成，以负数uid标记
 
@@ -45,7 +45,7 @@ class Invite extends Model
     {
         $map['status'] = 1;
         $map['id'] = $data['invite_type'];
-        $invite_type = model('Ucenter/InviteType')->getSimpleList($map, 'length,time');
+        $invite_type = model('ucenter/InviteType')->getSimpleList($map, 'length,time');
         $data['end_time'] = unitTime_to_time($invite_type[0]['time'], '+');
         $data['uid'] = is_login(); //用户前台生成，以正数uid标记
 
@@ -56,7 +56,7 @@ class Invite extends Model
         $res = $this->addAll($dataList);
         if ($res) {
             $result['status'] = 1;
-            $result['url'] = Url('Ucenter/Invite/invite');
+            $result['url'] = Url('ucenter/Invite/invite');
         } else {
             $result['status'] = 0;
             $result['info'] = lang('_FAILED_TO_GENERATE_AN_INVITATION_CODE_WITH_EXCLAMATION_') . $this->getError();
@@ -75,7 +75,7 @@ class Invite extends Model
         $dataList = $this->where($map)->field('code')->select();
 
         foreach ($dataList as &$val) {
-            $val['code_url'] = Url('Ucenter/Member/register', ['code' => $val['code']], true, true);
+            $val['code_url'] = Url('ucenter/Member/register', ['code' => $val['code']], true, true);
         }
         unset($val);
         return $dataList;
@@ -162,11 +162,11 @@ class Invite extends Model
     {
         $invite_type_id = array_column($dataList, 'invite_type');
         $map['id'] = array('in', $invite_type_id);
-        $invite_types = model('Ucenter/InviteType')->getSimpleList($map);
+        $invite_types = model('ucenter/InviteType')->getSimpleList($map);
         $invite_types = array_combine(array_column($invite_types, 'id'), $invite_types);
         foreach ($dataList as &$val) {
             $val['invite'] = $invite_types[$val['invite_type']]['title'];
-            $val['code_url'] = Url('Ucenter/Member/register', array('code' => $val['code']), true, true);
+            $val['code_url'] = Url('ucenter/Member/register', ['code' => $val['code']], true, true);
             if ($val['uid'] > 0) {
                 $val['buyer'] = query_user('nickname', $val['uid']);
             } else {

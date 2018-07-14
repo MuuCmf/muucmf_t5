@@ -16,7 +16,7 @@ class Adv extends Model
         if ($list === false) {
             $now_theme = modC('NOW_THEME', 'default', 'Theme');
 
-            $advPos = model('Common/AdvPos')->getInfo($name, $path); //找到当前调用的广告位
+            $advPos = model('common/AdvPos')->getInfo($name, $path); //找到当前调用的广告位
             if ($advPos['theme'] != 'all' && !in_array($now_theme, explode(',', $advPos['theme']))) {
                 return null;
             }

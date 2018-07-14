@@ -86,7 +86,7 @@ class InviteUserInfo extends Model
      */
     private function _initSelectData($list=[])
     {
-        $inviteTypeModel=model('Ucenter/InviteType');
+        $inviteTypeModel=model('ucenter/InviteType');
 
         foreach($list as &$val){
             $inviteType=$inviteTypeModel->getSimpleData(array('id'=>$val['invite_type']));

@@ -382,8 +382,8 @@ class Index extends Base
             $map['status'] = 0;
             $result = Db::name('rank_user')->where($map)->delete();
             if ($result) {
-                model('Message')->sendMessageWithoutCheckSelf(is_login(),lang('_MESSAGE_RANK_CANCEL_1_'),  lang('_MESSAGE_RANK_CANCEL_2_'), 'Ucenter/Message/message', array('tab' => 'system'));
-                $this->success(lang('_SUCCESS_CANCEL_'), U('Ucenter/Index/rankVerifyWait'));
+                model('Message')->sendMessageWithoutCheckSelf(is_login(),lang('_MESSAGE_RANK_CANCEL_1_'),  lang('_MESSAGE_RANK_CANCEL_2_'), 'ucenter/Message/message', array('tab' => 'system'));
+                $this->success(lang('_SUCCESS_CANCEL_'), Url('ucenter/Index/rankVerifyWait'));
             } else {
                 $this->error(lang('_FAIL_CANCEL_'));
             }
@@ -405,7 +405,7 @@ class Index extends Base
             }
             $this->assign('old_rank_user', $old_rank_user);
             $map_already['id'] = array('neq', $rank_user_id);
-            model('Message')->sendMessageWithoutCheckSelf(is_login(), lang(''),lang(''),  'Ucenter/Message/message', array('tab' => 'system'));
+            model('Message')->sendMessageWithoutCheckSelf(is_login(), lang(''),lang(''),  'ucenter/Message/message', array('tab' => 'system'));
         }
         $alreadyRank = Db::name('rank_user')->where($map_already)->field('rank_id')->select();
         $alreadyRank = array_column($alreadyRank, 'rank_id');
@@ -441,17 +441,17 @@ class Index extends Base
         $data['create_time'] = time();
         $data['status'] = 0;
         if ($rank_user_id) {
-            $model = D('rank_user')->where(array('id' => $rank_user_id));
+            $model = Db::name('rank_user')->where(array('id' => $rank_user_id));
             if (!$model->select()) {
                 $this->error(lang('_ERROR_RANK_RE_SELECT_'));
             }
-            $result = D('rank_user')->where(array('id' => $rank_user_id))->save($data);
+            $result = Db::name('rank_user')->where(array('id' => $rank_user_id))->save($data);
         } else {
-            $result = D('rank_user')->add($data);
+            $result = Db::name('rank_user')->insert($data);
         }
         if ($result) {
-            D('Message')->sendMessageWithoutCheckSelf(is_login(),lang('_MESSAGE_RANK_APPLY_1_'),lang('_MESSAGE_RANK_APPLY_2_'),  'Ucenter/Message/message', array('tab' => 'system'));
-            $this->success(lang('_SUCCESS_RANK_APPLY_'), U('Ucenter/Index/rankVerify'));
+            model('Message')->sendMessageWithoutCheckSelf(is_login(),lang('_MESSAGE_RANK_APPLY_1_'),lang('_MESSAGE_RANK_APPLY_2_'),  'ucenter/Message/message', array('tab' => 'system'));
+            $this->success(lang('_SUCCESS_RANK_APPLY_'), Url('ucenter/Index/rankVerify'));
         } else {
             $this->error(lang('_FAIL_RANK_APPLY_'));
         }
