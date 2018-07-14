@@ -13,7 +13,7 @@ return [
     'Disagree'=>'不同意',
 
 
-    'It\'s in installation. Just a moment, please...'=>'正在安装，请稍候...',
+    "It is in installation. Just a moment, please..."=>'正在安装，请稍候...',
     'Click the button to enter the page'=>'点击下方按钮即可进入相应页面',
     'Login Admin'=>'登录后台',
     'Browse the home page'=>'浏览首页',
