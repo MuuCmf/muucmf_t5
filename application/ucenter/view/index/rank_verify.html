@@ -15,7 +15,7 @@
                     <div class="col-xs-7">
                         <div class="row">
                             <div class="col-xs-12 uc_fans" style="margin-left: 10px;">
-                                <ul class="nav nav-pills ucenter-tab">
+                                <ul class="nav nav-primary ucenter-tab">
                                     <li {eq name="tab" value="rank"} class="active"{/eq}><a href="{:Url('ucenter/Index/rank',array('uid'=>$uid))}">
                                     {:lang('_TANK_OWNED_')}</a></li>
                                     <li {eq name="tab" value="rankVerifyWait"} class="active"{/eq}><a href="{:Url('ucenter/Index/rankVerifyWait')}">
@@ -29,7 +29,7 @@
                             </div>
                         </div>
                         {if condition="count($rankList) eq 0"}
-                            <p class="text-muted" style="text-align: center; font-size: 2em;">
+                            <p class="text-muted" style="text-align: center;">
                                 <br><br>
                                 {:lang('_RANK_NONE_')}{:lang('_WAVE_')}
                                 <br><br>
@@ -43,23 +43,25 @@
                                         <label class="col-xs-2 control-label">{:lang('_RANK_APPLY_')}</label>
 
                                         <div class="col-xs-10">
-                                            <volist name="rankList" id="rank">
-                                                <div class="col-xs-4 text-center">
-                                                    <label class="radio-inline">
-                                                        <attr>
-                                                        <p>
-                                                            <empty name="rank.label_content">
-                                                                <img style="width: 18px;" class="rank-icon" src="{$rank.logo_url}" title="{$rank.title}" alt="{$rank.title}"/>
-                                                                <else/>
-                                                                <span class="label label-badge rank-label" title="{$rank.title}" style="background: {$rank.label_bg} !important;color:{$rank.label_color} !important;">{$rank.label_content}</span>
-                                                            </empty>
-                                                        </p>
-                                                        <p> <input type="radio" name="rank_id" value="{$rank.id}" <if condition="$rank['id'] eq $old_rank_user['rank_id']">checked</if>>{$rank.title}</p>
+                                            {volist name="rankList" id="rank"}
+                                            <div class="col-xs-4 text-center">
+                                                <label class="radio-inline">
+                                                    <attr>
+                                                    <p>
+                                                    {empty name="rank.label_content"}
+                                                        <img style="width: 18px;" class="rank-icon" src="{$rank.logo_url}" title="{$rank.title}" alt="{$rank.title}"/>
+                                                        {else/}
+                                                        <span class="label label-badge rank-label" title="{$rank.title}" style="background: {$rank.label_bg} !important;color:{$rank.label_color} !important;">{$rank.label_content}</span>
+                                                    {/empty}
+                                                    </p>
+                                                    <p> 
+                                                    <input type="radio" name="rank_id" value="{$rank.id}" {if condition="$rank['id'] eq $old_rank_user['rank_id']"}checked{/if}>{$rank.title}
+                                                    </p>
 
-                                                        </attr>
-                                                    </label>
-                                                </div>
-                                            </volist>
+                                                    </attr>
+                                                </label>
+                                            </div>
+                                            {/volist}
                                         </div>
                                     </div>
                                     <div class="form-group">

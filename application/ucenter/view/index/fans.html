@@ -37,11 +37,13 @@
 
                         </div>
                     </div>
-                    <if condition="count($fans) eq 0"><p class="text-muted" style="text-align: center; font-size: 3em;">
+                    {if condition="count($fans) eq 0"}
+                        <p class="text-muted text-center">
                         <br><br>
                         {:lang('_FANS_NONE_')}{:lang('_WAVE_')}
-                        <br><br><br>
-                    </p></if>
+                        <br><br>
+                    </p>
+                    {/if}
                     <div style="margin: 20px 0 20px 20px;">
                         {volist name="fans" id="fan"}
                             <div class="row"
@@ -51,8 +53,8 @@
                                          src="{$fan.user.avatar128}"/>
                                 </div>
                                 <div class="col-xs-10">
-                                    <div><a href="{$fan.user.space_url}"
-                                            ucard="{$fan.who_follow}">{$fan.user.nickname}</a><br/>
+                                    <div><a href="{$fan.user.space_url}" ucard="{$fan.who_follow}">{$fan.user.nickname}</a>
+                                        <br/>
                                         {:lang('_GRADE_')}{:lang('_COLON_')}{$fan.user.title}
                                     </div>
                                     <div class="row">

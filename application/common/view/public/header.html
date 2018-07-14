@@ -37,16 +37,17 @@
                             </a>
                             <ul class="dropdown-menu pull-right" role="menu">
                                 {volist name="user_nav" id="vo"}
-                                    <li><a target="{eq name='vo.target' value='1'}_blank{else/}_self{/eq}"
-                                        href="{:get_nav_url($vo['url'])}">
-                                        <i class="icon-{$vo.icon}"></i>{$vo.title} 
+                                <li>
+                                    <a target="{eq name='vo.target' value='1'}_blank{else/}_self{/eq}" href="{:get_nav_url($vo['url'])}">
+                                        <i class="icon-{$vo.icon}"></i>
+                                        <span>{$vo.title}</span> 
                                         {notempty name="vo.band_text"}
                                         <span class="label label-badge rank-label" title="{$vo.band_text}">
                                             {$vo.band_text}
                                         </span>
                                         {/notempty}
                                     </a>
-                                    </li>
+                                </li>
                                 {/volist}
 
                                 {:hook('personalMenus')}
