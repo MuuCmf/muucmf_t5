@@ -141,14 +141,16 @@ class Config extends Admin
     // 获取某个标签的配置参数
     public function group()
     {
-        $id = input('get.id', 1);
+        $id = input('id', 1,'intval');
         $type = config('CONFIG_GROUP_LIST');
-        $list = Db::name("Config")->where(['status' => 1, 'group' => $id])->field('id,name,title,extra,value,remark,type')->order('sort')->select();
+
+        $list = Db::name("Config")->where(['status' => 1, 'group' => $id])->field('id,name,title,extra,value,group,remark,type')->order('sort asc')->select();
 
         if ($list) {
             $this->assign('list', $list);
         }
         $this->assign('id', $id);
+        $this->assign('type', $type);
         $this->setTitle($type[$id] . lang('_SETTINGS_'));
         return $this->fetch();
     }

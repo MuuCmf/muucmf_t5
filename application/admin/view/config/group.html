@@ -9,7 +9,7 @@
 
     <div class="tab-wrap">
         <ul class="nav nav-primary">
-            {volist name="Think.config.CONFIG_GROUP_LIST" id="group"}
+            {volist name="type" id="group"}
 
                 <li {eq name="id" value="$key"}class="active"{/eq}>
                     <a href="{:Url('?id='.$key)}">{$group}{:lang("_TO_CONFIGURE_")}</a>
