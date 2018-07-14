@@ -21,7 +21,7 @@ class Admin extends MuuAdmin
         $builder->keyRadio('CONFIG_INDEX_TYPE','系统首页类型','',['static_index'=>'静态首页','index'=>'聚合首页','login'=>'登录页']);
         $builder->keyText('CONFIG_STATIC_TPL','静态模板名称','系统默认static_index');
 
-        $modules = model('Common/Module')->getAll();
+        $modules = model('common/Module')->getAll();
         foreach ($modules as $m) {
             if ($m['is_setup'] == 1 && $m['entry'] != '') {
                 //约定首页聚合控制器名称 IndexBlock.php

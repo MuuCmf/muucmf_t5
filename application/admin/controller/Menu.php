@@ -64,7 +64,7 @@ class Menu extends Admin {
         } else {
             $this->assign('info',array('pid'=>input('pid')));
             $menus = Db::name('Menu')->select();
-            $menus = model('Common/Tree')->toFormatTree($menus);
+            $menus = model('common/Tree')->toFormatTree($menus);
             $menus = array_merge(array(0=>array('id'=>0,'title_show'=>lang('_MENU_TOP_'))), $menus);
             $this->assign('Modules',model('Module')->getAll());
             $this->assign('Menus', $menus);
@@ -99,7 +99,7 @@ class Menu extends Admin {
             $info = Db::name('Menu')->where(['id'=>$id])->find();
             $menus = Db::name('Menu')->select();
 
-            $menus = model('Common/Tree')->toFormatTree($menus,$title = 'title',$pk='id',$pid = 'pid',$root = '0');
+            $menus = model('common/Tree')->toFormatTree($menus,$title = 'title',$pk='id',$pid = 'pid',$root = '0');
 
             $menus = array_merge(array(0=>array('id'=>'','title_show'=>lang('_MENU_TOP_'))), $menus);
 

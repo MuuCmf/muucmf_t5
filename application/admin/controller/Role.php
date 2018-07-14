@@ -366,7 +366,7 @@ class Role extends Admin
                 $map_role['id'] = $val;
                 $user_role=$this->userRoleModel->where($map_role)->find();
                 if($user_role['init']==0){
-                    model('Common/Member')->initUserRoleInfo($role_id,$user_role['uid']);
+                    model('common/Member')->initUserRoleInfo($role_id,$user_role['uid']);
                 }
             }
             $builder = new AdminListBuilder;
@@ -902,7 +902,7 @@ class Role extends Admin
      */
     public function initUnhaveUser()
     {
-        $memberModel=model('Common/Member');
+        $memberModel=model('common/Member');
 
         $uids=$memberModel->field('uid')->select();
         $uids=array_column($uids,'uid');

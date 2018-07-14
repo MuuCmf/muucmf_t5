@@ -32,7 +32,7 @@
         $(function () {
             $('[data-role=cleanRemember]').click(function () {
                 if (confirm("{:lang('_LOGIN_RECORD_CLEAR__CONFIRM_')}{:lang('_EXCLAMATION_')}")) {
-                    $.get(Url('Ucenter/Config/cleanRemember'), '', function (res) {
+                    $.get(Url('ucenter/Config/cleanRemember'), '', function (res) {
                         handleAjax(res);
                     })
                 }

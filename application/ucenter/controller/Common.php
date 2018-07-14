@@ -60,7 +60,7 @@ class Common extends Controller
     {
         $aUID = input('get.uid', 0, 'intval');
         $user = $this->getProfile($aUID);
-        $follow=model('Common/Follow')->isFollow(is_login(),$aUID);
+        $follow=model('common/Follow')->isFollow(is_login(),$aUID);
         $this->assign('follow',$follow);
 
         $this->assign('uid', $aUID);
@@ -119,7 +119,7 @@ class Common extends Controller
 
             $data = getUserConfigMap('user_cover');
             $data['role_id'] = 0;
-            $model = model('Ucenter/UserConfig');
+            $model = model('ucenter/UserConfig');
             $already_data = $model->findData($data);
             if (!$already_data) {
                 $data['value'] = $aCoverId;
@@ -144,7 +144,7 @@ class Common extends Controller
             //获取用户封面id
             $map = getUserConfigMap('user_cover');
             $map['role_id'] = 0;
-            $model = model('Ucenter/UserConfig');
+            $model = model('ucenter/UserConfig');
             $cover = $model->findData($map);
             
             $my_cover['cover_id'] = $cover['value'];

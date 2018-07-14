@@ -105,13 +105,13 @@
         //保存
         $('#submit_cover').click(function () {
             var cover_id = $('#user_cover').val();
-            $.post(Url('Ucenter/Public/changeCover'), {cover_id: cover_id}, function (msg) {
+            $.post(Url('ucenter/Public/changeCover'), {cover_id: cover_id}, function (msg) {
                 if (msg.status == 1) {
                     $('top_bg_box').css('backgroundImage','url("'+msg.path_1140+'")');
                     $('.close').click();
                     toast.success("{:lang('_SUCCESS_COVER_CHANGE_')}{:lang('_EXCLAMATION_')}",);
                     setTimeout(function(){
-                        window.location.href=Url("Ucenter/index/index");
+                        window.location.href=Url("ucenter/index/index");
                     },1500);
                 } else {
                     handleAjax(msg)

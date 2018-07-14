@@ -92,7 +92,7 @@ class Module extends Admin
             //$aToken=trim($aToken);
 
             //if($aToken!=''){
-            //    if(model('Common/Module')->setToken($module['name'],$aToken)){
+            //    if(model('common/Module')->setToken($module['name'],$aToken)){
             //        $tokenStr=lang('_TOKEN_WRITE_SUCCESS_');
             //    }else{
             //        $tokenStr=lang('_TOKEN_WRITE_FAILURE_');
@@ -111,7 +111,7 @@ class Module extends Admin
         } else {
             $aName = input('name', '', 'text');
             $module = $this->moduleModel->getModule($aName);
-            //$module['token']=model('Common/Module')->getToken($module['name']);
+            //$module['token']=model('common/Module')->getToken($module['name']);
             $builder = new AdminConfigBuilder();
             $builder->title(lang('_MODULE_EDIT_') . $module['alias']);
             $builder

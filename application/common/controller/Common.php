@@ -14,7 +14,7 @@ class Common extends Controller
 	public function _initialize()
     {
         //记住登陆
- 		model('Common/Member')->rembember_login();
+ 		model('common/Member')->rembember_login();
 
  		//获取站点LOGO
  		$logo = get_cover(modC('LOGO',0,'Config'),'path');

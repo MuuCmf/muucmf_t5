@@ -16,7 +16,7 @@
                         <div class="col-xs-12 uc_fans" style="margin-left: 10px;">
                             <ul class="nav nav-primary ucenter-tab">
                                 <li {eq name="tab" value="following"} class="active"{/eq}>
-                                    <a href="{:Url('Ucenter/Index/following',array('uid'=>$uid))}">
+                                    <a href="{:Url('ucenter/Index/following',array('uid'=>$uid))}">
                                     {if condition="$uid eq is_login()"}
                                         {:lang('_I_')}
                                     {else/}
@@ -24,7 +24,7 @@
                                     {/if}
                                     {:lang('_DE_FOLLOWER_')}</a></li>
                                 <li {eq name="tab" value="fans"} class="active"{/eq}>
-                                    <a href="{:Url('Ucenter/Index/fans',array('uid'=>$uid))}">
+                                    <a href="{:Url('ucenter/Index/fans',array('uid'=>$uid))}">
                                     {if condition="$uid eq is_login()"}
                                         {:lang('_I_')}
                                     {else/}

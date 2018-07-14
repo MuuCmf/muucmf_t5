@@ -51,7 +51,7 @@
                             {if condition="$open_invite_register"}
                                 <div class="alert alert-info" style="padding: 5px;margin-bottom: 10px;letter-spacing: 2px;">    {:Lang('_USER_INVITE_FIRST_')}
                                     <strong>
-                                        <a data-type="ajax" data-url="{:Url('Ucenter/Member/inCode')}" data-title="{:Lang('_INVITE_CODE_INPUT_')}" data-toggle="modal">
+                                        <a data-type="ajax" data-url="{:Url('ucenter/Member/inCode')}" data-title="{:Lang('_INVITE_CODE_INPUT_')}" data-toggle="modal">
                                             {:Lang('_INVITE_CODE_INPUT_')}
                                         </a>
                                     </strong>，{:Lang('_REGISTER_INFORMATION_FILL_OUT_')}~
@@ -217,7 +217,7 @@
                         {/if}
                         <button type="button" data-type="submit" class="btn btn-block btn-warning btn-lg">提 交</button>
                         <div class="existing-account">
-                            已有账户， <a href="{:Url('Ucenter/Member/login')}" title="" style="color: #607D8B;">点此登录</a>
+                            已有账户， <a href="{:Url('ucenter/Member/login')}" title="" style="color: #607D8B;">点此登录</a>
                         </div>
                     </div>
                 </form>
@@ -243,7 +243,7 @@
                     <div class="font">
                         <span>感谢您注册 {:modC('WEB_SITE_NAME','MuuCmf开源管理框架','Config')} ，希望你玩的愉快！</span> 
                     </div>
-                        <a class="btn btn-block btn-warning btn-lg" href="{:Url('Ucenter/Config/index')}" title="">完善个人资料</a> 
+                        <a class="btn btn-block btn-warning btn-lg" href="{:Url('ucenter/Config/index')}" title="">完善个人资料</a> 
                         <a class="btn btn-block btn-warning btn-lg" href="{:Url('index/Index/index')}" title="">前往首页</a></span>
                 </div>
             </div>

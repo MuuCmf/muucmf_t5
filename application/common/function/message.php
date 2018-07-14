@@ -17,7 +17,7 @@
  */
 function send_message($to_uids, $title = '您有新的消息', $content = '', $url = '', $url_args = array(), $from_uid = -1, $type = 'Common_system',$tpl='')
 {
-    model('Common/Message')->sendMessage($to_uids, $title, $content, $url, $url_args, $from_uid,$type,$tpl);
+    model('common/Message')->sendMessage($to_uids, $title, $content, $url, $url_args, $from_uid,$type,$tpl);
     return true;
 }
 
@@ -35,7 +35,7 @@ function send_message($to_uids, $title = '您有新的消息', $content = '', $u
  */
 function send_message_without_check_self($to_uids, $title = '您有新的消息', $content = '', $url = '', $url_args = array(), $from_uid = -1, $type = 'Common_system',$tpl='')
 {
-    model('Common/Message')->sendMessageWithoutCheckSelf($to_uids, $title, $content, $url, $url_args, $from_uid,$type,$tpl);
+    model('common/Message')->sendMessageWithoutCheckSelf($to_uids, $title, $content, $url, $url_args, $from_uid,$type,$tpl);
     return true;
 }
 
@@ -44,7 +44,7 @@ function send_message_without_check_self($to_uids, $title = '您有新的消息'
  */
 function get_all_message_type()
 {
-    $message_session=model('Common/Message')->getAllMessageType();
+    $message_session=model('common/Message')->getAllMessageType();
     return $message_session;
 }
 
@@ -55,7 +55,7 @@ function get_all_message_type()
  */
 function get_my_message_type($uid=0)
 {
-    $message_session=model('Common/Message')->getMyMessageType($uid);
+    $message_session=model('common/Message')->getMyMessageType($uid);
     return $message_session;
 }
 
@@ -65,6 +65,6 @@ function get_my_message_type($uid=0)
  */
 function get_message_tpl()
 {
-    $message_tpl=model('Common/Message')->getAllMessageTpl();
+    $message_tpl=model('common/Message')->getAllMessageTpl();
     return $message_tpl;
 }

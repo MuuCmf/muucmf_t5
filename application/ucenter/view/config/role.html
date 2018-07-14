@@ -65,7 +65,7 @@
                                 {volist name="can_up_roles" id="role"}
                                     <tr style="line-height: 40px;">
                                         <td style="width: 20%">{$role.title}</td>
-                                        <td style="width: 80%"><a data-role="up_role" data-url="{:Url('Ucenter/Member/upRole',array('role_id'=>$role['id']))}">{:lang('_IDENTITY_UPGRADE_')}</a></td>
+                                        <td style="width: 80%"><a data-role="up_role" data-url="{:Url('ucenter/Member/upRole',array('role_id'=>$role['id']))}">{:lang('_IDENTITY_UPGRADE_')}</a></td>
                                     </tr>
                                 {/volist}
                                 {if condition="!count($can_have_roles)&&!count($can_up_roles)"}
@@ -113,7 +113,7 @@
         $(function(){
             $('[data-role="changeLoginRole"]').click(function(){
                 var role_id=$(this).attr('data-id');
-                $.post(Url('Ucenter/Member/changeLoginRole'),{role_id:role_id},function(data){
+                $.post(Url('ucenter/Member/changeLoginRole'),{role_id:role_id},function(data){
                     if(data.status){
                         if(data.url!=undefined){
                             toast.success("{:lang('_REDIRECT_AFTER_IDENTITY_CHANGE_')}{:lang('_WAVE_')}");
@@ -133,7 +133,7 @@
             });
             $('[data-role="hold_role"]').click(function(){
                 var role_id=$(this).attr('data-id');
-                $.post(Url('Ucenter/Member/registerRole'),{role_id:role_id},function(data){
+                $.post(Url('ucenter/Member/registerRole'),{role_id:role_id},function(data){
                     if(data.status){
                         toast.success("{:lang('_REDIRECT_AFTER_IDENTITY_OWN_')}{:lang('_WAVE_')}");
                         setTimeout(function(){

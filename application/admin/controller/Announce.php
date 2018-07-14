@@ -11,8 +11,8 @@ class Announce extends Admin{
 
     public function _initialize()
     {
-        $this->announceModel=model('Common/Announce');
-        $this->announceArriveModel=model('Common/AnnounceArrive');
+        $this->announceModel=model('common/Announce');
+        $this->announceArriveModel=model('common/AnnounceArrive');
         parent::_initialize();
     }
 

@@ -33,7 +33,7 @@ class Adv extends Admin
         $advPosModel = model('AdvPos');
         $advModel = model('Adv');
         $advPoses = $advPosModel->where($map)->select();
-        //$themes = model('Common/Theme')->getThemeList();
+        //$themes = model('common/Theme')->getThemeList();
 
         foreach ($advPoses as &$v) {
             switch ($v['type']) {
@@ -115,7 +115,7 @@ class Adv extends Admin
 
     private function posModule()
     {
-        $module = model('Common/Module')->getAll(1);
+        $module = model('common/Module')->getAll(1);
         $advPosModel = model('AdvPos');
         foreach ($module as $key => &$v) {
             $v['count'] = $advPosModel->where(['status' => 1, 'path' => ['like', ucfirst($v['name']) . '/%']])->count();
@@ -140,7 +140,7 @@ class Adv extends Admin
     {
         $aIds = input('ids', '', 'intval');
         $aStatus = input('get.status', '1', 'intval');
-        $advPosModel = model('Common/AdvPos');
+        $advPosModel = model('common/AdvPos');
         $map['id'] = ['in', implode(',', $aIds)];
         $result = $advPosModel->where($map)->setField('status', $aStatus);
         Db::name('Adv')->where(['pos_id' => ['in', implode(',', $aIds)]])->setField('status', $aStatus);
@@ -156,7 +156,7 @@ class Adv extends Admin
         $aId = input('id', 0, 'intval');
         $aModule = input('get.module','','text');
         $aCopy = input('copy', 0, 'intval');
-        $advPosModel = model('Common/AdvPos');
+        $advPosModel = model('common/AdvPos');
         if (request()->isPost()) {
             //是提交
 

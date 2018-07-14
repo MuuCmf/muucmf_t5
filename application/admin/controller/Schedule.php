@@ -15,25 +15,25 @@ class Schedule extends Admin
      */
     public function scheduleList()
     {
-        $list = model('Common/Schedule')->getScheduleList();
+        $list = model('common/Schedule')->getScheduleList();
 
         foreach ($list as &$v) {
             list($type, $value) = $this->getTypeAndValue($v['type'], $v['type_value']);
             $v['type_text'] = $type;
             $v['type_value_text'] = $value;
-            $v['next_run'] = model('Common/Schedule')->calculateNextTime($v);
-            $v['last_run'] = model('Common/Schedule')->getLastUpdate($v['id']);
+            $v['next_run'] = model('common/Schedule')->calculateNextTime($v);
+            $v['last_run'] = model('common/Schedule')->getLastUpdate($v['id']);
         }
         unset($v);
 
         
         //显示页面
-        $btn_attr = model('Common/Schedule')->checkIsRunning() ? array('style' => 'font-weight:700') : array('style' => 'font-weight:700');
+        $btn_attr = model('common/Schedule')->checkIsRunning() ? array('style' => 'font-weight:700') : array('style' => 'font-weight:700');
         $btn_attr['class'] = 'ajax-post btn-info';
         $btn_attr[' hide-data'] = 'true';
         $btn_attr['href'] = Url('Schedule/run');
         //控制运行按钮文字
-        if(model('Common/Schedule')->checkIsRunning()){
+        if(model('common/Schedule')->checkIsRunning()){
             $btn_info = 'Running（点击停止）';
         }else{
             $btn_info = 'Stop（点击运行）';
@@ -92,7 +92,7 @@ class Schedule extends Admin
     public function showLog()
     {
         $aId = input('get.id', 0, 'intval');
-        $model = model('Common/Schedule');
+        $model = model('common/Schedule');
         $log = $model->getLog($aId);
         if ($log) {
             $log = explode("\n", $log);
@@ -109,7 +109,7 @@ class Schedule extends Admin
     public function clearLog()
     {
         $aId = input('post.id', 0, 'intval');
-        $model = model('Common/Schedule');
+        $model = model('common/Schedule');
         $rs = $model->clearLog($aId);
         $this->success('清空成功', 'refresh');
     }
@@ -228,7 +228,7 @@ class Schedule extends Admin
      */
     public function run()
     {
-        $model = model('Common/Schedule');
+        $model = model('common/Schedule');
 
         if ($model->checkIsRunning()) {
             $model->setStop();
@@ -245,7 +245,7 @@ class Schedule extends Admin
      */
     public function reRun()
     {
-        $model = model('Common/Schedule');
+        $model = model('common/Schedule');
         $model->setStop();
         //}
         $this->_run();

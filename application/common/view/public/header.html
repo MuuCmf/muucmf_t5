@@ -38,20 +38,26 @@
                             <ul class="dropdown-menu pull-right" role="menu">
                                 {volist name="user_nav" id="vo"}
                                     <li><a target="{eq name='vo.target' value='1'}_blank{else/}_self{/eq}"
-                                        href="{:get_nav_url($vo['url'])}"><span
-                                        class="icon-{$vo.icon}"></span>{$vo.title} 
-                                        <span class="label label-badge rank-label" title="{$vo.band_text}">{$vo.band_text}</span></a>
+                                        href="{:get_nav_url($vo['url'])}">
+                                        <i class="icon-{$vo.icon}"></i>{$vo.title} 
+                                        {notempty name="vo.band_text"}
+                                        <span class="label label-badge rank-label" title="{$vo.band_text}">
+                                            {$vo.band_text}
+                                        </span>
+                                        {/notempty}
+                                    </a>
                                     </li>
                                 {/volist}
 
-
                                 {:hook('personalMenus')}
                                 {if condition="check_auth('admin/Index/index')"}
-                                    <li><a href="{:Url('admin/Index/index')}" target="_blank"><span
-                                            class="glyphicon glyphicon-dashboard"></span>&nbsp;&nbsp;{:lang('_MANAGE_BACKGROUND_')}</a>
+                                    <li><a href="{:Url('admin/Index/index')}" target="_blank">
+                                        {:lang('_MANAGE_BACKGROUND_')}</a>
                                     </li>
                                 {/if}
-                                <li><a event-node="logout"><span class="glyphicon glyphicon-off"></span>&nbsp;&nbsp;{:lang('_LOGOUT_')}</a>
+                                <li><a event-node="logout">
+                                        {:lang('_LOGOUT_')}
+                                    </a>
                                 </li>
                             </ul>
                         </li>

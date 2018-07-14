@@ -12,18 +12,18 @@
  */
 function query_user($fields = null, $uid = null)
 {
-    return model('Common/User')->query_user($fields, $uid);
+    return model('common/User')->query_user($fields, $uid);
 }
 
 function read_query_user_cache($uid, $field)
 {
 
-    return model('Common/User')->read_query_user_cache($uid, $field);
+    return model('common/User')->read_query_user_cache($uid, $field);
 }
 
 function write_query_user_cache($uid, $field, $value)
 {
-    return model('Common/User')->write_query_user_cache($uid, $field, $value);
+    return model('common/User')->write_query_user_cache($uid, $field, $value);
 }
 
 /**清理用户数据缓存，即时更新query_user返回结果。

@@ -380,7 +380,7 @@ class Rank extends Admin
 
     public function sendMessage($data, $content, $type = '头衔颁发')
     {
-        model('Message')->sendMessage($data['uid'], $type, $content, 'Ucenter/Message/message',array(),is_login(), 1);
+        model('Message')->sendMessage($data['uid'], $type, $content, 'ucenter/Message/message',array(),is_login(), 1);
     }
 
     /**

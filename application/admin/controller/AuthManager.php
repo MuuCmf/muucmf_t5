@@ -391,7 +391,7 @@ class AuthManager extends Admin
 
             $this->assign('info', $info);
 
-            $modules = model('Common/Module')->getAll();
+            $modules = model('common/Module')->getAll();
             $this->assign('Modules', $modules);
             $this->setTitle(lang('_NEW_FRONT_DESK_RIGHT_NODE_'));
             return $this->fetch();
@@ -467,7 +467,7 @@ class AuthManager extends Admin
         $auth_group = Db::name('AuthGroup')->where(['status' => ['egt', '0'], 'type' => AuthGroup::TYPE_ADMIN])
             ->field('id,id,title,rules')->select();
 
-        $node_list = $this->getNodeListFromModule(model('Common/Module')->getAll());
+        $node_list = $this->getNodeListFromModule(model('common/Module')->getAll());
 
         $map = array('module' => array('neq', 'admin'), 'type' => AuthRule::RULE_MAIN, 'status' => 1);
         $main_rules = Db::name('AuthRule')->where($map)->field('name,id')->select();

@@ -17,23 +17,23 @@
                         <div class="col-xs-12 uc_fans" style="margin-left: 10px;">
                             <ul class="nav nav-primary ucenter-tab">
                                 <li {eq name="tab" value="rank"} class="active"{/eq}>
-                                    <a href="{:Url('Ucenter/Index/rank',array('uid'=>$uid))}">
+                                    <a href="{:Url('ucenter/Index/rank',array('uid'=>$uid))}">
                                         {:lang('_TANK_OWNED_')}
                                     </a>
                                 </li>
                                 {if condition="$uid eq is_login()"}
                                     <li {eq name="tab" value="rankVerifyWait"} class="active"{/eq}>
-                                        <a href="{:Url('Ucenter/Index/rankVerifyWait')}">
+                                        <a href="{:Url('ucenter/Index/rankVerifyWait')}">
                                             {:lang('_RANK_WAIT_AUDIT_')}
                                         </a>
                                     </li>
                                     <li {eq name="tab" value="rankVerifyFailure"} class="active"{/eq}>
-                                        <a href="{:Url('Ucenter/Index/rankVerifyFailure')}">
+                                        <a href="{:Url('ucenter/Index/rankVerifyFailure')}">
                                             {:lang('_RANK_APPLY_FAILED_')}
                                         </a>
                                     </li>
                                     <li {eq name="tab" value="rankVerify"} class="active"{/eq}>
-                                        <a href="{:Url('Ucenter/Index/rankVerify')}">
+                                        <a href="{:Url('ucenter/Index/rankVerify')}">
                                             {:lang('_RANK_APPLY_')}
                                         </a>
                                     </li>
@@ -72,9 +72,9 @@
                                 </div>
                                 <div class="col-xs-2">
                                     {eq name="tab" value="rankVerifyWait"} 
-                                        <a class="btn btn-primary" href="{:Url('Ucenter/Index/rankVerifyCancel',array('rank_id'=>$rank['rank_id']))}">{:lang('_APPLY_CANCEL_')}</a>{/eq}
+                                        <a class="btn btn-primary" href="{:Url('ucenter/Index/rankVerifyCancel',array('rank_id'=>$rank['rank_id']))}">{:lang('_APPLY_CANCEL_')}</a>{/eq}
                                     {eq name="tab" value="rankVerifyFailure"} 
-                                    <a class="btn btn-primary" href="{:Url('Ucenter/Index/rankVerify',array('rank_user_id'=>$rank['id']))}">
+                                    <a class="btn btn-primary" href="{:Url('ucenter/Index/rankVerify',array('rank_user_id'=>$rank['id']))}">
                                         {:lang('_APPLY_RE_')}
                                     </a>
                                     {/eq}

@@ -111,7 +111,7 @@ class Announce extends Controller
             $already_announce=cookie('announce_already_list');
 
             if($already_announce){
-                $announceArriveModel=model('Common/AnnounceArrive');
+                $announceArriveModel=model('common/AnnounceArrive');
                 $already_announce=explode('|',$already_announce);
                 $data['uid']=$map['uid']=is_login();
                 foreach($already_announce as $val){

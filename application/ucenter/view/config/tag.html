@@ -69,7 +69,7 @@
             });
             bind_remove();
             $('[data-role="set-tag"]').click(function(){
-                $.post(Url('Ucenter/Config/tag'),{tag_ids:tag_ids},function(msg){
+                $.post(Url('ucenter/Config/tag'),{tag_ids:tag_ids},function(msg){
                     if(msg.status){
                         toast.success("{:lang('_SUCCESS_SETTINGS_')}{:lang('_EXCLAMATION_')}");
                         setTimeout(function(){

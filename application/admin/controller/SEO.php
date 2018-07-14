@@ -22,7 +22,7 @@ class Seo extends Admin
         list($ruleList,$page) = $this->lists('SeoRule', $map, 'sort asc');
         $page = $ruleList->render();
 
-        $module = model('Common/Module')->getAll();
+        $module = model('common/Module')->getAll();
         $app = array();
         foreach ($module as $m) {
             if ($m['is_setup'])

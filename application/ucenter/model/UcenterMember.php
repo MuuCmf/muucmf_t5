@@ -68,7 +68,7 @@ class UcenterMember extends Model
                 
                 if ($ucenter_id === false) {
                     //如果注册失败，则回去Memeber表删除掉错误的记录
-                    model('Common/Member')->where(array('uid' => $uid))->delete();
+                    model('common/Member')->where(['uid' => $uid])->delete();
                 }
                 action_log('reg','ucenter_member',1,$uid);
                 return $uid ? $uid : 0; //0-未知错误，大于0-注册成功

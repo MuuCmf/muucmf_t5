@@ -18,7 +18,7 @@ class Announce extends Controller{
         }
         $map['uid']=is_login();
         $map['announce_id']=$aAnnounceId;
-        $announceArriveModel=model('Common/AnnounceArrive');
+        $announceArriveModel=model('common/AnnounceArrive');
         if(!$announceArriveModel->getDataByMap($map)){
             $data=$map;
             $data['create_time']=time();

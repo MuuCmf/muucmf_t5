@@ -33,7 +33,7 @@
     <div class="select-option">
         <button class="btn btn-primary" data-role="set-tag">{:lang('_SAVE_')}</button>
         {php}if(check_step_can_skip('set_tag')){{/php}
-        <a href="{:Url('Ucenter/member/step', array('step' => get_next_step('set_tag')))}"
+        <a href="{:Url('ucenter/member/step', array('step' => get_next_step('set_tag')))}"
            style="margin-left: 30px;line-height: 18px;display: inline-block;margin-top: 6px;">{:lang('_STEP_')}</a>
         {php}}{/php}
     </div>
@@ -53,7 +53,7 @@
         });
         bind_remove();
         $('[data-role="set-tag"]').click(function(){
-            $.post(Url('Ucenter/Member/set_tag'),{tag_ids:tag_ids},function(msg){
+            $.post(Url('ucenter/Member/set_tag'),{tag_ids:tag_ids},function(msg){
                 if(msg.status){
                     toast.success("{:lang('_SUCCESS_SETTINGS_')}{:lang('_EXCLAMATION_')}");
                     setTimeout(function(){
