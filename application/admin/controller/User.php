@@ -24,36 +24,56 @@ class User extends Admin
      */
     public function index()
     {
-        $nickname = input('nickname', '', 'text');
-        $aSeek = input('seek', 0, 'text');
+        $search = input('search','','text');
+        if(is_numeric($search)) {
+            //UID查询
+            $map['uid'] = $search;
+        }else{
+            $username = $search;
+            $aUnType = 0;
+            check_username($username, $email, $mobile, $aUnType);
+            //用户名或昵称查询
+            if($username){
+                $mapUsername['username'] = ['like', '%' . $username . '%'];
 
-        $map['status'] = array('egt', 0);
-        switch ($aSeek) {
-            case '0':
-
-                break;
-            case '1':
-                $map['uid|nickname'] = array(intval($nickname), array('like', '%' . $nickname . '%'), '_multi' => true);
-                break;
-            case '2':
-                $map['nickname'] = array('like', '%' . (string)$nickname . '%');
-                break;
-            case '3':
-                $mapEmail['email'] = array('like', '%' . $nickname . '%');
+                $uid = Db::name('ucenter_member')->where($mapUsername)->value('id');
+                if($uid){
+                    $map['uid'] = $uid;
+                }else{
+                    $map['nickname'] = ['like', '%' . (string)$search . '%'];
+                }
+            }
+            //邮箱查询
+            if($email){
+                $mapEmail['email'] = array('like', '%' . $email . '%');
                 $map['uid'] = Db::name('ucenter_member')->where($mapEmail)->value('id');
-                break;
-            case '4':
+            }
+            //手机查询
+            if($mobile){
                 $mapMobile['mobile'] = array('like', '%' . $nickname . '%');
                 $map['uid'] = Db::name('ucenter_member')->where($mapMobile)->value('id');
-
-                break;
-            default:
+            }
+        }
+        //排序
+        $sort = input('order','','text');
+        $order='';
+        if($sort == 'uid'){
+            $order = 'uid desc';
+        }
+        if($sort == 'reg_time'){
+            $order = 'reg_time desc';
+        }
+        if($sort == 'login_time'){
+            $order = 'last_login_time desc';
+        }
+        if($sort == 'login_num'){
+            $order = 'login desc';
         }
 
-        list($list,$page) = $this->lists('Member', $map);
-        
-        $list_arr = $list->toArray()['data'];
 
+        $map['status'] = array('egt', 0);
+        list($list,$page) = $this->lists('Member', $map, $order);
+        $list_arr = $list->toArray()['data'];
         foreach($list_arr as $key=>$v){
             //初始化ext键，避免报错
             $list_arr[$key]['username']='';
@@ -92,7 +112,6 @@ class User extends Admin
 
         $this->assign('title','用户列表');
         $this->assign('_list', $list_arr);
-        $this->assign('seek', $aSeek);
         return $this->fetch();
     }
 
@@ -116,7 +135,6 @@ class User extends Admin
             $this->error(lang('_ERROR_USER_RESET_SELECT_').lang('_EXCLAMATION_'));
         }
 
-        //dump($uids);exit;
         $ucModel = Db::name('UcenterMember');
 
         $data['password'] = user_md5('123456',config('database.auth_key'));

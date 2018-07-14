@@ -62,6 +62,7 @@
 '_PW_RESET_' =>' Reset password',
 '_PW_RESET_TIP_' =>' After resetting the password, the new password is "123456""',
 '_PLACEHOLDER_NICKNAME_ID_' =>' Please enter a user name or ID',
+'_USERNAME_NICKNAME_EMAIL_MOBILE_UID_' => 'Username/Nickname/Email/Mobile/UID',
 '_PW_RESET_CONFIRM_' =>' Password reset to 123456"',
 '_USER_LIST_' =>' User list',
 '_UID_' =>' UID',
@@ -1803,7 +1804,7 @@
 '_IN_USE_' =>' In use',
 '_PACKAGED_DOWNLOAD_' =>' download',
 '_PC_USE_' =>' Pc',
-'_MOBILE_USE_'=> 'Mobile'
+'_MOBILE_USE_'=> 'Mobile',
 '_UNINSTALL_DELETE_' =>' Uninstall',
 
 '_PLEASE_ENTER_THE_KEYWORD_WITH_DOUBLE_' =>' "Please enter the keyword"',

@@ -11,7 +11,7 @@
     </div>
     <div class="button-box clearfix">
         <div class="row">
-        <div class="col-xs-10">
+        <div class="col-md-8">
             <button class="btn btn-success ajax-post confirm" url="{:Url('User/changeStatus',array('method'=>'resumeUser'))}"
                     target-form="ids">{:lang('_ENABLED_')}
             </button>
@@ -27,12 +27,36 @@
         </div>
 
 
+
         <!-- 高级搜索 -->
-        <div class="search-form  col-xs-2 text-right">
-            <div class="input-group">
-                <input type="text" name="nickname" class="search-input form-control" value="{:input('nickname')}"
-                       placeholder="{:lang('_PLACEHOLDER_NICKNAME_ID_')}">
-                                 <span class="input-group-btn">  <a class="btn btn-default" href="javascript:;" id="search" url="{:Url('index')}"><i class="icon-search"></i></a></span>
+        <div class="search-form col-md-4">
+            <div class="row">
+            <div class="col-xs-6" style="display: inline-block;line-height: 32px;">
+                <div class="title pull-left">排序方式：</div>
+                <div class="select_box pull-left">
+                {php}
+                    $sort = input('order');
+                {/php}
+                <select name="order" data-role="select_text" class="form-control">
+                    <option value="uid" {eq name="sort" value="uid"} selected {/eq}>UID</option>
+                    <option value="login_time" {eq name="sort" value="login_time"} selected {/eq}>登陆时间</option>
+                    <option value="reg_time" {eq name="sort" value="reg_time"} selected {/eq}>注册时间</option>
+                    <option value="login_num" {eq name="sort" value="login_num"} selected {/eq}>登陆次数</option>
+                </select>
+                </div>
+            </div>
+
+            <div class="col-xs-6">
+                <div class="input-group">
+                    <input type="text" name="search" class="search-input form-control" value="{:input('search')}"
+                               placeholder="{:lang('_USERNAME_NICKNAME_EMAIL_MOBILE_UID_')}">
+                    <span class="input-group-btn">
+                        <a class="btn btn-default" href="javascript:;" id="search" url="{:Url('index')}">
+                            <i class="icon-search"></i>
+                        </a>
+                    </span>
+                </div>
+            </div>
             </div>
         </div>
         </div>
@@ -106,6 +130,42 @@
 {/block}
 
 {block name="script"}
+    <script>
+        //排序
+        $('[data-role="select_text"]').change(function(){
+            var url = window.location.href;
+            var query = $('.select_box').find('select').val();
+            console.log(query);
+            if (url.indexOf('?') > 0) {
+                if(url.indexOf('order') > 0){    
+                    url = changeURLArg(url,'order',query);
+                }else{
+                    url += '&' + 'order='+query;
+                }
+            } else {
+                url += '?' + 'order='+query;
+            }
+            window.location.href = url;
+        });
+
+        //设置url中参数值
+        function changeURLArg(url,arg,arg_val){
+            var pattern=arg+'=([^&]*)';
+            var replaceText=arg+'='+arg_val; 
+            if(url.match(pattern)){
+                var tmp='/('+ arg+'=)([^&]*)/gi';
+                tmp=url.replace(eval(tmp),replaceText);
+                return tmp;
+            }else{ 
+                if(url.match('[\?]')){ 
+                    return url+'&'+replaceText; 
+                }else{ 
+                    return url+'?'+replaceText; 
+                } 
+            }
+        }
+
+    </script>
 
     <script>
         function post_select_form(){
