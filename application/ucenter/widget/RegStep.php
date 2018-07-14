@@ -24,7 +24,7 @@ class RegStep extends Controller
             $this->$aStep();
         }
 
-        echo $this->fetch('Ucenter@Step/'.$aStep);
+        echo $this->fetch('ucenter@step/'.$aStep);
     }
 
     private function change_avatar()

@@ -627,11 +627,14 @@ class Member extends Model
         $res = $this->add($data);
         return $res;
     }
-
+    /**
+     * 随机生成一个昵称
+     * @return [type] [description]
+     */
     private function rand_nickname()
     {
         $nickname = create_rand(4);
-        if ($this->where(array('nickname' => $nickname))->select()) {
+        if ($this->where(['nickname' => $nickname])->select()) {
             $this->rand_nickname();
         } else {
             return $nickname;
