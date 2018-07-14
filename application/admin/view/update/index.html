@@ -19,7 +19,7 @@
 
             {if condition="$result['status'] neq 0"}
                
-            <form id="migration" class="form-horizontal" role="form" action="{:Url('Update/startUpdate')}" method="post">
+            <form id="migration" class="form-horizontal" role="form" action="{:Url('update/startUpdate')}" method="post">
                 <legend>系统检测到有可升级的版本</legend>
                     <div class="form-group">
                       <label class="col-md-2 control-label">版本</label>
@@ -107,22 +107,21 @@
                 </div>
             <!--确认对话框END-->
             {else /}
-
-                    <div class="alert alert-info-inverse with-icon">
-                        <i class="icon-info-sign"></i>
-                        <div class="content">
-                            <h3>当前系统版本：<span id="localVer">{$localVersion}</span></h3>
-                            <h3>云端最新版本：<span id="cloudVer">{$cloudVersion}</span></h3>
-                        </div>
-                   </div>
-
-                    <div class="alert alert-warning-inverse with-icon">
-                        <i class="icon-ok-sign"></i>
-                        <div class="content"><h3>已经是最新版本。</h3></div>
+                <div class="alert alert-info-inverse with-icon">
+                    <i class="icon-info-sign"></i>
+                    <div class="content">
+                        <h3>当前系统版本：<span id="localVer">{$localVersion}</span></h3>
+                        <h3>云端最新版本：<span id="cloudVer">{$cloudVersion}</span></h3>
                     </div>
-                    <div class="checkButtonBox">
-                        <button class="btn btn-block btn-lg btn-primary" id="checkVersion" type="button">重新检测</button>
-                    </div>
+                </div>
+
+                <div class="alert alert-warning-inverse with-icon">
+                    <i class="icon-ok-sign"></i>
+                    <div class="content"><h3>已经是最新版本。</h3></div>
+                </div>
+                <div class="checkButtonBox">
+                    <button class="btn btn-block btn-lg btn-primary" id="checkVersion" type="button">重新检测</button>
+                </div>
             {/if}
         </div>
     </div>

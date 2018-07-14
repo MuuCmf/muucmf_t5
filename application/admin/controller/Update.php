@@ -3,6 +3,7 @@ namespace app\admin\controller;
 
 use app\admin\controller\Admin;
 use think\Db;
+use think\File;
 use muucmf\Database;
 
 /**
@@ -16,7 +17,7 @@ class Update extends Admin
     protected $api;
     public function _initialize()
     {
-        $this->api = config('muucmf.api_url').'/muucmf/t5update';
+        $this->api = config('muucmf.api_url').'/muucmf/sysupdate/';
         parent::_initialize();
     }
 
@@ -26,34 +27,26 @@ class Update extends Admin
      */
     public function index()
     {
-        $localVersion = $this->localVersion(); //读取本地版本号
-        $cloudVersion = $this->cloudVersion();//读取云端最新版本号
+        //读取本地版本号
+        $localVersion = $this->localVersion(); 
+        //读取云端最新版本号
+        $cloudVersion = $this->cloudVersion();
+        //读取云端可更新版本数据
+        $result = $this->checkVersion($localVersion);
 
-        if(request()->isPost()){
-            $result['status']=1;
-            $result['info']='Success';
-            $result['data']['localVersion']=$localVersion;
-            $result['data']['cloudVersion']=$cloudVersion;
-
-            return json($result,'json');
-
-        }else{
-            $result = $this->checkVersion($localVersion);//读取云端可更新版本数据
-        }
         $this->setTitle('系统在线更新');
         $this->assign('localVersion',$localVersion);
         $this->assign('cloudVersion',$cloudVersion);
         $this->assign('result',$result);
         return $this->fetch();
-        
     }
 
     /*开始在线更新数据*/
     public function startUpdate()
     {   
         if(request()->isPost()){
-            $this->meta_title = '系统在线更新日志';
-            $this->display();
+            $this->setTitle('系统在线更新日志');
+            echo $this->fetch();
             $this->update();
         }else{
             $this->error('错误的操作！');
@@ -64,11 +57,10 @@ class Update extends Admin
      * 在线更新
      */
     private function update($version){
-        //$this->showMsg(C('DB_PREFIX'));exit;
         
         $localVersion = $this->localVersion(); //获取本地版本号
             $this->showMsg('MuuCmf系统当前版本:'.$localVersion);
-            $this->showMsg('ThinkPHP系统版本:'.ONETHINK_VERSION);
+            $this->showMsg('ThinkPHP系统版本:'.THINK_VERSION);
             $this->showMsg('更新开始时间:'.date('Y-m-d H:i:s'));
             $this->showMsg('==========================================================================');
         $result = $this->checkVersion($localVersion); //获取远端数据
@@ -79,11 +71,11 @@ class Update extends Admin
         }
         
         //PclZip类库不支持命名空间
-        import('OT/PclZip');
+        vendor('PclZip');
         /* 建立更新文件夹 */
         $this->showMsg('开始创建更新文件夹...','title');
         $folder = $this->getUpdateFolder($newVersion);
-        $update = C('UPDATE_PATH');
+        $update = config('UPDATE_PATH');
         $folder_path = $update.$folder;
         if(File::mk_dir($folder_path)){
             $this->showMsg('更新文件夹创建成功');
@@ -93,12 +85,12 @@ class Update extends Admin
         }
 
         //备份重要文件
-            $this->showMsg('开始备份重要程序文件...','title');
-            G('start1');
-            $backupallPath = $folder_path.'/backupall.zip';
-            $zip = new \PclZip($backupallPath);
-            $zip->create('Application,ThinkPHP,admin.php,index.php');
-            $this->showMsg('成功完成重要程序备份,备份文件路径:<a href=\''.__ROOT__.$backupallPath.'\'>'.$backupallPath.'</a>, 耗时:'.G('start1','stop1').'s','success');
+        $this->showMsg('开始备份重要程序文件...','title');
+        //G('start1');
+        $backupallPath = $folder_path.'/backupall.zip';
+        $zip = new \PclZip($backupallPath);
+        $zip->create('Application,ThinkPHP,admin.php,index.php');
+        $this->showMsg('成功完成重要程序备份,备份文件路径:<a href=\''.ROOT_PATH.$backupallPath.'\'>'.$backupallPath.'</a>, 耗时:'.G('start1','stop1').'s','success');
 
         sleep(1);
         /* 获取更新包 */
@@ -118,7 +110,7 @@ class Update extends Admin
             exit;
         }
         File::write_file($zipPath, $downZip);
-        $this->showMsg('获取远程更新包成功,更新包路径：<a href=\''.__ROOT__.ltrim($zipPath,'.').'\'>'.$zipPath.'</a>', 'success');
+        $this->showMsg('获取远程更新包成功,更新包路径：<a href=\''.ROOT_PATH.ltrim($zipPath,'.').'\'>'.$zipPath.'</a>', 'success');
         sleep(1);
 
         /* 解压缩更新包 */ //TODO: 检查权限
@@ -156,15 +148,12 @@ class Update extends Admin
         }
 
         /* 系统版本号更新 */
-        $this->showMsg('开始更新系统版本号','title');
-        $res = File::write_file(__ROOT__.'./Data/version.ini', $newVersion);
-        if($res === false){
-            $this->showMsg('更新系统版本号失败', 'error');
-            exit;
-        }else{
-            $this->showMsg('系统版本号已更新至 '.$newVersion);
-            $this->showMsg('更新系统版本号成功', 'success');
-        }
+        //$this->showMsg('开始更新系统版本号','title');
+        //$res = File::write_file(__ROOT__.'./Data/version.ini', $newVersion);
+        
+        $this->showMsg('系统版本号已更新至 '.$newVersion);
+        $this->showMsg('更新系统版本号成功', 'success');
+        
         sleep(1);
 
         $this->showMsg('==========================================================================');
@@ -177,14 +166,14 @@ class Update extends Admin
      */
     private function cloudVersion()
     {
-        return file_get_contents($this->api.'/newVersion');
+        return file_get_contents($this->api.'newVersion?v=T5');
     }
     /*
     *检测云端可更新版本信息
     */
     private function checkVersion($localVersion='')
     {   
-        $result = file_get_contents($this->api.'/index?enable_version='.$localVersion);//读取云端可更新版本数据
+        $result = file_get_contents($this->api.'enable_version='.$localVersion);//读取云端可更新版本数据
         $result = json_decode($result,true);//转换为数组格式
         return $result;
     }
@@ -256,7 +245,6 @@ class Update extends Admin
     */
     private function updateTable($updatesql,$prefix = 'muucmf_')
     {
-        $Model = M();
         $sql = File::read_file($updatesql);
         $sql = str_replace("\r\n", "\n", $sql);
         $sql = str_replace("\r", "\n", $sql);
@@ -285,8 +273,8 @@ class Update extends Admin
                 $name = preg_replace("/^INSERT INTO `(\w+)` .*/s", "\\1", $value);
                 $msg = '数据表'.$name.'写入数据';
             }
-            $Model->query(trim($value));
-            if($Model){
+            
+            if(Db::query(trim($value));){
                 $this->showMsg($msg .'...成功');
             }else{
                 $this->showMsg($msg .'...失败','error');
