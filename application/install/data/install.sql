@@ -4662,10 +4662,7 @@ INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `tip`, `
 ('127', '编辑分组', '126', 0, 'Role/editGroup', 1, '', '', 0, '', ''),
 ('128', '删除分组', '126', 0, 'Role/deleteGroup', 1, '', '', 0, '', ''),
 ('129', '身份基本信息配置', '2', 8, 'Role/config', 1, '', '身份管理', 0, '', ''),
-('130', '审核身份用户', '2', 9, 'Role/userList', 0, '', '用户管理', 0, '', ''),
-('131', '设置用户状态', '130', 0, 'Role/setUserStatus', 1, '', '', 0, '', ''),
-('132', '审核用户', '130', 0, 'Role/setUserAudit', 1, '', '', 0, '', ''),
-('133', '迁移用户', '130', 0, 'Role/changeRole', 1, '', '', 0, '', ''),
+('130', '审核身份用户', '3', 9, 'User/auditRole', 0, '', '', 0, '', ''),
 ('134', '上传默认头像', '123', 0, 'Role/uploadPicture', 1, '', '', 0, '', ''),
 ('135', '类型管理', '197', 8, 'Invite/index', 0, '', '邀请注册管理', 0, '', ''),
 ('136', '邀请码管理', '197', 9, 'Invite/invite', 0, '', '邀请注册管理', 0, '', ''),
@@ -4691,7 +4688,6 @@ INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `tip`, `
 ('156', '行为限制启用、禁用、删除', '114', 0, 'ActionLimit/setLimitStatus', 1, '', '', 0, '', ''),
 ('157', '启用、禁用、删除、回收站还原', '99', 0, 'SEO/setRuleStatus', 1, '', '', 0, '', ''),
 ('158', '回收站彻底删除', '102', 0, 'SEO/doClear', 1, '', '', 0, '', ''),
-('159', '初始化无角色用户', '130', 0, 'Role/initUnhaveUser', 1, '', '', 0, '', ''),
 ('160', '删除钩子', '58', 0, 'Addons/delHook', 0, '', '', 0, '', ''),
 ('161', '使用补丁', '103', 0, 'Update/usePack', 1, '', '', 0, '', ''),
 ('162', '查看补丁', '103', 0, 'Update/view', 1, '', '', 0, '', ''),
@@ -4731,7 +4727,7 @@ INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `tip`, `
 ('10458', '扩展设置', '74', 3, 'Config/expandConfig', 0, '', '系统设置', 0, '', ''),
 ('10001', '基本设置', '10000', 0, 'index/Admin/config', 0, '', '设置', 0, '', 'index'),
 ('BD914EA5-C77D-7118-399B-2E19DEB1D44B', '基础配置', 'BD56C46E-C9B0-D24A-C7F9-93831C04820D', 0, 'index/admin/config', 0, '', '', 0, '', 'index'),
-('B7135ED2-C7EA-4232-F61E-BC521D606AE2', 'Demo', '0', 1, 'demo/admin/index', 1, '', '', 0, '', 'demo'),
+('B7135ED2-C7EA-4232-F61E-BC521D606AE2', 'Demo', '0', 1, 'demo/admin/index', 1, '', '', 0, 'th-list', 'demo'),
 ('C2E64010-AC80-DF22-5C53-53A709B6F914', '表单演示', 'B7135ED2-C7EA-4232-F61E-BC521D606AE2', 0, 'demo/Admin/config', 0, '', '', 0, '', 'demo'),
 ('A5CD3728-FB33-F213-0CD0-075F1A5BF756', '列表演示', 'B7135ED2-C7EA-4232-F61E-BC521D606AE2', 0, 'demo/Admin/listDemo', 0, '', '', 0, '', 'demo'),
 ('9BE37DD3-641B-1CF0-BE1D-52A38F7BE6C4', '分类树', 'B7135ED2-C7EA-4232-F61E-BC521D606AE2', 0, 'demo/admin/tree', 0, '', '', 0, '', 'demo'),
@@ -4743,8 +4739,7 @@ INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `tip`, `
 ('A6E049E7-F99F-5FF2-1D4F-5AA242E3F6C8', '流失率数据', '197', 0, 'count/lost', 0, '', '数据统计', 0, '', ''),
 ('A985703F-0F39-F114-5784-A693F55D5310', '留存率数据', '197', 0, 'count/remain', 0, '', '数据统计', 0, '', ''),
 ('0AAED4DF-55D3-03DA-5860-3ABAEC00096D', '活跃用户数据', '197', 0, 'count/active', 0, '', '数据统计', 0, '', ''),
-('CCAE3F89-4E09-1912-9F3B-453E0A265A62', '在线用户', '197', 0, 'count/nowuserlist', 0, '', '数据统计', 0, '', ''),
-('BD56C46E-C9B0-D24A-C7F9-93831C04820D', '首页', '0', 0, 'index/index/index', 1, '', '', 0, '', 'index');
+('BD56C46E-C9B0-D24A-C7F9-93831C04820D', '首页', '0', 0, 'index/index/index', 1, '', '', 0, 'home', 'index');
 
 DROP TABLE IF EXISTS `muucmf_message`;
 CREATE TABLE IF NOT EXISTS `muucmf_message` (

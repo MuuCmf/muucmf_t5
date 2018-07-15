@@ -162,7 +162,7 @@ class AdminListBuilder extends AdminBuilder
         return $this->button($title, $attr);
     }
 
-    public function buttonSetStatus($url, $status, $title, $attr)
+    public function buttonSetStatus($url, $status, $title, $attr = array())
     {
         $attr['class'] =isset($attr['class'])?$attr['class']: 'btn ajax-post';
         $attr['url'] = $this->addUrlParam($url, array('status' => $status));
@@ -635,14 +635,14 @@ class AdminListBuilder extends AdminBuilder
         //image转换为图片
         //大蒙 <修复无图片ID时默认判断为图片路径的BUG>
         $this->convertKey('image', 'html', function ($value, $key, $item) {
+
             if (is_numeric($value)) {//value是图片id
                 if($value===0 || $value==='0'){
-                    $html = "<div class='popup-gallery'><img src=\"Public/images/nopic.png\" style=\"width:80px;height:80px\"></div>";
+                    $html = "<div class='popup-gallery'><img src=\"/static/common/images/nopic.png\" style=\"width:80px;height:80px\"></div>";
                     return $html;
                 }
                 $value = htmlspecialchars($value);
                 $sc_src = get_cover($value, 'path');
-
                 $src = getThumbImageById($value, 80, 80);
                 $sc_src = $sc_src == '' ? $src : $sc_src;
                 $html = "<div class='popup-gallery'><a title=\"" . lang('_VIEW_BIGGER_') . "\" href=\"$sc_src\"><img src=\"$sc_src\"/ style=\"width:80px;height:80px\"></a></div>";

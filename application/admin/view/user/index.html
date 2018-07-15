@@ -1,7 +1,16 @@
 {extend name="common/main"/}
 {block name="style"}
     <style>
+        .user-table .role {
+            padding:5px;
+            margin:5px auto;
+            background:#f1f1f1;
+            border-radius: 5px;
 
+        }
+        .user-table .role::last-child {
+            border-bottom: 0;
+        }
     </style>
 {/block}
 {block name="body"}
@@ -23,6 +32,8 @@
             </button>
             <button class="btn ajax-post btn-danger confirm" data-confirm="{:lang('_PW_RESET_CONFIRM_')}" url="{:Url('User/initPass')}" target-form="ids">{:lang('_PW_RESET_')}
             </button>
+            <a class="btn btn-info confirm" href="{:Url('User/auditRole')}">{:lang('审核身份')} <span class="label label-badge">{$audit_user_num}</span>
+            </a>
             <span style="font-size: 14px;color: #999898;margin-left: 11px;">{:lang('_PW_RESET_TIP_')}</span>
         </div>
 
@@ -63,7 +74,7 @@
     </div>
     <!-- 数据列表 -->
     <div class="data-table with-padding">
-        <table class="table table-bordered table-striped ">
+        <table class="table table-bordered table-striped user-table">
             <thead>
             <tr>
                 <th class="row-selected row-selected"><input class="check-all" type="checkbox"/></th>
@@ -95,7 +106,7 @@
                         <td>
                             {notempty name="vo.auth_group"}
                             {volist name="vo.auth_group" id="role"}
-                            <div>
+                            <div class="auth_group">
                                 <span>{$role.title}</span> 
                             </div>  
                             {/volist}
@@ -103,8 +114,22 @@
                         </td>
                         <td>
                             {volist name="vo.role" id="role"}
-                            <div>
-                                <span>{$role.title}</span> <span class="label label-badge label-info">{$role.status_text}</span>
+                            <div class="role">
+                                <span>{$role.title}</span>
+                                {switch name="role.status" }
+                                {case value="1"}
+                                <span class="label label-success pull-right">{$role.status_text}</span>
+                                {/case}
+                                {case value="2"}
+                                <span class="label label-warning pull-right">{$role.status_text}</span>
+                                {/case}
+                                {case value="-1"}
+                                <span class="label label-danger pull-right">{$role.status_text}</span>
+                                {/case}
+                                {case value="0"}
+                                <span class="label label-info pull-right">{$role.status_text}</span>
+                                {/case}
+                                {/switch}
                             </div>  
                             {/volist}
                         </td>
@@ -117,8 +142,8 @@
                         <td><a href="{:Url('Admin/User/expandinfo_details',array('uid'=>$vo['uid']))}" >{:lang('_EDIT_')}</a></td>
                     </tr>
                 {/volist}
-                {else/}
-                <td colspan="11" class="text-center">{:lang('_ADMIN_USER_EMPTY_')}</td>
+            {else/}
+                <td colspan="13" class="text-center">{:lang('_ADMIN_USER_EMPTY_')}</td>
             {/notempty}
             </tbody>
         </table>
@@ -131,7 +156,8 @@
 
 {block name="script"}
     <script>
-        //排序
+    $(function(){
+    //排序
         $('[data-role="select_text"]').change(function(){
             var url = window.location.href;
             var query = $('.select_box').find('select').val();
@@ -165,23 +191,6 @@
             }
         }
 
-    </script>
-
-    <script>
-        function post_select_form(){
-            var ids=$('.ids').serialize();
-
-            if(ids==''){
-                updateAlert('请勾选操作对象!。','danger');
-                return false;
-            }
-            var title="{:lang('_USER_GROUP_SELECT_')}";
-            $.post("{:Url('user/changeGroup')}",ids,function(msg){
-                (new $.zui.ModalTrigger({custom: msg,title:title})).show();
-            })
-        }
-    </script>
-    <script type="text/javascript">
         //搜索功能
         $("#search").click(function () {
             var url = $(this).attr('url');
@@ -202,5 +211,6 @@
                 return false;
             }
         });
+    });
     </script>
 {/block}

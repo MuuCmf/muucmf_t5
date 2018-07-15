@@ -96,7 +96,7 @@ class User extends Admin
                 $role_name = Db::name('role')->where(['id'=>$val['role_id']])->find();
                 if(!empty($role_name)){
                     $list_arr[$key]['role'][$k]['title'] = $role_name['title'];
-                        $list_arr[$key]['role'][$k]['status'] = $val['status'];
+                    $list_arr[$key]['role'][$k]['status'] = $val['status'];
                 }
             }
             unset($k);
@@ -107,12 +107,63 @@ class User extends Admin
 
         int_to_string($list_arr);
 
-        //dump($list_arr);
-        $this->setTitle(lang('_USER_INFO_'));
+        //获取待审核身份用户数
+        $audit_user_num = Db::name('UserRole')->where(['status'=>2])->count();
+        $this->assign('audit_user_num',$audit_user_num);
 
+        $this->setTitle(lang('_USER_INFO_'));
         $this->assign('title','用户列表');
         $this->assign('_list', $list_arr);
         return $this->fetch();
+    }
+    /**
+     * 审核身份用户
+     * @return [type] [description]
+     */
+    public function auditRole()
+    {   
+        
+        if(request()->isPost()){
+            
+            $data=input();
+            foreach($data['ids'] as $v){
+                $role_info = Db::name('UserRole')->where(['id'=>$v])->find();
+                $this->_resetSingleRole($role_info['uid'], $role_info['role_id'], $data['status']);
+            }
+            $this->success(lang('_SUCCESS_'));
+
+        }else{
+
+        $list = Db::name('UserRole')->where(['status'=>2])->paginate(10)->each(function($item, $key){
+            $user = query_user('nickname,email,mobile,avatar32',$item['uid']);
+            $item['avatar'] = $user['avatar32'];
+            $item['nickname'] = $user['nickname'];
+            $item['email'] = $user['email'];
+            $item['mobile'] = $user['mobile'];
+            $role = Db::name('Role')->where(['id'=>$item['role_id']])->find();
+            $item['role_name'] = $role['title'];
+            return $item;
+        });
+        $page = $list->render();
+        $list = $list->toArray()['data'];
+
+        $builder = new AdminListBuilder();
+        $builder
+            ->title('用户身份审核')
+            ->buttonEnable(Url('User/auditRole'),'审核通过')
+            ->buttonDisable(Url('User/auditRole'))
+            ->buttonDelete(Url('User/auditRole'))
+            ->keyUid()
+            ->keyImage('avatar', lang('_AVATAR_'))
+            ->keyText('email',lang('_EMAIL_'))
+            ->keyText('mobile',lang('_CELL_PHONE_NUMBER_'))
+            ->keyText('role_name',lang('_ROLE_NAME_'))
+            ->keyStatus()
+            ->keyDoAction('user/expandinfo_details?id=###', lang('_AUDIT_'))
+            ->page($page)
+            ->data($list)
+            ->display();
+        }
     }
 
     /**
@@ -224,11 +275,13 @@ class User extends Admin
      * @param string $uid
      * @author 大蒙<59262424@qq.com>
      */
-    public function expandinfo_details($uid = 0)
-    {
+    public function expandinfo_details()
+    {   
+        
         if (request()->isPost()) {
             /* 修改积分 */
             $data = input('post.');
+            $uid = $data['id'];
             foreach ($data as $key => $val) {
                 if (substr($key, 0, 5) == 'score') {
                     $data_score[$key] = $val;
@@ -251,16 +304,13 @@ class User extends Admin
             /*用户组设置*/
             model('AuthGroup')->addToGroup($data['id'], $data['auth_group']);
             /*用户组END*/
+
             /*身份设置*/
             $data_role = [];
-            foreach ($data as $key => $val) {
-                if ($key == 'role') {
-                    $data_role = explode(',', $val);
-                } else if (substr($key, 0, 4) == 'role') {
-                    $data_role[] = $val;
-                }
+            if(!empty($data['role'])){ 
+                $data_role = explode(',', $data['role']);
             }
-            unset($key, $val);
+            
             $rs_role = $this->_resetUserRole($uid, $data_role);
             /*身份设置 end*/
             
@@ -299,6 +349,7 @@ class User extends Admin
                 $this->error(lang('_ERROR_SAVE_').lang('_EXCLAMATION_'));
             }
         } else {
+            $uid = input('uid');
             $map['uid'] = $uid;
             $map['status'] = ['>=', 0];
             $member = Db::name('Member')->where($map)->find();
@@ -458,7 +509,7 @@ class User extends Admin
         }
         //验证唯一性
         $map_nickname['nickname'] = $nickname;
-        $map_nickname['uid'] = array('neq', $uid);
+        $map_nickname['uid'] = ['neq', $uid];
         $had_nickname = Db::name('Member')->where($map_nickname)->count();
 
         if ($had_nickname) {
@@ -489,57 +540,75 @@ class User extends Admin
         return $fields_list;
     }
     /**
+     * 根据身份ID重新设置某用户单个身份
+     * @param  integer $uid     [description]
+     * @param  [type]  $role_id [description]
+     * @param  integer $status  [description]
+     * @return [type]           [description]
+     */
+    private function _resetSingleRole($uid = 0, $role_id, $status=1)
+    {   
+        $map['uid'] = $uid;
+        $map['role_id'] = $role_id;
+        $userRole = Db::name('UserRole')->where($map)->find();
+        if ($userRole) {
+            if (!$userRole['init']) {
+                $memberModel->initUserRoleInfo($val, $uid);
+            }
+        } else {
+            $memberModel->initRoleUser($val, $uid);
+        }
+        if ($userRole['status'] != 1) {
+            Db::name('UserRole')->where($map)->setField('status', $status);
+        }
+        //非启用状态移除对应用户权限组
+        if($status!=1){
+            $role = Db::name('Role')->where(['id' => $role_id])->find();
+            //绑定用户组前提下移除
+            if ($role['user_groups'] != '') {
+                $auth_groups_ids = explode(',', $role['user_groups']);
+                Db::name('AuthGroupAccess')->where(['uid'=>$uid,'group_id'=>['in',$auth_groups_ids]])->delete();
+            }
+        }
+    }
+    /**
      * 重新设置某一用户拥有身份
      * @param int $uid
      * @param array $haveRole
      * @return bool
      */
-    private function _resetUserRole($uid = 0, $haveRole = [])
+    private function _resetUserRole($uid = 0, $haveRole = [], $status=1)
     {
         $memberModel = model('common/Member');
         $map['uid'] = $uid;
-        //先清除原
-        //Db::name('UserRole')->where($map)->delete();
-        
         foreach ($haveRole as $val) {
             $map['role_id'] = $val;
-            
             $userRole = Db::name('UserRole')->where($map)->find();
             if ($userRole) {
-                if (!$userRole['init']) {
+                //if (!$userRole['init']) {
                     $memberModel->initUserRoleInfo($val, $uid);
-                }
-                if ($userRole['status'] != 1) {
-                    Db::name('UserRole')->where($map)->setField('status', 1);
-                }
+                //}
             } else {
-                $data = $map;
-                $data['status'] = 1;
-                $data['step'] = 'start';
-                $data['init'] = 1;
-                $res = Db::name('UserRole')->insert($data);
-                if ($res) {
-                    $memberModel->initUserRoleInfo($val, $uid);
-                }
+                $memberModel->initRoleUser($val, $uid);
+            }
+            if ($userRole['status'] != 1) {
+                Db::name('UserRole')->where($map)->setField('status', $status);
             }
         }
+        //移除不包含role_id的用户身份
         $map_remove['uid'] = $uid;
-        $map_remove['role_id'] = array('not in', $haveRole);
+        $map_remove['role_id'] = ['not in', $haveRole];
         Db::name('UserRole')->where($map_remove)->setField('status', -1);
-        $user_info = Db::name('Member')->where(array('uid' => $uid))->find();
-        $user_data = []; //初始化
+        //移除相对应用户组
+        $role = Db::name('Role')->where(['id' => ['not in', $haveRole]])->select();
+        foreach($role as $v){
+            if ($v['user_groups'] != '') {
+                $auth_groups_ids = explode(',', $v['user_groups']);
+                Db::name('AuthGroupAccess')->where(['uid'=>$uid,'group_id'=>['in',$auth_groups_ids]])->delete();
+            }
+        }
+        //默认用户组设置 end
 
-        if (!in_array($user_info['show_role'], $haveRole)) {
-            $user_data['show_role'] = $haveRole[count($haveRole) - 1];
-        }
-        if (!in_array($user_info['last_login_role'], $haveRole)) {
-            $user_data['last_login_role'] = $haveRole[count($haveRole) - 1];
-        }
-        
-        if(empty($user_data)){
-            Db::name('Member')->where(['uid' => $uid])->update($user_data);
-        }
-        
         return true;
     }
 
@@ -815,7 +884,8 @@ class User extends Admin
             ->keyBool('visiable', lang('_OPEN_YE_OR_NO_'))
             ->keyBool('required', lang('_WHETHER_THE_REQUIRED_'));
 
-            $builder->data($field_setting);
+            $builder
+            ->data($field_setting);
             $builder
             ->buttonSubmit(Url('editFieldSetting'), $id == 0 ? lang('_ADD_') : lang('_MODIFY_'))
             ->buttonBack();
@@ -1028,11 +1098,11 @@ class User extends Admin
         if ($uid) {
             $user = query_user(null, $uid);
 
-            $this->ajaxReturn($user);
+            return json($user);
 
         } else {
 
-            $this->ajaxReturn(null);
+            return null;
         }
 
     }

@@ -293,99 +293,6 @@ class Role extends Admin
 
     //身份基本信息及配置 end
 
-    /**
-     * 设置用户身份状态，启用、禁用
-     * @param $ids
-     * @param int $status
-     * @param int $role_id
-     * @author 郑钟良<zzl@ourstu.com>
-     */
-    public function setUserStatus($ids, $status = 1, $role_id = 0)
-    {
-        $ids = is_array($ids) ? $ids : explode(',', $ids);
-        if ($status == 1) {
-            $map_role['role_id'] = $role_id;
-            $map_role['init'] = 0;
-            $user_role=$this->userRoleModel->where($map_role)->field('id,uid')->select();
-            $to_init_ids=array_column($user_role,'id');
-            $to_init_uids=array_combine($to_init_ids,$user_role);
-            $to_init_ids=array_intersect($ids,$to_init_ids);//交集获得需要初始化的ids
-            foreach($to_init_ids as $val){
-                D('Common/Member')->initUserRoleInfo($role_id,$to_init_uids[$val]['uid']);
-            }
-            $builder = new AdminListBuilder;
-            $builder->doSetStatus('UserRole', $ids, $status);
-        } else if ($status == 0) {
-            $uids = $this->userRoleModel->where(array('id' => array('in', $ids)))->field('uid')->select();
-            if (count($uids)) {
-                $uids = array_column($uids, 'uid');
-                $map['role_id'] = array('neq', $role_id);
-                $map['uid'] = array('in', $uids);
-                $map['status'] = array('gt', 0);
-                $has_other_role_user_ids = $this->userRoleModel->where($map)->field('uid')->select();
-                if(count($has_other_role_user_ids)){
-                    $unHave = array_diff($uids, array_column($has_other_role_user_ids, 'uid'));
-                }else{
-                    $unHave=$uids;
-                }
-                if (count($unHave) > 0) {
-                    $map_ids['uid']=array('in',$unHave);
-                    $map_ids['role_id']=$role_id;
-                    $error_ids=$this->userRoleModel->where($map_ids)->field('id')->select();
-                    $error_ids=implode(',',array_column($error_ids,'id'));
-
-                    $this->error(lang('_ERROR_DISABLE_CANNOT_PARAM_',array('error_ids'=>$error_ids)));
-                }
-                foreach($uids as $val){
-                    $this->setDefaultShowRole($role_id,$val);
-                }
-                unset($val);
-                $builder = new AdminListBuilder;
-                $builder->doSetStatus('UserRole', $ids, $status);
-            } else {
-                $this->info(lang('_NO_OPERATIONAL_DATA_'));
-            }
-        } else {
-            $this->error(lang('_ILLEGAL_OPERATION_'));
-        }
-    }
-
-    /**
-     * 审核用户，通过，不通过
-     * @param $ids
-     * @param int $status
-     * @param int $role_id
-     * @author 郑钟良<zzl@ourstu.com>
-     */
-    public function setUserAudit($ids,$status=1,$role_id=0)
-    {
-        $ids = is_array($ids) ? $ids : explode(',', $ids);
-        if ($status == 1) {
-            $map_role['role_id'] = $role_id;
-            foreach ($ids as $val) {
-                $map_role['id'] = $val;
-                $user_role=$this->userRoleModel->where($map_role)->find();
-                if($user_role['init']==0){
-                    model('common/Member')->initUserRoleInfo($role_id,$user_role['uid']);
-                }
-            }
-            $builder = new AdminListBuilder;
-            $builder->doSetStatus('UserRole', $ids, $status);
-        } else if ($status == 0) {
-            $uids = $this->userRoleModel->where(array('id' => ['in', $ids]))->field('uid')->select();
-            if (count($uids)) {
-                $builder = new AdminListBuilder;
-                $builder->doSetStatus('UserRole', $ids, $status);
-            } else {
-                $this->info(lang('_NO_OPERATIONAL_DATA_'));
-            }
-        } else {
-            $this->error(lang('_ILLEGAL_OPERATION_'));
-        }
-    }
-
-    //身份用户管理 end
-
     //身份分组 start
     /**
      * 分组列表
@@ -880,7 +787,7 @@ class Role extends Admin
         ); //TODO:上传到远程服务器
         /* 记录图片信息 */
         if ($info) {
-            $return['status'] = 1;
+            $return['code'] = 1;
             empty($info['download']) && $info['download'] = $info['file'];
             $return = array_merge($info['download'], $return);
             $return['path256'] = getThumbImageById($return['id'], 256, 256);
@@ -888,50 +795,11 @@ class Role extends Admin
             $return['path64'] = getThumbImageById($return['id'], 64, 64);
             $return['path32'] = getThumbImageById($return['id'], 32, 32);
         } else {
-            $return['status'] = 0;
-            $return['info'] = $Picture->getError();
+            $return['code'] = 0;
+            $return['msg'] = $Picture->getError();
         }
         /* 返回JSON数据 */
-        $this->ajaxReturn($return);
+        return json($return);
     }
 
-
-    /**
-     * 初始化没身份的用户
-     * @author 郑钟良<zzl@ourstu.com>
-     */
-    public function initUnhaveUser()
-    {
-        $memberModel=model('common/Member');
-
-        $uids=$memberModel->field('uid')->select();
-        $uids=array_column($uids,'uid');
-
-        $role=$this->roleModel->selectByMap(array('status'=>1));
-        $role=array_column($role,'id');
-        $map['role_id']=array('in',$role);
-
-        $have_uids=$this->userRoleModel->where($map)->field('uid')->select();
-        if(count($have_uids)){
-            $have_uids=array_column($have_uids,'uid');
-            $have_uids=array_unique($have_uids);
-            $not_have_uids=array_diff($uids,$have_uids);
-        }
-
-        $data['status']=1;
-        $data['role_id']=1;
-        $data['step']="finish";
-        $data['init']=1;
-        $dataList=array();
-
-        foreach($not_have_uids as $val){
-            $data['uid']=$val;
-            $dataList[]=$data;
-            $memberModel->initUserRoleInfo(1,$val);
-            $memberModel->initDefaultShowRole(1,$val);
-        }
-        unset($val);
-        $this->userRoleModel->addAll($dataList);
-        $this->success(lang('_OPERATION_SUCCESS_'));
-    }
 } 

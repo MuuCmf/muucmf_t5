@@ -14,7 +14,7 @@ class Menu extends Admin {
      */
     public function index(){
         $title = input('title','','text');
-        $pid  = input('get.pid','0','text');
+        $pid  = input('pid','0','text');
         if($pid){
             $where['id'] = $pid;
             $data = Db::name('Menu')->where($where)->find();

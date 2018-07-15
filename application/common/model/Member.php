@@ -375,7 +375,12 @@ class Member extends Model
     public  function initRoleUser($role_id = 0, $uid)
     {
         $role = Db::name('role')->where(['id' => $role_id])->find();
-        $user_role = ['uid' => $uid, 'role_id' => $role_id, 'step' => "start"];
+        $user_role = [
+            'uid' => $uid,
+            'role_id' => $role_id,
+            'step' => "start"
+        ];
+
         if ($role['audit']) { //该角色需要审核
             $user_role['status'] = 2; //未审核
         } else {
@@ -397,12 +402,11 @@ class Member extends Model
      */
     public function initUserRoleInfo($role_id, $uid)
     {
-        Db::name('UserRole')->where(['role_id' => $role_id, 'uid' => $uid])->setField('init', 1);
-
         //默认用户组设置
         $role = Db::name('Role')->where(['id' => $role_id])->find();
+
         if ($role['user_groups'] != '') {
-            $role = explode(',', $role['user_groups']);
+            $auth_groups_ids = explode(',', $role['user_groups']);
 
             //查询已拥有用户组
             $have_user_group_ids = Db::name('AuthGroupAccess')->where(['uid' => $uid])->select();
@@ -410,8 +414,8 @@ class Member extends Model
             //查询已拥有用户组 end
 
             $authGroupAccess['uid'] = $uid;
-            $authGroupAccess_list = array();
-            foreach ($role as $val) {
+            $authGroupAccess_list = [];
+            foreach ($auth_groups_ids as $val) {
                 if ($val != '' && !in_array($val, $have_user_group_ids)) { //去除已拥有用户组
                     $authGroupAccess['group_id'] = $val;
                     $authGroupAccess_list[] = $authGroupAccess;
@@ -423,7 +427,7 @@ class Member extends Model
         //默认用户组设置 end
 
         $map['role_id'] = $role_id;
-        $map['name'] = ['in', array('score', 'rank')];
+        $map['name'] = ['in', ['score', 'rank']];
         $config = Db::name('RoleConfig')->where($map)->select();
         $config = array_combine(array_column($config, 'name'), $config);
 
@@ -452,7 +456,7 @@ class Member extends Model
             $ranks = explode(',', $config['rank']['value']);
             if (count($ranks)) {
                 //查询已拥有头衔
-                $have_rank_ids = $rankUserModel->where(array('uid' => $uid))->select();
+                $have_rank_ids = Db::name('RankUser')->where(['uid' => $uid])->select();
                 $have_rank_ids = array_column($have_rank_ids, 'rank_id');
                 //查询已拥有头衔 end
 
@@ -474,6 +478,8 @@ class Member extends Model
             }
         }
         //默认头衔设置 end
+        //初始化状态更新
+        Db::name('UserRole')->where(['role_id' => $role_id, 'uid' => $uid])->setField('init', 1);
     }
 
     /**
