@@ -17,10 +17,10 @@ return [
     // +----------------------------------------------------------------------
     // 应用命名空间
     'app_namespace'          => 'app',
-    // 应用调试模式
-    'app_debug'              => Env::get('app.debug', true),
-    // 应用Trace
-    'app_trace'              => Env::get('app.trace', true),
+    // 应用调试模式,无需修改可通过后台系统配置设置
+    'app_debug'              => Env::get('app.debug', false),
+    // 应用Trace,无需修改可通过后台系统配置设置
+    'app_trace'              => Env::get('app.trace', false),
     // 应用模式状态
     'app_status'             => '',
     // 是否支持多模块

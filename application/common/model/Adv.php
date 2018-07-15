@@ -62,8 +62,4 @@ class Adv extends Model
         $res=$this->where($map)->delete();
         return $res;
     }
-
-    /*——————————————————分隔线————————————————*/
-
-
 }

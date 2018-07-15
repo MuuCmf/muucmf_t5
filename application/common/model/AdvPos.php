@@ -11,7 +11,7 @@ class AdvPos extends Model
     {
         $adv_pos = cache('adv_pos_by_pos_' .$path. $name);
         if ($adv_pos === false) {
-            $adv_pos = $this->where(array('name' => $name, 'path' => $path, 'status' => 1))->find();
+            $adv_pos = $this->where(['name' => $name, 'path' => $path, 'status' => 1])->find();
             cache('adv_pos_by_pos_'  .$path. $name,$adv_pos);
         }
         return $adv_pos;
@@ -36,10 +36,8 @@ class AdvPos extends Model
                 break;
             default:
                 $return = '其他';
-
         }
         return $return;
     }
-
 
 }

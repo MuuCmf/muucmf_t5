@@ -63,7 +63,6 @@ class Action extends Model
 
         //内容添加或更新完成
         return $data;
-
     }
 
 
@@ -141,15 +140,16 @@ class Action extends Model
 	        //未定义日志规则，记录操作url
 	        $data['remark'] = '操作url：' . $_SERVER['REQUEST_URI'];
 	    }
-
-
 	    $log_id = Db::name('ActionLog')->insertGetId($data);
 
+	    //解析积分规则并执行
 	    if (!empty($action_info['rule'])) {
 	        //解析行为
 	        $rules = $this->parse_action($action, $user_id);
 	        //执行行为
 	        $res = $this->execute_action($rules, $action_info['id'], $user_id, $log_id);
+
+	        return $res;
 	    }
 
 	    return true;
@@ -258,28 +258,25 @@ class Action extends Model
 	        //获取现在的积分数量
 	    	$Model = Db::name(ucfirst($rule['table']));
 	        $field = 'score' . $rule['field'];
-	        $nowScore = $Model->where(['uid' => is_login()])->value($field);
+	        $nowScore = $Model->where(['uid' => $user_id])->value($field);
 	        $rule['rule'] = (is_bool(strpos($rule['rule'], '+')) ? '+' : '') . $rule['rule'];
 	        $rule['rule'] = is_bool(strpos($rule['rule'], '-')) ?  $rule['rule'] : substr($rule['rule'],1) ;
 	        //应该设置的积分
 	        $newScore = floatval($nowScore)+$rule['rule'];
 	        //设置积分 //执行数据库操作
-	        $res = $Model->where(['uid' => is_login(), 'status' => 1])->setField($field, $newScore);
-
-	        $scoreModel= model('ucenter/Score');
-
-	        $scoreModel->cleanUserCache(is_login(),$rule['field']);
-
-
-	        $sType = Db::name('ucenter_score_type')->where(['id' => $rule['field']])->find();
-	        $log_score .= '【' . $sType['title'] . '：' . $rule['rule'] . $sType['unit'] . '】';
-
-	        $action = strpos($rule['rule'], '-')?'dec':'inc';
-
-	        $scoreModel->addScoreLog(is_login(),$rule['field'],$action , substr($rule['rule'],1,strlen($rule['rule'])-1),$action_log['model'],$action_log['record_id'],$action_log['remark'].'【' . $sType['title'] . '：' . $rule['rule'] . $sType['unit'] . '】');
-
+	        $res = $Model->where(['uid' => $user_id, 'status' => 1])->setField($field, $newScore);
 	        if (!$res) {
 	            $return = false;
+	        }else{
+	        	$scoreModel= model('ucenter/Score');
+		        $scoreModel->cleanUserCache($user_id,$rule['field']);
+
+		        $sType = Db::name('ucenter_score_type')->where(['id' => $rule['field']])->find();
+		        $log_score .= '【' . $sType['title'] . '：' . $rule['rule'] . $sType['unit'] . '】';
+
+		        $action = strpos($rule['rule'], '-')?'dec':'inc';
+		        //写积分日志
+		        $scoreModel->addScoreLog($user_id,$rule['field'],$action , substr($rule['rule'],1,strlen($rule['rule'])-1),$action_log['model'],$action_log['record_id'],$action_log['remark'].'【' . $sType['title'] . '：' . $rule['rule'] . $sType['unit'] . '】');
 	        }
 	    }
 	    /* php7不支持exp表达式 暂取消

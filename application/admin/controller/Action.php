@@ -263,11 +263,13 @@ class Action extends Admin {
      */
     public function editAction()
     {
-        $id = input('get.id');
+        $id = input('id');
         //empty($id) && $this->error(lang('_PARAMETERS_CANT_BE_EMPTY_'));
         if($id){
             $data = Db::name('Action')->field(true)->find($id);
+
         }else{
+            //初始默认数据
             $data = [
                 'name'=>'',
                 'title'=>'',
@@ -276,7 +278,7 @@ class Action extends Admin {
                 'remark'=>'',
                 'rule'=>'',
                 'id'=>''
-                ];
+            ];
         }
 
         $this->assign('data', $data);

@@ -80,16 +80,14 @@ class ActionLimit extends Model
         unset($k, $v);
 
         $limitList = Db::name('actionLimit')->where('action_list','like','%'.$item['action'].'%')->where('status','=',1)->select();
-        
-        $item['action_id'] = Db::name('action')->where(array('name' => $item['action']))->field('id')->find();
-
+        $item['action_id'] = Db::name('action')->where(['name' => $item['action']])->field('id')->find();
         $item['action_id'] = implode($item['action_id']);
         unset($item['action']);
 
         foreach ($limitList as &$val) {
             $ago = get_time_ago($val['time_unit'], $val['time_number'], time());
 
-            $item['create_time'] = array('egt', $ago);
+            $item['create_time'] = ['egt', $ago];
 
             $log = Db::name('actionLog')->where($item)->order('create_time desc')->select();
             
@@ -109,8 +107,6 @@ class ActionLimit extends Model
         }
         unset($val);
     }
-
-
 }
 
 

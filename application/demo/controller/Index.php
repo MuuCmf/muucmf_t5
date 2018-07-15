@@ -28,4 +28,11 @@ class Index extends Common
         return $this->fetch();
     }
 
+    public function action()
+    {   
+        //执行行为测试
+        $res = action_log('demo', 'demo', 1, is_login());
+        dump($res);
+    }
+
 }
