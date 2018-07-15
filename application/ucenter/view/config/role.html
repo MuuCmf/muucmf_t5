@@ -46,7 +46,17 @@
                                     <tr style="line-height: 40px;">
                                         <td style="width: 20%">{$role.title}</td>
                                         <td style="width: 50%">{$role.user_status}</td>
-                                        <td style="width: 30%"><neq name="role.user_role_status" value="0"><eq name="role.can_login" value="1"><a data-role="changeLoginRole" data-id="{$role.id}">{:lang('_LOGIN_CHANGE_')}</a><else/>{:lang('_LOGIN_NOW_')}</neq></eq></td>
+                                        <td style="width: 30%">
+                                            {neq name="role.user_role_status" value="0"}
+                                                {eq name="role.can_login" value="1"}
+                                                    <a class="change_login_role" data-role="changeLoginRole" data-id="{$role.id}">
+                                                        {:lang('_LOGIN_CHANGE_')}
+                                                    </a>
+                                                {else/}
+                                                    {:lang('_LOGIN_NOW_')}
+                                                {/eq}
+                                            {/neq}
+                                        </td>
                                     </tr>
                                 {/volist}
                                 </tbody>
@@ -77,7 +87,7 @@
                     </div>
                 </div>
                 <div class="tab-pane" id="default" style="margin-top: 30px;">
-                    <form action="__SELF__" method="post" class="ajax-form form-horizontal">
+                    <form action="{:Url()}" method="post" class="ajax-form form-horizontal">
                         <div class="form-group">
                             <label for="show_role" class="col-xs-3 control-label" style="text-align: right;">
                                 {:lang('_PERSONAL_PAGE_DISPLAY_IDENTITY_')}{:lang('_COLON_')}
@@ -114,7 +124,7 @@
             $('[data-role="changeLoginRole"]').click(function(){
                 var role_id=$(this).attr('data-id');
                 $.post(Url('ucenter/Member/changeLoginRole'),{role_id:role_id},function(data){
-                    if(data.status){
+                    if(data.code){
                         if(data.url!=undefined){
                             toast.success("{:lang('_REDIRECT_AFTER_IDENTITY_CHANGE_')}{:lang('_WAVE_')}");
                             setTimeout(function(){
@@ -134,7 +144,7 @@
             $('[data-role="hold_role"]').click(function(){
                 var role_id=$(this).attr('data-id');
                 $.post(Url('ucenter/Member/registerRole'),{role_id:role_id},function(data){
-                    if(data.status){
+                    if(data.code){
                         toast.success("{:lang('_REDIRECT_AFTER_IDENTITY_OWN_')}{:lang('_WAVE_')}");
                         setTimeout(function(){
                             window.location.href=data.url;

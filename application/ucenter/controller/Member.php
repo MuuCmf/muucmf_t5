@@ -609,22 +609,23 @@ class Member extends Controller
     {
         $aRoleId = input('post.role_id', 0, 'intval');
         $uid = is_login();
-        $data['status'] = 0;
+        $data['code'] = 0;
         if ($uid && $aRoleId != get_login_role()) {
             $roleUser = Db::name('UserRole')->where(['uid' => $uid, 'role_id' => $aRoleId])->find();
+            
             if ($roleUser) {
                 $memberModel = model('common/Member');
                 $memberModel->logout();
                 clean_query_user_cache($uid, array('avatar64', 'avatar128', 'avatar32', 'avatar256', 'avatar512', 'rank_link'));
                 $result = $memberModel->login($uid, false, $aRoleId);
                 if ($result) {
-                    $data['info'] = lang('_INFO_ROLE_CHANGE_');
-                    $data['status'] = 1;
+                    $data['msg'] = lang('_INFO_ROLE_CHANGE_');
+                    $data['code'] = 1;
                 }
             }
         }
-        $data['info'] = lang('_ERROR_ILLEGAL_OPERATE_');
-        $this->ajaxReturn($data);
+        $data['msg'] = lang('_ERROR_ILLEGAL_OPERATE_');
+        return json($data);
     }
 
     /**
@@ -634,22 +635,22 @@ class Member extends Controller
     {
         $aRoleId = input('post.role_id', 0, 'intval');
         $uid = is_login();
-        $data['status'] = 0;
+        $data['code'] = 0;
         if ($uid > 0 && $aRoleId != get_login_role()) {
             $roleUser = Db::name('UserRole')->where(['uid' => $uid, 'role_id' => $aRoleId])->find();
             if ($roleUser) {
-                $data['info'] = lang('_INFO_INV_ROLE_POSSESS_');
-                $this->ajaxReturn($data);
+                $data['msg'] = lang('_INFO_INV_ROLE_POSSESS_');
+                return json($data);
             } else {
                 $memberModel = model('common/Member');
-                $memberModel->logout();
-                model('ucenter/UcenterMember')->initRoleUser($aRoleId, $uid);
+                $memberModel->initRoleUser($aRoleId, $uid);
                 clean_query_user_cache($uid, array('avatar64', 'avatar128', 'avatar32', 'avatar256', 'avatar512', 'rank_link'));
+                $memberModel->logout();
                 $memberModel->login($uid, false, $aRoleId); //登陆
             }
         } else {
-            $data['info'] = lang('_ERROR_ILLEGAL_OPERATE_');
-            $this->ajaxReturn($data);
+            $data['msg'] = lang('_ERROR_ILLEGAL_OPERATE_');
+            return json($data);
         }
     }
 

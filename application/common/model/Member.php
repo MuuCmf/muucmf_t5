@@ -374,7 +374,6 @@ class Member extends Model
      */
     public  function initRoleUser($role_id = 0, $uid)
     {
-
         $role = Db::name('role')->where(['id' => $role_id])->find();
         $user_role = ['uid' => $uid, 'role_id' => $role_id, 'step' => "start"];
         if ($role['audit']) { //该角色需要审核
