@@ -50,6 +50,8 @@
 
 <input data-toggle="can_update" value="{$can_update}" type="hidden" />
 <input data-toggle="version" value="{$version}" type="hidden" />
+<input data-toggle="server_ip" value="{php}echo $_SERVER['SERVER_ADDR']{/php}" type="hidden" />
+<input data-toggle="server_name" value="{php}echo $_SERVER['SERVER_NAME']{/php}" type="hidden" />
 <!-- ./wrapper -->
 <script src="__COMMON__/lib/jquery-2.1.1/jquery.min.js"></script>
 <script src="__LIB__/bootstrap/bootstrap.min.js"></script>
