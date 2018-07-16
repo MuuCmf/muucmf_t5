@@ -103,12 +103,7 @@
         <div class='icon-chose' title={:lang("_SELECT_ICON_WITH_DOUBLE_")}>
             <select name="{$field.name}" title={:lang("_SELECT_ICON_WITH_DOUBLE_")} class="chosen-icons" data-value="{$field.value|default='icon-star'}"></select>
         </div>
-        {php}
-            if(empty($have_icon)){
-            $have_icon=1;
-        {/php}
         
-        {php}}{/php}
         <script>
             $(function(){
                 $('.chosen-container').remove()

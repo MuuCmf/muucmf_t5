@@ -577,8 +577,8 @@ class AdminConfigBuilder extends AdminBuilder
 
     private function readUserGroups()
     {
-        $list = Db::name('AuthGroup')->where(array('status' => 1))->order('id asc')->select();
-        $result = array();
+        $list = Db::name('AuthGroup')->where(['status' => 1])->order('id asc')->select();
+        $result = [];
         foreach ($list as $group) {
             $result[$group['id']] = $group['title'];
         }
@@ -592,7 +592,7 @@ class AdminConfigBuilder extends AdminBuilder
      * @param array $default
      * @return array|mixed
      */
-    public function parseKanbanArray($data, $item = array(), $default = array())
+    public function parseKanbanArray($data, $item = [], $default = [])
     {
         if (empty($data)) {
             $head = reset($default);
@@ -613,7 +613,7 @@ class AdminConfigBuilder extends AdminBuilder
                 $data_id = getSubByKey($v['items'], 'id');
                 $data_d[$key] = $v;
                 unset($data_d[$key]['items']);
-                $data_d[$key]['items'] = $data_id ? $data_id : array();
+                $data_d[$key]['items'] = $data_id ? $data_id : [];
                 $all = array_merge($all, $data_id);
             }
             unset($v);
@@ -635,7 +635,7 @@ class AdminConfigBuilder extends AdminBuilder
                 }
             }
             unset($v);
-            $item_t = array();
+            $item_t = [];
             foreach ($item as $val) {
 
                 $item_t[$val['id']] = $val['title'];
@@ -645,7 +645,7 @@ class AdminConfigBuilder extends AdminBuilder
             foreach ($data_d as &$v) {
                 foreach ($v['items'] as &$val) {
                     $t = $val;
-                    $val = array();
+                    $val = [];
                     $val['id'] = $t;
                     $val['title'] = $item_t[$t];
                 }
