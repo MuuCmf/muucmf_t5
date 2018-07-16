@@ -52,15 +52,14 @@ Temporary Items
 # gulp
 node_modules/
 package-lock.json
-
-#
 /.idea
-/*.lock
+
 
 # MuuCmf
+/addons/*
 /public/src
 /public/uploads
-/runtime
+/runtime/*
 /.hatccess
 /data
-/install.lock
+/*.lock

@@ -162,7 +162,6 @@
         $('[data-role="select_text"]').change(function(){
             var url = window.location.href;
             var query = $('.select_box').find('select').val();
-            console.log(query);
             if (url.indexOf('?') > 0) {
                 if(url.indexOf('order') > 0){    
                     url = changeURLArg(url,'order',query);
