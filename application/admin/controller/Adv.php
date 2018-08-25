@@ -211,13 +211,8 @@ class Adv extends Admin
             } else {
                 $builder->title($pos['title'] . '【' . $pos['name'] . '】' . ' 设置——' . $advPosModel->switchType($pos['type']));
             }
-
-
-            //$themes = D('Common/Theme')->getThemeList();
-            //$themes_array['all'] = '<span class="text-success">全部主题</span>';
-            //foreach ($themes as $v) {
-            //    $themes_array[$v['name']] = $v['title'];
-            //}
+            //转化为数组
+            $pos = $pos->toArray();
             //
             $builder->keyId()
                     ->keyTitle('title','广告名')
@@ -231,6 +226,7 @@ class Adv extends Admin
                     ->keyText('padding', '内部留白', '支持各类长度单位，如px，em，%；依次为：上  右  下  左，如 5px 2px 0 3px');
                     //->keyCheckBox('theme', '适用主题', '', $themes_array);
             $data = json_decode($pos['data'], true);
+
             if (!empty($data)) {
                 $pos = array_merge($pos, $data);
             }
