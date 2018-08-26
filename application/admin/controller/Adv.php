@@ -5,6 +5,7 @@ namespace app\admin\controller;
 use app\admin\controller\Admin;
 use app\admin\builder\AdminConfigBuilder;
 use app\admin\builder\AdminListBuilder;
+use think\Db;
 
 class Adv extends Admin
 {
@@ -255,13 +256,14 @@ class Adv extends Admin
         if(!$aPosId){
             $this->error('未传入"pos_id"参数');
         }
-        $advPosModel = D('Common/AdvPos');
+        $advPosModel = model('Common/AdvPos');
         $pos = $advPosModel->find($aPosId);
         if ($aPosId != 0) {
             $map['pos_id'] = $aPosId;
         }
         $map['status'] = 1;
-        $data = D('Adv')->where($map)->order('pos_id desc,sort desc')->findPage($r);
+
+        $data = Db::name('adv')->where($map)->order('pos_id desc,sort desc')->select();
 
         //todo 广告管理列表
         $builder = new AdminListBuilder();
@@ -281,9 +283,17 @@ class Adv extends Admin
             $builder->button('广告排期查看', array('href' => Url('schedule?pos_id=' . $aPosId)));
             $builder->button('设置广告位', array('href' => Url('editPos?id=' . $aPosId)));
         }
-        $builder->keyText('url', '链接地址')->keyTime('start_time', '开始生效时间', '不设置则立即生效')->keyTime('end_time', '失效时间', '不设置则一直有效')->keyText('sort', '排序')->keyCreateTime()->keyStatus();
-        $builder->data($data['data']);
-        $builder->pagination($data['count'], $r);
+        $builder->keyText('url', '链接地址')
+                ->keyTime('start_time', '开始生效时间', '不设置则立即生效')
+                ->keyTime('end_time', '失效时间', '不设置则一直有效')
+                ->keyText('sort', '排序')
+                ->keyCreateTime()
+                ->keyStatus();
+        if(!empty($data['data'])){
+            $builder->data($data['data']);     
+        }
+        
+        //$builder->pagination($data['count'], $r);
         $builder->display();
     }
 
