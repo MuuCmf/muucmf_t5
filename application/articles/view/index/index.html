@@ -1,14 +1,22 @@
 {extend name="common@base/common" /}
 
 {block name="style"}
-<link href="__CSS__/static_home.min.css" rel="stylesheet" type="text/css"/>
+<link href="__CSS__/articles.min.css" rel="stylesheet" type="text/css"/>
 {/block}
-
 {block name="body"}
-    
+    <div>
+		<ul>
+		{volist name='list' id='data'}
+		    <li> {$data.title}</li>
+		{/volist}
+		</ul>
+	</div>
+	<div>
+		{$list->render()}
+	</div>
 
 {/block}
 
 {block name="script"}
-<script src="__JS__/home.min.js"></script>
+<script src="__JS__/articles.min.js"></script>
 {/block}

@@ -96,7 +96,7 @@ class User Extends Model
     {
         //默认赋值
         if ($pFields === null) {
-            return array('nickname', 'space_url', 'avatar32', 'avatar64', 'avatar128', 'uid');
+            return ['nickname', 'space_url', 'avatar32', 'avatar64', 'avatar128', 'uid'];
         }
 
         //如果fields不是数组，直接返回需要的值

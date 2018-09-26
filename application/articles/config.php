@@ -7,8 +7,8 @@ return [
     	'__COMMON__'    => '/static/common',
         '__LIB__'       => '/static/common/lib',
         '__ZUI__'       => '/static/common/lib/zui',  
-        '__JS__'    	=> '/static/index/js',
-        '__IMG__'       => '/static/index/images',
-        '__CSS__'       => '/static/index/css',   
+        '__JS__'    	=> '/static/articles/js',
+        '__IMG__'       => '/static/articles/images',
+        '__CSS__'       => '/static/articles/css',   
     ],
 ];
