@@ -181,10 +181,9 @@ class Module extends Admin
      */
     public function install()
     {
-        $aName = input('get.name', '', 'text');
+        $aName = input('name', '', 'text');
         $aNav = input('add_nav', 0, 'intval');
         $module = $this->moduleModel->getModule($aName);
-
 
         if (request()->isPost()) {
             //执行guide中的内容
@@ -206,19 +205,14 @@ class Module extends Admin
                 $this->error(lang('_SETUP_MODULE_FAILED_') . $this->moduleModel->getError());
             }
 
-
         } else {
 
-            $role_list = model("Admin/Role")->selectByMap(['status' => 1]);
+            $role_list = model("admin/Role")->selectByMap(['status' => 1]);
             $auth_role_array=array_combine(array_column($role_list,'id'),array_column($role_list,'title'));
             $this->assign('role_list', $role_list);
 
             $builder = new AdminConfigBuilder();
-
             $builder->title($module['alias'] . lang('_DASH_') . lang('_GUIDE_MODULE_INSTALL_'));
-
-            //dump($module);exit;
-
             $builder
                 ->keyId()
                 ->keyReadOnly('name', lang('_MODULE_NAME_'))
@@ -237,11 +231,8 @@ class Module extends Admin
                 $builder->keyBool('add_nav', lang('_ADD_NAVIGATION_'), lang('_INSTALL_AUTO_ADD_MENU_'));
             }
 
-            
             $builder->group(lang('_INSTALL_OPTION_'), 'name,version,mode,add_nav,auth_role');
             
-
-
             $module['mode'] = 'install';
             $builder->data($module);
             $builder->buttonSubmit();

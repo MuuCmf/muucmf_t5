@@ -1670,6 +1670,7 @@
 '_GROUPING_' =>' Grouping',
 '_FOR_THE_LEFT_GROUP_TWO_MENU_' =>' (for the left group two menu)',
 '_WHETHER_TO_HIDE_' =>' Whether to hide',
+'_IS_SYS_MENU_' =>'Is the system menu',
 '_ONLY_DEVELOPER_MODE_VISIBLE_' =>' Only developer mode visible',
 '_MENU_DETAILS_' =>' (menu details)',
 '_BATCH_IMPORT_' =>' Batch import',
