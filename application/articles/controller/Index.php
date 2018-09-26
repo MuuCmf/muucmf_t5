@@ -42,20 +42,19 @@ class Index extends Common
      * 文章首页
      * @return [type] [description]
      */
-    public function index()
+    public function index($r=20)
     {
         // 文章首页
         $map['status']=1;
-        /* 获取当前分类下文章列表 */
-        $articles = model('Articles');
         // 查询数据集
-        $list = $articles->where($map)->order('id', 'desc')->paginate(2);
+        $list = model('Articles')->where($map)->order('id', 'desc')->paginate($r);
         foreach($list as &$val){
             $val['user']=query_user(['space_url','avatar32','nickname'],$val['uid']);
         }
         unset($val);
 
         /* 模板赋值并渲染模板 */
+        $this->assign('cid', 0);
         $this->assign('list', $list);
         return $this->fetch();
     }
@@ -63,7 +62,7 @@ class Index extends Common
     public function category($r=20)
     {
         /* 分类信息 */
-        $cid = input('cid',0,'intval');
+        $cid = input('id',0,'intval');
         if($cid){
             //$categoryT = $this->_category($$cid);
             $cates=model('ArticlesCategory')->getCategoryList(['pid'=>$cid]);
@@ -72,7 +71,7 @@ class Index extends Common
                 $cates=array_merge(array($cid),$cates);
                 $map['category']=array('in',$cates);
             }else{
-                $map['category']=$$cid;
+                $map['category']=$cid;
             }
         }
         $map['status']=1;
@@ -88,6 +87,61 @@ class Index extends Common
         $this->assign('cid', $cid);
 
         return $this->fetch();
+    }
+
+    public function detail()
+    {
+        $aId=input('id',0,'intval');
+
+        /* 标识正确性检测 */
+        if (!($aId && is_numeric($aId))) {
+            $this->error('文档ID错误！');
+        }
+
+        $info=model('Articles')->get($aId);
+        
+        $author=query_user(array('uid','space_url','nickname','avatar32','avatar64','signature'),$info['uid']);
+        $author['articles_count']=model('Articles')->where(['uid'=>$info['uid']])->count();
+        //关键字转化成数组
+        $keywords = explode(',',$info['keywords']);
+
+        /*用户所要文章访问量*/
+        $author['articles_view']=$this->_totalView($info['uid']);
+
+        $this->_category($info['category']);
+
+        /* 更新浏览数 */
+        $map = ['id' => $aId];
+        model('Articles')->where($map)->setInc('view');
+        /* 模板赋值并渲染模板 */
+
+        $this->assign('author',$author);
+        $this->assign('info', $info);
+        dump($info);exit;
+        return $this->fetch();
+    }
+
+    //获取用户文章数的总阅读量
+    private function _totalView($uid=0)
+    {
+        $total = cache("article_total_view_uid_{$uid}");
+        if(!$total){
+            $res=model('Articles')->where(['uid'=>$uid])->select();
+            $total=0;
+            foreach($res as $value){ 
+                $total=$total+$value['view'];
+            }
+            unset($value);
+            cache("article_total_view_uid_{$uid}",$total,3600);
+        }
+        return $total;
+    }
+
+    private function _category($id=0)
+    {
+        $now_category=model('ArticlesCategory')->getTree($id,'id,title,pid,sort');
+        $this->assign('now_category',$now_category);
+        return $now_category;
     }
 
     

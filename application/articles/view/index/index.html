@@ -1,22 +1,56 @@
 {extend name="common@base/common" /}
 
 {block name="style"}
+<link href="__COMMON__/lib/Swiper-3.4.2/css/swiper.min.css" rel="stylesheet" type="text/css" />
 <link href="__CSS__/articles.min.css" rel="stylesheet" type="text/css"/>
 {/block}
 {block name="body"}
-    <div>
-		<ul>
-		{volist name='list' id='data'}
-		    <li> {$data.title}</li>
-		{/volist}
-		</ul>
-	</div>
-	<div>
-		{$list->render()}
-	</div>
-
+    <div id="main-container" class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="common_block_border">
+                {include file="public/_nav"/}
+                    <div class="common_content_box">
+                        <section id="contents">
+                            {notempty name="list"}
+                                {volist name="list" id="data"}
+                                    {include file="public/_default_list"/}
+                                {/volist}
+                            {else/}
+                                <div style="font-size:1em;padding:2em 0;color: #ccc;text-align: center">
+                                    该类型下没有内容~
+                                </div>
+                            {/notempty}
+                        </section>
+                        <div class="text-right">
+                            {$list->render()}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="common_block_border">
+                <!--侧栏菜单-->
+                    
+                <!--end侧栏菜单-->   
+                </div>
+            </div>
+        </div>
+    </div>
 {/block}
-
 {block name="script"}
-<script src="__JS__/articles.min.js"></script>
+<script src="__COMMON__/lib/Swiper-3.4.2/js/swiper.jquery.min.js"></script>
+
+<script>
+$(function(){   
+      var navSwiper = new Swiper ('.articles-nav-box', {
+        freeMode : true,
+        slidesPerView : 'auto',
+        freeModeSticky : true ,
+    
+      });
+
+      $('.articles-nav-box #tab_category_{$cid}').addClass('active');
+})   
+</script>
 {/block}
