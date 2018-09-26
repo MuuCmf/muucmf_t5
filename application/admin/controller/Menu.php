@@ -101,7 +101,7 @@ class Menu extends Admin {
 
             $menus = model('common/Tree')->toFormatTree($menus,$title = 'title',$pk='id',$pid = 'pid',$root = '0');
 
-            $menus = array_merge(array(0=>array('id'=>'','title_show'=>lang('_MENU_TOP_'))), $menus);
+            $menus = array_merge(array(0=>array('id'=>'0','title_show'=>lang('_MENU_TOP_'))), $menus);
 
             $this->assign('Menus', $menus);
             $this->assign('Modules',model('Module')->getAll());
