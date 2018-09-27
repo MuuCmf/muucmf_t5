@@ -7,14 +7,11 @@
             {:lang('_MENU_MANAGER_')}
         </h2>
     </div>
-
-
-
     <div class="with-padding">
 
         <div class="button-box row clearfix ">
             <div class="col-xs-10">
-                <a class="btn btn-info" href="{:Url('add',array('pid'=>input('get.pid',0)))}">{:lang('_ADD_WITH_SPACE_')}</a>
+                <a class="btn btn-info" href="{:Url('add',array('pid'=>$pid))}">{:lang('_ADD_WITH_SPACE_')}</a>
                 <button class="btn btn-danger ajax-post confirm" url="{:Url('del')}" target-form="ids">{:lang('_DELETE_WITH_SPACE_')}</button>
                 <a class="btn btn-warning" href="{:Url('import',array('pid'=>input('get.pid',0)))}">{:lang('_IMPORT_')}</a>
                 <button class="btn list_sort" url="{:Url('sort',['pid'=>input('get.pid',0)])}">{:lang('_SORT_')}</button>

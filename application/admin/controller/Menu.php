@@ -20,6 +20,8 @@ class Menu extends Admin {
             $data = Db::name('Menu')->where($where)->find();
             $this->assign('data',$data);
         }
+        $this->assign('pid',$pid);
+
         if($title){
             $map['title'] = ['like','%'.$title.'%'];
         }
@@ -62,10 +64,12 @@ class Menu extends Admin {
                 $this->error($Menu->getError());
             }
         } else {
-            $this->assign('info',array('pid'=>input('pid')));
+            $this->assign('info',['pid'=>input('pid')]);
             $menus = Db::name('Menu')->select();
             $menus = model('common/Tree')->toFormatTree($menus);
-            $menus = array_merge(array(0=>array('id'=>0,'title_show'=>lang('_MENU_TOP_'))), $menus);
+            $menus = array_merge([
+                    0=>['id'=>0,'title_show'=>lang('_MENU_TOP_')]
+                ], $menus);
             $this->assign('Modules',model('Module')->getAll());
             $this->assign('Menus', $menus);
             $this->setTitle(lang('_MENU_ADD_'));
