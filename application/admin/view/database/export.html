@@ -59,9 +59,9 @@
         $optimize.add($repair).click(function(){
             $.post(this.href, $form.serialize(), function(data){
                 if(data.code){
-                    updateAlert(data.msg,'alert-success');
+                    updateAlert(data.msg,'success');
                 } else {
-                    updateAlert(data.msg,'alert-error');
+                    updateAlert(data.msg,'error');
                 }
                 setTimeout(function(){
 	                $('#top-alert').find('button').click();
