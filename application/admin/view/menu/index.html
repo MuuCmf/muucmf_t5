@@ -47,6 +47,7 @@
                     <th>{:lang('_URL_')}</th>
                     <th>{:lang('_SORT_')}</th>
                     <th>{:lang('_DEV_MODE_ONLY_')}</th>
+                    <th>{:lang('_WHETHER_TO_HIDE_')}</th>
                     <th>{:lang('_IS_TYPE_MENU_')}</th>
                     <th>{:lang('_OPERATE_')}</th>
                 </tr>
@@ -74,6 +75,12 @@
                                 <a href="{:Url('toogleHide',array('id'=>$menu['id'],'value'=>abs($menu['hide']-1)))}"
                                    class="ajax-get">
                                     {$menu.hide_text}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="#"
+                                   class="ajax-get">
+                                    {$menu.type_text}
                                 </a>
                             </td>
                             <td>

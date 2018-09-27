@@ -58,10 +58,10 @@
                 </div>
             </div>
             <div class="form-item builder_item">
-                <label class="item-label">{:lang("_IS_TYPE_MENU_")}<span class="check-tips"></span></label>
+                <label class="item-label">{:lang("_WHETHER_TO_HIDE_")}<span class="check-tips"></span></label>
                 <div class="controls">
-                    <label class="radio-inline"><input type="radio" name="hide" value="1">{:lang("_MODULE_MENU_")}</label>
-                    <label class="radio-inline"><input type="radio" name="hide" value="0">{:lang("_SYS_MENU_")}</label>
+                    <label class="radio-inline"><input type="radio" name="hide" value="1">{:lang("_YES_")}</label>
+                    <label class="radio-inline"><input type="radio" name="hide" value="0">{:lang("_NOT_")}</label>
                 </div>
             </div>
             <div class="form-item builder_item">
@@ -69,6 +69,13 @@
                 <div class="controls">
                     <label class="radio-inline"><input type="radio" name="is_dev" value="1">{:lang("_YES_")}</label>
                     <label class="radio-inline"><input type="radio" name="is_dev" value="0">{:lang("_NOT_")}</label>
+                </div>
+            </div>
+            <div class="form-item builder_item">
+                <label class="item-label">{:lang("_IS_TYPE_MENU_")}<span class="check-tips"></span></label>
+                <div class="controls">
+                    <label class="radio-inline"><input type="radio" name="type" value="1">{:lang("_MODULE_MENU_")}</label>
+                    <label class="radio-inline"><input type="radio" name="type" value="0">{:lang("_SYS_MENU_")}</label>
                 </div>
             </div>
             <div class="form-ite builder_item">
@@ -92,6 +99,7 @@
         Think.setValue("pid", '{$info.pid|default=0}');
         Think.setValue("hide", '{$info.hide|default=0}');
         Think.setValue("is_dev", '{$info.is_dev|default=0}');
+        Think.setValue("type", '{$info.type|default=0}');
         Think.setValue("module", '{$info.module|default=''}');
     </script>
 {/block}

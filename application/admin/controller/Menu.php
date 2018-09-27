@@ -31,7 +31,11 @@ class Menu extends Admin {
         
         $list       =   Db::name("Menu")->where($map)->order('sort asc,id asc')->select();
 
-        int_to_string($list,['hide'=>[1=>lang('_MODULE_MENU_'),0=>lang('_SYS_MENU_')],'is_dev'=>[1=>lang('_YES_'),0=>lang('_NOT_')]]);
+        int_to_string($list,[
+            'hide'=>[1=>lang('_YES_'),0=>lang('_NOT_')],
+            'is_dev'=>[1=>lang('_YES_'),0=>lang('_NOT_')],
+            'type'=>[1=>lang('_MODULE_MENU_'),0=>lang('_SYS_MENU_')]
+        ]);
         
         $this->assign('list',$list);
 
@@ -65,7 +69,7 @@ class Menu extends Admin {
             }
         } else {
             $map['id'] = input('pid');
-            $info = Db::name('Menu')->where($map)->field('module,pid,hide,is_dev')->find();
+            $info = Db::name('Menu')->where($map)->field('module,pid,hide,is_dev,type')->find();
             $info['pid'] = input('pid');
             $this->assign('info',$info);
             //菜单树
