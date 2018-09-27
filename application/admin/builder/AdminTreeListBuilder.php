@@ -390,7 +390,7 @@ class AdminTreeListBuilder extends AdminBuilder
     {
         $ids = is_array($ids) ? $ids : explode(',', $ids);
         Db::name($model)->where(['id' => ['in', $ids]])->update(['status' => $status]);
-        $this->success(lang('success_setting'), $_SERVER['HTTP_REFERER']);
+        $this->success(lang('_SUCCESS_SETTING_'), $_SERVER['HTTP_REFERER']);
     }
 
     private function convertKey($from, $to, $convertFunction)
