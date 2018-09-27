@@ -31,7 +31,7 @@ class Menu extends Admin {
         
         $list       =   Db::name("Menu")->where($map)->order('sort asc,id asc')->select();
 
-        int_to_string($list,['hide'=>[1=>lang('_YES_'),0=>lang('_NOT_')],'is_dev'=>[1=>lang('_YES_'),0=>lang('_NOT_')]]);
+        int_to_string($list,['hide'=>[1=>lang('_MODULE_MENU_'),0=>lang('_SYS_MENU_')],'is_dev'=>[1=>lang('_YES_'),0=>lang('_NOT_')]]);
         
         $this->assign('list',$list);
 
@@ -64,7 +64,11 @@ class Menu extends Admin {
                 $this->error($Menu->getError());
             }
         } else {
-            $this->assign('info',['pid'=>input('pid')]);
+            $map['id'] = input('pid');
+            $info = Db::name('Menu')->where($map)->field('module,pid,hide,is_dev')->find();
+            $info['pid'] = input('pid');
+            $this->assign('info',$info);
+            //菜单树
             $menus = Db::name('Menu')->select();
             $menus = model('common/Tree')->toFormatTree($menus);
             $menus = array_merge([
@@ -79,7 +83,6 @@ class Menu extends Admin {
 
     /**
      * 编辑配置
-     * @author yangweijie <yangweijiester@gmail.com>
      */
     public function edit($id = ''){
         

@@ -1585,7 +1585,9 @@ return array(
     '_GROUPING_' => '分组',
     '_FOR_THE_LEFT_GROUP_TWO_MENU_' => '（用于左侧分组二级菜单）',
     '_WHETHER_TO_HIDE_' => '是否隐藏',
-    '_IS_SYS_MENU_' =>'是否系统菜单',
+    '_IS_TYPE_MENU_' =>'菜单类型',
+    '_SYS_MENU_' =>'系统',
+    '_MODULE_MENU_' =>'模块',
     '_ONLY_DEVELOPER_MODE_VISIBLE_' => '仅开发者模式可见',
     '_MENU_DETAILS_' => '（菜单详细说明）',
 
