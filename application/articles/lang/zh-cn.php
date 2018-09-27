@@ -5,6 +5,7 @@ return array(
     '_DISPLAY_BLOCK_' => '展示模块',
     '_HOME_SETTING_' => '首页设置',
     '_CAROUSEL_' => '轮播',
+    '_ENABLE_' => '启用',
     '_DISABLED_' => '禁用',
     '_TIP_DISPLAY_BLOCK_' => '拖拽到右侧以展示这些模块，新的模块安装后会多出一些可操作的项目',
     '_PICTURE_' => '图片',

@@ -17,7 +17,6 @@ class ArticlesCategory extends Model {
      * @param int $id
      * @param bool $field
      * @return array
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function getTree($id = 0, $field = true,$map=array('status' => array('gt', -1))){
         /* 获取当前分类信息 */
@@ -45,28 +44,16 @@ class ArticlesCategory extends Model {
      * @param $id
      * @param bool $field
      * @return mixed
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function info($id, $field = true){
         /* 获取分类信息 */
-        $map = array();
+        $map = [];
         if(is_numeric($id)){ //通过ID查询
             $map['id'] = $id;
         } else { //通过标识查询
             $map['name'] = $id;
         }
         return $this->field($field)->where($map)->find();
-    }
-
-    public function editData($data)
-    {
-        $data=$this->create();
-        if($data['id']){
-            $res=$this->save($data);
-        }else{
-            $res=$this->add($data);
-        }
-        return $res;
     }
 
     public function getCategoryList($map,$type=0)
