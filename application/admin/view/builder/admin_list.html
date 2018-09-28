@@ -198,7 +198,7 @@
         $(document).on('submit', '.form-dont-clear-url-param', function(e){
             e.preventDefault();
 
-            var seperator = "&";
+            var seperator = "?";
             var form = $(this).serialize();
             var action = $(this).attr('action');
             if(action == ''){
@@ -252,7 +252,7 @@
                         updateAlert({:lang('_NO_OPERATIONAL_DATA_WITH_SINGLE_')},'danger');
                         return false;
                     }
-                    target_url=target_url+'&'+query;
+                    target_url=target_url+'?'+query;
                 }
                 var myModalTrigger = new $.zui.ModalTrigger({
                     'type':'ajax',

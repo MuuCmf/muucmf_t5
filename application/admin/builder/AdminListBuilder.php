@@ -53,7 +53,7 @@ class AdminListBuilder extends AdminBuilder
     }
     public function page($page)
     {
-        $this->_page = $page;
+        $this->_page = $page; 
         return $this;
     }
     /**
@@ -556,6 +556,9 @@ class AdminListBuilder extends AdminBuilder
 
     public function data($list)
     {
+        if(is_object($list)) {
+            $list = $list->toArray()['data'];
+        }
         $this->_data = $list;
         return $this;
     }
