@@ -204,22 +204,21 @@ class AdminListBuilder extends AdminBuilder
     /**清空回收站
      * @param null $model
      * @return $this
-     * @author 陈一枭
+     * 该操作太尼玛危险~先不处理
      */
     public function buttonClear($model = null)
     {
-        return $this->button(lang('_CLEAR_OUT_'), array('class' => 'btn ajax-post tox-confirm', 'data-confirm' => lang('_CONFIRM_CLEAR_OUT_'), 'url' => U('', array('model' => $model)), 'target-form' => 'ids', 'hide-data' => 'true'));
+        return $this->button(lang('_CLEAR_OUT_'), array('class' => 'btn btn-danger ajax-post tox-confirm', 'data-confirm' => lang('_CONFIRM_CLEAR_OUT_'), 'url' => Url('', array('model' => $model)), 'target-form' => 'ids', 'hide-data' => 'true'));
     }
 
     /**彻底删除
      * @param null $url
      * @return $this
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function buttonDeleteTrue($url = null)
     {
-        if (!$url) $url = $this->_setDeleteTrueUrl;
-        $attr['class'] = 'btn ajax-post tox-confirm';
+        if (!$url) $url = $this->_setDeleteTrueUrl;//还未定义
+        $attr['class'] = 'btn btn-danger ajax-post tox-confirm';
         $attr['data-confirm'] = lang('_CONFIRM_DELETE_COMPLETELY_');
         $attr['url'] = $url;
         $attr['target-form'] = 'ids';
@@ -477,7 +476,7 @@ class AdminListBuilder extends AdminBuilder
         return $this;
     }
 
-    public function keyDoAction($getUrl, $text, $title = '操作')
+    public function keyDoAction($getUrl, $text, $title = '操作', $class = '')
     {
         //获取默认getUrl函数
         if (is_string($getUrl)) {
@@ -506,15 +505,30 @@ class AdminListBuilder extends AdminBuilder
         }
 
         //在DOACTIONS中增加action
-        $doActionKey['opt']['actions'][] = array('text' => $text, 'get_url' => $getUrl);
+        $doActionKey['opt']['actions'][] = array('text' => $text, 'get_url' => $getUrl, 'class' => $class);
+
         return $this;
+    }
+    /**
+     * ajax操作链接
+     * @param  [type] $getUrl [description]
+     * @param  string $text   [description]
+     * @return [type]         [description]
+     */
+    public function keyDoActionAjax($getUrl, $text = 'Ajax')
+    {
+        return $this->keyDoAction($getUrl, $text, '操作', 'ajax-get');
     }
 
     public function keyDoActionEdit($getUrl, $text = '编辑')
     {
         return $this->keyDoAction($getUrl, $text);
     }
-
+    /**
+     * 还原操作，存在获取数据ID BUG
+     * @param  string $text [description]
+     * @return [type]       [description]
+     */
     public function keyDoActionRestore($text = '还原')
     {
         $that = $this;
@@ -522,7 +536,7 @@ class AdminListBuilder extends AdminBuilder
         $getUrl = function () use ($that, $setStatusUrl) {
             return $that->addUrlParam($setStatusUrl, array('status' => 1));
         };
-        return $this->keyDoAction($getUrl, $text, array('class' => 'ajax-get'));
+        return $this->keyDoAction($getUrl, $text,'操作', 'ajax-get');
     }
 
     public function keyTruncText($name, $title, $length)
@@ -535,6 +549,8 @@ class AdminListBuilder extends AdminBuilder
      * @param $totalCount
      * @param $listRows
      * @return $this
+     *
+     * 已弃用
      */
     public function pagination($totalCount, $listRows)
     {
@@ -664,6 +680,7 @@ class AdminListBuilder extends AdminBuilder
                 $getUrl = $action['get_url'];
                 $linkText = $action['text'];
                 $url = $getUrl($item);
+                $class = $action['class'];
                 if (isset($action['opt'])) {
                     $content = array();
                     foreach ($action['opt'] as $key => $value) {
@@ -674,10 +691,10 @@ class AdminListBuilder extends AdminBuilder
                     if (isset($action['opt']['data-role']) && $action['opt']['data-role'] == "modal_popup") {//模态弹窗
                         $result[] = "<a href=\" javascrapt:void(0);\" modal-url=\"$url\" " . $content . ">$linkText</a>";
                     } else {
-                        $result[] = "<a href=\"$url\" " . $content . ">$linkText</a>";
+                        $result[] = "<a href=\"$url\" class=\"$class\" " . $content . ">$linkText</a>";
                     }
                 } else {
-                    $result[] = "<a href=\"$url\">$linkText</a>";
+                    $result[] = "<a href=\"$url\" class=\"$class\">$linkText</a>";
                 }
             }
             return implode(' ', $result);
@@ -759,7 +776,7 @@ class AdminListBuilder extends AdminBuilder
     public function doSetStatus($model, $ids, $status = 1)
     {
         $id = array_unique((array)$ids);
-        $rs = Db::name($model)->where(array('id' => array('in', $id)))->update(['status' => $status]);
+        $rs = Db::name($model)->where(['id' => ['in', $id]])->update(['status' => $status]);
         if ($rs === false) {
             $this->error(lang('_ERROR_SETTING_') . lang('_PERIOD_'));
         }
@@ -868,7 +885,7 @@ class AdminListBuilder extends AdminBuilder
     public function doDeleteTrue($model, $ids)
     {
         $ids = is_array($ids) ? $ids : explode(',', $ids);
-        Db::name($model)->where(array('id' => array('in', $ids)))->delete();
+        Db::name($model)->where(['id' => ['in', $ids]])->delete();
         $this->success(lang('_SUCCESS_DELETE_COMPLETELY_'), $_SERVER['HTTP_REFERER']);
     }
 

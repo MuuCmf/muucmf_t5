@@ -159,8 +159,9 @@
                 <tr>
                     <td><input class="ids" type="checkbox" value="{notempty name="e['id']"}{$e['id']}{/notempty}" name="ids[]"></td>
                     {volist name="keyList" id="field"}
-                        <td style="width:auto;max-width: {$field['width']};"  class="text-ellipsis">{$e[$field['name']]}</td>
-
+                        <td style="width:auto;max-width: {$field['width']};"  class="text-ellipsis">
+                            {$e[$field['name']]}
+                        </td>
                     {/volist}
                 </tr>
             {/volist}
