@@ -99,8 +99,9 @@ class Index extends Common
         }
 
         $info=model('Articles')->get($aId);
+        $info['detail'] = model('ArticlesDetail')->get(['articles_id'=>$aId]);
         
-        $author=query_user(array('uid','space_url','nickname','avatar32','avatar64','signature'),$info['uid']);
+        $author=query_user(['uid','space_url','nickname','avatar32','avatar64','signature'],$info['uid']);
         $author['articles_count']=model('Articles')->where(['uid'=>$info['uid']])->count();
         //关键字转化成数组
         $keywords = explode(',',$info['keywords']);
@@ -117,7 +118,7 @@ class Index extends Common
 
         $this->assign('author',$author);
         $this->assign('info', $info);
-        dump($info);exit;
+        //dump($info);exit;
         return $this->fetch();
     }
 
