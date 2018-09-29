@@ -98,8 +98,7 @@ class Index extends Common
             $this->error('文档ID错误！');
         }
 
-        $info=model('Articles')->get($aId);
-        $info['detail'] = model('ArticlesDetail')->get(['articles_id'=>$aId]);
+        $info=model('Articles')->getDataById($aId);
         
         $author=query_user(['uid','space_url','nickname','avatar32','avatar64','signature'],$info['uid']);
         $author['articles_count']=model('Articles')->where(['uid'=>$info['uid']])->count();
@@ -108,16 +107,18 @@ class Index extends Common
 
         /*用户所要文章访问量*/
         $author['articles_view']=$this->_totalView($info['uid']);
-
         $this->_category($info['category']);
 
         /* 更新浏览数 */
         $map = ['id' => $aId];
         model('Articles')->where($map)->setInc('view');
+        /* 该作者最新更新列表 */
+        $new_post_list = model('Articles')->getListByUid($info['uid'],5);
+        
         /* 模板赋值并渲染模板 */
-
         $this->assign('author',$author);
         $this->assign('info', $info);
+        $this->assign('new_post_list',$new_post_list);
         //dump($info);exit;
         return $this->fetch();
     }
