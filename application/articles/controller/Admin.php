@@ -342,7 +342,9 @@ str;
     {
         $ids = input('ids/a');
         !is_array($ids)&&$ids=explode(',',$ids);
-        
+        //删除内容表
+        model('ArticlesDetail')->where(['articles_id' => ['in',$ids]])->delete();
+        //删除信息表
         $builder = new AdminListBuilder();
         $builder->doDeleteTrue('Articles', $ids);
     }
@@ -361,12 +363,8 @@ str;
             foreach($position as $val){
                 $data['position']+=intval($val);
             }
-            if($data['id']){
-                $res = model('Articles')->save($data,['id'=>$data['id']]);
-            }else{
-                $res = model('Articles')->save($data);
-            }
-            
+            $res = model('Articles')->editData($data);
+
             if($res){
                 cache('articles_home_data',null);
                 //$aId=$aId?$aId:$res;
@@ -378,7 +376,7 @@ str;
 
             $position_options=$this->_getPositions();
             if($aId){
-                $data=model('Articles')->get($aId);
+                $data=model('Articles')->getDataById($aId);
                 
                 $position=[];
                 foreach($position_options as $key=>$val){
@@ -386,11 +384,13 @@ str;
                         $position[]=$key;
                     }
                 }
+                $data['content']=$data['detail']['content'];
+                $data['template']=$data['detail']['template'];
                 $data['position']=implode(',',$position);
             }else{
                 $data = null;
             }
-            $category=model('ArticlesCategory')->getCategoryList(array('status'=>array('egt',0)),1);
+            $category=model('ArticlesCategory')->getCategoryList(['status'=>['egt',0]],1);
             $options=[];
             foreach($category as $val){
                 $options[$val['id']]=$val['title'];
@@ -416,6 +416,7 @@ str;
                 ->keyInteger('sort','排序')->keyDefault('sort',0)
                 //->keyText('template','模板')
                 ->keyText('source','来源','原文地址')
+                ->keyText('template','模板')
                 ->keyCheckBox('position','推荐位','多个推荐，则将其推荐值相加',$position_options)
                 ->keyStatus()
                 ->keyDefault('status',1)
