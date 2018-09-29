@@ -34,8 +34,24 @@ class Index extends Common
             }
             $c_menu[]=$m;
         }
+        /*用户操作菜单*/
+        $show_edit=cache('SHOW_EDIT_BUTTON');
+        if($show_edit===false){
+            $map['can_post']=1;
+            $map['status']=1;
+            $show_edit=model('ArticlesCategory')->where($map)->count();
+            cache('SHOW_EDIT_BUTTON',$show_edit);
+        }
+        $action_menu=[];
+        if(is_login()){
+            $action_menu[]=['tab' => 'myArticles', 'title' => '<i class="icon-th-list"></i> 我发布的', 'href' =>Url('articles/User/my')];
+            if($show_edit){
+            $action_menu[]=['tab' => 'create', 'title' => '<i class="icon-edit"></i> 发布文章', 'href' =>is_login()?Url('articles/User/edit'):"javascript:toast.error('登录后才能操作')"];
+            }
+        }
         
         $this->assign('sub_menu', $c_menu);
+        $this->assign('action_menu', $action_menu);
         
     }
     /**
@@ -113,14 +129,23 @@ class Index extends Common
         $map = ['id' => $aId];
         model('Articles')->where($map)->setInc('view');
         /* 该作者最新更新列表 */
-        $new_post_list = model('Articles')->getListByUid($info['uid'],5);
-        
+        $new_post_list_map['uid'] = $info['uid'];
+        $new_post_list = model('Articles')->getListByMap($new_post_list_map,5);
+
         /* 模板赋值并渲染模板 */
         $this->assign('author',$author);
         $this->assign('info', $info);
         $this->assign('new_post_list',$new_post_list);
         //dump($info);exit;
         return $this->fetch();
+    }
+    /**
+     * 作者文章列表
+     * @return [type] [description]
+     */
+    public function author()
+    {
+
     }
 
     //获取用户文章数的总阅读量

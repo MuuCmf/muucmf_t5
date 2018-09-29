@@ -48,9 +48,9 @@ class Articles extends Model {
         return null;
     }
 
-    public function getListByUid($uid,$limit=5,$order = 'create_time desc')
+    public function getListByMap($map, $limit=5,$order = 'create_time desc')
     {
-    	$map['uid'] = $uid;
+    	
     	$list = $this->where($map)->limit($limit)->order($order)->select();
     	$category=model('ArticlesCategory')->_category();
 
