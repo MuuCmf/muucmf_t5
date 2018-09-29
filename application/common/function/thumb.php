@@ -82,15 +82,14 @@ function getThumbImage($filename, $width = 100, $height = 'auto', $type = 0, $re
             }
 
             $thumb = Image::open($UPLOAD_PATH . $filename);
-            
-            $thumb->thumb($width, $height);
+            //默认裁切类型标识缩略图居中裁剪类型，先写死，后续版本增加后台设置
+            $thumb->thumb($width, $height, Image::THUMB_CENTER);
             
             $res = $thumb->save($UPLOAD_PATH . $thumbFile);
             $info['src'] = $UPLOAD_PATH . $thumbFile;
             $info['width'] = $old_image_width;
             $info['height'] = $old_image_height;
             return $info;
-
         }
     }
 }
@@ -117,9 +116,9 @@ function getThumbImageById($cover_id, $width = 100, $height = 'auto', $type = 0,
         $attach = getThumbImage('uploads/picture/nopic.png', $width, $height, $type, $replace);
         return get_pic_src($attach['src']);
     }
-
-    if ($picture['type'] == 'local') {
+    if ($picture['type'] == 'local' || $picture['driver'] == 'local') {
         $attach = getThumbImage($picture['path'], $width, $height, $type, $replace);
+
         return get_pic_src($attach['src']);
     } else {
         $new_img = $picture['path'];
