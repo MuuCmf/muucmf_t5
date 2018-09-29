@@ -128,14 +128,11 @@ class Index extends Common
         /* 更新浏览数 */
         $map = ['id' => $aId];
         model('Articles')->where($map)->setInc('view');
-        /* 该作者最新更新列表 */
-        $new_post_list_map['uid'] = $info['uid'];
-        $new_post_list = model('Articles')->getListByMap($new_post_list_map,5);
-
+        
         /* 模板赋值并渲染模板 */
         $this->assign('author',$author);
         $this->assign('info', $info);
-        $this->assign('new_post_list',$new_post_list);
+        
         //dump($info);exit;
         return $this->fetch();
     }
@@ -143,9 +140,27 @@ class Index extends Common
      * 作者文章列表
      * @return [type] [description]
      */
-    public function author()
+    public function author($r=20)
     {
-
+        $uid = input('uid',0,'intval');
+        $map['uid'] = $uid;
+        $map['status']=1;
+        // 查询数据集
+        $list = model('Articles')->where($map)->order('id', 'desc')->paginate($r);
+        foreach($list as &$val){
+            $val['user']=query_user(['space_url','avatar32','nickname'],$val['uid']);
+        }
+        unset($val);
+        /*作者信息*/
+        $author=query_user(['uid','space_url','nickname','avatar32','avatar64','signature'],$uid);
+        $author['articles_count']=model('Articles')->where(['uid'=>$uid])->count();
+        /*用户所要文章访问量*/
+        $author['articles_view']=$this->_totalView($uid);
+        /* 模板赋值并渲染模板 */
+        $this->assign('uid', $uid);
+        $this->assign('author',$author);
+        $this->assign('list', $list);
+        return $this->fetch();
     }
 
     //获取用户文章数的总阅读量
