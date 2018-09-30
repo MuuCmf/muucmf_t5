@@ -80,7 +80,7 @@
 			            <label for="description" class="control-label">摘要</label>
 
 			            <div class="">
-			                <textarea id="description" name="description" class="form-control input-lg" placeholder="简单描述一下资讯内容(选填)">{$data.description}</textarea>
+			                <textarea id="description" name="description" class="form-control input-lg" placeholder="简单描述一下文章内容(选填)">{$data.description}</textarea>
 			            </div>
 			        </div>
 
@@ -92,14 +92,11 @@
 			                {:widget('common/Wangeditor/editor',['myeditor_edit','content',$data['detail']['content'],'','height:auto;min-height:400px'])}
 			            </div>
 			        </div>
-			        <div class="form-group">
-			            <div class="col-sm-offset-1 col-xs-1">
-			                <button type="submit" class="btn btn-primary">提交</button>
-
-			            </div>
-			            <div class="col-xs-8">
-			                <button onclick="history.go(-1);" class="btn btn-default">返回</button>
-			            </div>
+			        <div class="form-group text-center">
+			            
+			            <button type="submit" class="btn btn-lg btn-primary">提交</button>
+			            <button onclick="history.go(-1);" class="btn btn-lg btn-default">返回</button>
+			            
 			        </div>
 			    </form>
 			</div>
