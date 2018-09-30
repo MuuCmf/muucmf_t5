@@ -29,10 +29,20 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="common_block_border">
+                {if condition="is_login()"}
+                <div class="right_block">
                 <!--侧栏菜单-->
-                    
-                <!--end侧栏菜单-->   
+                {include file="public/_button"/}
+                <!--end侧栏菜单-->
+                </div>
+                {/if}
+                <div class="right_block">
+                    <div class="right_block_item">
+                        <div class="right_block_title">
+                            <h3>最新更新</h3>
+                        </div>
+                        {:widget('News/lists',['map'=>['status'=>1],'limit'=>10])}
+                    </div>
                 </div>
             </div>
         </div>

@@ -44,10 +44,10 @@ class Index extends Common
         }
         $action_menu=[];
         if(is_login()){
-            $action_menu[]=['tab' => 'myArticles', 'title' => '<i class="icon-th-list"></i> 我发布的', 'href' =>Url('articles/User/my')];
             if($show_edit){
-            $action_menu[]=['tab' => 'create', 'title' => '<i class="icon-edit"></i> 发布文章', 'href' =>is_login()?Url('articles/User/edit'):"javascript:toast.error('登录后才能操作')"];
+            $action_menu[]=['tab' => 'create', 'class' => 'btn-warning', 'title' => '<i class="icon-edit"></i> 发布文章', 'href' =>Url('articles/User/edit')];
             }
+            $action_menu[]=['tab' => 'myArticles', 'class' => 'btn-info btn-articles', 'title' => '<i class="icon-th-list"></i> 我发布的', 'href' =>Url('articles/User/my')]; 
         }
         
         $this->assign('sub_menu', $c_menu);
@@ -122,8 +122,8 @@ class Index extends Common
         $keywords = explode(',',$info['keywords']);
 
         /*用户所要文章访问量*/
-        $author['articles_view']=$this->_totalView($info['uid']);
-        $this->_category($info['category']);
+        $author['articles_view']=model('Articles')->_totalView($info['uid']);
+        $info['category'] = $this->_category($info['category']);
 
         /* 更新浏览数 */
         $map = ['id' => $aId];
@@ -155,28 +155,12 @@ class Index extends Common
         $author=query_user(['uid','space_url','nickname','avatar32','avatar64','signature'],$uid);
         $author['articles_count']=model('Articles')->where(['uid'=>$uid])->count();
         /*用户所要文章访问量*/
-        $author['articles_view']=$this->_totalView($uid);
+        $author['articles_view']=model('Articles')->_totalView($uid);
         /* 模板赋值并渲染模板 */
         $this->assign('uid', $uid);
         $this->assign('author',$author);
         $this->assign('list', $list);
         return $this->fetch();
-    }
-
-    //获取用户文章数的总阅读量
-    private function _totalView($uid=0)
-    {
-        $total = cache("article_total_view_uid_{$uid}");
-        if(!$total){
-            $res=model('Articles')->where(['uid'=>$uid])->select();
-            $total=0;
-            foreach($res as $value){ 
-                $total=$total+$value['view'];
-            }
-            unset($value);
-            cache("article_total_view_uid_{$uid}",$total,3600);
-        }
-        return $total;
     }
 
     private function _category($id=0)
