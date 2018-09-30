@@ -249,6 +249,7 @@ str;
             ->keyCreateTime()
             ->keyUpdateTime()
             ->keyDoActionEdit('editArticles?id=###')
+            ->keyDoActionAjax('setArticleStatus?ids=###&status=-1','回收站')
             ->page($page)
             ->display();
     }

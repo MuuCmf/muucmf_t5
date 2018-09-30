@@ -19,8 +19,8 @@ class User extends Index
 
         if(request()->isPost()){
             $data = input();
-            $aId&&$data['id']=$aId;
-
+            $aId&&$data['id'] = $aId;
+            $data['status'] = 0;
             $res = model('Articles')->editData($data);
 
             if($res){

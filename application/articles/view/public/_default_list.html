@@ -25,17 +25,18 @@
         </div>
     {else/}
         <div class="col-xs-12">
-            <div>
-                <h3 class="text-more">
+            <div class="tit">
+                <h3 class="title text-more">
                     <a title="{$data.title|text}" href="{:Url('Articles/index/detail',array('id'=>$data['id']))}" target="_blank">{$data.title}</a>
                 </h3>
             </div>
-            <div>
-                <span class="author"><a href="{$data.user.space_url}" ucard="{$data.uid}">{$data.user.nickname}</a>&nbsp;&nbsp;{$data.create_time|date='Y-m-d H:i:s',###}</span>
-                <p>{$data.description}</p>
-            </div>
-            <div>
+            <div class="con">
+                <span class="author"><a href="{$data.user.space_url}">
+                    <img src="{$data.user.avatar32}" class="img-circle"/>  
+                    {$data.user.nickname}</a>&nbsp;&nbsp;{$data.create_time|date='Y/m/d H:i',###}
+                </span>
 
+                <p>{$data.description|msubstr=0,60,'utf-8',false}...</p>
             </div>
         </div>
     {/if}

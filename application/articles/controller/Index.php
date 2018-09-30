@@ -115,6 +115,10 @@ class Index extends Common
         }
 
         $info=model('Articles')->getDataById($aId);
+        //未审核内容并不是作者浏览时报错
+        if($info['status']!=1 && $info['uid']!=is_login()){
+            $this->error('内容审核中...');
+        }
         
         $author=query_user(['uid','space_url','nickname','avatar32','avatar64','signature'],$info['uid']);
         $author['articles_count']=model('Articles')->where(['uid'=>$info['uid']])->count();
