@@ -59,7 +59,7 @@ package-lock.json
 /addons/*
 !/addons/demo
 !/addons/chinacity
-/public/src
+/public/src/common/lib
 /public/uploads
 /runtime/*
 /.hatccess

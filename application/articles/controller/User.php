@@ -24,7 +24,7 @@ class User extends Index
             $res = model('Articles')->editData($data);
 
             if($res){
-                $this->success($title.'成功！',Url('index'));
+                $this->success($title.'成功！',Url('my'));
             }else{
                 $this->error($title.'失败！',model('Articles')->getError());
             }

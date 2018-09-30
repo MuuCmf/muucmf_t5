@@ -17,9 +17,11 @@ class Articles extends Model {
     	if(!mb_strlen($data['description'],'utf-8')){
             $data['description'] = msubstr(text($data['content']),0,200);
         }
+        if(!isset($data['uid'])) $data['uid'] = is_login();
+        if(isset($data['template'])) $detail['template'] = $data['template'];
+        
         $detail['content'] = $data['content'];
-        $detail['template'] = $data['template'];
-
+        
         if($data['id']){
         	$data['update_time'] = time();
             $res = $this->allowField(true)->save($data,$data['id']);
