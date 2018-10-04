@@ -4783,7 +4783,13 @@ INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `type`, 
 ('A985703F-0F39-F114-5784-A693F55D5310', '留存率数据', '197', 0, 'count/remain', 0, 0, '', '数据统计', 0, '', ''),
 ('0AAED4DF-55D3-03DA-5860-3ABAEC00096D', '活跃用户数据', '197', 0, 'count/active', 0, 0, '', '数据统计', 0, '', ''),
 ('CCAE3F89-4E09-1912-9F3B-453E0A265A62', '在线用户', '197', 0, 'count/nowuserlist', 0, 0, '', '数据统计', 0, '', ''),
-('BD56C46E-C9B0-D24A-C7F9-93831C04820D', '首页', '0', 0, 'index/index/index', 1, 1, '', '', 0, '', 'index');
+('BD56C46E-C9B0-D24A-C7F9-93831C04820D', '首页', '0', 0, 'index/index/index', 1, 1, '', '', 0, '', 'index'),
+('1E82B5BE-3CCF-C30D-F604-728174A3281F', '文章', '0', 0, 'articles/admin/index', 1, 1, '', '', 0, '', 'articles'),
+('4E72609A-8EBA-A6E3-A989-5AE47240D70A', '配置管理', '1E82B5BE-3CCF-C30D-F604-728174A3281F', 0, 'articles/Admin/config', 0, 1, '', '配置管理', 0, '', 'articles'),
+('F29D6718-A1CB-861E-438C-62F9635FF98B', '分类列表', '1E82B5BE-3CCF-C30D-F604-728174A3281F', 0, 'articles/Admin/category', 0, 1, '', '分类管理', 0, '', 'articles'),
+('61DAFD9B-E944-AFC4-1B4D-0130E564D4CE', '文章列表', '1E82B5BE-3CCF-C30D-F604-728174A3281F', 0, 'articles/Admin/index', 0, 1, '', '文章管理', 0, '', 'articles'),
+('D5FF0EFE-BD0B-A49D-3E03-0C6051D4D082', '待审核列表', '1E82B5BE-3CCF-C30D-F604-728174A3281F', 0, 'articles/Admin/audit', 0, 1, '', '文章管理', 0, '', 'articles'),
+('AD604555-FD73-8521-0611-DEE0E1FCC56F', '回收站', '1E82B5BE-3CCF-C30D-F604-728174A3281F', 0, 'articles/Admin/recycle', 0, 1, '', '文章管理', 0, '', 'articles');
 
 DROP TABLE IF EXISTS `muucmf_message`;
 CREATE TABLE IF NOT EXISTS `muucmf_message` (
