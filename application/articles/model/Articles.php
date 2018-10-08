@@ -52,7 +52,6 @@ class Articles extends Model {
 
     public function getListByMap($map, $limit=5,$order = 'create_time desc')
     {
-    	
     	$list = $this->where($map)->limit($limit)->order($order)->select();
     	$category=model('ArticlesCategory')->_category();
 
