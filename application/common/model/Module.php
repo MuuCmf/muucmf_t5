@@ -49,7 +49,7 @@ class Module extends Model
         return $module;
     }
 
-    function getDir($dir) {
+    public function getDir($dir) {
         $dirArray[]=NULL;
         if (false != ($handle = opendir ( $dir ))) {
             $i=0;

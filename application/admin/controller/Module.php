@@ -36,14 +36,12 @@ class Module extends Admin
         } else if ($aRefresh == 2) {
             cache('admin_modules', null);
             model('Module')->cleanModulesCache();
-
         }
         /*刷新模块列表时清空缓存 end*/
 
         $modules = cache('admin_modules');
         if ($modules === false) {
             $modules = model('Module')->getAll();
-            //$modules = $this->cloudModel->getVersionInfoList($modules);
             cache('admin_modules', $modules);
         }
 
