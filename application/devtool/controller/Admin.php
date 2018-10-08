@@ -42,6 +42,7 @@ class Admin extends MuuAdmin
         cache('guide_action_limit',null);
         cache('guide_sql_tables',null);
         cache('guide_sql_rows',null);
+        cache('guide_sql_drop_table',null);
         return $this->fetch('devtool@admin/module');
     }
 
@@ -161,29 +162,55 @@ class Admin extends MuuAdmin
         $this->assign('cleanData', $sql_drop_table);
         return $this->fetch('devtool@admin/module5');
     }
-
+    /**
+     * 替换安装文件
+     * @return [type] [description]
+     */
     public function replace()
     {
-        if (chmod(APP_PATH . $this->module['name'] . '/Info', 0777)) {
-            $dir = 'Application/' . $this->module['name'] . '/Info';
-            if (!rename($dir . '/install.sql', $dir . '/install.sql.bk')) {
-                $info .= lang('_FAIL_BACKUP_WITH_BR_',array('file'=>'install.sql'));
-            };
-            if (!rename($dir . '/guide.json', $dir . '/guide.json.bk')) {
-                $info .= lang('_FAIL_BACKUP_WITH_BR_',array('file'=>'guide_json'));
-            };
-            if (!rename($dir . '/cleanData.sql', $dir . '/cleanData.sql.bk')) {
-                $info .= lang('_FAIL_BACKUP_WITH_BR_',array('file'=>'cleanData.sql'));
-            };
+        if (is_writable(APP_PATH . $this->module['name'] . '/info')) {
+            $dir = '../application/' . $this->module['name'] . '/info';
+            $info = lang('_PACK_REPLACE_INSTALL_FILE_').lang('_SUCCESS_');
+
+            if(file_exists($dir . '/install.sql')) {
+                if (!rename($dir . '/install.sql', $dir . '/install.sql.bk')) {
+                    $info = lang('_FAIL_BACKUP_WITH_BR_',['file'=>'install.sql']);
+                    $this->error($info);
+                }
+            }
+
+            if(file_exists($dir . '/guide.json')) {
+                if (!rename($dir . '/guide.json', $dir . '/guide.json.bk')) {
+                    $info = lang('_FAIL_BACKUP_WITH_BR_',['file'=>'guide_json']);
+                    $this->error($info);
+                }
+            }
+
+            if(file_exists($dir . '/cleanData.sql')) {
+                if (!rename($dir . '/cleanData.sql', $dir . '/cleanData.sql.bk')) {
+                    $info = lang('_FAIL_BACKUP_WITH_BR_',['file'=>'cleanData.sql']);
+                    $this->error($info);
+                }
+            }
+
             if (!file_put_contents($dir . '/guide.json', json_encode($this->getGuideContent()))) {
-                $info .= lang('_FAIL_REPLACE_WITH_BR_',array('file'=>'guide.json'));
-            };
-            if (!file_put_contents($dir . '/install.sql', $this->getInstallContent())) {
-                $info .=lang('_FAIL_REPLACE_WITH_BR_',array('file'=>'install.sql'));
-            };
-            if (!file_put_contents($dir . '/cleanData.sql', $_SESSION['guide_sql_drop_table'])) {
-                $info .= lang('_FAIL_REPLACE_WITH_BR_',array('file'=>'cleanData.sql'));
-            };
+                $info = lang('_FAIL_REPLACE_WITH_BR_',['file'=>'guide.json']);
+                $this->error($info);
+            }
+
+            if ($this->getInstallContent()) {
+                
+                if(!file_put_contents($dir . '/install.sql', $this->getInstallContent())){
+                    $info =lang('_FAIL_REPLACE_WITH_BR_',['file'=>'install.sql']);
+                    $this->error($info);
+                }
+            }
+            if (cache('guide_sql_drop_table')) {
+                if (!file_put_contents($dir . '/cleanData.sql', cache('guide_sql_drop_table'))) {
+                    $info = lang('_FAIL_REPLACE_WITH_BR_',['file'=>'cleanData.sql']);
+                    $this->error($info);
+                }
+            }
 
         } else {
             $this->error(lang('_ERROR_FAIL_REPLACE_'));
