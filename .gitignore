@@ -60,8 +60,9 @@ package-lock.json
 !/addons/demo
 !/addons/chinacity
 /public/src/common/lib
-/public/uploads
+/public/uploads/*
 /runtime/*
 /.hatccess
-/data
+/data/*
 /*.lock
+!.gitkeep
