@@ -183,8 +183,8 @@ class Module extends Model
 
         if ($withoutData == 0) {
             //如果不保留数据
-            if (file_exists(APP_PATH . '/' . $module['name'] . '/Info/cleanData.sql')) {
-                $uninstallSql = APP_PATH . '/' . $module['name'] . '/Info/cleanData.sql';
+            if (file_exists(APP_PATH . '/' . $module['name'] . '/info/cleanData.sql')) {
+                $uninstallSql = APP_PATH . '/' . $module['name'] . '/info/cleanData.sql';
 
                 $uninstallSql = file_get_contents($uninstallSql);
                 if(empty($uninstallSql) || $uninstallSql = ''){
@@ -200,8 +200,8 @@ class Module extends Model
                 }
             }
             //兼容老的卸载方式，执行一边uninstall.sql
-            if (file_exists(APP_PATH . '/' . $module['name'] . '/Info/uninstall.sql')) {
-                $uninstallSql = APP_PATH . '/' . $module['name'] . '/Info/uninstall.sql';
+            if (file_exists(APP_PATH . '/' . $module['name'] . '/info/uninstall.sql')) {
+                $uninstallSql = APP_PATH . '/' . $module['name'] . '/info/uninstall.sql';
 
                 $uninstallSql = file_get_contents($uninstallSql);
                 if(empty($uninstallSql) || $uninstallSql = ''){
@@ -353,9 +353,10 @@ class Module extends Model
             $this->error = lang('_MODULE_INSTALLED_WITH_PERIOD_');
             return false;
         }
-        if (file_exists(APP_PATH . '/' . $module['name'] . '/Info/guide.json')) {
+        
+        if (file_exists(APP_PATH . '/' . $module['name'] . '/info/guide.json')) {
             //如果存在guide.json
-            $guide = file_get_contents(APP_PATH . '/' . $module['name'] . '/Info/guide.json');
+            $guide = file_get_contents(APP_PATH . '/' . $module['name'] . '/info/guide.json');
             $data = json_decode($guide, true);
 
             //导入菜单项,menu
@@ -398,8 +399,8 @@ class Module extends Model
                 }
             }
 
-            if (file_exists(APP_PATH . '/' . $module['name'] . '/Info/install.sql')) {
-                $install_sql = APP_PATH . '/' . $module['name'] . '/Info/install.sql';
+            if (file_exists(APP_PATH . '/' . $module['name'] . '/info/install.sql')) {
+                $install_sql = APP_PATH . '/' . $module['name'] . '/info/install.sql';
 
                 $install_sql = file_get_contents($install_sql);
                 $install_sql = str_replace("\r", "\n", $install_sql);
