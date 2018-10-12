@@ -7,8 +7,12 @@ use think\Db;
 
     class Demo extends Addons{
 
+        /**
+         * 插件基础信息
+         * @var [type]
+         */
         public $info = [
-            //插件目录
+            //插件目录（名称）
             'name'=>'demo',
             //插件名
             'title'=>'demo测试',
@@ -19,6 +23,12 @@ use think\Db;
             //版本号
             'version'=>'1.0.0'
         ];
+
+        /**
+         * [$admin description]
+         * @var boolean
+         */
+        public $admin = true;
 
         public function install(){
     
@@ -38,7 +48,7 @@ use think\Db;
         public function run($param){
 
             $this->assign('param',$param);
-            return $this->fetch('view/index/demo');
+            return $this->fetch('index/demo');
         }
         /**
          * 绑定实现插件的钩子
