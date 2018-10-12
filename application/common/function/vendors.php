@@ -18,7 +18,6 @@
  * 淘宝IP接口
  * @Return: array
  */
-use Vendor\PHPMailer;
 use think\Db;
 
 function get_city_by_ip($ip)
@@ -75,7 +74,7 @@ function send_mail($to = '', $subject = '', $body = '', $name = '', $attachment 
  */
 function sae_mail($to = '', $subject = '', $body = '', $name = '')
 {
-    $site_name = modconfig('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config');
+    $site_name = modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config');
     if ($to == '') {
         $to = config('MAIL_SMTP_CE'); //邮件地址为空时，默认使用后台默认邮件测试地址
     }
@@ -120,13 +119,13 @@ function is_local()
 function send_mail_local($to = '', $subject = '', $body = '', $name = '', $attachment = null)
 {
     $from_email = config('MAIL_SMTP_USER');
-    $from_name = modconfig('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config');
+    $from_name = modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config');
     $reply_email = '';
     $reply_name = '';
 
-    $mail = new PHPMailer(); //实例化PHPMailer
+    $mail = new \PHPMailer(); //实例化PHPMailer
     $mail->CharSet = 'UTF-8'; //设定邮件编码，默认ISO-8859-1，如果发中文此项必须设置，否则乱码
-    $mail->IsSMTP(); // 设定使用SMTP服务
+    $mail->isSMTP(); // 设定使用SMTP服务
     $mail->SMTPDebug = 0; // 关闭SMTP调试功能
     // 1 = errors and messages
     // 2 = messages only
@@ -137,28 +136,32 @@ function send_mail_local($to = '', $subject = '', $body = '', $name = '', $attac
     $mail->Port = config('MAIL_SMTP_PORT'); // SMTP服务器的端口号
     $mail->Username = config('MAIL_SMTP_USER'); // SMTP服务器用户名
     $mail->Password = config('MAIL_SMTP_PASS'); // SMTP服务器密码
-    $mail->SetFrom($from_email, $from_name);
+    $mail->CharSet = 'UTF-8';// 设置发送的邮件的编码
+    $mail->isHTML(true);// 邮件正文是否为html编码 注意此处是一个方法
+    $mail->From = $from_email;// 设置发件人邮箱地址 同登录账号
+    $mail->FromName = $from_name;
+    
     $replyEmail = $reply_email ? $reply_email : $from_email;
     $replyName = $reply_name ? $reply_name : $from_name;
     if ($to == '') {
         $to = config('MAIL_SMTP_CE'); //邮件地址为空时，默认使用后台默认邮件测试地址
     }
     if ($name == '') {
-        $name = modconfig('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config'); //发送者名称为空时，默认使用网站名称
+        $name = modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config'); //发送者名称为空时，默认使用网站名称
     }
     if ($subject == '') {
-        $subject = modconfig('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config'); //邮件主题为空时，默认使用网站标题
+        $subject = modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config'); //邮件主题为空时，默认使用网站标题
     }
     if ($body == '') {
-        $body = modconfig('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config'); //邮件内容为空时，默认使用网站描述
+        $body = modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config'); //邮件内容为空时，默认使用网站描述
     }
-    $mail->AddReplyTo($replyEmail, $replyName);
+    $mail->addReplyTo($replyEmail, $replyName);
     $mail->Subject = $subject;
-    $mail->MsgHTMlang($body); //解析
-    $mail->AddAddress($to, $name);
+    $mail->body = $body; //解析
+    $mail->addAddress($to, $name);
     if (is_array($attachment)) { // 添加附件
         foreach ($attachment as $file) {
-            is_file($file) && $mail->AddAttachment($file);
+            is_file($file) && $mail->addAttachment($file);
         }
     }
 
