@@ -56,7 +56,6 @@ package-lock.json
 
 
 # MuuCmf
-/addons/*
 !/addons/demo
 !/addons/chinacity
 /public/src/common/lib
