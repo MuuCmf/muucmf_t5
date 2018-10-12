@@ -1,5 +1,5 @@
 <?php
-namespace addons\demo;
+namespace addons\smsbao;
 
 use app\common\controller\Addons;
 use think\Db;
@@ -11,11 +11,11 @@ class SmsBao extends Addons
      * @var [type]
      */
     public $info = [
-        'name' => 'SmsBao',
+        'name' => 'smsbao',
         'title' => '短信宝',
         'description' => '短信宝短信插件 http://www.smsbao.com/ ',
         'status' => 1,
-        'author' => '@严大蒙同学',
+        'author' => 'www.muucmf.cn',
         'version' => '1.1.0'
     ];
         
