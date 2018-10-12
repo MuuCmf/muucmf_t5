@@ -157,7 +157,7 @@ function send_mail_local($to = '', $subject = '', $body = '', $name = '', $attac
     }
     $mail->addReplyTo($replyEmail, $replyName);
     $mail->Subject = $subject;
-    $mail->body = $body; //解析
+    $mail->Body = $body; //解析
     $mail->addAddress($to, $name);
     if (is_array($attachment)) { // 添加附件
         foreach ($attachment as $file) {
@@ -165,7 +165,8 @@ function send_mail_local($to = '', $subject = '', $body = '', $name = '', $attac
         }
     }
 
-    return $mail->Send() ? true : $mail->ErrorInfo; //返回错误信息
+    $status = $mail->send(); //? true : $mail->ErrorInfo; //返回错误信息
+    return $status;
 }
 
 function muucmf_hash($message, $salt = "MuuCmf")
