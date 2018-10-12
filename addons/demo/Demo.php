@@ -20,8 +20,6 @@ use think\Db;
             'version'=>'1.0.0'
         ];
 
-        public $admin = 1;
-
         public function install(){
     
             return true;
@@ -31,11 +29,23 @@ use think\Db;
             
             return true;
         }
+        /**
+         * 实现demo插件的默认方法
+         * 任何钩子都可执行
+         * @param  [type] $param [description]
+         * @return [type]        [description]
+         */
+        public function run($param){
 
-        public function demoTest($param){
-
-            echo '这是一个测试';
-            dump($param);
-
+            $this->assign('param',$param);
+            return $this->fetch('view/index/demo');
+        }
+        /**
+         * 绑定实现插件的钩子
+         * 绑定钩子，其它钩子无法执行
+         * @return [type] [description]
+         */
+        public function demoTest(){
+            return true;
         }
     }

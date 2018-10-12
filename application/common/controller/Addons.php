@@ -16,12 +16,9 @@ abstract class Addons{
 
     public $info                =   [];
     public $addons_path         =   '';
-    //public $config_file         =   '';
-
+    public $config_file         =   '';
     public $custom_config       =   '';
-    //public $admin_list          =   [];
     public $admin               =   '';
-    //public $custom_adminlist    =   '';
     public $access_url          =   [];
 
 
@@ -35,8 +32,8 @@ abstract class Addons{
         $this->addons_path = ADDONS_PATH . $this->getName(). DS;
 
         // 读取当前插件配置信息
-        if (is_file($this->addons_path . 'config.php')) {
-            $this->config_file = $this->addons_path . 'config.php';
+        if (is_file($this->addons_path . 'Config.php')) {
+            $this->config_file = $this->addons_path . 'Config.php';
         }
         
         $view_replace_str = Config::get('view_replace_str');

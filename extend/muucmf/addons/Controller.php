@@ -21,6 +21,7 @@ use think\Loader;
  */
 class Controller extends \think\Controller
 {
+
     // 当前插件操作
     protected $addon = null;
     protected $controller = null;

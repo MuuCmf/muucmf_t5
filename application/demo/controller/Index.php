@@ -24,7 +24,8 @@ class Index extends Common
 
     public function addon() 
     {
-        hook('demoTest',['id'=>100]);//自定义
+        //控制器执行插件
+        //hook('demoTest',['id'=>100]);//自定义
         return $this->fetch();
     }
 
