@@ -281,10 +281,12 @@ class Config extends Admin
             }
         }
         $builder
-            ->keySelect('SMS_HOOK', lang('_SMS_SENDING_SERVICE_PROVIDER_'), lang('_SMS_SEND_SERVICE_PROVIDERS_NEED_TO_INSTALL_THE_PLUG-IN_'), $opt);
+            ->keySelect('SMS_HOOK', lang('_SMS_SENDING_SERVICE_PROVIDER_'), lang('_SMS_SEND_SERVICE_PROVIDERS_NEED_TO_INSTALL_THE_PLUG-IN_'), $opt)
+            ->keyText('SMS_SIGN', lang('_SMS_PLATFORM_SIGN_'), lang('_SMS_PLATFORM_SIGN_CONT_'))
+            ->keyDefault('SMS_SIGN','【MuuCmf】');
 
         $builder
-            ->group(lang('_SMS_CONFIGURATION_'), 'SMS_HOOK');
+            ->group(lang('_SMS_CONFIGURATION_'), 'SMS_HOOK,SMS_SIGN');
         unset($opt);
 
         $builder->data($data);

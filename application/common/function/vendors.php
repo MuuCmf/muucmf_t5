@@ -215,13 +215,13 @@ function modC($key, $default = '', $module = '')
 function sendSMS($mobile, $content)
 {
 
-    $sms_hook = modconfig('SMS_HOOK','none','CONFIG');
+    $sms_hook = modC('SMS_HOOK','none','CONFIG');
     $sms_hook =  check_sms_hook_is_exist($sms_hook);
     if($sms_hook == 'none'){
         return lang('_THE_ADMINISTRATOR_HAS_NOT_CONFIGURED_THE_SMS_SERVICE_PROVIDER_INFORMATION_PLEASE_CONTACT_THE_ADMINISTRATOR_');
     }
     //根据电信基础运营商的规定，每条短信必须附加短信签名，否则将无法正常发送。这里将后台设置的短信签名与内容拼接成发送内容
-    $sms_sign = modconfig('SMS_SIGN','','CONFIG');
+    $sms_sign = modC('SMS_SIGN','【MuuCmf】','CONFIG');
     $content = $sms_sign.$content;
 
     $name = get_addon_class($sms_hook);

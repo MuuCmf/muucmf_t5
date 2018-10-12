@@ -324,16 +324,16 @@
                 var account = $this.parents('.tab-pane').find('[name="username"]').val();
                 var type = $this.parents('.tab-pane').find('[name="reg_type"]').val();
                 $.post("{:Url('ucenter/verify/sendVerify')}", {account: account, type: type, action: 'member'}, function (res) {
-                    if (res.status) {
+                    if (res.code == 200) {
                         DecTime.obj = $this
                         DecTime.time = "{: modC('SMS_RESEND','60','USERCONFIG')}";
                         $this.attr('disabled',true)
                         DecTime.dec_time();
 
-                        toast.success(res.info);
+                        toast.success(res.msg);
                     }
                     else {
-                        toast.error(res.info);
+                        toast.error(res.msg);
                     }
                     toast.hideLoading();
                 })
