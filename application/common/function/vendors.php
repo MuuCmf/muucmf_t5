@@ -149,12 +149,18 @@ function send_mail_local($to = '', $subject = '', $body = '', $name = '', $attac
     $from_email = config('MAIL_SMTP_USER');
     $from_name = modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config');
 
+    if(config('MAIL_SMTP_SSL')){
+        $ssl_value = 'ssl';
+    }else{
+        $ssl_value = '';
+    }
+    
     $mail = new \PHPMailer(); //实例化PHPMailer
     
     $mail->isSMTP(); // 设定使用SMTP服务
     $mail->SMTPDebug = 0; // 关闭SMTP调试功能// 1 = errors and messages// 2 = messages only
     $mail->SMTPAuth = true; // 启用 SMTP 验证功能
-    $mail->SMTPSecure = ''; // 使用安全协议
+    $mail->SMTPSecure = $ssl_value; // 使用安全协议
     $mail->Host = config('MAIL_SMTP_HOST'); // SMTP 服务器
     $mail->Port = config('MAIL_SMTP_PORT'); // SMTP服务器的端口号
     $mail->Username = config('MAIL_SMTP_USER'); // SMTP服务器用户名

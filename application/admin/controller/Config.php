@@ -46,10 +46,11 @@ class Config extends Admin
         if (request()->isPost()) {
             $Config = Db::name('Config');
             $data = input('');
+            $data['status'] = 1; //默认启用状态
             if ($data) {
                 if ($Config->insert($data)) {
                     cache('DB_CONFIG_DATA', null);
-                    $this->success(lang('_SUCCESS_ADD_'), U('index'));
+                    $this->success(lang('_SUCCESS_ADD_'), url('index'));
                 } else {
                     $this->error(lang('_FAIL_ADD_'));
                 }
