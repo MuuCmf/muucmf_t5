@@ -273,7 +273,6 @@ class Member extends Controller
         }
     }
 
-
     /**
      * 快捷登录页面
      * @return [type] [description]
@@ -364,37 +363,6 @@ class Member extends Controller
         $clear = implode('|', array($user['uid'], $user['username'], $user['last_login_time'], $user['password']));
         $verify = muucmf_hash($clear, UC_AUTH_KEY);
         return $verify;
-    }
-
-    
-
-    /**
-     * 发送验证码
-     * @param $account
-     * @param $verify
-     * @param $type
-     * @return bool|string
-     */
-    public function doSendVerify($account, $verify, $type)
-    {
-        switch ($type) {
-            case 'mobile':
-                //发送手机短信验证
-                $content = modC('SMS_CONTENT', '{$verify}', 'USERCONFIG');
-                $content = str_replace('{$verify}', $verify, $content);
-                $content = str_replace('{$account}', $account, $content);
-                $res = sendSMS($account, $content);
-                return $res;
-                break;
-            case 'email':
-                //发送验证邮箱
-                $content = modC('REG_EMAIL_VERIFY', '{$verify}', 'USERCONFIG');
-                $content = str_replace('{$verify}', $verify, $content);
-                $content = str_replace('{$account}', $account, $content);
-                $res = send_mail($account, modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config') . lang('_EMAIL_VERIFY_2_'), $content);
-                return $res;
-                break;
-        }
     }
 
     /**

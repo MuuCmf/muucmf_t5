@@ -59,10 +59,10 @@ class Verify extends Controller
             $this->error(lang('_ERROR_FAIL_SEND_').lang('_EXCLAMATION_'));
         }
         if($aAction==='find'){//找回密码
-            $res =  controller('ucenter/'.ucfirst('Member'))->doSendVerify($aAccount, $verify, $aType);
+            $res =  doSendVerify($aAccount, $verify, $aType);
         }
         if($aAction==='member'){//注册会员
-            $res =  controller('ucenter/'.ucfirst('Member'))->doSendVerify($aAccount, $verify, $aType);
+            $res =  doSendVerify($aAccount, $verify, $aType);
         }
         
         if ($res === true) {

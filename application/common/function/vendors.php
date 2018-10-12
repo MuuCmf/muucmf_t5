@@ -37,6 +37,34 @@ function get_city_by_ip($ip)
     return $guo . $city . $ips . '[' . $ip . ']';
 
 }
+/**
+ * 发送验证码
+ * @param $account
+ * @param $verify
+ * @param $type
+ * @return bool|string
+ */
+function doSendVerify($account, $verify, $type)
+{
+    switch ($type) {
+        case 'mobile':
+            //发送手机短信验证
+            $content = modC('SMS_CONTENT', '{$verify}', 'USERCONFIG');
+            $content = str_replace('{$verify}', $verify, $content);
+            $content = str_replace('{$account}', $account, $content);
+            $res = sendSMS($account, $content);
+            return $res;
+            break;
+        case 'email':
+            //发送验证邮箱
+            $content = modC('REG_EMAIL_VERIFY', '{$verify}', 'USERCONFIG');
+            $content = str_replace('{$verify}', $verify, $content);
+            $content = str_replace('{$account}', $account, $content);
+            $res = send_mail($account, modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config') . lang('_EMAIL_VERIFY_2_'), $content);
+            return $res;
+            break;
+    }
+}
 
 /**
  * 系统邮件发送函数
@@ -120,29 +148,21 @@ function send_mail_local($to = '', $subject = '', $body = '', $name = '', $attac
 {
     $from_email = config('MAIL_SMTP_USER');
     $from_name = modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config');
-    $reply_email = '';
-    $reply_name = '';
 
     $mail = new \PHPMailer(); //实例化PHPMailer
-    $mail->CharSet = 'UTF-8'; //设定邮件编码，默认ISO-8859-1，如果发中文此项必须设置，否则乱码
+    
     $mail->isSMTP(); // 设定使用SMTP服务
-    $mail->SMTPDebug = 0; // 关闭SMTP调试功能
-    // 1 = errors and messages
-    // 2 = messages only
+    $mail->SMTPDebug = 0; // 关闭SMTP调试功能// 1 = errors and messages// 2 = messages only
     $mail->SMTPAuth = true; // 启用 SMTP 验证功能
-
     $mail->SMTPSecure = ''; // 使用安全协议
     $mail->Host = config('MAIL_SMTP_HOST'); // SMTP 服务器
     $mail->Port = config('MAIL_SMTP_PORT'); // SMTP服务器的端口号
     $mail->Username = config('MAIL_SMTP_USER'); // SMTP服务器用户名
     $mail->Password = config('MAIL_SMTP_PASS'); // SMTP服务器密码
     $mail->CharSet = 'UTF-8';// 设置发送的邮件的编码
-    $mail->isHTML(true);// 邮件正文是否为html编码 注意此处是一个方法
     $mail->From = $from_email;// 设置发件人邮箱地址 同登录账号
     $mail->FromName = $from_name;
-    
-    $replyEmail = $reply_email ? $reply_email : $from_email;
-    $replyName = $reply_name ? $reply_name : $from_name;
+
     if ($to == '') {
         $to = config('MAIL_SMTP_CE'); //邮件地址为空时，默认使用后台默认邮件测试地址
     }
@@ -155,9 +175,10 @@ function send_mail_local($to = '', $subject = '', $body = '', $name = '', $attac
     if ($body == '') {
         $body = modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config'); //邮件内容为空时，默认使用网站描述
     }
-    $mail->addReplyTo($replyEmail, $replyName);
+    $mail->isHTML(true);// 邮件正文是否为html编码 注意此处是一个方法
+    $mail->CharSet = 'UTF-8'; //设定邮件编码，默认ISO-8859-1，如果发中文此项必须设置，否则乱码
     $mail->Subject = $subject;
-    $mail->Body = $body; //解析
+    $mail->MsgHTML($body);    //发送的邮件内容主体
     $mail->addAddress($to, $name);
     if (is_array($attachment)) { // 添加附件
         foreach ($attachment as $file) {
@@ -166,7 +187,12 @@ function send_mail_local($to = '', $subject = '', $body = '', $name = '', $attac
     }
 
     $status = $mail->send(); //? true : $mail->ErrorInfo; //返回错误信息
-    return $status;
+    if($status) {
+        return $status;
+    }else{
+        return $mail->ErrorInfo;
+    }
+    
 }
 
 function muucmf_hash($message, $salt = "MuuCmf")
