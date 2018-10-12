@@ -35,9 +35,11 @@ class SmsBao extends Addons
      * @return [type]          [description]
      */
     public function sendSms($mobile, $content){
-        $uid = modC('SMS_UID', 'demo', 'CONFIG');
-        $pwd = modC('SMS_PWD', '', 'CONFIG');
-
+        //获取插件配置
+        $config = $this->getConfig();
+        $uid = $config['uid'];
+        $pwd = $config['pwd'];
+        
         if (empty($uid) || empty($pwd)) {
             return '管理员还未配置短信信息，请联系管理员配置'. $uid .$pwd;
         }
