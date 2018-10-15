@@ -62,7 +62,7 @@ class Addons extends Admin
         $this->assign('_list', $list);
         
         // 记录当前列表页的cookie
-        //Cookie('__forward__', $_SERVER['REQUEST_URI']);
+        Cookie('__forward__', $_SERVER['REQUEST_URI']);
         return $this->fetch();
     }
 

@@ -732,7 +732,7 @@ function tox_addons_url($url, $param)
     $param['_addons'] = $addon;
     $param['_controller'] = $controller;
     $param['_action'] = $action;
-    return Url("Home/Addons/execute", $param);
+    return url("Home/Addons/execute", $param);
 }
 
 
@@ -911,7 +911,7 @@ function convert_url_query($query)
  */
 function get_ip_lookup($ip=null){
     if(empty($ip)){
-        $ip = get_client_ip(0);
+        $ip = request()->ip();
     }
     $res = @file_get_contents('http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=js&ip=' . $ip);
     if(empty($res)){ return false; }

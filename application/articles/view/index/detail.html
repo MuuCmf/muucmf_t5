@@ -29,9 +29,9 @@
                         {if condition="$info['keywords'] neq ''"}
                         <div class="keywords-box">
                             <span>关键字</span>
-                            <volist name="keywords" id="vo" key="k">
+                            {volist name="keywords" id="vo" key="k"}
                                 <span class="keywords">{$vo}</span> 
-                            </volist>
+                            {/volist}
                         </div>
                         {/if}
                     </div>
@@ -52,7 +52,13 @@
                         </div>
                     </section>
                     <div style="padding:10px">
-                        {:hook('localComment', array('path'=>"Articles/index/$info[id]", 'uid'=>$info['uid'],'count_model'=>'articles','count_field'=>'comment','this_url'=>'articles/index/detail'))}
+                        {:hook('localComment', [
+                            'app'=>"articles", 
+                            'mod'=>"articles",
+                            'row_id'=>$info.id,
+                            'url'=>url('articles/index/detail',['id'=>$info.id]),
+                            'to_uid'=>$info.uid
+                        ])}
                     </div>
                 </div>
             </div>

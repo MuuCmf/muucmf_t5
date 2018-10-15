@@ -20,8 +20,6 @@ use think\Db;
             'version'=>'2.0'
         ];
 
-
-
         public function install(){
 
             /* 先判断插件需要的钩子是否存在 */
