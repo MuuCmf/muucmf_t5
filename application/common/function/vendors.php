@@ -18,7 +18,6 @@
  * 淘宝IP接口
  * @Return: array
  */
-use Vendor\PHPMailer;
 use think\Db;
 
 function get_city_by_ip($ip)
@@ -37,6 +36,34 @@ function get_city_by_ip($ip)
     }
     return $guo . $city . $ips . '[' . $ip . ']';
 
+}
+/**
+ * 发送验证码
+ * @param $account
+ * @param $verify
+ * @param $type
+ * @return bool|string
+ */
+function doSendVerify($account, $verify, $type)
+{
+    switch ($type) {
+        case 'mobile':
+            //发送手机短信验证
+            $content = modC('SMS_CONTENT', '{$verify}', 'USERCONFIG');
+            $content = str_replace('{$verify}', $verify, $content);
+            $content = str_replace('{$account}', $account, $content);
+            $res = sendSMS($account, $content);
+            return $res;
+            break;
+        case 'email':
+            //发送验证邮箱
+            $content = modC('REG_EMAIL_VERIFY', '{$verify}', 'USERCONFIG');
+            $content = str_replace('{$verify}', $verify, $content);
+            $content = str_replace('{$account}', $account, $content);
+            $res = send_mail($account, modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config') . lang('_EMAIL_VERIFY_2_'), $content);
+            return $res;
+            break;
+    }
 }
 
 /**
@@ -75,7 +102,7 @@ function send_mail($to = '', $subject = '', $body = '', $name = '', $attachment 
  */
 function sae_mail($to = '', $subject = '', $body = '', $name = '')
 {
-    $site_name = modconfig('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config');
+    $site_name = modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config');
     if ($to == '') {
         $to = config('MAIL_SMTP_CE'); //邮件地址为空时，默认使用后台默认邮件测试地址
     }
@@ -120,49 +147,58 @@ function is_local()
 function send_mail_local($to = '', $subject = '', $body = '', $name = '', $attachment = null)
 {
     $from_email = config('MAIL_SMTP_USER');
-    $from_name = modconfig('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config');
-    $reply_email = '';
-    $reply_name = '';
+    $from_name = modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config');
 
-    $mail = new PHPMailer(); //实例化PHPMailer
-    $mail->CharSet = 'UTF-8'; //设定邮件编码，默认ISO-8859-1，如果发中文此项必须设置，否则乱码
-    $mail->IsSMTP(); // 设定使用SMTP服务
-    $mail->SMTPDebug = 0; // 关闭SMTP调试功能
-    // 1 = errors and messages
-    // 2 = messages only
+    if(config('MAIL_SMTP_SSL')){
+        $ssl_value = 'ssl';
+    }else{
+        $ssl_value = '';
+    }
+    
+    $mail = new \PHPMailer(); //实例化PHPMailer
+    
+    $mail->isSMTP(); // 设定使用SMTP服务
+    $mail->SMTPDebug = 0; // 关闭SMTP调试功能// 1 = errors and messages// 2 = messages only
     $mail->SMTPAuth = true; // 启用 SMTP 验证功能
-
-    $mail->SMTPSecure = ''; // 使用安全协议
+    $mail->SMTPSecure = $ssl_value; // 使用安全协议
     $mail->Host = config('MAIL_SMTP_HOST'); // SMTP 服务器
     $mail->Port = config('MAIL_SMTP_PORT'); // SMTP服务器的端口号
     $mail->Username = config('MAIL_SMTP_USER'); // SMTP服务器用户名
     $mail->Password = config('MAIL_SMTP_PASS'); // SMTP服务器密码
-    $mail->SetFrom($from_email, $from_name);
-    $replyEmail = $reply_email ? $reply_email : $from_email;
-    $replyName = $reply_name ? $reply_name : $from_name;
+    $mail->CharSet = 'UTF-8';// 设置发送的邮件的编码
+    $mail->From = $from_email;// 设置发件人邮箱地址 同登录账号
+    $mail->FromName = $from_name;
+
     if ($to == '') {
         $to = config('MAIL_SMTP_CE'); //邮件地址为空时，默认使用后台默认邮件测试地址
     }
     if ($name == '') {
-        $name = modconfig('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config'); //发送者名称为空时，默认使用网站名称
+        $name = modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config'); //发送者名称为空时，默认使用网站名称
     }
     if ($subject == '') {
-        $subject = modconfig('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config'); //邮件主题为空时，默认使用网站标题
+        $subject = modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config'); //邮件主题为空时，默认使用网站标题
     }
     if ($body == '') {
-        $body = modconfig('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config'); //邮件内容为空时，默认使用网站描述
+        $body = modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config'); //邮件内容为空时，默认使用网站描述
     }
-    $mail->AddReplyTo($replyEmail, $replyName);
+    $mail->isHTML(true);// 邮件正文是否为html编码 注意此处是一个方法
+    $mail->CharSet = 'UTF-8'; //设定邮件编码，默认ISO-8859-1，如果发中文此项必须设置，否则乱码
     $mail->Subject = $subject;
-    $mail->MsgHTMlang($body); //解析
-    $mail->AddAddress($to, $name);
+    $mail->MsgHTML($body);    //发送的邮件内容主体
+    $mail->addAddress($to, $name);
     if (is_array($attachment)) { // 添加附件
         foreach ($attachment as $file) {
-            is_file($file) && $mail->AddAttachment($file);
+            is_file($file) && $mail->addAttachment($file);
         }
     }
 
-    return $mail->Send() ? true : $mail->ErrorInfo; //返回错误信息
+    $status = $mail->send(); //? true : $mail->ErrorInfo; //返回错误信息
+    if($status) {
+        return $status;
+    }else{
+        return $mail->ErrorInfo;
+    }
+    
 }
 
 function muucmf_hash($message, $salt = "MuuCmf")
@@ -215,13 +251,13 @@ function modC($key, $default = '', $module = '')
 function sendSMS($mobile, $content)
 {
 
-    $sms_hook = modconfig('SMS_HOOK','none','CONFIG');
+    $sms_hook = modC('SMS_HOOK','none','CONFIG');
     $sms_hook =  check_sms_hook_is_exist($sms_hook);
     if($sms_hook == 'none'){
         return lang('_THE_ADMINISTRATOR_HAS_NOT_CONFIGURED_THE_SMS_SERVICE_PROVIDER_INFORMATION_PLEASE_CONTACT_THE_ADMINISTRATOR_');
     }
     //根据电信基础运营商的规定，每条短信必须附加短信签名，否则将无法正常发送。这里将后台设置的短信签名与内容拼接成发送内容
-    $sms_sign = modconfig('SMS_SIGN','','CONFIG');
+    $sms_sign = modC('SMS_SIGN','【MuuCmf】','CONFIG');
     $content = $sms_sign.$content;
 
     $name = get_addon_class($sms_hook);

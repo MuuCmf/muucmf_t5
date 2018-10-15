@@ -20,19 +20,18 @@ class Verify extends Controller
             $this->error($str . lang('_ERROR_OPTIONS_CLOSED_').lang('_EXCLAMATION_'));
         }
 
-
         if (empty($aAccount)) {
             $this->error(lang('_ERROR_ACCOUNT_CANNOT_EMPTY_'));
         }
         check_username($cUsername, $cEmail, $cMobile);
         $time = time();
         if($aType == 'mobile'){
+            //短信验证码的有效期，默认60秒
             $resend_time =  modC('SMS_RESEND','60','USERCONFIG');
             if($time <= session('verify_time')+$resend_time ){
                 $this->error(lang('_ERROR_WAIT_1_').($resend_time-($time-session('verify_time'))).lang('_ERROR_WAIT_2_'));
             }
         }
-
 
         if ($aType == 'email' && empty($cEmail)) {
             $this->error(lang('_ERROR__EMAIL_'));
@@ -59,10 +58,11 @@ class Verify extends Controller
         if (!$verify) {
             $this->error(lang('_ERROR_FAIL_SEND_').lang('_EXCLAMATION_'));
         }
-        if($aAction==='find'){
-            $res =  controller('ucenter/'.ucfirst('Member'))->doSendVerify($aAccount, $verify, $aType);
-        }else{
-            $res =  controller(ucfirst($aAction))->doSendVerify($aAccount, $verify, $aType);
+        if($aAction==='find'){//找回密码
+            $res =  doSendVerify($aAccount, $verify, $aType);
+        }
+        if($aAction==='member'){//注册会员
+            $res =  doSendVerify($aAccount, $verify, $aType);
         }
         
         if ($res === true) {

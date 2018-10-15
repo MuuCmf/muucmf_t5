@@ -139,9 +139,9 @@ class Addons extends Model
      */
     public function getIcon($name) 
     {
-        $file = ADDONS_PATH.$name.'/icon.png';
+        $file = '/static/addons/'.$name.'/icon.png';
         if(file_exists($file)){
-            return ADDONS_PATH.$name.'/icon.png';
+            return '/static/addons/'.$name.'/icon.png';
         }else{
             return '';
         }

@@ -62,9 +62,7 @@
         {/case}
         {case value="textarea"}
             <div class="controls">
-                <label class="textarea input-large">
-                    <textarea name="config[{$o_key}]" class="form-control form-text-area-size">{$form.value}</textarea>
-                </label>
+                <textarea name="config[{$o_key}]" class="form-control form-text-area-size">{$form.value}</textarea>
             </div>
         {/case}
         {case value="picture_union"}
@@ -137,14 +135,14 @@
         {case value="group"}
             <ul class="nav nav-secondary">
                 {volist name="form.options" id="li"}
-                    <li data-tab="tab{$i}" {eq name="i" value="1"}class="active"{/eq}><a data-toggle="tab" href="#tab{$i}">{$li.title}</a></li>
+                <li {eq name="i" value="1"}class="active"{/eq} >
+                    <a data-target="#tab{$i}" data-toggle="tab" href="#tab{$i}">{$li.title}</a>
+                </li>
                 {/volist}
             </ul>
-
-
-            <div class="tab-content with-padding">
+            <div class="tab-content">
                 {volist name="form.options" id="tab"}
-                    <div id="tab{$i}" class="tab-pane {eq name="i" value="1">active{/eq} tab{$i}">
+                    <div id="tab{$i}" class="tab-pane {eq name="i" value="1"}active{/eq} tab{$i}">
                     {foreach name="tab['options']" item="tab_form" key="o_tab_key"}
                         <label class="item-label">
                             {$tab_form.title|default=''}
@@ -293,9 +291,6 @@
 		//当有tab时，返回按钮不显示
 		$('.btn-return').hide();
 	}
-	$(function(){
-		//支持tab
-		showTab();
-	})
+
 </script>
 {/block}
