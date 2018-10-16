@@ -387,21 +387,6 @@ function tree_to_list($tree, $child = '_child', $order = 'id', &$list = array())
     return $list;
 }
 
-
-
-
-/**
- * 时间戳格式化
- * @param int $time
- * @return string 完整的时间显示
- * @author dameng <59262424@qq.com>
- */
-function time_format($time = NULL, $format = 'Y-m-d H:i')
-{
-    $time = $time === NULL ? time() : intval($time);
-    return date($format, $time);
-}
-
 /**
  * 记录行为日志，并执行该行为的规则
  * @param string $action 行为标识
