@@ -46,10 +46,11 @@ class Config extends Admin
         if (request()->isPost()) {
             $Config = Db::name('Config');
             $data = input('');
+            $data['status'] = 1; //默认启用状态
             if ($data) {
                 if ($Config->insert($data)) {
                     cache('DB_CONFIG_DATA', null);
-                    $this->success(lang('_SUCCESS_ADD_'), U('index'));
+                    $this->success(lang('_SUCCESS_ADD_'), url('index'));
                 } else {
                     $this->error(lang('_FAIL_ADD_'));
                 }
@@ -268,6 +269,7 @@ class Config extends Admin
         unset($opt);
         
         //短信验证
+        //短信插件需放置在sms钩子内
         $addons = \Think\Hook::get('sms');
         $opt = array('none' => lang('_NONE_'));
         foreach ($addons as $name) {
@@ -279,13 +281,13 @@ class Config extends Admin
                 }
             }
         }
-        $builder->keySelect('SMS_HOOK', lang('_SMS_SENDING_SERVICE_PROVIDER_'), lang('_SMS_SEND_SERVICE_PROVIDERS_NEED_TO_INSTALL_THE_PLUG-IN_'), $opt)
-            ->keyText('SMS_UID', lang('_SMS_PLATFORM_ACCOUNT_NUMBER_'), lang('_SMS_PLATFORM_ACCOUNT_NUMBER_'))
-            ->keyText('SMS_PWD', lang('_SMS_PLATFORM_PASSWORD_'), lang('_SMS_PLATFORM_PASSWORD_'))
-            ->keyText('SMS_SIGN', lang('_SMS_PLATFORM_SIGN_'), lang('_SMS_PLATFORM_SIGN_CONT_'));
+        $builder
+            ->keySelect('SMS_HOOK', lang('_SMS_SENDING_SERVICE_PROVIDER_'), lang('_SMS_SEND_SERVICE_PROVIDERS_NEED_TO_INSTALL_THE_PLUG-IN_'), $opt)
+            ->keyText('SMS_SIGN', lang('_SMS_PLATFORM_SIGN_'), lang('_SMS_PLATFORM_SIGN_CONT_'))
+            ->keyDefault('SMS_SIGN','【MuuCmf】');
 
         $builder
-        ->group(lang('_SMS_CONFIGURATION_'), 'SMS_HTTP,SMS_UID,SMS_PWD,SMS_SIGN,SMS_CONTENT,SMS_HOOK,SMS_RESEND');
+            ->group(lang('_SMS_CONFIGURATION_'), 'SMS_HOOK,SMS_SIGN');
         unset($opt);
 
         $builder->data($data);

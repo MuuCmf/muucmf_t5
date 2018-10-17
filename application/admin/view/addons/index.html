@@ -8,9 +8,9 @@
     <div class="with-padding">
     <div class="clearfix">
         <ul class="nav nav-primary pull-left">
-            <li id="type_all"><a href="{:Url('index',array('type'=>'all'))}">{:lang("_ALL_")}</a></li>
-            <li id="type_yes"><a href="{:Url('index',array('type'=>'yes'))}">{:lang("_NOT_INSTALLED_")}</a></li>
-            <li id="type_no"><a href="{:Url('index',array('type'=>'no'))}">{:lang("_INSTALLED_")}</a></li>
+            <li id="type_all"><a href="{:url('index',['type'=>'all'])}">{:lang("_ALL_")}</a></li>
+            <li id="type_yes"><a href="{:url('index',['type'=>'yes'])}">{:lang("_INSTALLED_")}</a></li>
+            <li id="type_no"><a href="{:url('index',['type'=>'no'])}">{:lang("_NOT_INSTALLED_")}</a></li>
             <script>
                 $('#type_{$type}').addClass('active');
             </script>

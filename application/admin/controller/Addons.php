@@ -38,27 +38,25 @@ class Addons extends Admin
      */
     public function index()
     {
-        $type = input('get.type', 'all', 'text');
+        $param = input('');
+        $type = isset($param['type']) ? $param['type'] : 'all';
+
         $list = model('admin/Addons')->getList('');
         $request = (array)input('request.');
-
         if ($type == 'yes') {//已安装的
             foreach ($list as $key => $value) {
-                if ($value['uninstall'] != 1) {
+                if ($value['uninstall'] != 0) {
                     unset($list[$key]);
                 }
             }
         } else if ($type == 'no') {
             foreach ($list as $key => $value) {
-                if ($value['uninstall'] == 1) {
+                if ($value['uninstall'] == 0) {
                     $value['id'] = 0;
                     unset($list[$key]);
                 }
             }
-        } else {
-            $type = 'all';
-        }
-
+        } 
         $this->setTitle(lang('_PLUGIN_LIST_'));
         $this->assign('type', $type);
         $this->assign('_list', $list);

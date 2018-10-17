@@ -39,4 +39,5 @@ class Common extends Api
             $this->error('error');
         }
     }
+
 }

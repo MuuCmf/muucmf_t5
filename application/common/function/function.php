@@ -6,7 +6,6 @@ require_once(APP_PATH . '/common/function/addons.php');
 require_once(APP_PATH . '/common/function/api.php');
 require_once(APP_PATH . '/common/function/builder.php');
 require_once(APP_PATH . '/common/function/cache.php');
-require_once(APP_PATH . '/common/function/collect.php');
 require_once(APP_PATH . '/common/function/ext_parse.php');
 require_once(APP_PATH . '/common/function/file.php');
 require_once(APP_PATH . '/common/function/limit.php');
@@ -17,7 +16,6 @@ require_once(APP_PATH . '/common/function/role.php');
 require_once(APP_PATH . '/common/function/seo.php');
 require_once(APP_PATH . '/common/function/thumb.php');
 require_once(APP_PATH . '/common/function/time.php');
-require_once(APP_PATH . '/common/function/type.php');
 require_once(APP_PATH . '/common/function/user.php');
 require_once(APP_PATH . '/common/function/vendors.php');
 require_once(APP_PATH . '/common/function/wechat.php');
@@ -389,21 +387,6 @@ function tree_to_list($tree, $child = '_child', $order = 'id', &$list = array())
     return $list;
 }
 
-
-
-
-/**
- * 时间戳格式化
- * @param int $time
- * @return string 完整的时间显示
- * @author dameng <59262424@qq.com>
- */
-function time_format($time = NULL, $format = 'Y-m-d H:i')
-{
-    $time = $time === NULL ? time() : intval($time);
-    return date($format, $time);
-}
-
 /**
  * 记录行为日志，并执行该行为的规则
  * @param string $action 行为标识
@@ -734,7 +717,7 @@ function tox_addons_url($url, $param)
     $param['_addons'] = $addon;
     $param['_controller'] = $controller;
     $param['_action'] = $action;
-    return Url("Home/Addons/execute", $param);
+    return url("Home/Addons/execute", $param);
 }
 
 
@@ -913,7 +896,7 @@ function convert_url_query($query)
  */
 function get_ip_lookup($ip=null){
     if(empty($ip)){
-        $ip = get_client_ip(0);
+        $ip = request()->ip();
     }
     $res = @file_get_contents('http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=js&ip=' . $ip);
     if(empty($res)){ return false; }

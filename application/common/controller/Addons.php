@@ -41,7 +41,7 @@ abstract class Addons{
         Config::set('view_replace_str', $view_replace_str);
 
         // 初始化视图模型
-        $config = ['view_path' => $this->addons_path];
+        $config = ['view_path' => $this->addons_path . 'view/'];
         $config = array_merge(Config::get('template'), $config);
         $this->view = new View($config, Config::get('view_replace_str'));
 
