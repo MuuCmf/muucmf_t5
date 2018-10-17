@@ -355,8 +355,7 @@ class User Extends Model
     //获取个人中心地址
         $spaceUrlResult = array();
         if (array_intersect(array('space_url', 'space_link', 'space_mob_url'), $fields)) {
-            $urls['space_url'] = Url('ucenter/Index/index', array('uid' => $uid));
-            $urls['space_link'] = '<a ucard="' . $uid . '" target="_blank" href="' . Url('ucenter/Index/index', array('uid' => $uid)) . '">' . $result['nickname'] . '</a>';
+            $urls['space_url'] = url('ucenter/Index/index', array('uid' => $uid));
             $result = array_merge($result, $urls);
             $this->write_query_user_cache($uid, 'urls', $urls);
         }
