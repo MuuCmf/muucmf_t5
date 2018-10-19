@@ -528,13 +528,13 @@ class User extends Admin
     private function getRoleFieldIds($uid = null)
     {
         $role_id = get_role_id($uid);
-        $fields_list = S('Role_Expend_Info_' . $role_id);
+        $fields_list = cache('Role_Expend_Info_' . $role_id);
         if (!$fields_list) {
             $map_role_config = getRoleConfigMap('expend_field', $role_id);
-            $fields_list = D('RoleConfig')->where($map_role_config)->getField('value');
+            $fields_list = model('RoleConfig')->where($map_role_config)->getField('value');
             if ($fields_list) {
                 $fields_list = explode(',', $fields_list);
-                S('Role_Expend_Info_' . $role_id, $fields_list, 600);
+                cache('Role_Expend_Info_' . $role_id, $fields_list, 600);
             }
         }
         return $fields_list;
@@ -644,8 +644,8 @@ class User extends Admin
 
         $builder
             ->keyStatus()
-            ->keyDoAction('User/field?id=###', lang('_FIELD_MANAGER_'))
-            ->keyDoAction('User/editProfile?id=###', lang('_EDIT_'));
+            ->keyDoActionEdit('User/field?id=###', lang('_FIELD_MANAGER_'))
+            ->keyDoActionEdit('User/editProfile?id=###', lang('_EDIT_'));
 
         $builder->data($profileList);
         $builder->page($page);

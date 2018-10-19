@@ -206,7 +206,7 @@ str;
             ->page($page);
 
         $builder->keyDoActionEdit('editArticles?id=###');
-        $builder->keyDoActionAjax('setArticleStatus?ids=###&status=-1','回收站');
+        $builder->keyDoActionDelete('setArticleStatus?ids=###&status=-1','回收站');
         $builder->display();
     }
 

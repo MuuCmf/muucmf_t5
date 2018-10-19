@@ -439,10 +439,11 @@ class AdminListBuilder extends AdminBuilder
      * @param $text
      * @param $title
      * @param array $attr
+     * @param str $class
      * @return $this
-     * @author 郑钟良<zzl@ourstu.com>
+     * @author 大蒙<59262424@qq.com> 完善
      */
-    public function keyDoActionModalPopup($getUrl, $text, $title, $attr = array())
+    public function keyDoActionModalPopup($getUrl, $text, $title, $attr = array() ,$class='btn-primary')
     {
         //attr中需要设置data-title，用于设置模态弹窗标题
         $attr['data-role'] = 'modal_popup';
@@ -472,11 +473,11 @@ class AdminListBuilder extends AdminBuilder
         }
 
         //在DOACTIONS中增加action
-        $doActionKey['opt']['actions'][] = array('text' => $text, 'get_url' => $getUrl, 'opt' => $attr);
+        $doActionKey['opt']['actions'][] = array('text' => $text, 'get_url' => $getUrl, 'opt' => $attr, 'class' => $class);
         return $this;
     }
 
-    public function keyDoAction($getUrl, $text, $title = '操作', $class = '')
+    public function keyDoAction($getUrl, $text, $title = '操作', $class = 'btn-primary')
     {
         //获取默认getUrl函数
         if (is_string($getUrl)) {
@@ -505,7 +506,7 @@ class AdminListBuilder extends AdminBuilder
         }
 
         //在DOACTIONS中增加action
-        $doActionKey['opt']['actions'][] = array('text' => $text, 'get_url' => $getUrl, 'class' => $class);
+        $doActionKey['opt']['actions'][] = ['text' => $text, 'get_url' => $getUrl, 'class' => $class];
 
         return $this;
     }
@@ -515,14 +516,39 @@ class AdminListBuilder extends AdminBuilder
      * @param  string $text   [description]
      * @return [type]         [description]
      */
-    public function keyDoActionAjax($getUrl, $text = 'Ajax')
+    public function keyDoActionAjax($getUrl, $text = 'Ajax', $class = 'btn-primary')
     {
-        return $this->keyDoAction($getUrl, $text, '操作', 'ajax-get');
+        return $this->keyDoAction($getUrl, $text, '操作', 'ajax-get'.$class);
     }
-
+    /**
+     * 编辑操作
+     * @param  [type] $getUrl [description]
+     * @param  string $text   [description]
+     * @return [type]         [description]
+     */
     public function keyDoActionEdit($getUrl, $text = '编辑')
     {
-        return $this->keyDoAction($getUrl, $text);
+        return $this->keyDoAction($getUrl, '<i class="icon icon-edit"></i> '.$text, '操作', 'btn-success');
+    }
+    /**
+     * 禁用操作
+     * @param  [type] $getUrl [description]
+     * @param  string $text   [description]
+     * @return [type]         [description]
+     */
+    public function keyDoActionDisable($getUrl, $text = '禁用')
+    {
+        return $this->keyDoAction($getUrl, '<i class="icon icon-minus-sign"></i> '. $text, '禁用', 'btn-warning ajax-get');
+    }
+    /**
+     * 删除操作
+     * @param  [type] $getUrl [description]
+     * @param  string $text   [description]
+     * @return [type]         [description]
+     */
+    public function keyDoActionDelete($getUrl, $text = '删除')
+    {
+        return $this->keyDoAction($getUrl, '<i class="icon icon-trash"></i> '.$text, '操作','btn-danger ajax-get');
     }
     /**
      * 还原操作，存在获取数据ID BUG
@@ -536,7 +562,7 @@ class AdminListBuilder extends AdminBuilder
         $getUrl = function () use ($that, $setStatusUrl) {
             return $that->addUrlParam($setStatusUrl, array('status' => 1));
         };
-        return $this->keyDoAction($getUrl, $text,'操作', 'ajax-get');
+        return $this->keyDoAction($getUrl, $text,'操作','btn-primary ajax-get');
     }
 
     public function keyTruncText($name, $title, $length)
@@ -689,12 +715,12 @@ class AdminListBuilder extends AdminBuilder
                     }
                     $content = implode(' ', $content);
                     if (isset($action['opt']['data-role']) && $action['opt']['data-role'] == "modal_popup") {//模态弹窗
-                        $result[] = "<a href=\" javascrapt:void(0);\" modal-url=\"$url\" " . $content . ">$linkText</a>";
+                        $result[] = "<a href=\" javascrapt:void(0);\" class=\"$class btn btn-mini $class\" modal-url=\"$url\" " . $content . ">$linkText</a>";
                     } else {
-                        $result[] = "<a href=\"$url\" class=\"$class\" " . $content . ">$linkText</a>";
+                        $result[] = "<a href=\"$url\" class=\"btn btn-mini $class\" " . $content . ">$linkText</a>";
                     }
                 } else {
-                    $result[] = "<a href=\"$url\" class=\"$class\">$linkText</a>";
+                    $result[] = "<a href=\"$url\" class=\"btn btn-mini $class\">$linkText</a>";
                 }
             }
             return implode(' ', $result);

@@ -233,7 +233,9 @@ class Admin extends MuuAdmin
             ->keyUpdateTime();
 
         $builder->keyDoActionEdit('demo/editArticles?id=###');
-        $builder->keyDoAction('demo/setDel?ids=###','回收站');
+        $builder->keyDoActionDisable('demo/setDel?ids=###');
+        $builder->keyDoActionDelete('demo/setDel?ids=###');
+        $builder->keyDoActionRestore();
         //$builder->page($page);
 
     	$builder->display();
