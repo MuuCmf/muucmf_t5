@@ -220,8 +220,11 @@ class Admin extends MuuAdmin
             ->setSelectPostUrl(Url('DEMO/admin/index'))
             ->select('','cate','select','','','',$optCategory)
             
-            ->buttonNew(Url('DEMO/editArticles'))
-            ->buttonModalPopup(Url('DEMO/doAudit'),null,'审核不通过',array('data-title'=>'设置审核失败原因','target-form'=>'ids'))
+            ->buttonNew(url('demoNew'))
+            ->buttonDisable(url('demoDisable'))
+            ->buttonEnable(url('demoEnable'))
+            ->buttonDelete(url('demoEnable'))
+            ->buttonModalPopup(Url('modalPopup'),null,'审核不通过',array('data-title'=>'设置审核失败原因','target-form'=>'ids'))
             ->keyId()
             ->keyUid()
             ->keyText('title','标题')

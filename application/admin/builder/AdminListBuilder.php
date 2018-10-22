@@ -117,9 +117,9 @@ class AdminListBuilder extends AdminBuilder
      * @auth 陈一枭
      */
 
-    public function button($title, $attr)
+    public function button($title, $attr = [])
     {
-        $this->_buttonList[] = array('title' => $title, 'attr' => $attr);
+        $this->_buttonList[] = ['title' => $title, 'attr' => $attr];
         return $this;
     }
 
@@ -128,16 +128,16 @@ class AdminListBuilder extends AdminBuilder
      * @param string $title
      * @param array $attr
      * @return AdminListBuilder
-     * @auth 陈一枭
+     * @auth 大蒙<59262424@qq.com>
      */
-    public function buttonNew($href, $title = '新增', $attr = array())
+    public function buttonNew($href, $title = '新增', $attr = [])
     {
         $attr['href'] = $href;
         $attr['class']='btn btn-ajax btn-info';
         return $this->button($title, $attr);
     }
 
-    public function ajaxButton($url, $params, $title, $attr = array())
+    public function ajaxButton($url, $params, $title, $attr = [])
     {
         $attr['class'] = 'btn ajax-post';
         $attr['url'] = $this->addUrlParam($url, $params);
@@ -151,9 +151,9 @@ class AdminListBuilder extends AdminBuilder
      * @param $title
      * @param array $attr
      * @return $this
-     * @author 郑钟良<zzl@ourstu.com>
+     * @author 郑钟良<zzl@ourstu.com> 大蒙<59262424@qq.com>
      */
-    public function buttonModalPopup($url, $params, $title, $attr = array())
+    public function buttonModalPopup($url, $params, $title, $attr = [])
     {
         //$attr中可选参数，data-title：模态框标题，target-form：要传输的数据
         $attr['modal-url'] = $this->addUrlParam($url, $params);
@@ -162,22 +162,22 @@ class AdminListBuilder extends AdminBuilder
         return $this->button($title, $attr);
     }
 
-    public function buttonSetStatus($url, $status, $title, $attr = array())
+    public function buttonSetStatus($url, $status, $title, $attr = [])
     {
-        $attr['class'] =isset($attr['class'])?$attr['class']: 'btn ajax-post';
+        $attr['class'] = isset($attr['class'])?$attr['class']: 'btn ajax-post';
         $attr['url'] = $this->addUrlParam($url, array('status' => $status));
         $attr['target-form'] = 'ids';
         return $this->button($title, $attr);
     }
 
-    public function buttonDisable($url = null, $title = '禁用', $attr = array())
+    public function buttonDisable($url = null, $title = '禁用', $attr = [])
     {
         if (!$url) $url = $this->_setStatusUrl;
         $attr['class']='btn ajax-post btn-warning';
         return $this->buttonSetStatus($url, 0, $title, $attr);
     }
 
-    public function buttonEnable($url = null, $title = '启用', $attr = array())
+    public function buttonEnable($url = null, $title = '启用', $attr = [])
     {
         if (!$url) $url = $this->_setStatusUrl;
         $attr['class']='btn ajax-post btn-success';
@@ -187,7 +187,7 @@ class AdminListBuilder extends AdminBuilder
     /**
      * 删除到回收站
      */
-    public function buttonDelete($url = null, $title = '删除', $attr = array())
+    public function buttonDelete($url = null, $title = '删除', $attr = [])
     {
         if (!$url) $url = $this->_setStatusUrl;
         $attr['class']='btn ajax-post btn-danger';
@@ -195,7 +195,7 @@ class AdminListBuilder extends AdminBuilder
         return $this->buttonSetStatus($url, -1, $title, $attr);
     }
 
-    public function buttonRestore($url = null, $title = '还原', $attr = array())
+    public function buttonRestore($url = null, $title = '还原', $attr = [])
     {
         if (!$url) $url = $this->_setStatusUrl;
         return $this->buttonSetStatus($url, 1, $title, $attr);
@@ -208,7 +208,7 @@ class AdminListBuilder extends AdminBuilder
      */
     public function buttonClear($model = null)
     {
-        return $this->button(lang('_CLEAR_OUT_'), array('class' => 'btn btn-danger ajax-post tox-confirm', 'data-confirm' => lang('_CONFIRM_CLEAR_OUT_'), 'url' => Url('', array('model' => $model)), 'target-form' => 'ids', 'hide-data' => 'true'));
+        return $this->button(lang('_CLEAR_OUT_'), ['class' => 'btn btn-danger ajax-post tox-confirm', 'data-confirm' => lang('_CONFIRM_CLEAR_OUT_'), 'url' => url('', ['model' => $model]), 'target-form' => 'ids', 'hide-data' => 'true']);
     }
 
     /**彻底删除
@@ -225,7 +225,7 @@ class AdminListBuilder extends AdminBuilder
         return $this->button(lang('_DELETE_COMPLETELY_'), $attr);
     }
 
-    public function buttonSort($href, $title = '排序', $attr = array())
+    public function buttonSort($href, $title = '排序', $attr = [])
     {
         $attr['href'] = $href;
         return $this->button($title, $attr);
