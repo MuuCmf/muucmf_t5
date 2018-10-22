@@ -869,7 +869,7 @@ class AdminListBuilder extends AdminBuilder
         } else {
             $seperator = '&';
         }
-        if(isset($params)){
+        if(is_array($params)){
             $params = http_build_query($params);
             return $url . $seperator . $params;
         }
