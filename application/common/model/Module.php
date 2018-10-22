@@ -74,10 +74,8 @@ class Module extends Model
         $modules = collection($this->select())->toArray();
         $info = [];
         foreach ($modules as $m) {
-            if (file_exists(APP_PATH . '/' . $m['name'] . '/Info/info.php')) {
+            if (file_exists(APP_PATH . '/' . $m['name'] . '/info/info.php') || file_exists(APP_PATH . '/' . $m['name'] . '/info/Info.php')) {
                 $info[] = array_merge($m, $this->getInfo($m['name']));
-                
-                //$this->save($info);
             } 
         }
 
@@ -96,7 +94,7 @@ class Module extends Model
             $this->error = lang('_MODULE_INFORMATION_DOES_NOT_EXIST_WITH_PERIOD_');
             return false;
         } else {
-            if (file_exists(APP_PATH . '/' . $module['name'] . '/Info/info.php')) {
+            if (file_exists(APP_PATH . '/' . $module['name'] . '/info/info.php') || file_exists(APP_PATH . '/' . $module['name'] . '/info/Info.php')) {
                 $info = array_merge($module, $this->getInfo($module['name']));
                 $this->save($info);
                 $this->cleanModuleCache($name);
@@ -105,7 +103,8 @@ class Module extends Model
         }
     }
 
-    /**检查是否可以访问模块，被用于控制器初始化
+    /**
+     * 检查是否可以访问模块，被用于控制器初始化
      * @param $name
      */
     public function checkCanVisit($name)
@@ -115,7 +114,7 @@ class Module extends Model
         foreach ($modules as $m) {
             if (isset($m['is_setup']) && $m['is_setup'] == 0 && $m['name'] == ucfirst($name)) {
                 header("Content-Type: text/html; charset=utf-8");
-                exit('您所访问的模块未安装，禁止访问，请管理员到后台云市场-本地-模块中安装。');
+                exit('您所访问的模块未安装，禁止访问，请管理员到后台扩展-本地-模块中安装。');
             }
         }
 

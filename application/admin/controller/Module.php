@@ -32,7 +32,6 @@ class Module extends Admin
         if ($aRefresh == 1) {
             cache('admin_modules', null);
             model('Module')->reload();
-            cache('admin_modules', null);
         } else if ($aRefresh == 2) {
             cache('admin_modules', null);
             model('Module')->cleanModulesCache();
