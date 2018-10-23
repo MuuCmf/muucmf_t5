@@ -233,7 +233,7 @@ class Adv extends Admin
             if ($pos['type'] == 2) {
 
                 $builder
-                ->keyRadio('style', '轮播_风格', '', [1 => 'simpleslider 风格', 2 => 'KinmaxShow 风格', 3 =>'Flickity 风格'])
+                ->keyRadio('style', '轮播_风格', '', [1 => 'Swiper 风格', 2 => 'KinmaxShow 风格', 3 =>'Flickity 风格'])
                 ->keyDefault('style', 1);
             }
 

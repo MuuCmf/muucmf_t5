@@ -83,89 +83,45 @@
 
 
                 {default /}
-                    <!--默认轮播效果-->
-                <link href="__LIB__/simpleSlider/style.css" rel="stylesheet" type="text/css">
-                <script type="text/javascript" src="__LIB__/simpleSlider/js/transit.js"></script>
-                <script type="text/javascript" src="__LIB__/simpleSlider/js/touchSwipe.js"></script>
-                <script type="text/javascript" src="__LIB__/simpleSlider/js/simpleSlider.js"></script>
-                <script type="text/javascript" src="__LIB__/simpleSlider/js/backstretch.js"></script>
-                <script>
-                var mainslider;
-                $(document).ready(function(){
-                    var options = {
-                        slides: '.slide', // The name of a slide in the slidesContainer
-                        swipe: true,    // Add possibility to Swipe > note that you have to include touchSwipe for this
-                        slideTracker: true, // Add a UL with list items to track the current slide
-                        slideTrackerID: 'slideposition', // The name of the UL that tracks the slides
-                        slideOnInterval: false, // Slide on interval
-                        interval: 9000, // Interval to slide on if slideOnInterval is enabled
-                        animateDuration: 1000, // Duration of an animation
-                        animationEasing: 'ease', // Accepts: linear ease in out in-out snap easeOutCubic easeInOutCubic easeInCirc easeOutCirc easeInOutCirc easeInExpo easeOutExpo easeInOutExpo easeInQuad easeOutQuad easeInOutQuad easeInQuart easeOutQuart easeInOutQuart easeInQuint easeOutQuint easeInOutQuint easeInSine easeOutSine easeInOutSine easeInBack easeOutBack easeInOutBack
-                        pauseOnHover: false // Pause when user hovers the slide container
-                    };
+                <!--默认轮播效果Swiper-->
+                <link href="__LIB__/Swiper-3.4.2/css/swiper.min.css" rel="stylesheet" type="text/css">
+                <script type="text/javascript" src="__LIB__/Swiper-3.4.2/js/swiper.jquery.min.js"></script>
 
-                    $(".slider").simpleSlider(options);
-                    mainslider = $(".slider").data("simpleslider");
-                    /* yes, that's all! */
-
-                    $(".slider").on("beforeSliding", function(event){
-                        var prevSlide = event.prevSlide;
-                        var newSlide = event.newSlide;
-                        $(".slider .slide[data-index='"+prevSlide+"'] .slidecontent").fadeOut();
-                        $(".slider .slide[data-index='"+newSlide+"'] .slidecontent").hide();
-                    });
-
-                    $(".slider").on("afterSliding", function(event){
-                        var prevSlide = event.prevSlide;
-                        var newSlide = event.newSlide;
-                        $(".slider .slide[data-index='"+newSlide+"'] .slidecontent").fadeIn();
-                    });
-                    {volist name="list" id="vo"}
-                    $(".slide#ad_{$vo.id}").backstretch("{$vo.pic|pic}");
-                    {/volist}
-
-                    $('.slide .backstretch img').on('dragstart', function(event) { event.preventDefault(); });
-
-                    $(".slidecontent").each(function(){
-                        $(this).css('margin-top', -$(this).height()/2);
-                    });
-                });
-                $(function(){
-                    var largeHeader = document.getElementById('fullscreen');
-                    var width = window.innerWidth;
-                    var height = window.innerHeight;
-                    largeHeader.style.height = height+'px';
-                    window.addEventListener('resize', resize);
-                    function resize() {
-                        var width = window.innerWidth;
-                        var height = window.innerHeight;
-                        largeHeader.style.height = height+'px';
-                        canvas.width = width;
-                        canvas.height = height;
-                    }
-                })
-
-                </script>
-                <div class='pagewrap'>
-            
-                <div class='pageblock' id='fullscreen'>
-                    <div class='slider'>
-                    {volist name="list" id="vo"}
-                        <div class='slide' id="ad_{$vo.id}">
-                            <div class='slidecontent'>
-                                <h1>{$vo.title}</h1>
-                                
-                                <div class="btn btn-success btn-lg" onclick="mainslider.nextSlide();">Done? Let's move on!</div>
-                            </div>
+                <div class="swiper-container" data-role="muuadv_swiper">
+                    <div class="swiper-wrapper">
+                    {volist name="list" id="data"}
+                        <div class="swiper-slide">
+                             <a title="{$data.title|text}" href="{$data.url}">
+                                <img src="{$data.pic|pic}" alt="{$data.title}" class="img-responsive" >
+                            </a>
                         </div>
                     {/volist}
-                        
                     </div>
+                    <!-- 如果需要导航按钮 -->
+                    <div class="swiper-button-prev swiper-button-white"></div>
+                    <div class="swiper-button-next swiper-button-white"></div> <!-- 白色 -->
+                    
+                    <!-- 如果需要滚动条 -->
+                    <div class="swiper-scrollbar"></div>
                 </div>
-                </div>
-                </div>
+                <script>
+                $(function(){
+                    var mySwiper = new Swiper ('.swiper-container[data-role="muuadv_swiper"]', {
+                    loop: true,
+                    
+                    // 如果需要分页器
+                    pagination: '.swiper-pagination',
+                    
+                    // 如果需要前进后退按钮
+                    nextButton: '.swiper-button-next',
+                    prevButton: '.swiper-button-prev',
+                    
+                    // 如果需要滚动条
+                    scrollbar: '.swiper-scrollbar',
+                  })        
+                });
+                </script>
             {/switch}
         {/if}
-
     </div>
 </div>
