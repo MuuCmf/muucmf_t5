@@ -196,12 +196,12 @@ class Adv extends Admin
             $builder = new AdminConfigBuilder();
 
             if ($aCopy != 0) {
-                $pos = $advPosModel->find($aCopy);
+                $pos = $advPosModel->find($aCopy)->toArray();
                 unset($pos['id']);
                 $pos['name'] .= '   请重新设置!';
                 $pos['title'] .= '   请重新设置!';
             } else {
-                $pos = $advPosModel->find($aId);
+                $pos = $advPosModel->find($aId)->toArray();
             }
             if ($aId == 0) {
 

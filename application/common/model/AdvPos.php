@@ -12,6 +12,7 @@ class AdvPos extends Model
         $adv_pos = cache('adv_pos_by_pos_' .$path. $name);
         if ($adv_pos === false) {
             $adv_pos = $this->where(['name' => $name, 'path' => $path, 'status' => 1])->find();
+            $adv_pos = $adv_pos->toArray();
             cache('adv_pos_by_pos_'  .$path. $name,$adv_pos);
         }
         return $adv_pos;

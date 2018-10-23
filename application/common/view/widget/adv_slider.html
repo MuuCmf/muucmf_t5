@@ -4,7 +4,7 @@
             {switch name="pos.style"}
                 {case value="2"}
                     <!--轮播效果2-->
-                    <script src="__PUBLIC__/lib/kinmaxshow/js/kinmaxshow.min.js"></script>
+                    <script src="__LIB__/kinmaxshow/js/kinmaxshow.min.js"></script>
                     <div>
                         <div id="slide_{$pos.id}" style="display: none">
                             {volist name="list" id="vo"}
@@ -65,17 +65,17 @@
                         }
                     </style>
                     <link href="__LIB__/flickity/css/flickity.css" rel="stylesheet" media="screen">
-                    <script src="__LIB__/lib/flickity/js/flickity.pkgd.min.js"></script>
+                    <script src="__LIB__/flickity/js/flickity.pkgd.min.js"></script>
                       <div id="slide_{$pos.id}">
                         <div class="flickity-content js-flickity" id="main-gallery" data-flickity-options='{ "cellAlign": "left", "contain": true,"autoplay": true,"wrapAround": true}'>
-                            <volist name="list" id="vo">
+                            {volist name="list" id="vo"}
                                 <div class="gallery-cell">
                                     <a href="{$vo.url}" target="_blank" title="{$vo.title}">
                                         <img src="{$vo.pic|pic}"
                                              alt="{$vo.title}" class="img-responsive" >
                                     </a>
                                 </div>
-                            </volist>
+                            {/volist}
                         </div>
                       </div>
                     <!--轮播效果3END-->
@@ -154,7 +154,7 @@
                         <div class='slide' id="ad_{$vo.id}">
                             <div class='slidecontent'>
                                 <h1>{$vo.title}</h1>
-                                <p>{$vo.description}</p>
+                                
                                 <div class="btn btn-success btn-lg" onclick="mainslider.nextSlide();">Done? Let's move on!</div>
                             </div>
                         </div>

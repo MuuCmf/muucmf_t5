@@ -25,10 +25,10 @@ class Adv extends Model
             $advMap['status'] = 1;
             $advMap['start_time'] = array('lt', time());
             $advMap['end_time'] = array('gt', time());
-            $data = $this->where($advMap)->order('sort asc')->select();
+            $list = $this->where($advMap)->order('sort asc')->select();
+            $list = collection($list)->toArray();
 
-
-            foreach ($data as &$v) {
+            foreach ($list as &$v) {
                 $d = json_decode($v['data'], true);
                 if (!empty($d)) {
                     $v = array_merge($d, $v);
@@ -39,7 +39,7 @@ class Adv extends Model
             cache('adv_list_' . $name . $path, $list);
         }
 
-        return $data;
+        return $list;
     }
 
     /**

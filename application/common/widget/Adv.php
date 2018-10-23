@@ -11,7 +11,6 @@ class Adv extends Controller
 
     public function render($param)
     {
-
         if (is_array($param)) {
             $name = $param['name'];
         } else {
@@ -21,7 +20,6 @@ class Adv extends Controller
         $advPosModel = model('common/AdvPos');
         $request = Request::instance();
         $path = $request->module() . '/' . $request->controller() . '/' . $request->action();
-
         $pos = $advPosModel->getInfo($name, $path);
 
         //不存在广告位则创建
@@ -38,9 +36,7 @@ class Adv extends Controller
             $param['name'] = $name;
             $param['path'] = $path;
             $param['data']=json_encode($param['data']);
-            //$pos = $advPosModel->create($param);
             $pos['id'] = $advPosModel->save($pos);
-
             cache('adv_pos_by_pos_' . $path . $name, $pos);
         }
         $pos['type_text'] = $advPosModel->switchType($pos['type']);
