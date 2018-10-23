@@ -1,20 +1,20 @@
 <div id="adv_{$pos.id}" class="adv-wrap" style="padding: {$pos.padding};margin:{$pos.margin};">
     <div >
-        <if condition="count($list) gt 0">
-            <switch name="pos.style">
-                <case value="2">
+        {if condition="count($list) gt 0"}
+            {switch name="pos.style"}
+                {case value="2"}
                     <!--轮播效果2-->
                     <script src="__PUBLIC__/lib/kinmaxshow/js/kinmaxshow.min.js"></script>
                     <div>
                         <div id="slide_{$pos.id}" style="display: none">
-                            <volist name="list" id="vo">
+                            {volist name="list" id="vo"}
                                 <div>
                                     <a href="{$vo.url}" target="_blank" title="{$vo.title}">
                                         <img src="{$vo.pic|pic}"
                                              alt="{$vo.title}" class="img-responsive" >
                                     </a>
                                 </div>
-                            </volist>
+                            {/volist}
                         </div>
                     </div>
                     <script type="text/javascript">
@@ -47,8 +47,8 @@
                         })
                     </script>
                     <!--轮播效果2END-->
-                </case>
-                <case value="3">
+                {/case}
+                {case value="3"}
                     <!--轮播效果3 Flickity 风格 START-->
                     <style>
                         .flickity-content {
@@ -64,8 +64,8 @@
                             width:100%;
                         }
                     </style>
-                    <link href="__PUBLIC__/lib/flickity/css/flickity.css" rel="stylesheet" media="screen">
-                    <script src="__PUBLIC__/lib/flickity/js/flickity.pkgd.min.js"></script>
+                    <link href="__LIB__/flickity/css/flickity.css" rel="stylesheet" media="screen">
+                    <script src="__LIB__/lib/flickity/js/flickity.pkgd.min.js"></script>
                       <div id="slide_{$pos.id}">
                         <div class="flickity-content js-flickity" id="main-gallery" data-flickity-options='{ "cellAlign": "left", "contain": true,"autoplay": true,"wrapAround": true}'>
                             <volist name="list" id="vo">
@@ -79,17 +79,16 @@
                         </div>
                       </div>
                     <!--轮播效果3END-->
-                </case>
+                {/case}
 
 
-                <default />
+                {default /}
                     <!--默认轮播效果-->
-                <link href="__PUBLIC__/lib/simpleSlider/style.css" rel="stylesheet" type="text/css">
-                <script src="http://libs.baidu.com/jquery/1.10.2/jquery.min.js"></script>
-                <script type="text/javascript" src="__PUBLIC__/lib/simpleSlider/js/transit.js"></script>
-                <script type="text/javascript" src="__PUBLIC__/lib/simpleSlider/js/touchSwipe.js"></script>
-                <script type="text/javascript" src="__PUBLIC__/lib/simpleSlider/js/simpleSlider.js"></script>
-                <script type="text/javascript" src="__PUBLIC__/lib/simpleSlider/js/backstretch.js"></script>
+                <link href="__LIB__/simpleSlider/style.css" rel="stylesheet" type="text/css">
+                <script type="text/javascript" src="__LIB__/simpleSlider/js/transit.js"></script>
+                <script type="text/javascript" src="__LIB__/simpleSlider/js/touchSwipe.js"></script>
+                <script type="text/javascript" src="__LIB__/simpleSlider/js/simpleSlider.js"></script>
+                <script type="text/javascript" src="__LIB__/simpleSlider/js/backstretch.js"></script>
                 <script>
                 var mainslider;
                 $(document).ready(function(){
@@ -121,9 +120,9 @@
                         var newSlide = event.newSlide;
                         $(".slider .slide[data-index='"+newSlide+"'] .slidecontent").fadeIn();
                     });
-                    <volist name="list" id="vo">
+                    {volist name="list" id="vo"}
                     $(".slide#ad_{$vo.id}").backstretch("{$vo.pic|pic}");
-                    </volist>
+                    {/volist}
 
                     $('.slide .backstretch img').on('dragstart', function(event) { event.preventDefault(); });
 
@@ -151,7 +150,7 @@
             
                 <div class='pageblock' id='fullscreen'>
                     <div class='slider'>
-                    <volist name="list" id="vo">
+                    {volist name="list" id="vo"}
                         <div class='slide' id="ad_{$vo.id}">
                             <div class='slidecontent'>
                                 <h1>{$vo.title}</h1>
@@ -159,14 +158,14 @@
                                 <div class="btn btn-success btn-lg" onclick="mainslider.nextSlide();">Done? Let's move on!</div>
                             </div>
                         </div>
-                    </volist>
+                    {/volist}
                         
                     </div>
                 </div>
                 </div>
                 </div>
-            </switch>
-        </if>
+            {/switch}
+        {/if}
 
     </div>
 </div>

@@ -1,11 +1,12 @@
 <?php
 
-namespace Common\Widget;
+namespace app\common\widget;
 
-use Think\Controller;
+use think\Controller;
+use think\Request;
 
 
-class AdvWidget extends Controller
+class Adv extends Controller
 {
 
     public function render($param)
@@ -17,8 +18,9 @@ class AdvWidget extends Controller
             $name = $param;
             $param = array();
         }
-        $advPosModel = D('Common/AdvPos');
-        $path = MODULE_NAME . '/' . CONTROLLER_NAME . '/' . ACTION_NAME;
+        $advPosModel = model('common/AdvPos');
+        $request = Request::instance();
+        $path = $request->module() . '/' . $request->controller() . '/' . $request->action();
 
         $pos = $advPosModel->getInfo($name, $path);
 
@@ -32,21 +34,21 @@ class AdvWidget extends Controller
             empty($param['title']) && $param['title'] = $name;
             empty($param['margin']) && $param['margin'] = '';
             empty($param['padding']) && $param['padding'] = '';
-            empty($param['data']) && $param['data'] = array();
+            empty($param['data']) && $param['data'] = [];
             $param['name'] = $name;
             $param['path'] = $path;
             $param['data']=json_encode($param['data']);
-            $pos = $advPosModel->create($param);
-            $pos['id'] = $advPosModel->add($pos);
+            //$pos = $advPosModel->create($param);
+            $pos['id'] = $advPosModel->save($pos);
 
-            S('adv_pos_by_pos_' . $path . $name, $pos);
+            cache('adv_pos_by_pos_' . $path . $name, $pos);
         }
         $pos['type_text'] = $advPosModel->switchType($pos['type']);
         $data = json_decode($pos['data'], true);
         if (!empty($data)) {
             $pos = array_merge($pos, $data);
         }
-        $list = D('Common/Adv')->getAdvList($name, $path);
+        $list = model('common/Adv')->getAdvList($name, $path);
         $this->assign('list', $list);
         $this->assign('pos', $pos);
         if (empty($list)) {
@@ -66,10 +68,10 @@ class AdvWidget extends Controller
                     $tpl = 'code';
                     break;
                 default:
-                    $tpl = T('Application://Common@Widget/adv/adv_empty');
+                    $tpl = 'empty';
             }
         }
-        $this->display(T('Application://Common@Widget/adv_' . $tpl));
+        return $this->fetch('common@widget/adv_' . $tpl));
 
     }
 
