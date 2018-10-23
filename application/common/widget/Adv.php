@@ -71,7 +71,7 @@ class Adv extends Controller
                     $tpl = 'empty';
             }
         }
-        return $this->fetch('common@widget/adv_' . $tpl));
+        return $this->fetch('common@widget/adv_' . $tpl);
 
     }
 
