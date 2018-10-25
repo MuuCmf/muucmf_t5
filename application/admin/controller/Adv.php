@@ -10,7 +10,7 @@ use think\Db;
 class Adv extends Admin
 {
 
-    public function pos($page = 1, $r = 20)
+    public function pos($r = 20)
     {
         $aModule = input('module', '', 'text');
         $aTheme = input('theme', 'all', 'text');
@@ -34,7 +34,6 @@ class Adv extends Admin
         $advPosModel = model('AdvPos');
         $advModel = model('Adv');
         $advPoses = $advPosModel->where($map)->select();
-        //$themes = model('common/Theme')->getThemeList();
 
         foreach ($advPoses as &$v) {
             switch ($v['type']) {
@@ -50,6 +49,8 @@ class Adv extends Admin
                 case 4:
                     $v['type_html'] = '<span class="text-error">代码块</span>';
                     break;
+                case 0:
+                    $v['type_html'] = '<span class="text-error">其它</span>';
             }
             if ($v['theme'] != 'all') {
                 $theme_names = explode(',', $v['theme']);
@@ -63,21 +64,19 @@ class Adv extends Admin
             }
 
             $count = $advModel->where(array('pos_id' => $v['id'], 'status' => 1))->count();
-            $v['do'] = '<a href="' . Url('editPos?copy=' . $v['id']) . '"><i class="icon-copy"></i> 复制</a>&nbsp;&nbsp;&nbsp;&nbsp;'
-                . '<a href="' . Url('editPos?module='.$aModule.'&id=' . $v['id']) . '"><i class="icon-cog"></i> 设置</a>&nbsp;&nbsp;&nbsp;&nbsp;'
-                . '<a href="' . Url('adv?pos_id=' . $v['id']) . '" ><i class="icon-sitemap"></i> 管理广告(' . $count . ')</a>&nbsp;&nbsp;&nbsp;&nbsp;'
-                . '<a href="' . Url('editAdv?pos_id=' . $v['id']) . '"><i class="icon-plus"></i> 添加广告</a>&nbsp;&nbsp;&nbsp;&nbsp;'
-                . '<a href="' . Url($v['path']) . '#adv_' . $v['id'] . '" target="_blank"><i class="icon-share-alt"></i>到前台查看</a>&nbsp;&nbsp;';
-
-
+            $v['do'] = '<a href="' . url('editPos?copy=' . $v['id']) . '"><i class="icon-copy"></i> 复制</a>&nbsp;&nbsp;&nbsp;&nbsp;'
+                . '<a href="' . url('editPos?module='.$aModule.'&id=' . $v['id']) . '"><i class="icon-cog"></i> 设置</a>&nbsp;&nbsp;&nbsp;&nbsp;'
+                . '<a href="' . url('adv?pos_id=' . $v['id']) . '" ><i class="icon-sitemap"></i> 管理广告(' . $count . ')</a>&nbsp;&nbsp;&nbsp;&nbsp;'
+                . '<a href="' . url('editAdv?pos_id=' . $v['id']) . '"><i class="icon-plus"></i> 添加广告</a>&nbsp;&nbsp;&nbsp;&nbsp;'
+                . '<a href="' . url($v['path']) . '#adv_' . $v['id'] . '" target="_blank"><i class="icon-share-alt"></i>到前台查看</a>&nbsp;&nbsp;';
         }
         unset($v);
 
         $adminList->title('广告位管理');
-        $adminList->buttonNew(Url('editPos'), '添加广告位');
-        $adminList->buttonDelete(Url('setPosStatus'));
-        $adminList->buttonDisable(Url('setPosStatus'));
-        $adminList->buttonEnable(Url('setPosStatus'));
+        $adminList->buttonNew(url('editPos'), '添加广告位');
+        $adminList->buttonDelete(url('setPosStatus'));
+        $adminList->buttonDisable(url('setPosStatus'));
+        $adminList->buttonEnable(url('setPosStatus'));
         $adminList
         ->keyId()
         ->keyTitle()
@@ -92,13 +91,6 @@ class Adv extends Admin
         ->keyText('padding', '内部留白')
         ->keyText('theme_html', '适用主题');
 
-        //$themes_array[] = array('id' => 'all', 'value' => '--全部主题--');
-        //foreach ($themes as $v) {
-        //    $themes_array[] = array('id' => $v['name'], 'value' => $v['title']);
-        //}
-        
-        //$adminList->select('所属主题：', 'theme', 'select', '描述', '', '', $themes_array);
-        //
         $status_array = [
             ['id' => 1, 'value' => '正常'], 
             ['id' => 0, 'value' => '禁用'], 
