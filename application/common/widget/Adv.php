@@ -21,10 +21,10 @@ class Adv extends Controller
         $request = Request::instance();
         $path = $request->module() . '/' . $request->controller() . '/' . $request->action();
         $pos = $advPosModel->getInfo($name, $path);
-
+        
         //不存在广告位则创建
         if (empty($pos)) {
-            empty($param['type']) && $param['type'] = 3;
+            empty($param['type']) && $param['type'] = 0;
             empty($param['status']) && $param['status'] = 1;
             empty($param['width']) && $param['width'] = '100px';
             empty($param['height']) && $param['height'] = '100px';
@@ -36,9 +36,11 @@ class Adv extends Controller
             $param['name'] = $name;
             $param['path'] = $path;
             $param['data']=json_encode($param['data']);
-            $pos['id'] = $advPosModel->save($pos);
+            $advPos = $advPosModel->save($param);
+            $pos['id'] = $advPos->id;
             cache('adv_pos_by_pos_' . $path . $name, $pos);
         }
+        
         $pos['type_text'] = $advPosModel->switchType($pos['type']);
         $data = json_decode($pos['data'], true);
         if (!empty($data)) {
