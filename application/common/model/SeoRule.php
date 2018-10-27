@@ -22,7 +22,7 @@ class SeoRule extends Model
 
         //获取相关的规则
         $rules = $this->getRelatedRules($module, $controller, $action);
-
+        
         //按照排序计算最终结果
         $title = '';
         $keywords = '';
@@ -45,8 +45,7 @@ class SeoRule extends Model
         }
         
         //生成结果
-        $result = array('title' => $title, 'keywords' => $keywords, 'description' => $description);
-
+        $result = ['title' => $title, 'keywords' => $keywords, 'description' => $description];
         //写入缓存
         cache($cacheKey, $result);
 
@@ -58,10 +57,12 @@ class SeoRule extends Model
     {
         
         //查询与当前页面相关的SEO规则
-        $rules = $this
-            ->where("(app='' or app='$module') and (controller='' or controller='$controller') and (action='' or action='$action') and status=1")
-            ->order('sort asc')
-            ->select();
+        $map['app'] = [['=',''],['=',$module],'or'];
+        $map['controller'] = [['=',''],['=',$controller],'or']; 
+        $map['action'] = [['=',''],['=',$action],'or'];
+        $map['status'] = 1;
+
+        $rules = $this->where($map)->order('sort asc')->select();
 
         //返回规则列表
         return $rules;
