@@ -193,7 +193,8 @@ class Adv extends Admin
                 $pos['name'] .= '   请重新设置!';
                 $pos['title'] .= '   请重新设置!';
             } else {
-                $pos = $advPosModel->find($aId)->toArray();
+                $pos = $advPosModel->find($aId);
+                if(!empty($pos)) $pos = $pos->toArray();
             }
             if ($aId == 0) {
 
