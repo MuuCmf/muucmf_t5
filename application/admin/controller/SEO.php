@@ -126,32 +126,30 @@ class Seo extends Admin
 
         //读取规则内容
         if ($isEdit) {
-            $rule = Db::name('SeoRule')->where(array('id' => $id))->find();
+            $rule = Db::name('SeoRule')->where(['id' => $id])->find();
         } else {
-            $rule = array('status' => 1);
+            $rule = [
+                'status' => 1,
+                'action' => '',
+                'summary'=> ''
+            ];
         }
-
-        //
         $rule['action2'] = $rule['action'];
+        $rule['summary']=nl2br($rule['summary']);
 
         //显示页面
         $builder = new AdminConfigBuilder();
-
-
         $modules = model('Module')->getAll();
 
-
-        $app = array('' => lang('_MODULE_ALL_'));
+        $app = ['' => lang('_MODULE_ALL_')];
         foreach ($modules as $m) {
             if ($m['is_setup']) {
-                $app[$m['name']] = $m['alias'];
+                $app[$m['name']] = lcfirst($m['alias']);//首字母改小写，兼容V1
             }
         }
 
-        $rule['summary']=nl2br($rule['summary']);
-
-        $builder->
-        title($isEdit ? lang('_EDIT_RULES_') : lang('_ADD_RULE_'))
+        $builder
+            ->title($isEdit ? lang('_EDIT_RULES_') : lang('_ADD_RULE_'))
             ->keyId()
             ->keyText('title', lang('_NAME_'), lang('_RULE_NAME,_CONVENIENT_MEMORY_'))
             ->keySelect('app', lang('_MODULE_NAME_'), lang('_NOT_FILLED_IN_ALL_MODULES_'), $app)
@@ -163,7 +161,7 @@ class Seo extends Admin
             ->keyReadOnly('summary',lang('_VARIABLE_DESCRIPTION_'),lang('_VARIABLE_DESCRIPTION_VICE_'))
             ->keyStatus()
             ->data($rule)
-            ->buttonSubmit(Url('doEditRule'))
+            ->buttonSubmit(url('doEditRule'))
             ->buttonBack()
             ->display();
     }
@@ -173,12 +171,21 @@ class Seo extends Admin
         //判断是否为编辑模式
         $isEdit = $id ? true : false;
         //写入数据库
-        $data = array('title' => $title, 'app' => $app, 'controller' => $controller, 'action' => $action2, 'seo_title' => $seo_title, 'seo_keywords' => $seo_keywords, 'seo_description' => $seo_description, 'status' => $status);
-        $model = Db::name('SeoRule');
+        $data = [
+            'title' => $title, 
+            'app' => $app, 
+            'controller' => $controller, 
+            'action' => $action2, 
+            'seo_title' => $seo_title, 
+            'seo_keywords' => $seo_keywords,
+            'seo_description' => $seo_description, 
+            'status' => $status
+        ];
+
         if ($isEdit) {
-            $result = $model->where(array('id' => $id))->update($data);
+            $result = Db::name('SeoRule')->where(['id' => $id])->update($data);
         } else {
-            $result = $model->save($data);
+            $result = Db::name('SeoRule')->insert($data);
         }
 
         clean_all_cache();
