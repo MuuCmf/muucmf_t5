@@ -309,18 +309,20 @@ class Addons extends Admin
             if ($data) {
                 if ($data['id']) {
                     $flag = Db::name('Hooks')->where(['id'=>$data['id']])->update($data);
-                    if ($flag !== false)
-                        cache('hooks', null);
-                        $this->success(lang('_UPDATE_'), Cookie('__forward__'));
-                    else
+                    if ($flag !== false){
+                       cache('hooks', null);
+                        $this->success(lang('_UPDATE_'), Cookie('__forward__')); 
+                    }else{
                         $this->error(lang('_UPDATE_FAILED_'));
+                    }
                 } else {
                     $flag = Db::name('Hooks')->insert($data);
-                    if ($flag)
+                    if ($flag){
                         cache('hooks', null);
                         $this->success(lang('_NEW_SUCCESS_'), Cookie('__forward__'));
-                    else
+                    }else{
                         $this->error(lang('_NEW_FAILURE_'));
+                    }
                 }
 
             } else {
