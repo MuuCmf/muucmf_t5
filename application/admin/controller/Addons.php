@@ -145,6 +145,7 @@ class Addons extends Admin
             cache($config['addons_cache'], null);
         }
         if ($flag !== false) {
+            cache('hooks', null);
             $this->success(lang('_SAVE_'), Cookie('__forward__'));
         } else {
             $this->error(lang('_SAVE_FAILED_'));
@@ -273,6 +274,8 @@ class Addons extends Admin
             }
         }
         $all_addons_arr = $tmp_arr;
+        //清理缓存
+        cache('hooks', null);
         $this->assign('data', $hook);
         //看板挂载数据
         $this->assign('all_addons_arr', $all_addons_arr);
@@ -286,6 +289,7 @@ class Addons extends Admin
     public function delhook($id)
     {
         if (Db::name('Hooks')->delete($id) !== false) {
+            cache('hooks', null);
             $this->success(lang('_DELETE_SUCCESS_'));
         } else {
             $this->error(lang('_DELETE_FAILED_'));
@@ -306,16 +310,19 @@ class Addons extends Admin
                 if ($data['id']) {
                     $flag = Db::name('Hooks')->where(['id'=>$data['id']])->update($data);
                     if ($flag !== false)
+                        cache('hooks', null);
                         $this->success(lang('_UPDATE_'), Cookie('__forward__'));
                     else
                         $this->error(lang('_UPDATE_FAILED_'));
                 } else {
                     $flag = Db::name('Hooks')->insert($data);
                     if ($flag)
+                        cache('hooks', null);
                         $this->success(lang('_NEW_SUCCESS_'), Cookie('__forward__'));
                     else
                         $this->error(lang('_NEW_FAILURE_'));
                 }
+
             } else {
                 $this->error($hookModel->getError());
             }
@@ -347,6 +354,7 @@ class Addons extends Admin
 
         $map = array('id' => array('in', $ids));
         if ($addonModel->where($map)->delete()) {
+            cache('hooks', null);
             $this->success(lang('_DELETE_SUCCESS_'));
         } else {
             $this->error(lang('_DELETE_FAILED_'));
