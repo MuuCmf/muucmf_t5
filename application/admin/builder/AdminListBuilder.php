@@ -720,8 +720,11 @@ class AdminListBuilder extends AdminBuilder
                 if(isset($action['hide'])){
                     $hide_arr = $action['hide'];
                     
-                    if(!empty($hide_arr)){
-                        if($item[$hide_arr[0]].$hide_arr[1].$hide_arr[2]){
+                    if(!empty($hide_arr)){ 
+                        $d = $item[$hide_arr[0]].$hide_arr[1].$hide_arr[2];
+                        $hide_str_res =  eval('echo $d;');
+
+                        if($hide_str_res){
                             //符合条件跳出本次循环
                             continue;
                         }
