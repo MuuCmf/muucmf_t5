@@ -614,7 +614,10 @@ class AdminListBuilder extends AdminBuilder
         //key类型的等价转换
         //map转换成text
         $this->convertKey('map', 'text', function ($value, $key) {
-            return $key['opt'][$value];
+            if(!empty($value)) {
+                return $key['opt'][$value];
+            }
+            return '';
         });
 
         //uid转换成text
