@@ -12,7 +12,7 @@ class AdminListBuilder extends AdminBuilder
     private $_buttonList = array();
     private $_pagination = array();
     private $_explain = array();
-    private $_data = array();
+    private $_data;
     private $_setStatusUrl;
     private $_searchPostUrl;
     private $_selectPostUrl;
@@ -137,7 +137,7 @@ class AdminListBuilder extends AdminBuilder
         return $this->button($title, $attr);
     }
 
-    public function ajaxButton($url, $params, $title, $attr = [])
+    public function buttonAjax($url, $params, $title, $attr = [])
     {
         $attr['class'] = 'btn ajax-post';
         $attr['url'] = $this->addUrlParam($url, $params);
@@ -354,15 +354,15 @@ class AdminListBuilder extends AdminBuilder
      * @param $name
      * @param $title
      * @param $getUrl Closure|string
-     * 可以是函数或U函数解析的字符串。如果是字符串，该函数将附带一个id参数
+     * 可以是函数或url函数解析的字符串。如果是字符串，该函数可附带一个$flag定义的参数
      *
      * @return $this
      */
-    public function keyLink($name, $title, $getUrl)
+    public function keyLink($name, $title, $getUrl, $flag='id')
     {
         //如果getUrl是一个字符串，则表示getUrl是一个U函数解析的字符串
         if (is_string($getUrl)) {
-            $getUrl = $this->createDefaultGetUrlFunction($getUrl);
+            $getUrl = $this->createDefaultGetUrlFunction($getUrl, $flag);
         }
 
         //修整添加多个空字段时显示不正常的BUG@mingyangliu
@@ -376,13 +376,13 @@ class AdminListBuilder extends AdminBuilder
 
     public function keyStatus($name = 'status', $title = '状态')
     {
-        $map = array(-1 => lang('_DELETE_'), 0 => lang('_DISABLE_'), 1 => lang('_ENABLED_'), 2 => lang('_UNAUDITED_'));
+        $map = [-1 => lang('_DELETE_'), 0 => lang('_DISABLE_'), 1 => lang('_ENABLED_'), 2 => lang('_UNAUDITED_')];
         return $this->key($name, $title, 'status', $map);
     }
 
     public function keyYesNo($name, $title)
     {
-        $map = array(0 => lang('_NO_'), 1 => lang('_YES_'));
+        $map = [0 => lang('_NO_'), 1 => lang('_YES_')];
         return $this->keymap($name, $title, $map);
     }
 
@@ -443,13 +443,13 @@ class AdminListBuilder extends AdminBuilder
      * @return $this
      * @author 大蒙<59262424@qq.com> 完善
      */
-    public function keyDoActionModalPopup($getUrl, $text, $title, $attr = array() ,$class='btn-primary')
+    public function keyDoActionModalPopup($getUrl, $text, $title, $attr = [] ,$class='btn-primary',$flag = 'id')
     {
         //attr中需要设置data-title，用于设置模态弹窗标题
         $attr['data-role'] = 'modal_popup';
         //获取默认getUrl函数
         if (is_string($getUrl)) {
-            $getUrl = $this->createDefaultGetUrlFunction($getUrl);
+            $getUrl = $this->createDefaultGetUrlFunction($getUrl,$flag);
         }
         //确认已经创建了DOACTIONS字段
         $doActionKey = null;
@@ -477,11 +477,11 @@ class AdminListBuilder extends AdminBuilder
         return $this;
     }
 
-    public function keyDoAction($getUrl, $text, $title = '操作', $class = 'btn-primary')
+    public function keyDoAction($getUrl, $text, $title = '操作', $class = 'btn-primary', $flag = 'id')
     {
         //获取默认getUrl函数
         if (is_string($getUrl)) {
-            $getUrl = $this->createDefaultGetUrlFunction($getUrl);
+            $getUrl = $this->createDefaultGetUrlFunction($getUrl,$flag);
         }
 
         //确认已经创建了DOACTIONS字段
@@ -592,7 +592,7 @@ class AdminListBuilder extends AdminBuilder
      */
     public function explain($title, $content)
     {
-        $this->_explain = array('title' => $title, 'content' => $content);
+        $this->_explain = ['title' => $title, 'content' => $content];
         return $this;
     }
 
@@ -840,31 +840,6 @@ class AdminListBuilder extends AdminBuilder
         }
     }
 
-    /**
-     * @param $pattern Url函数解析的URL字符串，例如 Admin/Test/index?test_id=###
-     * Admin/Test/index?test_id={other_id}
-     * ###将被id替换
-     * {other_id}将被替换
-     * @return callable
-     */
-    private function createDefaultGetUrlFunction($pattern)
-    {
-        $explode = explode('|', $pattern);
-        $pattern = $explode[0];
-        $fun = empty($explode[1]) ? 'Url' : $explode[1];
-
-        return function ($item) use ($pattern, $fun) {
-            $pattern = str_replace('###', $item['id'], $pattern);
-            //调用ThinkPHP中的解析引擎解析变量
-            //$view = new \think\View();
-            //$view->assign($item);
-
-            //dump($pattern);
-            //$pattern = $view->fetch('', $pattern);
-            return $fun($pattern);
-        };
-    }
-
     public function addUrlParam($url, $params)
     {
         if (strpos($url, '?') === false) {
@@ -919,43 +894,21 @@ class AdminListBuilder extends AdminBuilder
     }
 
     /**
-     * keyLinkByFlag  带替换表示的链接
-     * @param        $name
-     * @param        $title
-     * @param        $getUrl
-     * @param string $flag
-     * @return $this
-     * @author:xjw129xjt xjt@ourstu.com
-     */
-    public function keyLinkByFlag($name, $title, $getUrl, $flag = 'id')
-    {
-
-        //如果getUrl是一个字符串，则表示getUrl是一个U函数解析的字符串
-        if (is_string($getUrl)) {
-            $getUrl = $this->ParseUrl($getUrl, $flag);
-        }
-
-        //添加key
-        return $this->key($name, $title, 'link', $getUrl);
-    }
-
-    /**解析Url
-     * @param $pattern URL文本
-     * @param $flag
+     * @param $pattern Url函数解析的URL字符串，例如 Admin/Test/index?test_id=###
+     * Admin/Test/index?test_id={other_id}
+     * ###将被id替换
+     * {other_id}将被替换
      * @return callable
-     * @auth 陈一枭
      */
-    private function ParseUrl($pattern, $flag)
+    private function createDefaultGetUrlFunction($pattern, $flag='id')
     {
-        return function ($item) use ($pattern, $flag) {
+        $explode = explode('|', $pattern);
+        $pattern = $explode[0];
+        $fun = empty($explode[1]) ? 'url' : $explode[1];
 
+        return function ($item) use ($pattern, $fun, $flag) {
             $pattern = str_replace('###', $item[$flag], $pattern);
-            //调用ThinkPHP中的解析引擎解析变量
-            $view = new \Think\View();
-            $view->assign($item);
-            $pattern = $view->fetch('', $pattern);
-            return Url($pattern);
+            return $fun($pattern);
         };
     }
-
 }

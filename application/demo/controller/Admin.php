@@ -184,40 +184,47 @@ class Admin extends MuuAdmin
         $list = [
             [
                 'id'=>1,
+                'demo_id'=>888,
                 'title'=>'title',
                 'category'=>1,
                 'description'=>'description',
                 'sort'=>1,
                 'status'=>1,
+                'yesno'=>1,
                 'create_time'=>time(),
                 'update_time'=>time(),
             ],
             [
-                'id'=>1,
+                'id'=>2,
+                'demo_id'=>999,
                 'title'=>'title',
                 'category'=>1,
                 'description'=>'description',
                 'sort'=>1,
                 'status'=>0,
+                'yesno'=>0,
                 'create_time'=>time(),
                 'update_time'=>time(),
             ],
             [
-                'id'=>1,
+                'id'=>3,
+                'demo_id'=>5555,
                 'title'=>'title',
                 'category'=>1,
                 'description'=>'description',
                 'sort'=>1,
                 'status'=>-1,
+                'yesno'=>1,
                 'create_time'=>time(),
                 'update_time'=>time(),
             ],
         ];
-
+        //仅做部分演示
+        //list 所有方法查看AdminListBuilder类
     	$builder=new AdminListBuilder();
         $builder
             ->data($list)
-            ->setSelectPostUrl(Url('DEMO/admin/index'))
+            ->setSelectPostUrl(url('DEMO/admin/index'))
             ->select('','cate','select','','','',$optCategory)
             
             ->buttonNew(url('demoNew'))
@@ -231,9 +238,14 @@ class Admin extends MuuAdmin
             ->keyText('category','分类')
             ->keyText('description','摘要')
             ->keyText('sort','排序')
-            ->keyStatus()
+            ->keyLink('','ID参数链接','demo?id=###')//默认###为id的链接
+            ->keyLink('link','自定义参数链接','demo?demo_id=###','demo_id')//自定义###参数的链接
+            ->keyYesNo('yesno','开关')
+            ->keyStatus()->setStatusUrl(url('setStatus'))
+
             ->keyCreateTime()
-            ->keyUpdateTime();
+            ->keyUpdateTime()
+            ->explain('列表说明', '列表说明描述支持html');
 
         $builder->keyDoActionEdit('demo/editArticles?id=###');
         $builder->keyDoActionDisable('demo/setDel?ids=###');
