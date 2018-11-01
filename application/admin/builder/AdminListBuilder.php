@@ -10,7 +10,6 @@ class AdminListBuilder extends AdminBuilder
     private $_tips;
     private $_keyList = array();
     private $_buttonList = array();
-    private $_pagination = array();
     private $_explain = array();
     private $_data;
     private $_setStatusUrl;
@@ -22,6 +21,12 @@ class AdminListBuilder extends AdminBuilder
     private $_search = array();
     private $_select = array();
 
+    function __construct() {
+       parent::__construct();
+       //初始化值
+       $this->_selectPostUrl = url();
+       $this->_searchPostUrl = url();
+   }
     /**设置页面标题
      * @param $title 标题文本
      * @return $this

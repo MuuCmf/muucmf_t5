@@ -163,6 +163,11 @@ str;
         if($aPos>0){
             $map[] = "position & {$aPos} = {$aPos}";
         }
+        //搜索关键字
+        $aKeyword = input('keyword','','text');
+        if($aKeyword){
+            $map['title']=['like','%'.$aKeyword.'%'];
+        }
         $map['status']=1;
 
         $positions=$this->_getPositions(1);
@@ -190,6 +195,7 @@ str;
             ->setSelectPostUrl(url('index'))
             ->select('分类：','cate','select','','','',$optCategory)
             ->select('推荐位：','pos','select','','','',$positions)
+            ->search('搜索','keyword','text','检索文章标题关键字','搜索')
             ->buttonNew(url('editArticles'))
             ->setStatusUrl(url('setArticleStatus'))
             ->buttonModalPopup(url('doAudit'),null,'审核不通过',['data-title'=>'设置审核失败原因','target-form'=>'ids'])
@@ -385,7 +391,7 @@ str;
                         $position[]=$key;
                     }
                 }
-                
+
                 $data['content']=$data['detail']['content'];
                 $data['template']=$data['detail']['template'];
                 $data['position']=implode(',',$position);
