@@ -263,12 +263,11 @@ class AdminListBuilder extends AdminBuilder
     {
 
         if (empty($type) && $type = 'text') {
-            $this->_search[] = array('title' => $title, 'name' => $name, 'type' => $type, 'des' => $des, 'attr' => $attr);
+            $this->_search[] = ['title' => $title, 'name' => $name, 'type' => $type, 'des' => $des, 'attr' => $attr];
 //            $this->setSearchPostUrl('');
         } else {
             if (empty($arrdb)) {
-                //$this->_search[] = array('title' => $title, 'name' => $name, 'type' => $type, 'des' => $des, 'attr' => $attr, 'field' => $field, 'table' => $table, 'arrvalue' => $arrvalue);
-                $this->_search[] = array('title' => $title, 'name' => $name, 'type' => $type, 'des' => $des, 'attr' => $attr);
+                $this->_search[] = ['title' => $title, 'name' => $name, 'type' => $type, 'des' => $des, 'attr' => $attr];
                 $this->setSearchPostUrl('');
             } else {
                 //TODO:呆完善如果$arrdb存在的就把当前数据表的$name字段的信息全部查询出来供筛选。
@@ -292,7 +291,7 @@ class AdminListBuilder extends AdminBuilder
     public function select($title = '筛选', $name = 'key', $type = 'select', $des = '', $attr, $arrdb = '', $arrvalue = null)
     {
         if (empty($arrdb)) {
-            $this->_select[] = array('title' => $title, 'name' => $name, 'type' => $type, 'des' => $des, 'attr' => $attr, 'arrvalue' => $arrvalue);
+            $this->_select[] = ['title' => $title, 'name' => $name, 'type' => $type, 'des' => $des, 'attr' => $attr, 'arrvalue' => $arrvalue];
         } else {
             //TODO:呆完善如果$arrdb存在的就把当前数据表的$name字段的信息全部查询出来供筛选。
         }
@@ -301,7 +300,7 @@ class AdminListBuilder extends AdminBuilder
 
     public function key($name, $title, $type, $opt = null, $width = '150px')
     {
-        $key = array('name' => $name, 'title' => $title, 'type' => $type, 'opt' => $opt, 'width' => $width);
+        $key = ['name' => $name, 'title' => $title, 'type' => $type, 'opt' => $opt, 'width' => $width];
         $this->_keyList[] = $key;
         return $this;
     }

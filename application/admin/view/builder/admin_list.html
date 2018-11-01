@@ -24,54 +24,52 @@
     {/php}
 
     <div style="margin-bottom: 10px;" {eq name='show' value='0'}class="hide" {/eq} id="search_form">
+        <form id="searchForm" method="get" action="{$searchPostUrl}?" class="form-dont-clear-url-param">
+            <div class="search-form cf">
+                <table class="tb_search">
+                {volist name="searches" id="search"}
+                     <!--判断搜索选项是TEXT还是SELECT-->
+                     {php}$getName = input($search['name']);{/php}
+            		 {eq name="search['type']" value="select"}
+            		 	<tr style="line-height: 28px">
+                          <td>
+                              {$search.title} 
+                          </td>			  
+                          <td>
+                          	<select size="1" name="{$search['name']}" class="search-input form-control form-input-width">
+                          		<option value="">{:lang("_ALL_")}</option>
+                          		{volist name="search['arrvalue']" id="svo"}
+                          			<option value="{$svo.id}" {eq name="svo.id" value='$getName'}selected{/eq}>{$svo.value}</option>
+                          		{/volist}
+            				</select>
+                          </td>
+                          <td>
+                              {$search.des}
+                          </td>
+                      </tr>
+            		 {else/}
+            		 	 <tr style="line-height: 28px">
+                          <td>
+                              {$search.title}
+                          </td>
+                          <td>
+                              <input style="float: none" type="text" name="{$search.name}" class="search-input form-control form-input-width"
+                                     value="{:input($search['name'])}">
+                          </td>
+                          <td>
+                              {$search.des}
+                          </td>
+                      </tr>
+            		 {/eq}
 
-    <form id="searchForm" method="get" action="{$searchPostUrl}?" class="form-dont-clear-url-param">
-    <div class="search-form cf">
-    <table class="tb_search">
-    {volist name="searches" id="search"}
-         <!--判断搜索选项是TEXT还是SELECT-->
-		 {eq name="search['type']" value="select"}
-		 	<tr style="line-height: 28px">
-              <td>
-                  {$search.title} 
-              </td>			  
-              <td>
-              	<select size="1" name="{$search['name']}" class="search-input form-control form-input-width">
-              		<option value="">{:lang("_ALL_")}</option>
-              		{volist name="search['arrvalue']" id="svo"}
-              			<option value="{$svo.id}" {eq name="svo.id" value=''}selected{/eq}>{$svo.value}</option>
-              		{/volist}
-				</select>
-              </td>
-              <td>
-                  {$search.des}
-              </td>
-          </tr>
-		 {else/}
-		 	 <tr style="line-height: 28px">
-              <td>
-                  {$search.title}
-              </td>
-              <td>
-                  <input style="float: none" type="text" name="{$search.name}" class="search-input form-control form-input-width"
-                         value="{:input($search['name'])}">
-              </td>
-              <td>
-                  {$search.des}
-              </td>
-          </tr>
-		 {/eq}
-
-    {/volist}
-            <tr><td></td>
-                <td><input type="submit" class="btn" value={:lang("_DETERMINATION_WITH_DOUBLE_")}/> <button class="btn ajax-post btn-warning" onclick="toggle_search()">{:lang("_CLOSE_")}</button></td>
-                <td></td>
-            </tr>
-    </table>
-    </div>
-    </form>
-
-
+                {/volist}
+                    <tr><td></td>
+                        <td><input type="submit" class="btn" value={:lang("_DETERMINATION_WITH_DOUBLE_")}/> <button class="btn ajax-post btn-warning" onclick="toggle_search()">{:lang("_CLOSE_")}</button></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+        </form>
     </div>
     
 
@@ -88,14 +86,6 @@
             <{$button.tag} {$button.attr}>{$button.title|htmlspecialchars}</{$button.tag}>&nbsp;
         {/volist}
 
-        {php}
-            foreach($selects as $select){
-            if(empty($_REQUEST[$select['name']]))
-                {
-                    $show=1;
-                }
-            }
-        {/php}
         <!-- 选择框select -->
         <div style="float: right;" >
             <style>
@@ -115,15 +105,15 @@
                     min-width: 200px;
                 }
             </style>
-            <form id="selectForm" method="get" action="{$selectPostUrl}?" class="form-dont-clear-url-param">
-                
+            <form id="selectForm" method="get" action="{$selectPostUrl}" class="form-dont-clear-url-param">
                 {volist name="selects" id="select"}
+                {php}$getName = input($select["name"]);{/php}
                     <div class="oneselect">
                         <div class="title">{$select.title}</div>
                         <div class="select_box">
                         <select name="{$select['name']}" data-role="select_text" class="form-control">
                             {volist name="select['arrvalue']" id="svo"}
-                                <option value="{$svo.id}" {eq name="svo.id" value=''} selected{/eq}>
+                                <option value="{$svo.id}" {eq name="svo.id" value='$getName'} selected{/eq}>
                                     {$svo.value}
                                 </option>
                             {/volist}
@@ -228,9 +218,11 @@
                     window.location.href = url + '&ids=' + param;
                 }
             });
+            //下拉选择框
             $('[data-role="select_text"]').change(function(){
                 $('#selectForm').submit();
             });
+
             //模态弹窗
             $('[data-role="modal_popup"]').click(function(){
                 var target_url=$(this).attr('modal-url');
