@@ -446,8 +446,9 @@ class AdminListBuilder extends AdminBuilder
      * @param str $class
      * @return $this
      * @author 大蒙<59262424@qq.com> 完善
+     * $hide 根据条件判断是否隐藏该操作，如根据状态字段status=1可这样设置['status','=','1']
      */
-    public function keyDoActionModalPopup($getUrl, $text, $title, $attr = [] ,$class='btn-primary',$flag = 'id')
+    public function keyDoActionModalPopup($getUrl, $text, $title, $attr = [] ,$class='btn-primary',$hide=[], $flag = 'id')
     {
         //attr中需要设置data-title，用于设置模态弹窗标题
         $attr['data-role'] = 'modal_popup';
@@ -477,11 +478,11 @@ class AdminListBuilder extends AdminBuilder
         }
 
         //在DOACTIONS中增加action
-        $doActionKey['opt']['actions'][] = array('text' => $text, 'get_url' => $getUrl, 'opt' => $attr, 'class' => $class);
+        $doActionKey['opt']['actions'][] = ['text' => $text, 'get_url' => $getUrl, 'opt' => $attr, 'class' => $class, 'hide' => $hide];
         return $this;
     }
 
-    public function keyDoAction($getUrl, $text, $title = '操作', $class = 'btn-primary', $flag = 'id')
+    public function keyDoAction($getUrl, $text, $title = '操作', $class = 'btn-primary', $hide=[], $flag = 'id')
     {
         //获取默认getUrl函数
         if (is_string($getUrl)) {
@@ -510,7 +511,7 @@ class AdminListBuilder extends AdminBuilder
         }
 
         //在DOACTIONS中增加action
-        $doActionKey['opt']['actions'][] = ['text' => $text, 'get_url' => $getUrl, 'class' => $class];
+        $doActionKey['opt']['actions'][] = ['text' => $text, 'get_url' => $getUrl, 'class' => $class, 'hide' => $hide];
 
         return $this;
     }
@@ -520,9 +521,9 @@ class AdminListBuilder extends AdminBuilder
      * @param  string $text   [description]
      * @return [type]         [description]
      */
-    public function keyDoActionAjax($getUrl, $text = 'Ajax', $class = 'btn-primary')
+    public function keyDoActionAjax($getUrl, $text = 'Ajax', $class = 'btn-primary' ,$hide=[])
     {
-        return $this->keyDoAction($getUrl, $text, '操作', 'ajax-get'.$class);
+        return $this->keyDoAction($getUrl, $text, '操作', 'ajax-get'.$class, $hide);
     }
     /**
      * 编辑操作
@@ -530,9 +531,9 @@ class AdminListBuilder extends AdminBuilder
      * @param  string $text   [description]
      * @return [type]         [description]
      */
-    public function keyDoActionEdit($getUrl, $text = '编辑')
+    public function keyDoActionEdit($getUrl, $text = '编辑',$hide=[])
     {
-        return $this->keyDoAction($getUrl, '<i class="icon icon-edit"></i> '.$text, '操作', 'btn-success');
+        return $this->keyDoAction($getUrl, '<i class="icon icon-edit"></i> '.$text, '操作', 'btn-success', $hide);
     }
     /**
      * 禁用操作
@@ -540,9 +541,9 @@ class AdminListBuilder extends AdminBuilder
      * @param  string $text   [description]
      * @return [type]         [description]
      */
-    public function keyDoActionDisable($getUrl, $text = '禁用')
+    public function keyDoActionDisable($getUrl, $text = '禁用', $hide=[])
     {
-        return $this->keyDoAction($getUrl, '<i class="icon icon-minus-sign"></i> '. $text, '禁用', 'btn-warning ajax-get');
+        return $this->keyDoAction($getUrl, '<i class="icon icon-minus-sign"></i> '. $text, '禁用', 'btn-warning ajax-get', $hide);
     }
     /**
      * 删除操作
@@ -550,23 +551,23 @@ class AdminListBuilder extends AdminBuilder
      * @param  string $text   [description]
      * @return [type]         [description]
      */
-    public function keyDoActionDelete($getUrl, $text = '删除')
+    public function keyDoActionDelete($getUrl, $text = '删除', $hide=[])
     {
-        return $this->keyDoAction($getUrl, '<i class="icon icon-trash"></i> '.$text, '操作','btn-danger ajax-get');
+        return $this->keyDoAction($getUrl, '<i class="icon icon-trash"></i> '.$text, '操作','btn-danger ajax-get', $hide);
     }
     /**
      * 还原操作，存在获取数据ID BUG
      * @param  string $text [description]
      * @return [type]       [description]
      */
-    public function keyDoActionRestore($text = '还原')
+    public function keyDoActionRestore($text = '还原', $hide=[])
     {
         $that = $this;
         $setStatusUrl = $this->_setStatusUrl;
         $getUrl = function () use ($that, $setStatusUrl) {
             return $that->addUrlParam($setStatusUrl, array('status' => 1));
         };
-        return $this->keyDoAction($getUrl, $text,'操作','btn-primary ajax-get');
+        return $this->keyDoAction($getUrl, $text,'操作','btn-primary ajax-get',$hide);
     }
 
     public function keyTruncText($name, $title, $length)
@@ -714,13 +715,29 @@ class AdminListBuilder extends AdminBuilder
                 $linkText = $action['text'];
                 $url = $getUrl($item);
                 $class = $action['class'];
+
+                //是否设置了根据条件隐藏操作按钮
+                if(isset($action['hide'])){
+                    $hide_arr = $action['hide'];
+                    
+                    if(!empty($hide_arr)){
+                        if($item[$hide_arr[0]].$hide_arr[1].$hide_arr[2]){
+                            //符合条件跳出本次循环
+                            continue;
+                        }
+                    }
+                }
+
                 if (isset($action['opt'])) {
+                    
                     $content = array();
                     foreach ($action['opt'] as $key => $value) {
                         $value = htmlspecialchars($value);
                         $content[] = "$key=\"$value\"";
                     }
                     $content = implode(' ', $content);
+                    
+
                     if (isset($action['opt']['data-role']) && $action['opt']['data-role'] == "modal_popup") {//模态弹窗
                         $result[] = "<a href=\" javascrapt:void(0);\" class=\"$class btn btn-mini $class\" modal-url=\"$url\" " . $content . ">$linkText</a>";
                     } else {
@@ -740,7 +757,7 @@ class AdminListBuilder extends AdminBuilder
                 if (!$key['opt']['url']) {
                     return $val;
                 } else {
-                    $urld = U($key['opt']['url'], array($key['opt']['return'] => $value));
+                    $urld = url($key['opt']['url'], array($key['opt']['return'] => $value));
                     return "<a href=\"$urld\">$val</a>";
                 }
             } else {
