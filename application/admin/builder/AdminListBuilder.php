@@ -716,12 +716,37 @@ class AdminListBuilder extends AdminBuilder
                 $url = $getUrl($item);
                 $class = $action['class'];
 
-                //是否设置了根据条件隐藏操作按钮
+                //是否设置了根据条件隐藏操作按钮,以下写法支持，多条件时第4个留空默认&&
+                //['status',['>',1],['<',3],'&&'];
+                //['status',['>',1],['<',3]];
+                //['status','>1','<3','||'];
+                //['status','>1','<3'];
+                //['status','>',1];
                 if(isset($action['hide'])){
                     $hide_arr = $action['hide'];
                     
                     if(!empty($hide_arr)){ 
-                        $d = $item[$hide_arr[0]].$hide_arr[1].$hide_arr[2];
+
+                        $a = $hide_arr;
+
+                        if(is_array($a[1]) && is_array($a[2])){
+                            if(isset($a[3])){
+                                $d = $item[$a[0]].$a[1][0].$a[1][1].' '.$b[3].' '.$item[$a[0]].$a[2][0].$a[2][1];   
+                            }else{
+                                $d = $item[$a[0]].$a[1][0].$a[1][1].' && '.$item[$a[0]].$a[2][0].$a[2][1];
+                            }
+                        }else if(is_string($a[1]) && (is_string($a[2]) || is_int($a[2]))){
+                            if(isset($a[3])){
+                                $d = $item[$a[0]].$a[1].' '.$a[3].' '.$item[$a[0]].$a[2];
+                            }else{
+                                if(strstr($a[2],'<') || strstr($a[2],'>') || strstr($a[2],'=')){
+                                    $d = $item[$a[0]].$a[1].' && '.$item[$a[0]].$a[2];
+                                }else{
+                                    $d = $item[$a[0]].$a[1].$a[2];
+                                }
+                            }
+                        }
+                        
                         $hide_str_res =  eval("return $d;");
 
                         if($hide_str_res){
