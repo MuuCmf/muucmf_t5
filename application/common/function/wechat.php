@@ -9,11 +9,6 @@ function isWeixinBrowser() {
     return true;
 }
 
-// php获取当前访问的完整url地址
-function GetCurUrl() {
-    return get_url();
-}
-
 //获取分享url的方法，解决controler在鉴权时二次回调jssdk获取分享url错误的问题
 function get_shareurl(){
     $url = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];

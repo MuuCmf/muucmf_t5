@@ -3,9 +3,7 @@
 use think\Db;
 
 require_once(APP_PATH . '/common/function/addons.php');
-require_once(APP_PATH . '/common/function/api.php');
 require_once(APP_PATH . '/common/function/builder.php');
-require_once(APP_PATH . '/common/function/ext_parse.php');
 require_once(APP_PATH . '/common/function/file.php');
 require_once(APP_PATH . '/common/function/limit.php');
 require_once(APP_PATH . '/common/function/message.php');
@@ -437,48 +435,7 @@ if (!function_exists('array_column')) {
     }
 }
 
-/**
- * 调用系统的API接口方法（静态方法）
- * api('User/getName','id=5'); 调用公共模块的User接口的getName方法
- * api('Admin/User/getName','id=5');  调用Admin模块的User接口
- * @param  string $name 格式 [模块名]/接口名/方法名
- * @param  array|string $vars 参数
- */
-function api($name, $vars = array())
-{
-    $array = explode('/', $name);
 
-    $method = array_pop($array);
-    $classname = array_pop($array);
-    $module = $array ? array_pop($array) : 'Common';
-    $callback = $module . '\\Api\\' . $classname . 'Api::' . $method;
-    if (is_string($vars)) {
-        parse_str($vars, $vars);
-    }
-    return call_user_func_array($callback, $vars);
-}
-
-/**
- * 检查$pos(推荐位的值)是否包含指定推荐位$contain
- * @param number $pos 推荐位的值
- * @param number $contain 指定推荐位
- * @return boolean true 包含 ， false 不包含
- * @author huajie <banhuajie@163.com>
- */
-function check_document_position($pos = 0, $contain = 0)
-{
-    if (empty($pos) || empty($contain)) {
-        return false;
-    }
-
-    //将两个参数进行按位与运算，不为0则表示$contain属于$pos
-    $res = $pos & $contain;
-    if ($res !== 0) {
-        return true;
-    } else {
-        return false;
-    }
-}
 
 /**
  * 获取数据的所有子孙数据的id值
@@ -561,21 +518,6 @@ function get_nav_active($url)
 }
 
 /**
- * 获取列表总行数
- * @param  string $category 分类ID
- * @param  integer $status 数据状态
- * @author 麦当苗儿 <zuojiazi@vip.qq.com>
- */
-function get_list_count($category, $status = 1)
-{
-    static $count;
-    if (!isset($count[$category])) {
-        $count[$category] = D('Document')->listCount($category, $status);
-    }
-    return $count[$category];
-}
-
-/**
  * t函数用于过滤标签，输出没有html的干净的文本
  * @param string text 文本内容
  * @return string 处理后内容
@@ -634,22 +576,6 @@ function real_strip_tags($str, $allowable_tags = "")
     return strip_tags($str, $allowable_tags);
 }
 
-/**span
- * 获取楼层信息
- * @param $k
- */
-function getLou($k)
-{
-    $lou = array(
-        2 => lang('_SOFA_'),
-        3 => lang('_BENCH_'),
-        4 => lang('_FLOOR_')
-    );
-    !empty($lou[$k]) && $res = $lou[$k];
-    empty($lou[$k]) && $res = $k . '楼';
-    return $res;
-}
-
 /**获取当前的积分
  * @param string $score_name
  * @return mixed
@@ -659,31 +585,6 @@ function getMyScore($score_name = 'score1')
     $user = query_user(array($score_name), is_login());
     $score = $user[$score_name];
     return $score;
-}
-
-/**根据积分的变动返回提示文本
- * @param $before 变动前的积分
- * @param $after 变动后的积分
- * @return string
- * @auth 陈一枭
- */
-function getScoreTip($before, $after)
-{
-    $score_change = $after - $before;
-    $tip = '';
-    if ($score_change) {
-        $tip = lang('_INTEGRAL_') . ($score_change > 0 ? '加&nbsp;' . $score_change : '减&nbsp;' . $score_change) . ' 。';
-    }
-    return $tip;
-}
-
-
-function action_log_and_get_score($action = null, $model = null, $record_id = null, $user_id = null)
-{
-    $score_before = getMyScore();
-    action_log($action, $model, $record_id, $user_id);
-    $score_after = getMyScore();
-    return $score_after - $score_before;
 }
 
 function is_ie()
@@ -701,23 +602,6 @@ function array_subtract($a, $b)
 {
     return array_diff($a, array_intersect($a, $b));
 }
-
-
-function tox_addons_url($url, $param)
-{
-    // 拆分URL
-    $url = explode('/', $url);
-    $addon = $url[0];
-    $controller = $url[1];
-    $action = $url[2];
-
-    // 调用url函数
-    $param['_addons'] = $addon;
-    $param['_controller'] = $controller;
-    $param['_action'] = $action;
-    return url("Home/Addons/execute", $param);
-}
-
 
 /**
  * 取一个二维数组中的每个数组的固定的键知道的值来形成一个新的一维数组
@@ -885,32 +769,6 @@ function convert_url_query($query)
     return '';
 }
 
-
-/**
- * get_ip_lookup  获取ip地址所在的区域
- * @param null $ip
- * @return bool|mixed
- * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
- */
-function get_ip_lookup($ip=null){
-    if(empty($ip)){
-        $ip = request()->ip();
-    }
-    $res = @file_get_contents('http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=js&ip=' . $ip);
-    if(empty($res)){ return false; }
-    $jsonMatches = array();
-    preg_match('#\{.+?\}#', $res, $jsonMatches);
-    if(!isset($jsonMatches[0])){ return false; }
-    $json = json_decode($jsonMatches[0], true);
-    if(isset($json['ret']) && $json['ret'] == 1){
-        $json['ip'] = $ip;
-        unset($json['ret']);
-    }else{
-        return false;
-    }
-    return $json;
-}
-
 /**
  * cut_str  截取字符串
  * @param $search
@@ -931,25 +789,6 @@ function cut_str($search,$str,$place=''){
             $result =  preg_replace('/'.addcslashes(quotemeta($search),'/').'/','',$str);
     }
     return $result;
-}
-
-
-/**
- * array_search_key 搜索数组中某个键为某个值的数组
- * @param $array
- * @param $key
- * @param $value
- * @return bool
- * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
- */
-function array_search_key($array, $key, $value)
-{
-    foreach ($array as $k => $v) {
-        if ($v[$key] == $value) {
-            return $array[$k];
-        }
-    }
-    return false;
 }
 
 /**
@@ -1006,13 +845,14 @@ function check_sms_hook_is_exist($driver){
         }
     }
 }
-
-
-
-
+/**
+ * 根据ID获取区域名称
+ * @param  [type] $id [description]
+ * @return [type]     [description]
+ */
 function get_area_name($id)
 {
-    return Db::name('district')->where(array('id' => $id))->field('name')->find();
+    return Db::name('district')->where(['id' => $id])->field('name')->find();
 }
 
 /**

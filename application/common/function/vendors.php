@@ -359,9 +359,3 @@ function qrcode($data,$filename,$picPath=false,$logo=false,$size='4',$level='L',
     }
     return $filename;
 }
-
-function import_lang($module_name){
-    $file=APP_PATH . '/'.$module_name.'/lang/' . LANG_SET . '.php';
-    if (is_file($file))
-        lang(include $file);
-}
