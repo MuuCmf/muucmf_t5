@@ -431,7 +431,7 @@ class AdminListBuilder extends AdminBuilder
     }
 
     //关联表字段显示+URL连接
-    public function keyJoin($name, $title, $mate, $return, $model, $url = '')
+    public function keyJoin($name, $title, $mate, $return, $model, $url = '', $target = '_self')
     {
         $map = array('mate' => $mate, 'return' => $return, 'model' => $model, 'url' => $url);
         return $this->key($name, $title, 'Join', $map);
@@ -786,7 +786,8 @@ class AdminListBuilder extends AdminBuilder
                     return $val;
                 } else {
                     $urld = url($key['opt']['url'], array($key['opt']['return'] => $value));
-                    return "<a href=\"$urld\">$val</a>";
+                    $target = $key['opt']['target'];
+                    return "<a href=\"$urld\" target=\"$target\">$val</a>";
                 }
             } else {
                 return '-';
