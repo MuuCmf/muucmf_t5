@@ -431,9 +431,9 @@ class AdminListBuilder extends AdminBuilder
     }
 
     //关联表字段显示+URL连接
-    public function keyJoin($name, $title, $mate, $return, $model, $url = '', $target = '_self')
+    public function keyJoin($name, $title, $mate, $return, $model, $url = '')
     {
-        $map = ['mate' => $mate, 'return' => $return, 'model' => $model, 'url' => $url, 'target' => $target];
+        $map = array('mate' => $mate, 'return' => $return, 'model' => $model, 'url' => $url);
         return $this->key($name, $title, 'Join', $map);
     }
 
@@ -728,21 +728,27 @@ class AdminListBuilder extends AdminBuilder
                     if(!empty($hide_arr)){ 
 
                         $a = $hide_arr;
+                        //判断是数字或字符串
+                        if(is_numeric($item[$a[0]])){
+                            $p = $item[$a[0]];
+                        }else{
+                            $p = '"'.$item[$a[0]].'"';
+                        }
 
                         if(is_array($a[1]) && is_array($a[2])){
                             if(isset($a[3])){
-                                $d = $item[$a[0]].$a[1][0].$a[1][1].' '.$b[3].' '.$item[$a[0]].$a[2][0].$a[2][1];   
+                                $d = $p.$a[1][0].$a[1][1].' '.$b[3].' '.$p.$a[2][0].$a[2][1];   
                             }else{
-                                $d = $item[$a[0]].$a[1][0].$a[1][1].' && '.$item[$a[0]].$a[2][0].$a[2][1];
+                                $d = $p.$a[1][0].$a[1][1].' && '.$p.$a[2][0].$a[2][1];
                             }
                         }else if(is_string($a[1]) && (is_string($a[2]) || is_int($a[2]))){
                             if(isset($a[3])){
-                                $d = $item[$a[0]].$a[1].' '.$a[3].' '.$item[$a[0]].$a[2];
+                                $d = $p.$a[1].' '.$a[3].' '.$p.$a[2];
                             }else{
                                 if(strstr($a[2],'<') || strstr($a[2],'>') || strstr($a[2],'=')){
-                                    $d = $item[$a[0]].$a[1].' && '.$item[$a[0]].$a[2];
+                                    $d = $p.$a[1].' && '.$p.$a[2];
                                 }else{
-                                    $d = $item[$a[0]].$a[1].$a[2];
+                                    $d = $p.$a[1].$a[2];
                                 }
                             }
                         }
@@ -785,9 +791,8 @@ class AdminListBuilder extends AdminBuilder
                 if (!$key['opt']['url']) {
                     return $val;
                 } else {
-                    $urld = url($key['opt']['url'], [$key['opt']['mate'] => $value]);
-                    $target = $key['opt']['target'];
-                    return "<a href=\"$urld\" target=\"$target\">$val</a>";
+                    $urld = url($key['opt']['url'], array($key['opt']['return'] => $value));
+                    return "<a href=\"$urld\">$val</a>";
                 }
             } else {
                 return '-';
