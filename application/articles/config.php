@@ -6,7 +6,7 @@ return [
     'view_replace_str'       => [
     	'__COMMON__'    => '/static/common',
         '__LIB__'       => '/static/common/lib',
-        '__ZUI__'       => '/static/common/lib/zui',  
+        '__ZUI__'       => 'https://cdn.bootcss.com/zui/1.8.1',  
         '__JS__'    	=> '/static/articles/js',
         '__IMG__'       => '/static/articles/images',
         '__CSS__'       => '/static/articles/css',   
