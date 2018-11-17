@@ -140,7 +140,8 @@ return [
         '__STATIC__'    => '/static',
         '__COMMON__'    => '/static/common',
         '__LIB__'       => '/static/common/lib',
-        '__ZUI__'       => 'https://cdn.bootcss.com/zui/1.8.1',   
+        '__ZUI__'       => 'https://cdn.bootcss.com/zui/1.8.1',  
+        '__SWIPER__'    => 'https://cdn.bootcss.com/Swiper/3.4.2' 
     ],
     // 默认跳转页面对应的模板文件
     'dispatch_success_tmpl'  => APP_PATH . 'common' . DS . 'view' . DS . 'tpl' . DS . 'dispatch_jump.tpl',
