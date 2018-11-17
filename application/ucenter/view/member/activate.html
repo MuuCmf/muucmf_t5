@@ -1,8 +1,9 @@
-<extend name="Base/common"/>
-
-
-<block name="body">
-    <link href="__CSS__/center.css" type="text/css" rel="stylesheet">
+{extend name="common@base/common"/}
+{block name="style"}
+<link href="__CSS__/center.css" type="text/css" rel="stylesheet">
+{/block}
+{block name="body"}
+    
 
     <div class="alert with-icon alert-info">
         <i class="icon-info-sign"></i>
@@ -54,14 +55,14 @@
     </div>
 
 
-</block>
+{/block}
 
-<block name="script">
+{block name="script"}
     <script>
         $(function () {
             $('[data-role="reSend"]').click(function () {
                 toast.showLoading();
-                $.post("{:Url('ucenter/member/reSend')}", {}, function (res) {
+                $.post("{:url('ucenter/member/reSend')}", {}, function (res) {
                         if(res.status){
                             toast.success(res.info);
                         }else{
@@ -74,7 +75,7 @@
             $('[data-role="changeEmail"]').click(function () {
                 toast.showLoading();
                 var email = $(this).parents('#changeEmail').find('#account').val();
-                $.post("{:Url('ucenter/member/changeEmail')}", {email:email}, function (res) {
+                $.post("{:url('ucenter/member/changeEmail')}", {email:email}, function (res) {
                    handleAjax(res)
                     toast.hideLoading();
                 })
@@ -82,4 +83,4 @@
 
         })
     </script>
-</block>
+{/block}

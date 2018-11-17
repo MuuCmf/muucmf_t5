@@ -1,5 +1,5 @@
-<notempty name="tag_list">
-    <volist name="tag_list" id="tag_group">
+{notempty name="tag_list"}
+    {volist name="tag_list" id="tag_group"}
         <div class="tag-select-block clearfix">
             <div class="select-cate">{$tag_group.title}：</div>
             <div class="select-option">
@@ -8,8 +8,8 @@
                 {/volist}
             </div>
         </div>
-    </volist>
-    <else/>
+    {/volist}
+{else/}
     <div style="text-align: center;font-size: 22px;color: #B3B3B3;">
         <p>
             <br/>
@@ -17,7 +17,7 @@
             <br/>
         </p>
     </div>
-</notempty>
+{/notempty}
 <div class="tag-select-block clearfix">
     <div class="select-cate">{:lang('_PERSONAL_TAB_')}{:lang('_COLON_')}</div>
     <div class="select-option my-tag-block">
@@ -53,7 +53,7 @@
         });
         bind_remove();
         $('[data-role="set-tag"]').click(function(){
-            $.post(Url('ucenter/Member/set_tag'),{tag_ids:tag_ids},function(msg){
+            $.post(url('ucenter/Member/set_tag'),{tag_ids:tag_ids},function(msg){
                 if(msg.status){
                     toast.success("{:lang('_SUCCESS_SETTINGS_')}{:lang('_EXCLAMATION_')}");
                     setTimeout(function(){
