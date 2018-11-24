@@ -294,13 +294,6 @@ function get_kanban_config($key, $kanban, $default = '', $module = '')
 }
 
 /**
- *
- * function qrcode(){
- *     $filename='qrcode.png';
- *     $logo=SITE_PATH."\\Public\\Home\\images\\logo_80.png";
- *     qrcode('http://www.dellidc.com',$filename,false,$logo,8,'L',2,true);
- * }
- *
  * @param $data 二维码包含的文字内容
  * @param $filename 保存二维码输出的文件名称，*.png
  * @param bool $picPath 二维码输出的路径
@@ -312,17 +305,21 @@ function get_kanban_config($key, $kanban, $default = '', $module = '')
  * return string
  */
 function qrcode($data,$filename,$picPath=false,$logo=false,$size='4',$level='L',$padding=2,$saveandprint=false){
-    vendor("phpqrcode.phpqrcode");//引入工具包
+    
+
     // 下面注释了把二维码图片保存到本地的代码,如果要保存图片,用$fileName替换第二个参数false
-    $path = $picPath?$picPath:__ROOT__."\\Uploads\\Picture\\QRcode"; //图片输出路径
-    mkdir($path);//dump($path);exit;
+    $path = $picPath?$picPath:PUBLIC_PATH. DS. "uploads". DS ."picture". DS ."QRcode"; //图片输出路径
+    if(!is_dir($path)){
+        mkdir($path);
+    }
+
     //在二维码上面添加LOGO
     if(empty($logo) || $logo=== false) { //不包含LOGO
         if ($filename==false) {
-            QRcode::png($data, false, $level, $size, $padding, $saveandprint); //直接输出到浏览器，不含LOGO
+            \PHPQRCode\QRcode::png($data, false, $level, $size, $padding, $saveandprint); //直接输出到浏览器，不含LOGO
         }else{
             $filename=$path.'/'.$filename; //合成路径
-            QRcode::png($data, $filename, $level, $size, $padding, $saveandprint); //直接输出到浏览器，不含LOGO
+            \PHPQRCode\QRcode::png($data, $filename, $level, $size, $padding, $saveandprint); //直接输出到浏览器，不含LOGO
         }
     }else { //包含LOGO
         if ($filename==false){
@@ -332,7 +329,8 @@ function qrcode($data,$filename,$picPath=false,$logo=false,$size='4',$level='L',
             //生成二维码,保存到文件
             $filename = $path . '\\' . $filename; //合成路径
         }
-        QRcode::png($data, $filename, $level, $size, $padding);
+        \PHPQRCode\QRcode::png($data, $filename, $level, $size, $padding);
+
         $QR = imagecreatefromstring(file_get_contents($filename));
         $logo = imagecreatefromstring(file_get_contents($logo));
         $QR_width = imagesx($QR);

@@ -18,6 +18,8 @@ define('APP_PATH', __DIR__ . '/../application/');
 define('ADDONS_PATH', __DIR__ . '/../addons/');
 //类库目录
 define('EXTEND_PATH', __DIR__ . '/../extend/');
+//public目录
+define('PUBLIC_PATH', __DIR__);
 // 判断是否安装MuuCmf
 if (!is_file(__DIR__ . '/../install.lock'))
 {	
