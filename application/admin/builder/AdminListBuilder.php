@@ -701,7 +701,7 @@ class AdminListBuilder extends AdminBuilder
                 $html = "<div class='popup-gallery'><a title=\"" . lang('_VIEW_BIGGER_') . "\" href=\"$sc_src\"><img src=\"$sc_src\"/ style=\"width:80px;height:80px\"></a></div>";
             } else {//value是图片路径
                 $sc_src = $value;
-                $html = "<div class='popup-gallery'><a title=\"" . lang('_VIEW_BIGGER_') . "\" href=\"$sc_src\"><img src=\"$sc_src\"/ style=\"border-radius:100%;\"></a></div>";
+                $html = "<div class='popup-gallery'><a title=\"" . lang('_VIEW_BIGGER_') . "\" href=\"$sc_src\"><img src=\"$sc_src\"/ style=\"width:80px;height:80px\"></a></div>";
             }
             return $html;
         });
