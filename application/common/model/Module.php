@@ -17,33 +17,27 @@ class Module extends Model
      * @return array|mixed
      */
     public function getAll($is_installed = '')
-    {
-        $module = cache('module_all'.$is_installed);
-        if ($module === false) {
-            
-            $dir = $this->getDir(APP_PATH);
+    {   
+        $dir = $this->getDir(APP_PATH);
 
-            foreach ($dir as $subdir) {
-                if (file_exists(APP_PATH . '/' . $subdir . '/info/info.php') && $subdir != '.' && $subdir != '..') {
+        foreach ($dir as $subdir) {
+            if (file_exists(APP_PATH . '/' . $subdir . '/info/info.php') && $subdir != '.' && $subdir != '..') {
 
-                    $info = $this->getModule($subdir);
-
-                    if ($is_installed == 1 && $info['is_setup'] == 0) {
-                        continue;
-                    }
-                    $this->moduleName = $info['name'];
-                    //如果icon图片存在
-                    if(file_exists('/static/'. $subdir .'images/icon.png')){
-                        $info['icon_photo'] = '/static/'. $subdir .'images/icon.png';
-                    }else{
-                        $info['icon_photo'] = '/static/admin/images/module_default_icon.png';
-                    }
-                    
-                    $module[] = $info;
+                $info = $this->getModule($subdir);
+                
+                if ($is_installed == 1 && $info['is_setup'] == 0) {
+                    continue;
                 }
+                $this->moduleName = $info['name'];
+                //如果icon图片存在
+                if(file_exists('/static/'. $subdir .'images/icon.png')){
+                    $info['icon_photo'] = '/static/'. $subdir .'images/icon.png';
+                }else{
+                    $info['icon_photo'] = '/static/admin/images/module_default_icon.png';
+                }
+                
+                $module[] = $info;
             }
-
-            cache('module_all'.$is_installed, $module);
         }
 
         return $module;
@@ -78,7 +72,7 @@ class Module extends Model
                 $info[] = array_merge($m, $this->getInfo($m['name']));
             } 
         }
-
+        
         $this->saveAll($info);
 
         $this->cleanModulesCache();

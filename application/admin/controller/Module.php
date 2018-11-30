@@ -28,7 +28,7 @@ class Module extends Admin
         $this->assign('type', $aType);
 
         /*刷新模块列表时清空缓存*/
-        $aRefresh = input('get.refresh', 0, 'intval');
+        $aRefresh = input('refresh', 0, 'intval');
         if ($aRefresh == 1) {
             cache('admin_modules', null);
             model('Module')->reload();
@@ -38,11 +38,11 @@ class Module extends Admin
         }
         /*刷新模块列表时清空缓存 end*/
 
-        $modules = cache('admin_modules');
-        if ($modules === false) {
+        //$modules = cache('admin_modules');
+        //if ($modules === false) {
             $modules = model('Module')->getAll();
-            cache('admin_modules', $modules);
-        }
+            //cache('admin_modules', $modules);
+        //}
 
         foreach ($modules as $key => $m) {
             switch ($aType) {
