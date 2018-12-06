@@ -4,11 +4,11 @@ MuuCmf T5采用最新ThinkPHP5开发，是一个将CMS和Framework两个概念�
 
 >官网：http://www.muucmf.cn
 
->演示地址：http://demo.t5.muucmf.cn
-
 >开发者社区：http://www.muucmf.cn/forum
 
 >开发手册：http://www.muucmf.cn/muucmf/index
+
+>演示地址：http://demo.t5.muucmf.cn
 
 >技术交流群:[633857075][2]
 
