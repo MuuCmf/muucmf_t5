@@ -10,9 +10,8 @@ class AdminListBuilder extends AdminBuilder
     private $_tips;
     private $_keyList = array();
     private $_buttonList = array();
-    private $_pagination = array();
     private $_explain = array();
-    private $_data = array();
+    private $_data;
     private $_setStatusUrl;
     private $_searchPostUrl;
     private $_selectPostUrl;
@@ -22,6 +21,12 @@ class AdminListBuilder extends AdminBuilder
     private $_search = array();
     private $_select = array();
 
+    function __construct() {
+       parent::__construct();
+       //初始化值
+       $this->_selectPostUrl = url();
+       $this->_searchPostUrl = url();
+   }
     /**设置页面标题
      * @param $title 标题文本
      * @return $this
@@ -117,9 +122,9 @@ class AdminListBuilder extends AdminBuilder
      * @auth 陈一枭
      */
 
-    public function button($title, $attr)
+    public function button($title, $attr = [])
     {
-        $this->_buttonList[] = array('title' => $title, 'attr' => $attr);
+        $this->_buttonList[] = ['title' => $title, 'attr' => $attr];
         return $this;
     }
 
@@ -128,16 +133,16 @@ class AdminListBuilder extends AdminBuilder
      * @param string $title
      * @param array $attr
      * @return AdminListBuilder
-     * @auth 陈一枭
+     * @auth 大蒙<59262424@qq.com>
      */
-    public function buttonNew($href, $title = '新增', $attr = array())
+    public function buttonNew($href, $title = '新增', $attr = [])
     {
         $attr['href'] = $href;
         $attr['class']='btn btn-ajax btn-info';
         return $this->button($title, $attr);
     }
 
-    public function ajaxButton($url, $params, $title, $attr = array())
+    public function buttonAjax($url, $params, $title, $attr = [])
     {
         $attr['class'] = 'btn ajax-post';
         $attr['url'] = $this->addUrlParam($url, $params);
@@ -151,9 +156,9 @@ class AdminListBuilder extends AdminBuilder
      * @param $title
      * @param array $attr
      * @return $this
-     * @author 郑钟良<zzl@ourstu.com>
+     * @author 郑钟良<zzl@ourstu.com> 大蒙<59262424@qq.com>
      */
-    public function buttonModalPopup($url, $params, $title, $attr = array())
+    public function buttonModalPopup($url, $params, $title, $attr = [])
     {
         //$attr中可选参数，data-title：模态框标题，target-form：要传输的数据
         $attr['modal-url'] = $this->addUrlParam($url, $params);
@@ -162,22 +167,22 @@ class AdminListBuilder extends AdminBuilder
         return $this->button($title, $attr);
     }
 
-    public function buttonSetStatus($url, $status, $title, $attr = array())
+    public function buttonSetStatus($url, $status, $title, $attr = [])
     {
-        $attr['class'] =isset($attr['class'])?$attr['class']: 'btn ajax-post';
+        $attr['class'] = isset($attr['class'])?$attr['class']: 'btn ajax-post';
         $attr['url'] = $this->addUrlParam($url, array('status' => $status));
         $attr['target-form'] = 'ids';
         return $this->button($title, $attr);
     }
 
-    public function buttonDisable($url = null, $title = '禁用', $attr = array())
+    public function buttonDisable($url = null, $title = '禁用', $attr = [])
     {
         if (!$url) $url = $this->_setStatusUrl;
         $attr['class']='btn ajax-post btn-warning';
         return $this->buttonSetStatus($url, 0, $title, $attr);
     }
 
-    public function buttonEnable($url = null, $title = '启用', $attr = array())
+    public function buttonEnable($url = null, $title = '启用', $attr = [])
     {
         if (!$url) $url = $this->_setStatusUrl;
         $attr['class']='btn ajax-post btn-success';
@@ -187,7 +192,7 @@ class AdminListBuilder extends AdminBuilder
     /**
      * 删除到回收站
      */
-    public function buttonDelete($url = null, $title = '删除', $attr = array())
+    public function buttonDelete($url = null, $title = '删除', $attr = [])
     {
         if (!$url) $url = $this->_setStatusUrl;
         $attr['class']='btn ajax-post btn-danger';
@@ -195,7 +200,7 @@ class AdminListBuilder extends AdminBuilder
         return $this->buttonSetStatus($url, -1, $title, $attr);
     }
 
-    public function buttonRestore($url = null, $title = '还原', $attr = array())
+    public function buttonRestore($url = null, $title = '还原', $attr = [])
     {
         if (!$url) $url = $this->_setStatusUrl;
         return $this->buttonSetStatus($url, 1, $title, $attr);
@@ -208,7 +213,7 @@ class AdminListBuilder extends AdminBuilder
      */
     public function buttonClear($model = null)
     {
-        return $this->button(lang('_CLEAR_OUT_'), array('class' => 'btn btn-danger ajax-post tox-confirm', 'data-confirm' => lang('_CONFIRM_CLEAR_OUT_'), 'url' => Url('', array('model' => $model)), 'target-form' => 'ids', 'hide-data' => 'true'));
+        return $this->button(lang('_CLEAR_OUT_'), ['class' => 'btn btn-danger ajax-post tox-confirm', 'data-confirm' => lang('_CONFIRM_CLEAR_OUT_'), 'url' => url('', ['model' => $model]), 'target-form' => 'ids', 'hide-data' => 'true']);
     }
 
     /**彻底删除
@@ -225,7 +230,7 @@ class AdminListBuilder extends AdminBuilder
         return $this->button(lang('_DELETE_COMPLETELY_'), $attr);
     }
 
-    public function buttonSort($href, $title = '排序', $attr = array())
+    public function buttonSort($href, $title = '排序', $attr = [])
     {
         $attr['href'] = $href;
         return $this->button($title, $attr);
@@ -263,12 +268,11 @@ class AdminListBuilder extends AdminBuilder
     {
 
         if (empty($type) && $type = 'text') {
-            $this->_search[] = array('title' => $title, 'name' => $name, 'type' => $type, 'des' => $des, 'attr' => $attr);
+            $this->_search[] = ['title' => $title, 'name' => $name, 'type' => $type, 'des' => $des, 'attr' => $attr];
 //            $this->setSearchPostUrl('');
         } else {
             if (empty($arrdb)) {
-                //$this->_search[] = array('title' => $title, 'name' => $name, 'type' => $type, 'des' => $des, 'attr' => $attr, 'field' => $field, 'table' => $table, 'arrvalue' => $arrvalue);
-                $this->_search[] = array('title' => $title, 'name' => $name, 'type' => $type, 'des' => $des, 'attr' => $attr);
+                $this->_search[] = ['title' => $title, 'name' => $name, 'type' => $type, 'des' => $des, 'attr' => $attr];
                 $this->setSearchPostUrl('');
             } else {
                 //TODO:呆完善如果$arrdb存在的就把当前数据表的$name字段的信息全部查询出来供筛选。
@@ -292,7 +296,7 @@ class AdminListBuilder extends AdminBuilder
     public function select($title = '筛选', $name = 'key', $type = 'select', $des = '', $attr, $arrdb = '', $arrvalue = null)
     {
         if (empty($arrdb)) {
-            $this->_select[] = array('title' => $title, 'name' => $name, 'type' => $type, 'des' => $des, 'attr' => $attr, 'arrvalue' => $arrvalue);
+            $this->_select[] = ['title' => $title, 'name' => $name, 'type' => $type, 'des' => $des, 'attr' => $attr, 'arrvalue' => $arrvalue];
         } else {
             //TODO:呆完善如果$arrdb存在的就把当前数据表的$name字段的信息全部查询出来供筛选。
         }
@@ -301,7 +305,7 @@ class AdminListBuilder extends AdminBuilder
 
     public function key($name, $title, $type, $opt = null, $width = '150px')
     {
-        $key = array('name' => $name, 'title' => $title, 'type' => $type, 'opt' => $opt, 'width' => $width);
+        $key = ['name' => $name, 'title' => $title, 'type' => $type, 'opt' => $opt, 'width' => $width];
         $this->_keyList[] = $key;
         return $this;
     }
@@ -354,15 +358,15 @@ class AdminListBuilder extends AdminBuilder
      * @param $name
      * @param $title
      * @param $getUrl Closure|string
-     * 可以是函数或U函数解析的字符串。如果是字符串，该函数将附带一个id参数
+     * 可以是函数或url函数解析的字符串。如果是字符串，该函数可附带一个$flag定义的参数
      *
      * @return $this
      */
-    public function keyLink($name, $title, $getUrl)
+    public function keyLink($name, $title, $getUrl, $flag='id')
     {
         //如果getUrl是一个字符串，则表示getUrl是一个U函数解析的字符串
         if (is_string($getUrl)) {
-            $getUrl = $this->createDefaultGetUrlFunction($getUrl);
+            $getUrl = $this->createDefaultGetUrlFunction($getUrl, $flag);
         }
 
         //修整添加多个空字段时显示不正常的BUG@mingyangliu
@@ -376,13 +380,13 @@ class AdminListBuilder extends AdminBuilder
 
     public function keyStatus($name = 'status', $title = '状态')
     {
-        $map = array(-1 => lang('_DELETE_'), 0 => lang('_DISABLE_'), 1 => lang('_ENABLED_'), 2 => lang('_UNAUDITED_'));
+        $map = [-1 => lang('_DELETE_'), 0 => lang('_DISABLE_'), 1 => lang('_ENABLED_'), 2 => lang('_UNAUDITED_')];
         return $this->key($name, $title, 'status', $map);
     }
 
     public function keyYesNo($name, $title)
     {
-        $map = array(0 => lang('_NO_'), 1 => lang('_YES_'));
+        $map = [0 => lang('_NO_'), 1 => lang('_YES_')];
         return $this->keymap($name, $title, $map);
     }
 
@@ -442,14 +446,15 @@ class AdminListBuilder extends AdminBuilder
      * @param str $class
      * @return $this
      * @author 大蒙<59262424@qq.com> 完善
+     * $hide 根据条件判断是否隐藏该操作，如根据状态字段status=1可这样设置['status','=','1']
      */
-    public function keyDoActionModalPopup($getUrl, $text, $title, $attr = array() ,$class='btn-primary')
+    public function keyDoActionModalPopup($getUrl, $text, $title, $attr = [] ,$class='btn-primary',$hide=[], $flag = 'id')
     {
         //attr中需要设置data-title，用于设置模态弹窗标题
         $attr['data-role'] = 'modal_popup';
         //获取默认getUrl函数
         if (is_string($getUrl)) {
-            $getUrl = $this->createDefaultGetUrlFunction($getUrl);
+            $getUrl = $this->createDefaultGetUrlFunction($getUrl,$flag);
         }
         //确认已经创建了DOACTIONS字段
         $doActionKey = null;
@@ -473,15 +478,15 @@ class AdminListBuilder extends AdminBuilder
         }
 
         //在DOACTIONS中增加action
-        $doActionKey['opt']['actions'][] = array('text' => $text, 'get_url' => $getUrl, 'opt' => $attr, 'class' => $class);
+        $doActionKey['opt']['actions'][] = ['text' => $text, 'get_url' => $getUrl, 'opt' => $attr, 'class' => $class, 'hide' => $hide];
         return $this;
     }
 
-    public function keyDoAction($getUrl, $text, $title = '操作', $class = 'btn-primary')
+    public function keyDoAction($getUrl, $text, $title = '操作', $class = 'btn-primary', $hide=[], $flag = 'id')
     {
         //获取默认getUrl函数
         if (is_string($getUrl)) {
-            $getUrl = $this->createDefaultGetUrlFunction($getUrl);
+            $getUrl = $this->createDefaultGetUrlFunction($getUrl,$flag);
         }
 
         //确认已经创建了DOACTIONS字段
@@ -506,7 +511,7 @@ class AdminListBuilder extends AdminBuilder
         }
 
         //在DOACTIONS中增加action
-        $doActionKey['opt']['actions'][] = ['text' => $text, 'get_url' => $getUrl, 'class' => $class];
+        $doActionKey['opt']['actions'][] = ['text' => $text, 'get_url' => $getUrl, 'class' => $class, 'hide' => $hide];
 
         return $this;
     }
@@ -516,9 +521,9 @@ class AdminListBuilder extends AdminBuilder
      * @param  string $text   [description]
      * @return [type]         [description]
      */
-    public function keyDoActionAjax($getUrl, $text = 'Ajax', $class = 'btn-primary')
+    public function keyDoActionAjax($getUrl, $text = 'Ajax', $class = 'btn-primary' ,$hide=[])
     {
-        return $this->keyDoAction($getUrl, $text, '操作', 'ajax-get'.$class);
+        return $this->keyDoAction($getUrl, $text, '操作', 'ajax-get'.$class, $hide);
     }
     /**
      * 编辑操作
@@ -526,9 +531,9 @@ class AdminListBuilder extends AdminBuilder
      * @param  string $text   [description]
      * @return [type]         [description]
      */
-    public function keyDoActionEdit($getUrl, $text = '编辑')
+    public function keyDoActionEdit($getUrl, $text = '编辑',$hide=[])
     {
-        return $this->keyDoAction($getUrl, '<i class="icon icon-edit"></i> '.$text, '操作', 'btn-success');
+        return $this->keyDoAction($getUrl, '<i class="icon icon-edit"></i> '.$text, '操作', 'btn-success', $hide);
     }
     /**
      * 禁用操作
@@ -536,9 +541,9 @@ class AdminListBuilder extends AdminBuilder
      * @param  string $text   [description]
      * @return [type]         [description]
      */
-    public function keyDoActionDisable($getUrl, $text = '禁用')
+    public function keyDoActionDisable($getUrl, $text = '禁用', $hide=[])
     {
-        return $this->keyDoAction($getUrl, '<i class="icon icon-minus-sign"></i> '. $text, '禁用', 'btn-warning ajax-get');
+        return $this->keyDoAction($getUrl, '<i class="icon icon-minus-sign"></i> '. $text, '禁用', 'btn-warning ajax-get', $hide);
     }
     /**
      * 删除操作
@@ -546,23 +551,23 @@ class AdminListBuilder extends AdminBuilder
      * @param  string $text   [description]
      * @return [type]         [description]
      */
-    public function keyDoActionDelete($getUrl, $text = '删除')
+    public function keyDoActionDelete($getUrl, $text = '删除', $hide=[])
     {
-        return $this->keyDoAction($getUrl, '<i class="icon icon-trash"></i> '.$text, '操作','btn-danger ajax-get');
+        return $this->keyDoAction($getUrl, '<i class="icon icon-trash"></i> '.$text, '操作','btn-danger ajax-get', $hide);
     }
     /**
      * 还原操作，存在获取数据ID BUG
      * @param  string $text [description]
      * @return [type]       [description]
      */
-    public function keyDoActionRestore($text = '还原')
+    public function keyDoActionRestore($text = '还原', $hide=[])
     {
         $that = $this;
         $setStatusUrl = $this->_setStatusUrl;
         $getUrl = function () use ($that, $setStatusUrl) {
             return $that->addUrlParam($setStatusUrl, array('status' => 1));
         };
-        return $this->keyDoAction($getUrl, $text,'操作','btn-primary ajax-get');
+        return $this->keyDoAction($getUrl, $text,'操作','btn-primary ajax-get',$hide);
     }
 
     public function keyTruncText($name, $title, $length)
@@ -592,7 +597,7 @@ class AdminListBuilder extends AdminBuilder
      */
     public function explain($title, $content)
     {
-        $this->_explain = array('title' => $title, 'content' => $content);
+        $this->_explain = ['title' => $title, 'content' => $content];
         return $this;
     }
 
@@ -614,7 +619,10 @@ class AdminListBuilder extends AdminBuilder
         //key类型的等价转换
         //map转换成text
         $this->convertKey('map', 'text', function ($value, $key) {
-            return $key['opt'][$value];
+            if(!empty($value) || $value == 0) {
+                return $key['opt'][$value];
+            }
+            return '';
         });
 
         //uid转换成text
@@ -693,7 +701,7 @@ class AdminListBuilder extends AdminBuilder
                 $html = "<div class='popup-gallery'><a title=\"" . lang('_VIEW_BIGGER_') . "\" href=\"$sc_src\"><img src=\"$sc_src\"/ style=\"width:80px;height:80px\"></a></div>";
             } else {//value是图片路径
                 $sc_src = $value;
-                $html = "<div class='popup-gallery'><a title=\"" . lang('_VIEW_BIGGER_') . "\" href=\"$sc_src\"><img src=\"$sc_src\"/ style=\"border-radius:100%;\"></a></div>";
+                $html = "<div class='popup-gallery'><a title=\"" . lang('_VIEW_BIGGER_') . "\" href=\"$sc_src\"><img src=\"$sc_src\"/ style=\"width:80px;height:80px\"></a></div>";
             }
             return $html;
         });
@@ -707,13 +715,63 @@ class AdminListBuilder extends AdminBuilder
                 $linkText = $action['text'];
                 $url = $getUrl($item);
                 $class = $action['class'];
+
+                //是否设置了根据条件隐藏操作按钮,以下写法支持，多条件时第4个留空默认&&
+                //['status',['>',1],['<',3],'&&'];
+                //['status',['>',1],['<',3]];
+                //['status','>1','<3','||'];
+                //['status','>1','<3'];
+                //['status','>',1];
+                if(isset($action['hide'])){
+                    $hide_arr = $action['hide'];
+                    
+                    if(!empty($hide_arr)){ 
+
+                        $a = $hide_arr;
+                        //判断是数字或字符串
+                        if(is_numeric($item[$a[0]])){
+                            $p = $item[$a[0]];
+                        }else{
+                            $p = '"'.$item[$a[0]].'"';
+                        }
+
+                        if(is_array($a[1]) && is_array($a[2])){
+                            if(isset($a[3])){
+                                $d = $p.$a[1][0].$a[1][1].' '.$b[3].' '.$p.$a[2][0].$a[2][1];   
+                            }else{
+                                $d = $p.$a[1][0].$a[1][1].' && '.$p.$a[2][0].$a[2][1];
+                            }
+                        }else if(is_string($a[1]) && (is_string($a[2]) || is_int($a[2]))){
+                            if(isset($a[3])){
+                                $d = $p.$a[1].' '.$a[3].' '.$p.$a[2];
+                            }else{
+                                if(strstr($a[2],'<') || strstr($a[2],'>') || strstr($a[2],'=')){
+                                    $d = $p.$a[1].' && '.$p.$a[2];
+                                }else{
+                                    $d = $p.$a[1].$a[2];
+                                }
+                            }
+                        }
+                        
+                        $hide_str_res =  eval("return $d;");
+
+                        if($hide_str_res){
+                            //符合条件跳出本次循环
+                            continue;
+                        }
+                    }
+                }
+
                 if (isset($action['opt'])) {
+                    
                     $content = array();
                     foreach ($action['opt'] as $key => $value) {
                         $value = htmlspecialchars($value);
                         $content[] = "$key=\"$value\"";
                     }
                     $content = implode(' ', $content);
+                    
+
                     if (isset($action['opt']['data-role']) && $action['opt']['data-role'] == "modal_popup") {//模态弹窗
                         $result[] = "<a href=\" javascrapt:void(0);\" class=\"$class btn btn-mini $class\" modal-url=\"$url\" " . $content . ">$linkText</a>";
                     } else {
@@ -733,7 +791,7 @@ class AdminListBuilder extends AdminBuilder
                 if (!$key['opt']['url']) {
                     return $val;
                 } else {
-                    $urld = U($key['opt']['url'], array($key['opt']['return'] => $value));
+                    $urld = url($key['opt']['url'], array($key['opt']['return'] => $value));
                     return "<a href=\"$urld\">$val</a>";
                 }
             } else {
@@ -837,31 +895,6 @@ class AdminListBuilder extends AdminBuilder
         }
     }
 
-    /**
-     * @param $pattern Url函数解析的URL字符串，例如 Admin/Test/index?test_id=###
-     * Admin/Test/index?test_id={other_id}
-     * ###将被id替换
-     * {other_id}将被替换
-     * @return callable
-     */
-    private function createDefaultGetUrlFunction($pattern)
-    {
-        $explode = explode('|', $pattern);
-        $pattern = $explode[0];
-        $fun = empty($explode[1]) ? 'Url' : $explode[1];
-
-        return function ($item) use ($pattern, $fun) {
-            $pattern = str_replace('###', $item['id'], $pattern);
-            //调用ThinkPHP中的解析引擎解析变量
-            //$view = new \think\View();
-            //$view->assign($item);
-
-            //dump($pattern);
-            //$pattern = $view->fetch('', $pattern);
-            return $fun($pattern);
-        };
-    }
-
     public function addUrlParam($url, $params)
     {
         if (strpos($url, '?') === false) {
@@ -869,7 +902,7 @@ class AdminListBuilder extends AdminBuilder
         } else {
             $seperator = '&';
         }
-        if(isset($params)){
+        if(is_array($params)){
             $params = http_build_query($params);
             return $url . $seperator . $params;
         }
@@ -916,43 +949,21 @@ class AdminListBuilder extends AdminBuilder
     }
 
     /**
-     * keyLinkByFlag  带替换表示的链接
-     * @param        $name
-     * @param        $title
-     * @param        $getUrl
-     * @param string $flag
-     * @return $this
-     * @author:xjw129xjt xjt@ourstu.com
-     */
-    public function keyLinkByFlag($name, $title, $getUrl, $flag = 'id')
-    {
-
-        //如果getUrl是一个字符串，则表示getUrl是一个U函数解析的字符串
-        if (is_string($getUrl)) {
-            $getUrl = $this->ParseUrl($getUrl, $flag);
-        }
-
-        //添加key
-        return $this->key($name, $title, 'link', $getUrl);
-    }
-
-    /**解析Url
-     * @param $pattern URL文本
-     * @param $flag
+     * @param $pattern Url函数解析的URL字符串，例如 Admin/Test/index?test_id=###
+     * Admin/Test/index?test_id={other_id}
+     * ###将被id替换
+     * {other_id}将被替换
      * @return callable
-     * @auth 陈一枭
      */
-    private function ParseUrl($pattern, $flag)
+    private function createDefaultGetUrlFunction($pattern, $flag='id')
     {
-        return function ($item) use ($pattern, $flag) {
+        $explode = explode('|', $pattern);
+        $pattern = $explode[0];
+        $fun = empty($explode[1]) ? 'url' : $explode[1];
 
+        return function ($item) use ($pattern, $fun, $flag) {
             $pattern = str_replace('###', $item[$flag], $pattern);
-            //调用ThinkPHP中的解析引擎解析变量
-            $view = new \Think\View();
-            $view->assign($item);
-            $pattern = $view->fetch('', $pattern);
-            return Url($pattern);
+            return $fun($pattern);
         };
     }
-
 }

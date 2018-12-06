@@ -10,7 +10,7 @@ use think\Db;
 class Adv extends Admin
 {
 
-    public function pos($page = 1, $r = 20)
+    public function pos($r = 20)
     {
         $aModule = input('module', '', 'text');
         $aTheme = input('theme', 'all', 'text');
@@ -34,7 +34,6 @@ class Adv extends Admin
         $advPosModel = model('AdvPos');
         $advModel = model('Adv');
         $advPoses = $advPosModel->where($map)->select();
-        //$themes = model('common/Theme')->getThemeList();
 
         foreach ($advPoses as &$v) {
             switch ($v['type']) {
@@ -50,6 +49,8 @@ class Adv extends Admin
                 case 4:
                     $v['type_html'] = '<span class="text-error">代码块</span>';
                     break;
+                case 0:
+                    $v['type_html'] = '<span class="text-error">其它</span>';
             }
             if ($v['theme'] != 'all') {
                 $theme_names = explode(',', $v['theme']);
@@ -63,21 +64,19 @@ class Adv extends Admin
             }
 
             $count = $advModel->where(array('pos_id' => $v['id'], 'status' => 1))->count();
-            $v['do'] = '<a href="' . Url('editPos?copy=' . $v['id']) . '"><i class="icon-copy"></i> 复制</a>&nbsp;&nbsp;&nbsp;&nbsp;'
-                . '<a href="' . Url('editPos?module='.$aModule.'&id=' . $v['id']) . '"><i class="icon-cog"></i> 设置</a>&nbsp;&nbsp;&nbsp;&nbsp;'
-                . '<a href="' . Url('adv?pos_id=' . $v['id']) . '" ><i class="icon-sitemap"></i> 管理广告(' . $count . ')</a>&nbsp;&nbsp;&nbsp;&nbsp;'
-                . '<a href="' . Url('editAdv?pos_id=' . $v['id']) . '"><i class="icon-plus"></i> 添加广告</a>&nbsp;&nbsp;&nbsp;&nbsp;'
-                . '<a href="' . Url($v['path']) . '#adv_' . $v['id'] . '" target="_blank"><i class="icon-share-alt"></i>到前台查看</a>&nbsp;&nbsp;';
-
-
+            $v['do'] = '<a href="' . url('editPos?copy=' . $v['id']) . '"><i class="icon-copy"></i> 复制</a>&nbsp;&nbsp;&nbsp;&nbsp;'
+                . '<a href="' . url('editPos?module='.$aModule.'&id=' . $v['id']) . '"><i class="icon-cog"></i> 设置</a>&nbsp;&nbsp;&nbsp;&nbsp;'
+                . '<a href="' . url('adv?pos_id=' . $v['id']) . '" ><i class="icon-sitemap"></i> 管理广告(' . $count . ')</a>&nbsp;&nbsp;&nbsp;&nbsp;'
+                . '<a href="' . url('editAdv?pos_id=' . $v['id']) . '"><i class="icon-plus"></i> 添加广告</a>&nbsp;&nbsp;&nbsp;&nbsp;'
+                . '<a href="' . url($v['path']) . '#adv_' . $v['id'] . '" target="_blank"><i class="icon-share-alt"></i>到前台查看</a>&nbsp;&nbsp;';
         }
         unset($v);
 
         $adminList->title('广告位管理');
-        $adminList->buttonNew(Url('editPos'), '添加广告位');
-        $adminList->buttonDelete(Url('setPosStatus'));
-        $adminList->buttonDisable(Url('setPosStatus'));
-        $adminList->buttonEnable(Url('setPosStatus'));
+        $adminList->buttonNew(url('editPos'), '添加广告位');
+        $adminList->buttonDelete(url('setPosStatus'));
+        $adminList->buttonDisable(url('setPosStatus'));
+        $adminList->buttonEnable(url('setPosStatus'));
         $adminList
         ->keyId()
         ->keyTitle()
@@ -92,13 +91,6 @@ class Adv extends Admin
         ->keyText('padding', '内部留白')
         ->keyText('theme_html', '适用主题');
 
-        //$themes_array[] = array('id' => 'all', 'value' => '--全部主题--');
-        //foreach ($themes as $v) {
-        //    $themes_array[] = array('id' => $v['name'], 'value' => $v['title']);
-        //}
-        
-        //$adminList->select('所属主题：', 'theme', 'select', '描述', '', '', $themes_array);
-        //
         $status_array = [
             ['id' => 1, 'value' => '正常'], 
             ['id' => 0, 'value' => '禁用'], 
@@ -173,34 +165,36 @@ class Adv extends Admin
             $pos['theme'] = input('theme', 'all', 'text');
             switch ($pos['type']) {
                 case 2:
-                    //todo 多图
-                    $pos['data'] = json_encode(array('style' => input('style', 1, 'intval')));
+                //todo 多图
+                $pos['data'] = json_encode(array('style' => input('style', 1, 'intval')));
             }
-
+            //新增
             if ($aId == 0) {
                 $result = $advPosModel->save($pos);
             } else {
+            //编辑
                 $pos['id'] = $aId;
-                $result = $advPosModel->where(['id'=>$pos['id']])->save($pos);
+                $result = $advPosModel->save($pos,$aId);
             }
 
             if ($result === false) {
                 $this->error('保存失败。');
             } else {
                 cache('adv_pos_by_pos_' . $pos['path'] . $pos['name'], null);
-                $this->success('保存成功。',Url('pos',array('module'=>$aModule)));
+                $this->success('保存成功。',url('pos',['module'=>$aModule]));
             }
 
         } else {
             $builder = new AdminConfigBuilder();
 
             if ($aCopy != 0) {
-                $pos = $advPosModel->find($aCopy);
+                $pos = $advPosModel->find($aCopy)->toArray();
                 unset($pos['id']);
                 $pos['name'] .= '   请重新设置!';
                 $pos['title'] .= '   请重新设置!';
             } else {
                 $pos = $advPosModel->find($aId);
+                if(!empty($pos)) $pos = $pos->toArray();
             }
             if ($aId == 0) {
 
@@ -212,20 +206,17 @@ class Adv extends Admin
             } else {
                 $builder->title($pos['title'] . '【' . $pos['name'] . '】' . ' 设置——' . $advPosModel->switchType($pos['type']));
             }
-            //转化为数组
-            $pos = $pos->toArray();
+            
             //
             $builder->keyId()
                     ->keyTitle('title','广告名')
                     ->keyText('name', '标识', '字母和数字构成，同一个页面上不要出现两个同名的')
                     ->keyText('path', '路径', '模块名/控制器名/方法名，例如：Home/Index/detail')
                     ->keyRadio('type', '广告类型', '', array(1 => '单图广告', 2 => '多图轮播', 3 => '文字链接', 4 => '代码'))
-                    
                     ->keyText('width', '宽度', '支持各类长度单位，如px，em，%')
                     ->keyText('height', '高度', '支持各类长度单位，如px，em，%')
                     ->keyText('margin', '边缘留白', '支持各类长度单位，如px，em，%；依次为：上  右  下  左，如 5px 2px 0 3px')
                     ->keyText('padding', '内部留白', '支持各类长度单位，如px，em，%；依次为：上  右  下  左，如 5px 2px 0 3px');
-                    //->keyCheckBox('theme', '适用主题', '', $themes_array);
             $data = json_decode($pos['data'], true);
 
             if (!empty($data)) {
@@ -235,7 +226,7 @@ class Adv extends Admin
             if ($pos['type'] == 2) {
 
                 $builder
-                ->keyRadio('style', '轮播_风格', '', [1 => 'simpleslider 风格', 2 => 'KinmaxShow 风格', 3 =>'Flickity 风格'])
+                ->keyRadio('style', '轮播_风格', '', [1 => 'Swiper 风格', 2 => 'KinmaxShow 风格', 3 =>'Flickity 风格'])
                 ->keyDefault('style', 1);
             }
 
@@ -249,20 +240,21 @@ class Adv extends Admin
                     ->display();
         }
     }
-
+    /**
+     * 广告列表
+     * @return [type] [description]
+     */
     public function adv()
     {
         $aPosId = input('pos_id', 0, 'intval');
         if(!$aPosId){
             $this->error('未传入"pos_id"参数');
         }
-        $advPosModel = model('Common/AdvPos');
-        $pos = $advPosModel->find($aPosId);
+        //$advPosModel = model('common/AdvPos');
+        $pos = Db::name('adv_pos')->find($aPosId);
         if ($aPosId != 0) {
             $map['pos_id'] = $aPosId;
         }
-        $map['status'] = 1;
-
         $data = Db::name('adv')->where($map)->order('pos_id desc,sort desc')->select();
 
         //todo 广告管理列表
@@ -270,18 +262,17 @@ class Adv extends Admin
         if ($aPosId == 0) {
             $builder->title('广告管理');
         } else {
-            $builder->title($pos['title'] . '【' . $pos['name'] . '】' . ' 设置——' . $advPosModel->switchType($pos['type']));
+            $builder->title($pos['title'] . '【' . $pos['name'] . '】' . ' 设置——' . model('AdvPos')->switchType($pos['type']));
         }
         $builder->keyId();
         $builder->keyText('title', '广告');
-        $builder->keyDoAction("editAdv?id=###", '编辑', $title = '操作');
-        $builder->keyLink('', '预览', 'adv_info?id=###');
-        //$builder->keyText('click_count', '点击量');
-        $builder->buttonNew(Url('editAdv',array('pos_id'=>$aPosId)), '新增/编辑广告');
-        $builder->buttonDelete(Url('setDel',array('pos_id'=>$aPosId)), '删除');
+        
+        $builder->keyText('click_count', '点击量');
+        $builder->buttonNew(url('editAdv',['pos_id'=>$aPosId]), '新增/编辑广告');
+        $builder->buttonDelete(url('setDel',['pos_id'=>$aPosId]), '删除');
         if ($aPosId != 0) {
-            $builder->button('广告排期查看', array('href' => Url('schedule?pos_id=' . $aPosId)));
-            $builder->button('设置广告位', array('href' => Url('editPos?id=' . $aPosId)));
+            $builder->button('广告排期查看', ['href' => url('schedule?pos_id=' . $aPosId)]);
+            $builder->button('设置广告位', ['href' => url('editPos?id=' . $aPosId)]);
         }
         $builder->keyText('url', '链接地址')
                 ->keyTime('start_time', '开始生效时间', '不设置则立即生效')
@@ -289,11 +280,10 @@ class Adv extends Admin
                 ->keyText('sort', '排序')
                 ->keyCreateTime()
                 ->keyStatus();
-        if(!empty($data['data'])){
-            $builder->data($data['data']);     
-        }
+        $builder->keyLink('', '预览', 'adv_info?id=###');
+        $builder->keyDoActionEdit("editAdv?id=###", '编辑', $title = '操作');
+        $builder->data($data);     
         
-        //$builder->pagination($data['count'], $r);
         $builder->display();
     }
 
@@ -305,12 +295,9 @@ class Adv extends Admin
         }
         $map['status'] = 1;
         $data = Db::name('Adv')->where($map)->select();
-
-
         foreach ($data as $v) {
             $events[] = array('title' => '<strong>' . $v['title'] . '</strong>', 'start' => date('Y-m-d h:i', $v['start_time']), 'end' => date('Y-m-d h:i', $v['end_time']), 'data' => array('id' => $v['id']));
         }
-        //   echo(json_encode($events));exit;
         $this->assign('events', json_encode($events));
         $this->assign('pos_id', $aPosId);
         return $this->fetch();
@@ -332,36 +319,29 @@ class Adv extends Admin
         $pos = Db::name('AdvPos')->where(['id' => $aPosId])->find();
 
         if (request()->isPost()) {
-            $adv['title'] = input('title', '', 'text');
-            $adv['description'] = input('description', '', 'text');
-            $adv['pos_id'] = $aPosId;
-            $adv['url'] = input('url', '', 'text');
-            $adv['sort'] = input('sort', 1, 'intval');
-            $adv['status'] = input('status', 1, 'intval');
-            $adv['create_time'] = input('create_time', '', 'intval');
-            $adv['start_time'] = input('start_time', '', 'intval');
-            $adv['end_time'] = input('end_time', '', 'intval');
-            $adv['target'] = input('target', '', 'text');
+            $inputData = input('post.');
+            //dump($inputData);exit;
+
             cache('adv_list_' . $pos['name'] . $pos['path'], null);
             if ($pos['type'] == 2) {
                 //todo 多图
-
-                $aTitles = input('title', '', 'text');
-                $aDescription = input('description', '', 'text');
-                $aUrl = input('url', '', 'text');
-                $aSort = input('sort', '', 'intval');
-                $aStartTime = input('start_time', '', 'intval');
-                $aEndTime = input('end_time', '', 'intval');
-                $aTarget = input('target', '', 'text');
+                $aPosId = $inputData['pos_id'];
+                $aTitles = $inputData['title'];
+                $aDescription = $inputData['description'];
+                $aUrl = $inputData['url'];
+                $aSort = $inputData['sort'];
+                $aStartTime = $inputData['start_time'];
+                $aEndTime = $inputData['end_time'];
+                $aTarget = $inputData['target'];
                 $added = 0;
                 Db::name('adv')->where(['pos_id' => $aPosId])->delete();
-                foreach (input('pic', 0, 'intval') as $key => $v) {
+                //获取现有广告位所有广告
+                $allThisAdv = Db::name('adv')->where(['pos_id' => $aPosId])->select();
+                foreach ($inputData['pic'] as $key => $v) {
                     $data['pic'] = $v;
                     $data['target'] = $aTarget[$key];
-
                     $adv_temp['title'] = $aTitles[$key];
-                    $adv_temp['description'] = $aDescription[$key];
-                    $adv_temp['pos_id'] = $adv['pos_id'];
+                    $adv_temp['pos_id'] = $aPosId;
                     $adv_temp['url'] = $aUrl[$key];
                     $adv_temp['sort'] = $aSort[$key];
                     $adv_temp['status'] = 1;
@@ -370,47 +350,56 @@ class Adv extends Admin
                     $adv_temp['end_time'] = $aEndTime[$key];
                     $adv_temp['target'] = $aTarget[$key];
                     $adv_temp['data'] = json_encode($data);
-
+                    //todo 处理数据库数据
                     $result = Db::name('adv')->insert($adv_temp);
+                    
                     if ($result !== false) {
                         $added++;
                     }
-                    //todo添加
                 }
-                $this->success('成功改动' . $added . '个广告。',Url('adv',array('pos_id'=>$aPosId)));
+                $this->success('成功改动' . $added . '个广告。',url('adv',['pos_id'=>$aPosId]));
 
             } else {
                 switch ($pos['type']) {
                     case 1:
                         //todo 单图
-                        $data['pic'] = input('pic', 0, 'intval');
-                        $data['target'] = input('target', 0, 'text');
+                        $data['pic'] = $inputData['pic'];
+                        $data['target'] = $inputData['target'];
                         break;
                     case 3:
-                        $data['text'] = input('text', '', 'text');
-                        $data['text_color'] = input('text_color', '', 'text');
-                        $data['text_font_size'] = input('text_font_size', '', 'text');
-                        $data['target'] = input('target', 0, 'text');
+                        //todo 文本
+                        $data['text'] = $inputData['text'];
+                        $data['text_color'] = $inputData['text_color'];
+                        $data['text_font_size'] = $inputData['text_font_size'];
+                        $data['target'] = $inputData['target'];
                         //todo 文字
                         break;
                     case 4:
                         //todo 代码
-                        $data['code'] = input('code', '', '');
+                        $data['code'] = $inputData['code'];
                         break;
                 }
+                $adv['title'] = $inputData['title'];
+                $adv['pos_id'] = $aPosId;
+                //$adv['description'] = $inputData['description'];
+                $adv['url'] = $inputData['url'];
+                $adv['sort'] = $inputData['sort'];
+                $adv['create_time'] = time();
+                $adv['start_time'] = $inputData['start_time'];
+                $adv['end_time'] = $inputData['end_time'];
                 $adv['data'] = json_encode($data);
 
                 if ($aId == 0) {
-                    $result = $advModel->add($adv);
+                    $result = Db::name('adv')->insert($adv);
                 } else {
                     $adv['id'] = $aId;
-                    $result = $advModel->save($adv);
+                    $result = Db::name('adv')->update($adv);
                 }
 
                 if ($result === false) {
                     $this->error('保存失败');
                 } else {
-                    $this->success('保存成功',Url('adv',array('pos_id'=>$aPosId)));
+                    $this->success('保存成功',url('adv',['pos_id'=>$aPosId]));
                 }
             }
         //构造页面
@@ -475,9 +464,9 @@ EOT;
                     $builder->keyTextArea('code', '代码内容', '不对此字段进行过滤，可填写js、html');
                     break;
             }
-            $builder->keyDefault('status', 1)->keyDefault('sort', 1);
 
             $builder
+                ->keyDefault('status', 1)->keyDefault('sort', 1)
                 ->keyDefault('title', $pos['title'] . '的广告 ' . date('m月d日', time()) . ' 添加')
                 ->keyDefault('end_time', time() + 60 * 60 * 24 * 7);
 
@@ -506,24 +495,27 @@ EOT;
             }
         }
     }
-
+    /**
+     * 广告预览
+     * @param  [type] $id [description]
+     * @return [type]     [description]
+     */
     public function adv_info($id){
-        header("Content-Type: text/html;charset=utf-8"); 
+        
         $data = Db::name('adv')->where(['id'=>$id])->find();
         $data['data'] = json_decode($data['data'],true);
 
-        if($data['data']['pic']){
+        if(isset($data['data']['pic'])){
             $data['data']['pic_url'] = pic($data['data']['pic']);
         }
         $data['create_time'] = date("Y-m-d H:i:s",$data['create_time']);
         $data['start_time'] = date("Y-m-d H:i:s",$data['start_time']);
         $data['end_time'] = date("Y-m-d H:i:s",$data['end_time']);
 
-
-        //$this->_meta_title = '广告位详情';
+        $this->_meta_title = '广告位详情';
         $this->assign('meta_title',$this->_meta_title);
         $this->assign('data',$data);
-        $this->fetch();
+        return $this->fetch();
     }
     /**
      * 删除广告（设置为删除状态）
@@ -532,11 +524,11 @@ EOT;
     public function setDel($ids,$pos_id)
     {
         !is_array($ids)&&$ids=explode(',',$ids);
-        $res=D('Common/Adv')->setDel($ids);
+        $res=model('common/Adv')->setDel($ids);
         if($res){
-            $this->success('操作成功！',Url('Adv/adv',array('pos_id'=>$pos_id)));
+            $this->success('操作成功！',url('Adv/adv',['pos_id'=>$pos_id]));
         }else{
-            $this->error('操作失败！'.D('Common/Adv')->getError());
+            $this->error('操作失败！'.model('common/Adv')->getError());
         }
     }
     /**
@@ -546,21 +538,21 @@ EOT;
     //真实删除，留个下个版本处理，暂时先保留该方法
     public function setTrueDel($ids,$pos_id)
     {
-    if(IS_POST){
-        $ids=input('post.ids','','text');
+    if(request()->isPost()){
+        $ids=input('post.ids/a','','text');
         $ids=explode(',',$ids);
         //!is_array($ids)&&$ids=explode(',',$ids);
-        $res=D('Common/Adv')->setTrueDel($ids);
+        $res=model('common/Adv')->setTrueDel($ids);
         if($res){
-            $this->success('彻底删除成功！',Url('Adv/adv',array('pos_id'=>$pos_id)));
+            $this->success('彻底删除成功！',url('Adv/adv',['pos_id'=>$pos_id]));
         }else{
-            $this->error('操作失败！'.D('Common/Adv')->getError());
+            $this->error('操作失败！'.model('common/Adv')->getError());
         }
     }else{
         $ids=input('ids');
             $ids=implode(',',$ids);
             $this->assign('ids',$ids);
-            $this->display();
+            return $this->fetch();
         }
     }
 

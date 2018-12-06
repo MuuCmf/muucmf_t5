@@ -248,12 +248,12 @@ class Member extends Model
                 //判断浏览器类型
                 if(isWeixinBrowser()){
                     //依赖微信基础模块；判断微信基础模块（微信公众号）模块是否安装，暂时只支持Weixin模块
-                    $needModule = model('Module')->checkInstalled('Weixin');
+                    $needModule = model('Module')->checkInstalled('weixin');
                     //如果微信浏览器
                     if($needModule){
                     //执行微信网页授权登陆
-                    $requer_url = urlencode(GetCurUrl());
-                    redirect(Url('Weixin/index/authorize_url').'&requer_url='.$requer_url);
+                    $requer_url = urlencode(get_url());
+                    redirect(url('weixin/index/authorize_url').'&requer_url='.$requer_url);
                     }
                 }
             }

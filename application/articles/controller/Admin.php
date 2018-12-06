@@ -153,16 +153,20 @@ str;
             if(count($cates)){
                 $cates=array_column($cates,'id');
                 $cates=array_merge(array($aCate),$cates);
-                $map['category']=array('in',$cates);
+                $map['category']=['in',$cates];
             }else{
                 $map['category']=$aCate;
             }
         }
-
         $aPos=input('pos',0,'intval');
         /* 设置推荐位 */
         if($aPos>0){
             $map[] = "position & {$aPos} = {$aPos}";
+        }
+        //搜索关键字
+        $aKeyword = input('keyword','','text');
+        if($aKeyword){
+            $map['title']=['like','%'.$aKeyword.'%'];
         }
         $map['status']=1;
 
@@ -188,12 +192,13 @@ str;
         $builder
             ->title('文章列表')
             ->data($list)
-            ->setSelectPostUrl(Url('index'))
-            ->select('','cate','select','','','',$optCategory)
+            ->setSelectPostUrl(url('index'))
+            ->select('分类：','cate','select','','','',$optCategory)
             ->select('推荐位：','pos','select','','','',$positions)
-            ->buttonNew(Url('editArticles'))
-            ->setStatusUrl(Url('setArticleStatus'))
-            ->buttonModalPopup(Url('doAudit'),null,'审核不通过',['data-title'=>'设置审核失败原因','target-form'=>'ids'])
+            ->search('搜索','keyword','text','检索文章标题关键字','搜索')
+            ->buttonNew(url('editArticles'))
+            ->setStatusUrl(url('setArticleStatus'))
+            ->buttonModalPopup(url('doAudit'),null,'审核不通过',['data-title'=>'设置审核失败原因','target-form'=>'ids'])
             ->keyId()
             ->keyUid()
             ->keyText('title','标题')
@@ -376,6 +381,7 @@ str;
         }else{
 
             $position_options=$this->_getPositions();
+
             if($aId){
                 $data=model('Articles')->getDataById($aId);
                 
@@ -385,6 +391,7 @@ str;
                         $position[]=$key;
                     }
                 }
+
                 $data['content']=$data['detail']['content'];
                 $data['template']=$data['detail']['template'];
                 $data['position']=implode(',',$position);

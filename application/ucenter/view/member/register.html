@@ -1,10 +1,8 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    {include file="common@public/meta"/}
     {include file="common@public/head"/}
     <link href="__CSS__/center.min.css" type="text/css" rel="stylesheet">
-    <script src="__COMMON__/lib/jquery-2.1.1/jquery.min.js"></script>
     <style>
         #main-container {
             margin-top: 0;
@@ -250,10 +248,7 @@
         {/if}
     </div>
 </div>
-<script src="__COMMON__/lib/zui/js/zui.min.js"></script>
-<script src="__COMMON__/lib/qtip/jquery.qtip.min.js"></script>
-<script src="__COMMON__/lib/placeholder/placeholder.js"></script>
-<script src="__COMMON__/js/main.min.js"></script>
+{include file="common@public/js"/}
 {block name="script"}
     <script type="text/javascript">
         $(function(){

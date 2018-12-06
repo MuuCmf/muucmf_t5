@@ -13,6 +13,10 @@ class Common extends Controller
 
 	public function _initialize()
     {
+        //seo 
+        $seo_meta = model('common/SeoRule')->getMetaOfCurrentPage();
+        $this->assign('seo_meta',$seo_meta);
+
         //记住登陆
  		model('common/Member')->rembember_login();
 
@@ -26,7 +30,7 @@ class Common extends Controller
         $this->assign('nav',$nav);
 
         //获取用户基本资料
-		$common_header_user = query_user(array('nickname','avatar32'));
+		$common_header_user = query_user(['nickname','avatar32']);
 		$this->assign('common_header_user',$common_header_user);
 
 		//获取用户菜单
@@ -51,25 +55,25 @@ class Common extends Controller
          	$only_open_register=1;
         }
         $this->assign('only_open_register',$only_open_register);
-        $login_url = Url('ucenter/Member/login');
+        $login_url = url('ucenter/Member/login');
         $this->assign('login_url',$login_url);
     }
 
     public function setTitle($title)
     {
         $this->_seo['title'] = $title;
-        $this->assign('seo', $this->_seo);
+        $this->assign('seo_meta', $this->_seo);
     }
 
     public function setKeywords($keywords)
     {
         $this->_seo['keywords'] = $keywords;
-        $this->assign('seo', $this->_seo);
+        $this->assign('seo_meta', $this->_seo);
     }
 
     public function setDescription($description)
     {
         $this->_seo['description'] = $description;
-        $this->assign('seo', $this->_seo);
+        $this->assign('seo_meta', $this->_seo);
     }
 }

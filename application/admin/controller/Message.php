@@ -361,7 +361,7 @@ class Message extends Admin
         $builder
             ->title('消息类型列表')
             ->suggest('这里只能查看和刷新，要对会话做增删改，请修改对应文件')
-            ->ajaxButton(Url('message/sessionRefresh'),null,'刷新',array('hide-data' => 'true'))
+            ->buttonAjax(url('message/sessionRefresh'),null,'刷新',['hide-data' => 'true'])
             ->keyText('name','标识（发送消息时的$type参数值）')
             ->keyTitle('消息列表')
             ->keyText('alias','所属模块')

@@ -51,7 +51,7 @@ class Message extends Base
     public function messageList()
     {
         $tab = input('post.tab','','text');
-        $tpl=$this->_messageTpl($tab);
+        $tpl=$this->_messageTpl(strtolower($tab));
         $map['to_uid'] = is_login();
         $map['type'] = $tab;
 
@@ -66,19 +66,9 @@ class Message extends Base
             }
             if($v['content']['url']) {
                 if(preg_match('/^(http|https).*$/',$v['content']['url'])){
-                    $v['from']=$v['content']['url'];
+                    $v['from_url']=$v['content']['url'];
                 }else{
-                    if($v['content']['args']){
-                        $model = explode('/',$v['content']['url']);
-                        $v['module']=ucwords($model[0]);
-                        $map=json_decode($v['content']['args']);
-                        $from = Db::name($v['module'])->where($map)->find();
-                        if($from){
-                            $v['fromArray']=$from;
-                        }
-                    }else{
-                        $v['from']=Url($v['content']['url']);
-                    }
+                    $v['from_url']=$v['content']['url'];
                 };
             }
             $v['tpl']=$tpl;
@@ -115,7 +105,7 @@ class Message extends Base
         //发送消息
         $message = model('common/Message')->sendMessage($to_uid, '你有一封私信', $user['nickname'].':' . $content, 'ucenter/Index/index', array('uid' => is_login()));
         if ($message) {
-            return json(['code' => 1, 'msg' => "发送" .lang('_SUCCESS_')]);
+            return json(['code' => 200, 'msg' => "发送" .lang('_SUCCESS_')]);
         } else {
              return json(['code' => 0, 'msg' => "发送 ".lang("_FAIL_")]);
         }
@@ -143,14 +133,13 @@ class Message extends Base
         
         if(empty($message_type) || $message_type=='') $message_type='common_system';
 
-        $tpl=APP_PATH.$messageTpl[$message_type]['module'].'/view/message/'.$messageTpl[$message_type]['tpl_name'].'.html';
+        $tpl=APP_PATH.$messageTpl[strtolower($message_type)]['module'].'/view/message/'.$messageTpl[strtolower($message_type)]['tpl_name'].'.html';
 
         if(file_exists($tpl)){
             return $tpl;
         }else{
             $tpl=APP_PATH.'common/view/message/_message_li.html';
         }
-
         return $tpl;
     }
 

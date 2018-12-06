@@ -16,16 +16,30 @@ class Index extends Common
     {
     	return $this->fetch();
     }
-
+    /**
+     * 前台编辑器演示
+     * @return [type] [description]
+     */
     public function editor()
     {
     	return $this->fetch();
     }
-
+    /**
+     * 插件调用演示
+     * @return [type] [description]
+     */
     public function addon() 
     {
         //控制器执行插件
         //hook('demoTest',['id'=>100]);//自定义
+        return $this->fetch();
+    }
+    /**
+     * 广告系统演示
+     * @return [type] [description]
+     */
+    public function adv()
+    {
         return $this->fetch();
     }
 

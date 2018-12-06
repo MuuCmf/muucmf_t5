@@ -137,13 +137,13 @@ class Announce extends Admin{
             $res=$this->announceModel->saveData($data);
             if($res){
                 cache('Announce_list',null);
-               $this->success('操作成功！',Url('announceList'));
+               $this->success('操作成功！',url('announceList'));
             }else{
                 $this->error('操作失败！');
             }
         }else{
-            $aId=input('get.id',0,'intval');
-            $data=$this->announceModel->getData($aId);
+            $aId=input('id',0,'intval');
+            $data=$this->announceModel->getDataById($aId);
             if(!$data){
                 $this->error('非法操作！');
             }

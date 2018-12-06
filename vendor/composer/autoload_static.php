@@ -28,7 +28,6 @@ class ComposerStaticInit62905484775f23ab1ad09d5ed1d098b1
         array (
             'Symfony\\Polyfill\\Php70\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
-            'Symfony\\Component\\OptionsResolver\\' => 34,
             'Symfony\\Component\\HttpFoundation\\' => 33,
             'Symfony\\Bridge\\PsrHttpMessage\\' => 30,
         ),
@@ -55,7 +54,6 @@ class ComposerStaticInit62905484775f23ab1ad09d5ed1d098b1
         ),
         'E' => 
         array (
-            'Endroid\\QrCode\\' => 15,
             'EasyWeChat\\' => 11,
         ),
         'C' => 
@@ -85,10 +83,6 @@ class ComposerStaticInit62905484775f23ab1ad09d5ed1d098b1
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
-        ),
-        'Symfony\\Component\\OptionsResolver\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/options-resolver',
         ),
         'Symfony\\Component\\HttpFoundation\\' => 
         array (
@@ -134,10 +128,6 @@ class ComposerStaticInit62905484775f23ab1ad09d5ed1d098b1
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
-        'Endroid\\QrCode\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/endroid/qr-code/src',
-        ),
         'EasyWeChat\\' => 
         array (
             0 => __DIR__ . '/..' . '/overtrue/wechat/src',
@@ -154,6 +144,10 @@ class ComposerStaticInit62905484775f23ab1ad09d5ed1d098b1
             'Pimple' => 
             array (
                 0 => __DIR__ . '/..' . '/pimple/pimple/src',
+            ),
+            'PHPQRCode' => 
+            array (
+                0 => __DIR__ . '/..' . '/aferrandini/phpqrcode/lib',
             ),
             'PHPExcel' => 
             array (

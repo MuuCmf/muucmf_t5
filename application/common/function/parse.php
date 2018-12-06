@@ -91,25 +91,6 @@ function utf8_strlen($string = null)
 }
 
 
-/**
- * 添加magnific效果
- * @param $content
- * @return mixed|string
- * autor:xjw129xjt
- */
-function parse_popup($content)
-{
-    $content = replace_attr($content);
-    preg_match_all('/<img src=\"(.*?)\"/', $content, $img_src);
-    preg_match_all('/<img src=\".*?\/>/', $content, $img_tag);
-    foreach ($img_tag[0] as $k => &$v) {
-        $content = str_replace($v, '<a class="popup" href="' . $img_src[1][$k] . '" title="'.L('_CLICK_TO_SEE_THE_BIG_PICTURE_').'">' . $v . '</a>', $content);
-    }
-    $content = '  <div class="popup-gallery">' . $content . '</div>';
-
-    return $content;
-}
-
 function replace_attr($content)
 {
     // 阻止代码部分被过滤 过滤前
@@ -233,33 +214,5 @@ function filter_base64($content)
             }
         }
     }
-    return $content;
-}
-
-/**
- * render_video  渲染视频
- * @param $content
- * @return mixed
- * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
- */
-function render_video($content)
-{
-    $content = D('ContentHandler')->renderVideo($content);
-    return $content;
-}
-
-
-function render($content){
-    $content =  render_video($content);
-    return $content;
-}
-/**
- * filter_content  过滤内容，主要用于过滤视频
- * @param $content
- * @return mixed
- * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
- */
-function filter_content($content){
-    $content = D('ContentHandler')->filterHtmlContent($content);
     return $content;
 }

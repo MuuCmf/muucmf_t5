@@ -9,21 +9,6 @@ use think\Model;
 class Addons extends Model
 {
     /**
-     * 查找后置操作
-     */
-    protected function _after_find(&$result, $options)
-    {
-
-    }
-
-    protected function _after_select(&$result, $options)
-    {
-
-        foreach ($result as &$record) {
-            $this->_after_find($record, $options);
-        }
-    }
-    /**
      * 插件安装
      * @param  [type] $name [description]
      * @return [type]       [description]

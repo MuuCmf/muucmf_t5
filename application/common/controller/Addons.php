@@ -1,13 +1,14 @@
 <?php
 namespace app\common\controller;
 
+use think\Controller;
 use think\Config;
 use think\View;
 use think\Db;
 /**
  * 插件类
  */
-abstract class Addons{
+abstract class Addons extends Controller{
 
     //视图实例对象
     protected $view             = null;
@@ -82,38 +83,6 @@ abstract class Addons{
         $this->view->engine->layout(false);
 
         echo $this->view->fetch($template, $vars, $replace, $config);
-    }
-
-    /**
-     * 渲染内容输出
-     * @access public
-     * @param string $content 内容
-     * @param array $vars 模板输出变量
-     * @param array $replace 替换内容
-     * @param array $config 模板参数
-     * @return mixed
-     */
-    final public function display($content, $vars = [], $replace = [], $config = [])
-    {
-        // 关闭模板布局
-        $this->view->engine->layout(false);
-
-        echo $this->view->display($content, $vars, $replace, $config);
-    }
-
-    /**
-     * 渲染内容输出
-     * @access public
-     * @param string $content 内容
-     * @param array $vars 模板输出变量
-     * @return mixed
-     */
-    final public function show($content, $vars = [])
-    {
-        // 关闭模板布局
-        $this->view->engine->layout(false);
-
-        echo $this->view->fetch($content, $vars, [], [], true);
     }
 
     /**

@@ -112,8 +112,9 @@ return array(
     '_PICTURE_' => '图片 ',
     '_COULD_NOT_BE_LOADED_' => ' 无法被载入.',
     //admin__LIST_
-    '_DETERMINATION_WITH_DOUBLE_' => '"确定"',
-    '_NO_OPERATIONAL_DATA_WITH_SINGLE_' => "'没有可操作数据。'",
+    '_SEARCH_' => "搜索",
+    '_DETERMINATION_WITH_DOUBLE_' => "确定",
+    '_NO_OPERATIONAL_DATA_WITH_SINGLE_' => "没有可操作数据。",
     //admin_so_LIST_
     '_O_SEGMENTATION_' => 'O分割符',
     '_SEARCH_WITH_DOUBLE_' => '"搜索"',

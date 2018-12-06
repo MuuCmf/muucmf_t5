@@ -303,7 +303,7 @@ class Message extends Model
                 $content['args'] = json_decode($content['args'], true);
                 $content['args_json'] = json_encode($content['args']);
                 if ($content['url']) {
-                    $content['web_url'] = is_bool(strpos($content['url'], 'http://')) ? U($content['url'], $content['args']) : $content['url'];
+                    $content['web_url'] = is_bool(strpos($content['url'], 'http://')) ? url($content['url'], $content['args']) : $content['url'];
                 } else {
                     $content['web_url'] = '';
                 }
@@ -501,6 +501,9 @@ class Message extends Model
             $map['uid'] = $uid;
             $map['status'] = 1;
             $message_type = Db::name('MessageType')->where($map)->select();
+            foreach($message_type as $v){
+                $v['type'] = strtolower($v['type']);
+            }
             cache($tag, $message_type);
         }
         return $message_type;
@@ -521,18 +524,18 @@ class Message extends Model
         $my_types = $this->getMyMessageType($uid);
         $type_list = $this->getAllMessageType();
         foreach ($my_types as $key => &$val) {
-            if (!$type_list[$val['type']]) {
+            if (!$type_list[strtolower($val['type'])]) {
                 unset($my_types[$key]);
                 continue;
             }
-            $val['detail'] = $type_list[$val['type']];
+            $val['detail'] = $type_list[strtolower($val['type'])];
             $map['to_uid'] = $uid;
-            $map['type'] = $val['type'];
+            $map['type'] = strtolower($val['type']);
             $map['is_read'] = 0;
             $val['count'] = $this->where($map)->count();
             
             $map_last['to_uid'] = $uid;
-            $map_last['type'] = $val['type'];
+            $map_last['type'] = strtolower($val['type']);
             $lastMessage = $this->where($map_last)->order('id desc')->find();
             if ($lastMessage) {
                 $val['last_message'] = $this->getContent($lastMessage['content_id']);
@@ -556,7 +559,7 @@ class Message extends Model
     {
         if(empty($type) || $type=='') $type='common_system';
         $allType = $this->getAllMessageType();
-        return $allType[$type];
+        return $allType[strtolower($type)];
     }
     private function _initMessage(&$messages)
     {

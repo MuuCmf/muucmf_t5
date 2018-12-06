@@ -145,6 +145,7 @@ class Addons extends Admin
             cache($config['addons_cache'], null);
         }
         if ($flag !== false) {
+            cache('hooks', null);
             $this->success(lang('_SAVE_'), Cookie('__forward__'));
         } else {
             $this->error(lang('_SAVE_FAILED_'));
@@ -230,7 +231,56 @@ class Addons extends Admin
     public function edithook($id)
     {
         $hook = Db::name('Hooks')->field(true)->find($id);
+        //所有插件
+        $all_addons = model('Addons')->getList();
+
+        //只获取已安装插件
+        foreach ($all_addons as $key => $value) {
+            if ($value['uninstall'] == 1) {
+                unset($all_addons[$key]);
+            }
+        }
+
+        $all_addons = array_combine(array_column($all_addons,'name'),$all_addons);
+
+        $all_addons_arr = [];
+        foreach ($all_addons as $key => $v) {
+            $all_addons_arr[] = ['name'=>$v['name'],'title' => $v['title']];
+        }
+        
+        //已挂载数据
+        if(empty($hook['addons'])){
+            $ok_addons = [];
+        }else{
+           $ok_addons = explode(',',$hook['addons']); 
+        }
+        
+        $ok_addons_arr = [];
+        foreach ($ok_addons as $key => $v) {
+            //为避免数组中含有已卸载插件，这里做个判断
+            if(!empty($all_addons[$v]['name'])){
+                $ok_addons_arr[] = ['name'=>$all_addons[$v]['name'],'title' =>$all_addons[$v]['title']];
+            }
+        }
+        //未挂载去除差值
+        $tmp_arr =[];//声明数组
+        foreach($all_addons_arr as $k => $v)
+        {
+            if(in_array($v, $ok_addons_arr))
+            {
+                unset($all_addons_arr[$k]);
+            }else {
+                $tmp_arr[] = $v;
+            }
+        }
+        $all_addons_arr = $tmp_arr;
+        //清理缓存
+        cache('hooks', null);
         $this->assign('data', $hook);
+        //看板挂载数据
+        $this->assign('all_addons_arr', $all_addons_arr);
+        $this->assign('ok_addons_arr', $ok_addons_arr);
+
         $this->setTitle(lang('_EDIT_HOOK_'));
         return $this->fetch('edithook');
     }
@@ -239,6 +289,7 @@ class Addons extends Admin
     public function delhook($id)
     {
         if (Db::name('Hooks')->delete($id) !== false) {
+            cache('hooks', null);
             $this->success(lang('_DELETE_SUCCESS_'));
         } else {
             $this->error(lang('_DELETE_FAILED_'));
@@ -258,17 +309,22 @@ class Addons extends Admin
             if ($data) {
                 if ($data['id']) {
                     $flag = Db::name('Hooks')->where(['id'=>$data['id']])->update($data);
-                    if ($flag !== false)
-                        $this->success(lang('_UPDATE_'), Cookie('__forward__'));
-                    else
+                    if ($flag !== false){
+                       cache('hooks', null);
+                        $this->success(lang('_UPDATE_'), Cookie('__forward__')); 
+                    }else{
                         $this->error(lang('_UPDATE_FAILED_'));
+                    }
                 } else {
                     $flag = Db::name('Hooks')->insert($data);
-                    if ($flag)
+                    if ($flag){
+                        cache('hooks', null);
                         $this->success(lang('_NEW_SUCCESS_'), Cookie('__forward__'));
-                    else
+                    }else{
                         $this->error(lang('_NEW_FAILURE_'));
+                    }
                 }
+
             } else {
                 $this->error($hookModel->getError());
             }
@@ -300,6 +356,7 @@ class Addons extends Admin
 
         $map = array('id' => array('in', $ids));
         if ($addonModel->where($map)->delete()) {
+            cache('hooks', null);
             $this->success(lang('_DELETE_SUCCESS_'));
         } else {
             $this->error(lang('_DELETE_FAILED_'));
