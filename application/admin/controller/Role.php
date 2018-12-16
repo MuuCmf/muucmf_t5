@@ -570,6 +570,7 @@ class Role extends Admin
         } else {
 
             $mRole_list = $this->roleModel->field('id,title')->select();
+            $mRole_list = collection($mRole_list)->toArray();
             $mRole_list = array_combine(array_column($mRole_list, 'id'), $mRole_list);
 
             //获取默认配置值
