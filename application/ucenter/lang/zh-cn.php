@@ -235,6 +235,7 @@ return array(
     '_SETTING_PERSONAL_PAGE_DISPLAY_' => '个人主页资料默认展示设置',
     '_PERSONAL_PAGE_DISPLAY_IDENTITY_' => '个人主页默认展示身份',
     '_IDENTITY_OWNED_' => '已持有的身份',
+    '_IDENTITY_OWNED_NO_' => '未持有的身份',
     '_LOGIN_CHANGE_' => '切换登录',
     '_LOGIN_NOW_' => '当前登录',
     '_IDENTITY_OWN_' => '持有该身份',

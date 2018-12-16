@@ -220,6 +220,7 @@
 '_SETTING_PERSONAL_PAGE_DISPLAY_' =>' Personal home page information default display settings',
 '_PERSONAL_PAGE_DISPLAY_IDENTITY_' =>' Personal homepage default display status',
 '_IDENTITY_OWNED_' =>' Identity has been held',
+'_IDENTITY_OWNED_NO_' => 'Unheld Identity',
 '_LOGIN_CHANGE_' =>' Switch login',
 '_LOGIN_NOW_' =>' Current login',
 '_IDENTITY_OWN_' =>' Hold the identity',
