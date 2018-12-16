@@ -509,10 +509,10 @@ class Role extends Admin
                     $this->error(lang('_PLEASE_UPLOAD_YOUR_AVATAR_'));
                 }
                 if (Db::name('RoleConfig')->where($map)->find()) {
-                    $result = Db::name('RoleConfig')->saveData($map, $data);
+                    $result = Db::name('RoleConfig')->update($map, $data);
                 } else {
                     $data = array_merge($map, $data);
-                    $result = Db::name('RoleConfig')->addData($data);
+                    $result = Db::name('RoleConfig')->insert($data);
                 }
             } else {//使用系统默认头像
                 if (Db::name('RoleConfig')->where($map)->find()) {
@@ -531,7 +531,7 @@ class Role extends Admin
             $avatar_id = Db::name('RoleConfig')->where($map)->value('value');
             $mRole_list = $this->roleModel->field('id,title')->select();
             $this->assign('role_list', $mRole_list);
-            $this->assign('this_role', array('id' => $aRoleId, 'avatar' => $avatar_id));
+            $this->assign('this_role', ['id' => $aRoleId, 'avatar' => $avatar_id]);
             $this->assign('tab', 'avatar');
             return $this->fetch('avatar');
         }
@@ -772,32 +772,31 @@ class Role extends Admin
      */
     public function uploadPicture()
     {
-        //TODO: 用户登录检测
-
-        /* 返回标准数据 */
-        $return = ['status' => 1, 'info' => lang('_UPLOAD_SUCCESS_'), 'data' => ''];
-
-        /* 调用文件上传组件上传文件 */
-        $Picture = model('Picture');
-        $pic_driver = config('PICTURE_UPLOAD_DRIVER');
-        $info = $Picture->upload(
-            $_FILES,
-            config('PICTURE_UPLOAD'),
-            config('PICTURE_UPLOAD_DRIVER'),
-            config("UPLOAD_{$pic_driver}_CONFIG")
-        ); //TODO:上传到远程服务器
-        /* 记录图片信息 */
-        if ($info) {
-            $return['code'] = 1;
-            empty($info['download']) && $info['download'] = $info['file'];
-            $return = array_merge($info['download'], $return);
-            $return['path256'] = getThumbImageById($return['id'], 256, 256);
-            $return['path128'] = getThumbImageById($return['id'], 128, 128);
-            $return['path64'] = getThumbImageById($return['id'], 64, 64);
-            $return['path32'] = getThumbImageById($return['id'], 32, 32);
-        } else {
+        $files = request()->file();
+        if (empty($files)) {
             $return['code'] = 0;
-            $return['msg'] = $Picture->getError();
+            $return['msg'] = 'No file upload or server upload limit exceeded';
+            return json($return);
+        }
+
+        $arr = model('api/Upload')->upload($files,'picture');
+
+        if(is_array($arr)){
+
+            foreach($arr as &$v){
+                $v['path256'] = getThumbImageById($v['id'], 256, 256);
+                $v['path128'] = getThumbImageById($v['id'], 128, 128);
+                $v['path64'] = getThumbImageById($v['id'], 64, 64);
+                $v['path32'] = getThumbImageById($v['id'], 32, 32);
+            }
+            unset($v);
+            
+            $return['code'] = 1;
+            $return['msg'] = 'Upload successful';
+            $return['data'] = $arr;
+        }else{
+            $return['code'] = 1;
+            $return['msg'] = model('api/Upload')->getError();
         }
         /* 返回JSON数据 */
         return json($return);
