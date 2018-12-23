@@ -340,12 +340,16 @@ class AuthManager extends Admin
         $aId = input('group_id', 0, 'intval');
         $this->updateRules();
         $auth_group = Db::name('AuthGroup')->where(['status' => ['egt', '0'], 'module' => 'admin', 'type' => AuthGroup::TYPE_ADMIN])
-            ->field('id,id,title,rules')->select();
+            ->field('id,title,rules')->select();
         $node_list = $this->returnNodes();
         
-        //dump($node_list);
         $group = Db::name('AuthGroup')->find($aId);
+        $rule_list = Db::name('AuthRule')->where('id','in',$group['rules'])->select();
+        foreach($rule_list as $v){
 
+        }
+
+        //dump($rule_list);
         $this->setTitle(lang('_ACCESS_AUTHORIZATION_'));
 
         $this->assign('node_list', $node_list);
