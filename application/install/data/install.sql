@@ -4789,7 +4789,10 @@ INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `type`, 
 ('F29D6718-A1CB-861E-438C-62F9635FF98B', '分类列表', '1E82B5BE-3CCF-C30D-F604-728174A3281F', 0, 'articles/Admin/category', 0, 1, '', '分类管理', 0, '', 'articles'),
 ('61DAFD9B-E944-AFC4-1B4D-0130E564D4CE', '文章列表', '1E82B5BE-3CCF-C30D-F604-728174A3281F', 0, 'articles/Admin/index', 0, 1, '', '文章管理', 0, '', 'articles'),
 ('D5FF0EFE-BD0B-A49D-3E03-0C6051D4D082', '待审核列表', '1E82B5BE-3CCF-C30D-F604-728174A3281F', 0, 'articles/Admin/audit', 0, 1, '', '文章管理', 0, '', 'articles'),
-('AD604555-FD73-8521-0611-DEE0E1FCC56F', '回收站', '1E82B5BE-3CCF-C30D-F604-728174A3281F', 0, 'articles/Admin/recycle', 0, 1, '', '文章管理', 0, '', 'articles');
+('AD604555-FD73-8521-0611-DEE0E1FCC56F', '回收站', '1E82B5BE-3CCF-C30D-F604-728174A3281F', 0, 'articles/Admin/recycle', 0, 1, '', '文章管理', 0, '', 'articles'),
+('DA900619-B54E-49E7-8027-21C94ECD6FAC', '首页', '0', 0, 'admin/index/index', 0, 0, '后台首页', '', 0, '', ''),
+('A8DBCB14-BA8A-7888-824F-AF15DF7AF84D', '控制台', 'DA900619-B54E-49E7-8027-21C94ECD6FAC', 0, 'admin/index/console', 0, 0, '', '', 0, '', '');
+
 
 DROP TABLE IF EXISTS `muucmf_message`;
 CREATE TABLE IF NOT EXISTS `muucmf_message` (

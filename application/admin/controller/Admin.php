@@ -290,7 +290,6 @@ class Admin extends Controller
      */
     final public function getTreeMenus()
     {   
-        
         if (empty($menus)) {
             // 获取主菜单
             $where['pid'] = '0';
@@ -299,24 +298,27 @@ class Admin extends Controller
                 $where['is_dev'] = 0;
             }
             $menus = Db::name('Menu')->where($where)->order('sort asc')->select();
-            //dump($menus);exit;
 
-            foreach ($menus as $key => $item) {
 
-                $menus[$key]['_child'] = [];
+            foreach ($menus as $key=>&$item) {
+
+                $item['_child'] = [];
 
                 if (!is_array($item) || empty($item['title']) || empty($item['url'])) {
                         $this->error(lang('_CLASS_CONTROLLER_ERROR_PARAM_',array('menus'=>$menus)));
                     }
-                    if (stripos($item['url'], request()->module()) !== 0) {
+                    if(empty($item['module']) || $item['module'] == ''){
+                        if (stripos($item['url'], request()->module()) !== 0) {
                         $item['url'] = request()->module() . '/' . $item['url'];
+                        }
                     }
+                    
                     // 判断主菜单权限
-                    if (!$this->is_root && !$this->checkRule($item['url'], AuthRule::RULE_MAIN, null)) {
-                        unset($menus['main'][$key]);
+                    if (!$this->checkRule($item['url'], AuthRule::RULE_MAIN, null)) {
+                        unset($menus[$key]);
                         continue;//继续循环
                     }
-    
+
                     //生成child树
                     $groups = Db::name('Menu')->where("pid = '{$item['id']}'")->distinct(true)->field("`group`")->order('sort asc')->select();
 
@@ -333,18 +335,19 @@ class Admin extends Controller
                     if (!config('DEVELOP_MODE')) { // 是否开发者模式
                         $where['is_dev'] = 0;
                     }
-                    $second_urls = Db::name('Menu')->where($where)->field('id,url')->select();
+                    $second_urls = Db::name('Menu')->where($where)->select();
 
                     if (!$this->is_root) {
                         // 检测菜单权限
-                        $to_check_urls = array();
+                        $to_check_urls = [];
                         foreach ($second_urls as $key => $to_check_url) {
-                            if (stripos($to_check_url['url'], request()->module()) !== 0) {
-                                $rule = request()->module() . '/' . $to_check_url['url'];
-                            } else {
-                                $rule = $to_check_url['url'];
+                            if(empty($to_check_url['module']) || $to_check_url['module'] == ''){
+                                if (stripos($to_check_url['url'], request()->module()) !== 0) {
+                                    $to_check_url['url'] = request()->module() . '/' . $to_check_url['url'];
+                                }
                             }
-                            if ($this->checkRule($rule, AuthRule::RULE_URL, null))
+
+                            if ($this->checkRule($to_check_url['url'], AuthRule::RULE_URL, null))
                                 $to_check_urls[] = $to_check_url['url'];
                         }
                     }
@@ -364,14 +367,14 @@ class Admin extends Controller
                         if (!config('DEVELOP_MODE')) { // 是否开发者模式
                             $map['is_dev'] = 0;
                         }
-                        $menuList = Db::name('Menu')->where($map)->field('id,pid,title,url,icon,tip')->order('sort asc')->select();
-
+                        $menuList = Db::name('Menu')->where($map)->order('sort asc')->select();
                         
-                        $menus[$key]['_child'][$g] = list_to_tree($menuList, 'id', 'pid', 'operater', $item['id']);
+                        $item['_child'][$g] = list_to_tree($menuList, 'id', 'pid', 'operater', $item['id']);
+
                     }
                 }
+                unset($item);
             }
-
         return $menus;
     }
 

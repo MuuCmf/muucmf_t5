@@ -6,7 +6,7 @@
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">系统管理</li>
         {volist name="__MENU__" id="menu"}
-          {neq name="menu.type" value="1"}
+          {neq name="$menu.type" value="1"}
           <li class="treeview" data-id="{$menu.id}" class="{$menu.class|default=''}">
               <a href="{$menu.url|Url}" target="main_iframe">
                   {notempty name="menu.icon"}

@@ -548,14 +548,11 @@ class AuthManager extends Admin
         }
         if ($tree) {
             $list = Db::name('Menu')->field('id,pid,title,url,tip,hide,module')->order('sort asc')->select();
-            foreach ($list as $key => $value) {
-                if(empty($value['module']) || $value['module'] == ''){
-                    if (stripos($value['url'], request()->module()) !== 0) {
-                        $list[$key]['url'] = request()->module() . '/' . $value['url'];
-                    }
-                }
+            foreach ($list as &$value) {
+                $value = $this->check_url_re($value);
                 unset($value['module']);
             }
+            unset($value);
             //由于menu表id更改为字符串格式，root必须设置成字符串0
             $nodes = list_to_tree($list, $pk = 'id', $pid = 'pid', $child = 'operator', $root = '0');
 
@@ -568,18 +565,26 @@ class AuthManager extends Admin
 
         } else {
             $nodes = Db::name('Menu')->field('title,url,tip,pid,module')->order('sort asc')->select();
-            foreach ($nodes as $key => $value) {
-                if(empty($value['module']) || $value['module'] == ''){
-                    if (stripos($value['url'], request()->module()) !== 0) {
-                    $nodes[$key]['url'] = request()->module() . '/' . $value['url'];
-                    }
-                }
+            foreach ($nodes as &$value) {
+                $value = $this->check_url_re($value);
                 unset($value['module']);
             }
+            unset($value);
         }
 
         $tree_nodes[(int)$tree] = $nodes;
         return $nodes;
+    }
+
+    public function check_url_re( $value = array() ){
+
+        if(empty($value['module']) || $value['module'] == ''){
+            if (stripos($value['url'], request()->module()) !== 0) {
+                $value['url'] = request()->module() . '/' . $value['url'];
+            }
+        }
+
+        return $value;
     }
 
 }
