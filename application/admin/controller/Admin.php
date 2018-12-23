@@ -2,8 +2,8 @@
 namespace app\admin\Controller;
 
 use think\Controller;
-use app\admin\Model\AuthRule;
-use app\admin\Model\AuthGroup;
+use app\admin\model\AuthRule;
+use app\admin\model\AuthGroup;
 use think\Request;
 use think\Db;
 use think\Config;
@@ -312,7 +312,7 @@ class Admin extends Controller
                         $item['url'] = request()->module() . '/' . $item['url'];
                     }
                     // 判断主菜单权限
-                    if (!$this->is_root && !$this->checkRule($item['url'], AuthRuleModel::RULE_MAIN, null)) {
+                    if (!$this->is_root && !$this->checkRule($item['url'], AuthRule::RULE_MAIN, null)) {
                         unset($menus['main'][$key]);
                         continue;//继续循环
                     }
@@ -339,13 +339,13 @@ class Admin extends Controller
                         // 检测菜单权限
                         $to_check_urls = array();
                         foreach ($second_urls as $key => $to_check_url) {
-                            if (stripos($to_check_url, request()->module()) !== 0) {
-                                $rule = request()->module() . '/' . $to_check_url;
+                            if (stripos($to_check_url['url'], request()->module()) !== 0) {
+                                $rule = request()->module() . '/' . $to_check_url['url'];
                             } else {
-                                $rule = $to_check_url;
+                                $rule = $to_check_url['url'];
                             }
-                            if ($this->checkRule($rule, AuthRuleModel::RULE_URL, null))
-                                $to_check_urls[] = $to_check_url;
+                            if ($this->checkRule($rule, AuthRule::RULE_URL, null))
+                                $to_check_urls[] = $to_check_url['url'];
                         }
                     }
                     // 按照分组生成子菜单树
@@ -479,50 +479,6 @@ class Admin extends Controller
         }
 
         return $menus;
-    }
-
-    /**
-     * 返回后台节点数据
-     * @param boolean $tree 是否返回多维数组结构(生成菜单时用到),为false返回一维数组(生成权限节点时用到)
-     * @retrun array
-     *
-     * 注意,返回的主菜单节点数组中有'controller'元素,以供区分子节点和主节点
-     *
-     * @author 朱亚杰 <xcoolcc@gmail.com>
-     */
-    final protected function returnNodes($tree = true)
-    {
-        header("Content-Type: text/html;charset=utf-8"); 
-        static $tree_nodes = array();
-        if ($tree && !empty($tree_nodes[(int)$tree])) {
-            return $tree_nodes[$tree];
-        }
-        if ((int)$tree) {
-            $list = Db::name('Menu')->field('id,pid,title,url,tip,hide')->order('sort asc')->select();
-            foreach ($list as $key => $value) {
-                if (stripos($value['url'], request()->module()) !== 0) {
-                    $list[$key]['url'] = request()->module() . '/' . $value['url'];
-                }
-            }
-            //由于menu表id更改为字符串格式，root必须设置成字符串0
-            $nodes = list_to_tree($list, $pk = 'id', $pid = 'pid', $child = 'operator', $root = '0');
-            foreach ($nodes as $key => $value) {
-                if (!empty($value['operator'])) {
-                    $nodes[$key]['child'] = $value['operator'];
-                    unset($nodes[$key]['operator']);
-                }
-            }
-
-        } else {
-            $nodes = Db::name('Menu')->field('title,url,tip,pid')->order('sort asc')->select();
-            foreach ($nodes as $key => $value) {
-                if (stripos($value['url'], request()->module()) !== 0) {
-                    $nodes[$key]['url'] = request()->module() . '/' . $value['url'];
-                }
-            }
-        }
-        $tree_nodes[(int)$tree] = $nodes;
-        return $nodes;
     }
 
     /**

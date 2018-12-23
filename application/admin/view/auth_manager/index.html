@@ -53,9 +53,7 @@
 			{else/}
 			<a href="{:Url('AuthManager/changeStatus?method=resumeGroup&id='.$vo['id'])}" class="ajax-get">{:lang('_ENABLE_')}</a>
 			{/eq}
-<!--修改内容开始-->
 			<a href="{:Url('AuthManager/changeStatus?method=deleteGroup&id='.$vo['id'])}" class="confirm ajax-get">{:lang('_DELETE_')}</a>
-<!--修改内容结束-->
             </td>
 	</tr>
 	{/volist}

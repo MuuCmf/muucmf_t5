@@ -18,7 +18,7 @@
             <div class="col-xs-2 text-right">
                 <select name="group" class="form-control">
                     {volist name="auth_group" id="vo"}
-                        <option value="{:Url('AuthManager/access',array('group_id'=>$vo['id'],'group_name'=>$vo['title']))}" {eq name="vo['id']" value="$this_group['id']"}selected{/eq} >{$vo.title}</option>
+                        <option value="{:Url('AuthManager/access',['group_id'=>$vo['id'],'group_name'=>$vo['title']])}" {eq name="vo['id']" value="$this_group['id']"}selected{/eq} >{$vo.title}</option>
                     {/volist}
                 </select>
             </div>
