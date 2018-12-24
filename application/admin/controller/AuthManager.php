@@ -70,11 +70,12 @@ class AuthManager extends Admin
         $AuthGroup = Db::name('AuthGroup');
         
         if ($data) {
-            $oldGroup = $AuthGroup->find($data['id']);
             if(isset($data['rules'])){
-                $data['rules'] = $this->getJoinRules($data['rules']);
+                $data['rules'] = $data['rules'];
+                //大蒙没搞懂自己搞了下，先注销
+                //$data['rules'] = $this->getJoinRules($data['rules']);
             }
-            
+
             if (empty($data['id'])) {
                 $r = $AuthGroup->insert($data);
             } else {
@@ -343,12 +344,17 @@ class AuthManager extends Admin
             ->field('id,title,rules')->select();
         $node_list = $this->returnNodes();
         
+        $map = ['module' => 'admin', 'type' => AuthRule::RULE_MAIN, 'status' => 1];
+        $main_rules = Db::name('AuthRule')->where($map)->column('name,id');
+        $map = ['module' => 'admin', 'type' => AuthRule::RULE_URL, 'status' => 1];
+        $child_rules = Db::name('AuthRule')->where($map)->column('name,id');
+
+        $this->assign('main_rules', $main_rules);
+        $this->assign('auth_rules', $child_rules);
+
+
         $group = Db::name('AuthGroup')->find($aId);
-        $rule_list = Db::name('AuthRule')->where('id','in',$group['rules'])->select();
-        foreach($rule_list as $v){
-
-        }
-
+        //$rule_list = Db::name('AuthRule')->where('id','in',$group['rules'])->select();
         //dump($rule_list);
         $this->setTitle(lang('_ACCESS_AUTHORIZATION_'));
 
@@ -403,27 +409,6 @@ class AuthManager extends Admin
         return $this->fetch();
     }
 
-    private function getMergedRules($oldRules, $rules, $isAdmin = 'neq')
-    {
-        $map = array('module' => array($isAdmin, 'admin'), 'status' => 1);
-        $otherRules = Db::name('AuthRule')->where($map)->field('id')->select();
-        $oldRulesArray = explode(',', $oldRules);
-        $otherRulesArray = getSubByKey($otherRules, 'id');
-
-        //1.删除全部非Admin模块下的权限，排除老的权限的影响
-        //2.合并新的规则
-        foreach ($otherRulesArray as $key => $v) {
-            if (in_array($v, $oldRulesArray)) {
-                $key_search = array_search($v, $oldRulesArray);
-                if ($key_search !== false)
-                    array_splice($oldRulesArray, $key_search, 1);
-            }
-        }
-
-        return str_replace(',,', ',', implode(',', array_unique(array_merge($oldRulesArray, $rules))));
-
-
-    }
 
     //预处理规则，去掉未安装的模块
     public function getNodeListFromModule($modules)

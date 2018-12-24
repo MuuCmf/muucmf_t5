@@ -33,7 +33,7 @@
 						<dl class="checkmod">
 							<dt class="hd">
 								<label class="checkbox">
-                                    <input class="auth_rules rules_all" type="checkbox" name="rules[]" value="{$node.id}" >
+                                    <input class="auth_rules rules_all" type="checkbox" name="rules[]" value="<?php echo $main_rules[$node['url']] ?>" >
                                     {$node.title}{:lang("_ADMINISTRATION_")}
                                 </label>
 							</dt>
@@ -43,7 +43,7 @@
                                     <div class="rule_check">
                                         <div>
                                             <label class="checkbox">
-                                            <input class="auth_rules rules_row" type="checkbox" name="rules[]" value="{$child.id}"/>{$child.title}
+                                            <input class="auth_rules rules_row" type="checkbox" name="rules[]" value="<?php echo $auth_rules[$child['url']] ?>"/>{$child.title}
                                             </label>
                                         </div>
                                        {notempty name="child['operator']"}
@@ -52,7 +52,7 @@
                                                 {volist name="child['operator']" id="op"}
                                                    <label class="checkbox">
                                                        <input class="auth_rules" type="checkbox" name="rules[]"
-                                                       value="{$op.id}"/>{$op.title}
+                                                       value="<?php echo $auth_rules[$op['url']] ?>"/>{$op.title}
                                                    </label>
                                                 {/volist}
                                            </span>
