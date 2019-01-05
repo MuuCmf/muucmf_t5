@@ -875,6 +875,7 @@ return array(
     '_MESSAGE_CONTENT_' => '短信内容',
     '_HIERARCHY_' => '等级配置',
     '_ONE_PER_LINE_BETWEEN_THE_NAME_AND_THE_INTEGRAL_BY_A_COLON_' => '每行一条，名称和积分之间用冒号分隔',
+    '_NICKNAME_PREFIX_' => '昵称的前缀',
     '_NICKNAME_LENGTH_MINIMUM_' => '昵称长度最小值',
     '_NICKNAME_LENGTH_MAXIMUM_' => '昵称长度最大值',
     '_USERNAME_LENGTH_MINIMUM_' => '用户名长度最小值',

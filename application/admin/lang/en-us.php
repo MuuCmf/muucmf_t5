@@ -795,6 +795,7 @@
 '_MESSAGE_CONTENT_' =>' SMS content',
 '_HIERARCHY_' =>' Hierarchical configuration',
 '_ONE_PER_LINE_BETWEEN_THE_NAME_AND_THE_INTEGRAL_BY_A_COLON_' =>' One per line, between the name and the integral by a colon',
+'_NICKNAME_PREFIX_' => 'Prefixes for nicknames',
 '_NICKNAME_LENGTH_MINIMUM_' =>' Nickname length',
 '_NICKNAME_LENGTH_MAXIMUM_' =>' Maximum nickname length',
 '_USERNAME_LENGTH_MINIMUM_' =>' Minimum user name',

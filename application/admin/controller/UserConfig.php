@@ -84,6 +84,7 @@ str;
             
             //基础配置
             ->keyTextArea('LEVEL', lang('_HIERARCHY_'), lang('_ONE_PER_LINE_BETWEEN_THE_NAME_AND_THE_INTEGRAL_BY_A_COLON_'))
+            ->keyText('NICKNAME_PREFIX', lang('_NICKNAME_PREFIX_'))->keyDefault('NICKNAME_PREFIX','Muu_')
             ->keyInteger('NICKNAME_MIN_LENGTH', lang('_NICKNAME_LENGTH_MINIMUM_'))->keyDefault('NICKNAME_MIN_LENGTH',2)
             ->keyInteger('NICKNAME_MAX_LENGTH', lang('_NICKNAME_LENGTH_MAXIMUM_'))->keyDefault('NICKNAME_MAX_LENGTH',32)
             ->keyInteger('USERNAME_MIN_LENGTH', lang('_USERNAME_LENGTH_MINIMUM_'))->keyDefault('USERNAME_MIN_LENGTH',2)
@@ -96,7 +97,7 @@ str;
             //->group(lang('_MAILBOX_ACTIVATION_TEMPLATE_'), 'REG_EMAIL_ACTIVATE')
             ->group(lang('_SMS_VERIFICATION_CONFIG_'), 'SMS_CONTENT,SMS_RESEND')
             
-            ->group(lang('_BASIC_SETTINGS_'), 'LEVEL,NICKNAME_MIN_LENGTH,NICKNAME_MAX_LENGTH,USERNAME_MIN_LENGTH,USERNAME_MAX_LENGTH')
+            ->group(lang('_BASIC_SETTINGS_'), 'LEVEL,NICKNAME_PREFIX,NICKNAME_MIN_LENGTH,NICKNAME_MAX_LENGTH,USERNAME_MIN_LENGTH,USERNAME_MAX_LENGTH')
             ->buttonSubmit('', lang('_SAVE_'))
             ->keyDefault('REG_EMAIL_VERIFY',lang('_VERICODE_ACCOUNT_').lang('_PERIOD_'))
             ->keyDefault('REG_EMAIL_ACTIVATE',lang('_LINK_ACTIVE_IS_'));
