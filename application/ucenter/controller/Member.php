@@ -19,14 +19,19 @@ class Member extends Controller
     {
         //获取参数
         $aUsername = $username = input('post.username', '', 'text');
-        $aNickname = input('post.nickname', '', 'text');
         $aPassword = input('post.password', '', 'text');
         $aVerify = input('post.verify', '', 'text');
         $aRegVerify = input('post.reg_verify', '', 'text');
         $aRegType = input('post.reg_type', '', 'text');
         $aStep = input('get.step', 'start', 'text');
         $aRole = input('post.role', 0, 'intval');
-
+        //昵称注册开关
+        if (modC('NICKNAME_SWITCH', 0, 'USERCONFIG')) {
+            $aNickname = modC('NICKNAME_PREFIX','','USERCONFIG').create_rand(8, 'all');
+        }else{
+            $aNickname = input('post.nickname', '', 'text');
+        }
+        
         if (!modC('REG_SWITCH', '', 'USERCONFIG')) {
             $this->error(lang('_ERROR_REGISTER_CLOSED_'));
         }
@@ -125,7 +130,10 @@ class Member extends Controller
             $aType = input('get.type', '', 'text');
             $regSwitch = modC('REG_SWITCH', '', 'USERCONFIG');
             $regSwitch = explode(',', $regSwitch);
-            $this->assign('regSwitch', $regSwitch);
+            $nicknameSwitch = modC('NICKNAME_SWITCH', 0, 'USERCONFIG');
+            
+            $this->assign('regSwitch', $regSwitch);//注册开关
+            $this->assign('nicknameSwitch', $nicknameSwitch);//昵称开关
             $this->assign('step', $aStep);
             $this->assign('type', $aType == '' ? 'username' : $aType);
             return $this->fetch();

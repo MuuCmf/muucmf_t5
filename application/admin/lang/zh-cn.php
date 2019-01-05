@@ -843,6 +843,8 @@ return array(
     '_USER_CONFIGURATION_' => '用户配置',
     '_REGISTRATION_SWITCH_' => '注册开关',
     '_THE_REGISTRATION_OPTION_THAT_ALLOWS_THE_USE_OF_THE_REGISTRATION_IS_CLOSED_' => '允许使用的注册选项,全不选即为关闭注册',
+    '_NICKNAME_SWITCH_' => '昵称开关',
+    '_NICKNAME_SWITCH_DESCRIPTION_' => '开启后用户注册时手动填写昵称，关闭时系统自动生成昵称',
     '_MAILBOX_' => '邮箱',
     '_MOBILE_PHONE_' => '手机',
     '_MAILBOX_VERIFICATION_TYPE_' => '邮箱验证类型',

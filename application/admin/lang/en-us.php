@@ -763,6 +763,8 @@
 '_USER_CONFIGURATION_' =>' User configuration',
 '_REGISTRATION_SWITCH_' =>' Register switch',
 '_THE_REGISTRATION_OPTION_THAT_ALLOWS_THE_USE_OF_THE_REGISTRATION_IS_CLOSED_' =>' Allows the use of the registration option, the full election is closed for the registration',
+'_NICKNAME_SWITCH_' => 'Nickname switch',
+'_NICKNAME_SWITCH_DESCRIPTION_' => 'Fill in the nickname manually when the user registers after opening',
 '_MAILBOX_' =>' Mailbox',
 '_MOBILE_PHONE_' =>' Mobile phone',
 '_MAILBOX_VERIFICATION_TYPE_' =>' Mailbox authentication type',
