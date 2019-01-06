@@ -140,7 +140,7 @@ class Upload extends Model
             $id = Db::name('file')->insertGetId($data);
             if($id){
                 $data['id'] = $id;
-                $data['savepath'] = getFileById($id);
+                $data['savepath'] = get_file_by_id($id);
                 $return['data'][] = $data;
             }
         }
