@@ -63,7 +63,7 @@
                             </table>
                         </div>
                         <div class="col-xs-12" style="padding-left: 40px;margin-top: 20px;">
-                            <div class="title" style="font-size: 18px;line-height: 50px;">{:lang('_IDENTITY_OWNED_')}</div>
+                            <div class="title" style="font-size: 18px;line-height: 50px;">{:lang('_IDENTITY_OWNED_NO_')}</div>
                             <table class="col-xs-12">
                                 <tbody>
                                 {volist name="can_have_roles" id="role"}
@@ -79,7 +79,7 @@
                                     </tr>
                                 {/volist}
                                 {if condition="!count($can_have_roles)&&!count($can_up_roles)"}
-                                    <div style="width: 100%;margin-left: 60px;color: #cdcdcd;font-size: 18px;">{:lang('_IDENTITY_NONE_')}{:lang('_EXCLAMATION_')}</div>
+                                    <div style="width: 100%;color: #cdcdcd;font-size: 18px;">{:lang('_IDENTITY_NONE_')}{:lang('_EXCLAMATION_')}</div>
                                 {/if}
                                 </tbody>
                             </table>

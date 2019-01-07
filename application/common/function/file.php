@@ -6,7 +6,7 @@ use think\Db;
  * @param bool $replace 是否强制替换
  * @return string
  */
-function getFileById($file_id, $type = 0, $replace = false)
+function get_file_by_id($file_id, $type = 0, $replace = false)
 {
 
     $file = cache('file_' . $file_id);
@@ -29,7 +29,7 @@ function getFileById($file_id, $type = 0, $replace = false)
  * @param  boolean $replace [description]
  * @return [type]           [description]
  */
-function getFileNameById($file_id)
+function get_filename_by_id($file_id)
 {
     $file = cache('file_' . $file_id);
     if (empty($file)) {

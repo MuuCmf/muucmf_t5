@@ -1,34 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: caipeichao
- * Date: 4/2/14
- * Time: 2:46 PM
- */
 
-
-function parse_expression($content)
-{
-    return preg_replace_callback("/(\\[.+?\\])/is", 'parse_expression_callback', $content);
-}
-
-function parse_expression_callback($data)
-{
-
-    if (preg_match("/#.+#/i", $data[0])) {
-        return $data[0];
-    }
-    $allexpression = D('Home/Expression')->getAll();
-    /*    if(!stristr($data[0],":")){
-            $data[0] = str_replace(']',':miniblog]',$data[0]);
-        }*/
-    $info = $allexpression[$data[0]];
-    if ($info) {
-        return preg_replace("/\\[.+?\\]/i", "<img src='" . $info['src'] . "' />", $data[0]);
-    } else {
-        return $data[0];
-    }
-}
 
 /**
  * 限制字符串长度

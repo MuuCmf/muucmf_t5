@@ -172,7 +172,7 @@
                                 {/case}
                             {/switch}
                         {/volist}
-
+                        {eq name="nicknameSwitch" value='1'}
                         <div class="form-group">
                             <label for="nickname" class=".sr-only col-xs-12" style="display: none"></label>
                             <input type="text" id="nickname" class="form-control form_check input-lg new-input" check-type="Nickname"  check-url="{:Url('ucenter/member/checkNickname')}" placeholder="请输入昵称" value="" name="nickname">
@@ -181,7 +181,7 @@
 
                             <div class="clearfix"></div>
                         </div>
-
+                        {/eq}
                         <div class="form-group">
                             <div class="password_block" style="position: relative;display: table;border-collapse: separate;">
                                 <input type="password" id="inputPassword" class="form-control input-lg new-input" check-length="6,30"  placeholder="请输入密码"  name="password">

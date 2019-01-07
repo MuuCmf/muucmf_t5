@@ -11,77 +11,14 @@ use think\Db;
  */
 class AuthManager extends Admin
 {
-
-    /**
-     * 后台节点配置的url作为规则存入auth_rule
-     * 执行新节点的插入,已有节点的更新,无效规则的删除三项任务
-     */
-    public function updateRules()
-    {
-        //需要新增的节点必然位于$nodes
-        $nodes = $this->returnNodes(false);
-
-        $AuthRule = Db::name('AuthRule');
-        $map = ['module' => 'admin', 'type' => ['in', '1,2']];//status全部取出,以进行更新
-        //需要更新和删除的节点必然位于$rules
-        $rules = $AuthRule->where($map)->order('name')->select();
-
-        //构建insert数据
-        $data = array();//保存需要插入和更新的新节点
-        foreach ($nodes as $value) {
-            $temp['name'] = $value['url'];
-            $temp['title'] = $value['title'];
-            $temp['module'] = 'admin';
-            if ($value['pid'] > 0 || $value['pid']!=='0') {
-                $temp['type'] = AuthRule::RULE_URL;
-            } else {
-                $temp['type'] = AuthRule::RULE_MAIN;
-            }
-            $temp['status'] = 1;
-            $data[strtolower($temp['name'] . $temp['module'] . $temp['type'])] = $temp;//去除重复项
-        }
-
-        $update = [];//保存需要更新的节点
-        $ids = [];//保存需要删除的节点的id
-        foreach ($rules as $index => $rule) {
-            $key = strtolower($rule['name'] . $rule['module'] . $rule['type']);
-            if (isset($data[$key])) {//如果数据库中的规则与配置的节点匹配,说明是需要更新的节点
-                $data[$key]['id'] = $rule['id'];//为需要更新的节点补充id值
-                $update[] = $data[$key];
-                unset($data[$key]);
-                unset($rules[$index]);
-                unset($rule['condition']);
-                $diff[$rule['id']] = $rule;
-            } elseif ($rule['status'] == 1) {
-                $ids[] = $rule['id'];
-            }
-        }
-        if (count($update)) {
-            foreach ($update as $k => $row) {
-                if ($row != $diff[$row['id']]) {
-                    $AuthRule->where(['id' => $row['id']])->update($row);
-                }
-            }
-        }
-        if (count($ids)) {
-            $AuthRule->where(['id' => ['IN', implode(',', $ids)]])->update(['status' => -1]);
-            //删除规则是否需要从每个用户组的访问授权表中移除该规则?
-        }
-        if (count($data)) {
-            $AuthRule->insertAll(array_values($data));
-        }
-
-        return true;
-        
-    }
-
-
     /**
      * 权限管理首页
      */
     public function index()
-    {
-        $list = Db::name('AuthGroup')->where(['module' => 'admin'])->order('id asc')->select();
+    {   
+        $map['module'] = 'admin';
+        $map['status'] = ['>',-1];
+        $list = Db::name('AuthGroup')->where($map)->order('id asc')->select();
         $list = int_to_string($list);
 
         $this->setTitle(lang('_PRIVILEGE_MANAGEMENT_'));
@@ -109,8 +46,10 @@ class AuthManager extends Admin
      */
     public function editGroup()
     {
-        $auth_group = Db::name('AuthGroup')->where(array('module' => 'admin', 'type' => AuthGroup::TYPE_ADMIN))
-            ->find((int)$_GET['id']);
+        $id = input('id',0,'intval');
+        $auth_group = Db::name('AuthGroup')->where(['module' => 'admin', 'type' => AuthGroup::TYPE_ADMIN])
+            ->find((int)$id);
+
         $this->assign('auth_group', $auth_group);
         $this->meta_title = lang('_EDIT_USER_GROUP_');
         return $this->fetch();
@@ -129,13 +68,14 @@ class AuthManager extends Admin
         $data['module'] = 'admin';
         $data['type'] = AuthGroup::TYPE_ADMIN;
         $AuthGroup = Db::name('AuthGroup');
-
+        
         if ($data) {
-            $oldGroup = $AuthGroup->find($data['id']);
             if(isset($data['rules'])){
-                $data['rules'] = $this->getMergedRules($oldGroup['rules'], explode(',', $data['rules']), 'eq');
+                $data['rules'] = $data['rules'];
+                //大蒙没搞懂自己搞了下，先注销
+                //$data['rules'] = $this->getJoinRules($data['rules']);
             }
-            
+
             if (empty($data['id'])) {
                 $r = $AuthGroup->insert($data);
             } else {
@@ -150,6 +90,8 @@ class AuthManager extends Admin
             $this->error(lang('_FAIL_OPERATE_') . $AuthGroup->getError());
         }
     }
+
+    
 
     /**
      * 状态修改
@@ -328,29 +270,8 @@ class AuthManager extends Admin
     }
 
     /**
-     * 将模型添加到用户组  入参:mid,group_id
+     * 新增权限节点
      */
-    public function addToModel()
-    {
-        $mid = input('id');
-        $gid = input('get.group_id');
-        if (empty($gid)) {
-            $this->error(lang('_PARAMETER_IS_INCORRECT_'));
-        }
-        $AuthGroup = model('AuthGroup');
-        if (!$AuthGroup->find($gid)) {
-            $this->error(lang('_USER_GROUP_DOES_NOT_EXIST_'));
-        }
-        if ($mid && !$AuthGroup->checkModelId($mid)) {
-            $this->error($AuthGroup->error);
-        }
-        if ($AuthGroup->addToModel($gid, $mid)) {
-            $this->success(lang('_SUCCESS_OPERATE_'));
-        } else {
-            $this->error(lang('_FAIL_OPERATE_'));
-        }
-    }
-
     public function addNode()
     {
         if (empty($this->auth_group)) {
@@ -417,24 +338,26 @@ class AuthManager extends Admin
      */
     public function access()
     {
-        $aId = input('get.group_id', 0, 'intval');
+        $aId = input('group_id', 0, 'intval');
         $this->updateRules();
         $auth_group = Db::name('AuthGroup')->where(['status' => ['egt', '0'], 'module' => 'admin', 'type' => AuthGroup::TYPE_ADMIN])
-            ->field('id,id,title,rules')->select();
+            ->field('id,title,rules')->select();
         $node_list = $this->returnNodes();
-        //dump($node_list);
+        
+        $map = ['module' => 'admin', 'type' => AuthRule::RULE_MAIN, 'status' => 1];
+        $main_rules = Db::name('AuthRule')->where($map)->column('name,id');
+        $map = ['module' => 'admin', 'type' => AuthRule::RULE_URL, 'status' => 1];
+        $child_rules = Db::name('AuthRule')->where($map)->column('name,id');
 
-        $map = array('module' => 'admin', 'type' => AuthRule::RULE_MAIN, 'status' => 1);
-        $main_rules = Db::name('AuthRule')->where($map)->field('name,id')->select();
-        $map = array('module' => 'admin', 'type' => AuthRule::RULE_URL, 'status' => 1);
-        $child_rules = Db::name('AuthRule')->where($map)->field('name,id')->select();
-
-        //dump($node_list);
-        $group = Db::name('AuthGroup')->find($aId);
-
-        $this->setTitle(lang('_ACCESS_AUTHORIZATION_'));
         $this->assign('main_rules', $main_rules);
         $this->assign('auth_rules', $child_rules);
+
+
+        $group = Db::name('AuthGroup')->find($aId);
+        //$rule_list = Db::name('AuthRule')->where('id','in',$group['rules'])->select();
+        //dump($rule_list);
+        $this->setTitle(lang('_ACCESS_AUTHORIZATION_'));
+
         $this->assign('node_list', $node_list);
         $this->assign('auth_group', $auth_group);
         $this->assign('this_group', $group);
@@ -444,7 +367,7 @@ class AuthManager extends Admin
 
     public function accessUser()
     {
-        $aId = input('get.group_id', 0, 'intval');
+        $aId = input('group_id', 0, 'intval');
 
         if (request()->isPost()) {
             $aId = input('id', 0, 'intval');
@@ -486,27 +409,6 @@ class AuthManager extends Admin
         return $this->fetch();
     }
 
-    private function getMergedRules($oldRules, $rules, $isAdmin = 'neq')
-    {
-        $map = array('module' => array($isAdmin, 'admin'), 'status' => 1);
-        $otherRules = Db::name('AuthRule')->where($map)->field('id')->select();
-        $oldRulesArray = explode(',', $oldRules);
-        $otherRulesArray = getSubByKey($otherRules, 'id');
-
-        //1.删除全部非Admin模块下的权限，排除老的权限的影响
-        //2.合并新的规则
-        foreach ($otherRulesArray as $key => $v) {
-            if (in_array($v, $oldRulesArray)) {
-                $key_search = array_search($v, $oldRulesArray);
-                if ($key_search !== false)
-                    array_splice($oldRulesArray, $key_search, 1);
-            }
-        }
-
-        return str_replace(',,', ',', implode(',', array_unique(array_merge($oldRulesArray, $rules))));
-
-
-    }
 
     //预处理规则，去掉未安装的模块
     public function getNodeListFromModule($modules)
@@ -525,4 +427,153 @@ class AuthManager extends Admin
         }
         return $node_list;
     }
+
+    /**
+     * 规则ID更改为auth_rule表的规则ID
+     */
+    protected function getJoinRules($menu_ids)
+    {
+        $menu_list = Db::name('menu')->where('id','in',$menu_ids)->field('id,url,module')->select();
+        foreach($menu_list as $key => $value){
+            if(empty($value['module']) || $value['module'] == ''){
+                if (stripos($value['url'], request()->module()) !== 0) {
+                    $menu_list[$key]['url'] = request()->module() . '/' . $value['url'];
+                }
+            }
+        }
+        //拼接字符串
+        $menu_url = '';
+        foreach($menu_list as $value){
+            $menu_url .=','.$value['url'];
+        }
+        $menu_url = substr($menu_url, 1 );
+        $auth_rule_list = Db::name('auth_rule')->where('name','in',$menu_url)->field('id,name')->select();
+
+        //拼接权限节点ID
+        $rules_id = '';
+        foreach($auth_rule_list as $value){
+            $rules_id .= ','.$value['id'];
+        }
+        $rules_id = substr($rules_id, 1 );
+
+        return $rules_id;
+    }
+    /**
+     * 后台节点配置的url作为规则存入auth_rule
+     * 执行新节点的插入,已有节点的更新,无效规则的删除三项任务
+     */
+    public function updateRules()
+    {
+        //需要新增的节点必然位于$nodes
+        $nodes = $this->returnNodes(false);
+
+        $AuthRule = Db::name('AuthRule');
+        $map = ['module' => 'admin', 'type' => ['in', '1,2']];//status全部取出,以进行更新
+        //需要更新和删除的节点必然位于$rules
+        $rules = $AuthRule->where($map)->order('name')->select();
+
+        //构建insert数据
+        $data = [];//保存需要插入和更新的新节点
+        foreach ($nodes as $value) {
+            $temp['name'] = $value['url'];
+            $temp['title'] = $value['title'];
+            $temp['module'] = 'admin';
+            if ($value['pid'] > 0 || $value['pid']!=='0') {
+                $temp['type'] = AuthRule::RULE_URL;
+            } else {
+                $temp['type'] = AuthRule::RULE_MAIN;
+            }
+            $temp['status'] = 1;
+            $data[strtolower($temp['name'] . $temp['module'] . $temp['type'])] = $temp;//去除重复项
+        }
+
+        $update = [];//保存需要更新的节点
+        $ids = [];//保存需要删除的节点的id
+        foreach ($rules as $index => $rule) {
+            $key = strtolower($rule['name'] . $rule['module'] . $rule['type']);
+            if (isset($data[$key])) {//如果数据库中的规则与配置的节点匹配,说明是需要更新的节点
+                $data[$key]['id'] = $rule['id'];//为需要更新的节点补充id值
+                $update[] = $data[$key];
+                unset($data[$key]);
+                unset($rules[$index]);
+                unset($rule['condition']);
+                $diff[$rule['id']] = $rule;
+            } elseif ($rule['status'] == 1) {
+                $ids[] = $rule['id'];
+            }
+        }
+        if (count($update)) {
+            foreach ($update as $k => $row) {
+                if ($row != $diff[$row['id']]) {
+                    $AuthRule->where(['id' => $row['id']])->update($row);
+                }
+            }
+        }
+        if (count($ids)) {
+            $AuthRule->where(['id' => ['IN', implode(',', $ids)]])->update(['status' => -1]);
+            //删除规则是否需要从每个用户组的访问授权表中移除该规则?
+        }
+        if (count($data)) {
+            $AuthRule->insertAll(array_values($data));
+        }
+        return true;
+    }
+
+
+    /**
+     * 返回后台节点数据
+     * @param boolean $tree 是否返回多维数组结构(生成菜单时用到),为false返回一维数组(生成权限节点时用到)
+     * @retrun array
+     *
+     * 注意,返回的主菜单节点数组中有'controller'元素,以供区分子节点和主节点
+     *
+     * @author 朱亚杰 <xcoolcc@gmail.com>
+     */
+    protected function returnNodes($tree = true)
+    {
+        static $tree_nodes = array();
+        if ($tree && !empty($tree_nodes[(int)$tree])) {
+            return $tree_nodes[$tree];
+        }
+        if ($tree) {
+            $list = Db::name('Menu')->field('id,pid,title,url,tip,hide,module')->order('sort asc')->select();
+            foreach ($list as &$value) {
+                $value = $this->check_url_re($value);
+                unset($value['module']);
+            }
+            unset($value);
+            //由于menu表id更改为字符串格式，root必须设置成字符串0
+            $nodes = list_to_tree($list, $pk = 'id', $pid = 'pid', $child = 'operator', $root = '0');
+
+            foreach ($nodes as $key => $value) {
+                if (!empty($value['operator'])) {
+                    $nodes[$key]['child'] = $value['operator'];
+                    unset($nodes[$key]['operator']);
+                }
+            }
+
+        } else {
+            $nodes = Db::name('Menu')->field('title,url,tip,pid,module')->order('sort asc')->select();
+            foreach ($nodes as &$value) {
+                $value = $this->check_url_re($value);
+                unset($value['module']);
+            }
+            unset($value);
+        }
+
+        $tree_nodes[(int)$tree] = $nodes;
+        return $nodes;
+    }
+
+    public function check_url_re( $value = array() ){
+
+        if(empty($value['module']) || $value['module'] == ''){
+            if (stripos($value['url'], request()->module()) !== 0) {
+                $value['url'] = request()->module() . '/' . $value['url'];
+            }
+        }
+
+        return $value;
+    }
+
 }
