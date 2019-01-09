@@ -281,7 +281,7 @@ class Adv extends Admin
                 ->keyCreateTime()
                 ->keyStatus();
         $builder->keyLink('', '预览', 'adv_info?id=###');
-        $builder->keyDoActionEdit("editAdv?id=###", '编辑', $title = '操作');
+        $builder->keyDoActionEdit("editAdv?id=###", '编辑');
         $builder->data($data);     
         
         $builder->display();
