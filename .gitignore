@@ -65,3 +65,4 @@ package-lock.json
 /data/*
 /*.lock
 !.gitkeep
+public/schedule_1.txt
