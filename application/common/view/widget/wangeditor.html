@@ -44,12 +44,14 @@
         var editor = new E('#toolbar_{$id}','#editarea_{$id}');
         // 或者 var editor = new E( document.getElementById('editor') )
         var $text1 = $('#wangeditor_{$id}')
+
         editor.customConfig.onchange = function (html) {
             // 监控变化，同步更新到 textarea
             $text1.val(html)
         }
         //上传图片
         editor.customConfig.uploadImgServer = '{:Url("api/File/uploadPicture")}'  // 上传图片到服务器
+        editor.customConfig.zIndex = 100
         editor.customConfig.uploadImgHooks = {
         customInsert: function (insertImg, result, editor) {
                 // result 必须是一个 JSON 格式字符串！！！否则报错
