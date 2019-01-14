@@ -37,6 +37,7 @@ return array(
     '_EDIT_' => '编辑',
     '_ADD_' => '新增',
     '_ADD__2' => '添加',
+    '_DELETE_' => '删除',
     '_FAIL_' => '失败！',
     '_SORT_' => '排序',
     '_RECOMMEND_' => '推荐',
@@ -232,7 +233,7 @@ return array(
     '_FAIL_UPLOAD_' => '上传失败',
     '_ERROR_UPLOAD_' => '上传出错',
 
-    /*core*/
+    /*api*/
     '_SUCCESS_UPLOAD_' => '上传成功',
     '_ERROR_PARAM_' => '参数错误',
     '_DOCUMENT_ID_INEXISTENT_' => '不存在的文档ID',
@@ -258,28 +259,11 @@ return array(
     '_GROUP_MANAGED_' => '我管理的群组',
     '_LZ_' => '楼主',
     '_PUBLISH_AT_' => '发表于',
-    '_DELETE_' => '删除',
     '_PUBLISH_TIME_' => '发表时间',
     '_REPLY_NEWEST_' => '最新回复',
     '_AUTHOR_' => '作者',
     '_PEER_VIEW_' => '人浏览',
     '_PEER_REPLY_' => '人回复',
-
-    //WEIBO
-    '_NEWEST_WEIBO_' => '最新微博',
-    '_FROM_' => '来自',
-    '_WEBSITE_SIDE_' => '网站端',
-    '_HOT_WEIBO_' => '热门微博',
-    '_EMPTY_NOW_' => '暂无内容',
-    '_SHARE_TO_WEIBO_' => '分享至微博',
-    '_PLACE_HOLDER_WRITE_SOMETHING_' => '写点什么吧',
-    '_PUBLISH_CTRL_CENTER_' => '发表 Ctrl+Enter',
-    '_COMMENTS_' => '评论',
-    '_PLACE_HOLDER_SAY_SOMETHING_' => '说点什么吧',
-    '_COMMENTS_CTRL_ENTER_' => '评论 Ctrl+Enter',
-    '_REPLY_VIEW_MORE_' => '查看更多回复',
-    '_REPOST_' => '转发',
-    '_COMMENT_' => '评论',
 
     //ucenter
     '_FOLLOWERS_' => '关注',
