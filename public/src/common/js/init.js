@@ -28,6 +28,27 @@ $(function () {
         });
     });
 
+    $(document).on('click', '.ajax-get', function (e) {
+        //取消默认动作，防止跳转页面
+        e.preventDefault();
+        //获取参数（属性）
+        var url = $(this).attr('href');
+        var confirmText = $(this).attr('data-confirm');
+
+        //如果需要的话，发出确认提示信息
+        if (confirmText) {
+            var result = confirm(confirmText);
+            if (!result) {
+                return false;
+            }
+        }
+
+        //发送AJAX请求
+        $.get(url, function (a, b, c) {
+            handleAjax(a);
+        });
+    });
+
     /**
      * ajax-form
      * 通过ajax提交表单，通过oneplus提示消息
