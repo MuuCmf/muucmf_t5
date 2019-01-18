@@ -693,11 +693,10 @@ class AdminConfigBuilder extends AdminBuilder
         return $this;
     }
 
-    public function keyUserDefined($name,$title,$subtitle,$display='',$param=''){
+    public function keyUserDefined($name,$title,$subtitle,$html='',$param=''){
         $this->assign('param',$param);
         $this->assign('name',$name);
-        $html = $this->fetch($display);
-
+        //$html = $this->fetch($display);
         $key = array('name'=>$name, 'title' => $title, 'subtitle' => $subtitle, 'type' => 'userDefined', 'definedHtml' => $html);
         $this->_keyList[] = $key;
         return $this;
