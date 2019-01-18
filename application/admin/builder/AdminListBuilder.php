@@ -523,7 +523,7 @@ class AdminListBuilder extends AdminBuilder
      */
     public function keyDoActionAjax($getUrl, $text = 'Ajax', $class = 'btn-primary' ,$hide=[])
     {
-        return $this->keyDoAction($getUrl, $text, '操作', 'ajax-get'.$class, $hide);
+        return $this->keyDoAction($getUrl, $text, '操作', 'ajax-get '. $class, $hide);
     }
     /**
      * 编辑操作
