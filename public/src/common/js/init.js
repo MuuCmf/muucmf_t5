@@ -57,7 +57,15 @@ $(function () {
     $(document).on('submit', 'form.ajax-form', function (e) {
         //取消默认动作，防止表单两次提交
         e.preventDefault();
+        var confirmText = $(this).attr('data-confirm');
 
+        //如果需要的话，发出确认提示信息
+        if (confirmText) {
+            var result = confirm(confirmText);
+            if (!result) {
+                return false;
+            }
+        }
         //禁用提交按钮，防止重复提交
         var form = $(this);
         $('[type=submit]', form).addClass('disabled');
