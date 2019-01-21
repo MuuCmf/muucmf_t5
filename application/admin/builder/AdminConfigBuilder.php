@@ -226,7 +226,7 @@ class AdminConfigBuilder extends AdminBuilder
 
     public function keyBool($name, $title, $subtitle = null)
     {
-        $map = array(1 => lang('_YES_'), 0 => lang('_NO_'));
+        $map = array(1 => lang('_YES_'), 0 => lang('_NOT_'));
         return $this->keyRadio($name, $title, $subtitle, $map);
     }
 
