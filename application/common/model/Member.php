@@ -206,10 +206,10 @@ class Member extends Model
             $token = $user1['token'];
             if ($user1 == null) {
                 $token = build_auth_key();
-                $data['token'] = $token;
-                $data['time'] = time();
-                $data['uid'] = $user['uid'];
-                Db::name('user_token')->insert($data);
+                $data_token['token'] = $token;
+                $data_token['time'] = time();
+                $data_token['uid'] = $user['uid'];
+                Db::name('user_token')->insert($data_token);
             }
         }
 
