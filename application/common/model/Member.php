@@ -286,7 +286,7 @@ class Member extends Model
         	if($cookie){
         		$cookie = explode(".", $this->jiemi($cookie));
 	        	$map['uid'] = $cookie[1];
-		        $user = model('user_token')->where($map)->find();
+		        $user = Db::name('user_token')->where($map)->find();
 		        $cookie_uid = ($cookie[0] != $this->change()) || ($cookie[2] != $user['token']) ? false : $cookie[1];
 		        $cookie_uid = $user['time'] - time() >= 3600 * 24 * 7 ? false : $cookie_uid;//过期时间7天
         	}
