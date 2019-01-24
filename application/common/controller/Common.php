@@ -24,14 +24,14 @@ class Common extends Controller
  		$this->initLogo();
         //获取前端导航菜单
         $this->initNav();
-        //获取用户基本资料
-		$this->initUserBaseInfo();
 		//获取用户菜单
 		$this->initUserNav();
         //用户登录、注册
         $this->initRegAndLogin();
         //记住登陆
         $this->initRembemberLogin();
+        //获取用户基本资料
+        $this->initUserBaseInfo();
     }
 
     /**
