@@ -6,11 +6,8 @@ use think\Controller;
 //用户消息
 class Message extends Controller{
 
-    public function render($data='')
+    public function render()
     {
-        if(!is_login()){
-            return '';
-        }
         return $this->fetch('common@widget/message');
     }
 
