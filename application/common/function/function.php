@@ -208,7 +208,7 @@ if (!function_exists('think_encrypt')) {
      */
     function think_encrypt($data, $key = '', $expire = 0)
     {
-        $key = md5(empty($key) ? C('DATA_AUTH_KEY') : $key);
+        $key = md5(empty($key) ? cache('DATA_AUTH_KEY') : $key);
         $data = base64_encode($data);
         $x = 0;
         $len = strlen($data);
@@ -241,7 +241,7 @@ if (!function_exists('think_decrypt')) {
      */
     function think_decrypt($data, $key = '')
     {
-        $key = md5(empty($key) ? C('DATA_AUTH_KEY') : $key);
+        $key = md5(empty($key) ? cache('DATA_AUTH_KEY') : $key);
         $data = str_replace(array('-', '_'), array('+', '/'), $data);
         $mod4 = strlen($data) % 4;
         if ($mod4) {

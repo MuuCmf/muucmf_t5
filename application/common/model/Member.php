@@ -655,7 +655,7 @@ class Member extends Model
     {
         switch ($code) {
             case -1:
-                $error = lang('_USER_NAME_MUST_BE_IN_LENGTH_').modC('USERNAME_MIN_LENGTH',2,'USERCONFIG').'-'.modC('USERNAME_MAX_LENGTH',32,'USERCONFIG').lang('_ERROR_LENGTH_2_').lang('_EXCLAMATION_'); //用户名长度不符
+                $error = lang('_USER_NAME_MUST_BE_IN_LENGTH_').modC('USERNAME_MIN_LENGTH',2,'USERCONFIG').'-'.modC('USERNAME_MAX_LENGTH',32,'USERCONFIG').lang('_BETWEEN_CHARACTERS_WITH_EXCLAMATION_'); //用户名长度不符
                 break;
             case -2:
                 $error = lang('_ERROR_USERNAME_FORBIDDEN_').lang('_EXCLAMATION_'); //用户名被禁止注册

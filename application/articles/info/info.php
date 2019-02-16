@@ -17,9 +17,9 @@ return [
     //开发者网站
     'website' => 'http://www.muucmf.com',
     //前台入口，可用Url函数
-    'entry' => 'index/articles/index',
+    'entry' => 'articles/Index/index',
     //后台入口
-    'admin_entry' => 'admin/articles/index',
+    'admin_entry' => 'articles/Admin/index',
     //图标 兼容fa图标库
     'icon' => 'home',
 ];

@@ -15,11 +15,11 @@ return [
 
     'file' => [
         //文件保存格式
-        'savepath'   => '/uploads/{year}{mon}{day}/{filemd5}{.suffix}',
+        'savepath'   => ROOT_PATH . 'public' . DS . 'uploads'  . DS . 'file',
         //最大可上传大小
-        'maxsize'   => 50*1024*1024,
+        'maxsize'   => 1024*1024*1024,
         //可上传的文件类型
-        'mimetype'  => 'zip,rar,xls,xlsx,doc,docx,pdf',
+        'mimetype'  => 'zip,rar,xls,xlsx,doc,docx,pdf,mp3,mp4,mpge,avi',
     ],
     
 ];

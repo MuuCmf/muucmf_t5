@@ -538,24 +538,24 @@
                class="text input-large form-control" style="width: 400px;display:inline-block;"/>
         <input class="btn" style="margin-left:10px" type="button" value={:lang("_CHOICE_WITH_DOUBLE_")} onclick="openwin('{$field.opt}','600','500')">
         <script type="text/javascript">
-            //弹出窗口
-            function openwin(url,width,height){
-                var l=window.screen.width ;
-                var w= window.screen.height;
-                var al=(l-width)/2;
-                var aw=(w-height)/2;
-                var OpenWindow=window.open(url,{:lang("_POP_UP_WINDOW_WITH_DOUBLE_")},"toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,width="+width+",height="+height+",top="+aw+",left="+al+"");
-                OpenWindow.focus();
-            if(OpenWindow!=null){ //弹出窗口关闭事件
-            //if(window.attachEvent) OpenWindow.attachEvent("onbeforeunload",   quickOut);
-            if(window.attachEvent) OpenWindow.attachEvent("onunload",   quickOut);
-            }
-            }
-            //关闭触发方法
-            function quickOut()
-            {
-            alert({:lang("_THE_WINDOW_IS_CLOSED_WITH_DOUBLE_")});
-            }
+        	//弹出窗口
+        	function openwin(url,width,height){
+        	    var l=window.screen.width ;
+        	    var w= window.screen.height;
+        	    var al=(l-width)/2;
+        	    var aw=(w-height)/2;
+        	    var OpenWindow=window.open(url,{:lang("_POP_UP_WINDOW_WITH_DOUBLE_")},"toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,width="+width+",height="+height+",top="+aw+",left="+al+"");
+        	    OpenWindow.focus();
+        	if(OpenWindow!=null){ //弹出窗口关闭事件
+        	//if(window.attachEvent) OpenWindow.attachEvent("onbeforeunload",   quickOut);
+        	if(window.attachEvent) OpenWindow.attachEvent("onunload",   quickOut);
+        	}
+        	}
+        	//关闭触发方法
+        	function quickOut()
+        	{
+        	alert({:lang("_THE_WINDOW_IS_CLOSED_WITH_DOUBLE_")});
+        	}
         </script>
     {/case}
     <!-- 弹出窗口选择并返回值（目前只支持返回ID）结束 -->
