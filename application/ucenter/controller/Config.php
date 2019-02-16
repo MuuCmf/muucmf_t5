@@ -812,7 +812,7 @@ class Config extends Base
      */
     public function changeAccount()
     {
-        $aTag = input('get.tag', '', 'text');
+        $aTag = input('tag', '', 'text');
         $aTag = $aTag == 'mobile' ? 'mobile' : 'email';
         $this->assign('cName', $aTag == 'mobile' ? lang('_PHONE_') : lang('_EMAIL_'));
         $this->assign('type', $aTag);
@@ -852,7 +852,7 @@ class Config extends Base
     }
 
     /**
-     * checkVerify  验证验证码
+     * checkVerify  验证验证码并修改数据
      */
     public function checkVerify()
     {
@@ -870,8 +870,8 @@ class Config extends Base
         if (!$res) {
             $this->error(lang('_FAIL_VERIFY_'));
         }
-        Db::name('ucenterMember')->where(['id' => $aUid])->save(array($aType => $aAccount));
-        $this->success(lang('_SUCCESS_VERIFY_'), U('ucenter/config/index'));
+        Db::name('ucenterMember')->where(['id' => $aUid])->save([$aType => $aAccount]);
+        $this->success(lang('_SUCCESS_VERIFY_'), url('ucenter/config/index'));
 
     }
 

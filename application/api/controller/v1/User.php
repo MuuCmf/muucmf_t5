@@ -42,25 +42,173 @@ class User extends Base
      */
     public function save()
     {
-        
+        //根据action 参数判断操作类型
         $action = input('action','save','text');
         switch($action){
-            case 'save':
+            case 'save'://修改用户基本信息
                 //需要登陆
                 if(!$this->needLogin()){
                     return $this->sendError('Need login');
                 }
-                echo 'save';
-                //dump($this->request);
-                dump($this->clientInfo);
+                $uid = get_uid();
+                $mobile = input('mobile',0,'intval');//手机号
+                $email = input('email','','text');//EMAIL
+                $verify = input('verify',0,'intval');//验证码
+                $nickname = input('nickname','','text');//昵称
+                $sex = input('sex','','intval');//性别
+                $signature = input('signature','','text');//签名
+                $community = input('post.community', 0, 'intval');
+                $district = input('post.district', 0, 'intval');
+                $city = input('post.city', 0, 'intval');
+                $province = input('post.province', 0, 'intval');
+                
+                if($uid){
+                    if($mobile && $mobile!=0) {
+                        $time = time();
+                        $resend_time =  modC('SMS_RESEND','60','USERCONFIG');
+                        if($time > session('verify_time')+$resend_time ){//验证码超时
+                            return $this->sendError('验证码超时');
+                        }
+                        $ret = model('Verify')->checkVerify($moblie,'mobile',$verify,$uid);
+                        if(!$ret){//验证码错误
+                            return $this->sendError('验证码错误');
+                        }
+                        $udata['mobile'] = $mobile;
+                    }
+
+                    if($email){
+                        $ret = model('Verify')->checkVerify($email,'email',$verify,$uid);
+                        if($ret){
+                            $udata['email'] = $email;
+                        }else{
+                            return $this->sendError('邮箱和验证不匹配');
+                        }
+                    }
+                    
+                    if($nickname){
+                        $mdata['nickname'] = $nickname;
+                    }
+                    if($sex==1 || $sex==2 || $sex==0){
+                        $mdata['sex'] = $sex;
+                    }
+                    if($signature){
+                        $mdata['signature'] = $signature;
+                    }
+                    /*用户地区*/
+                    if($community){
+                        $mdata['community'] = $community;
+                    }
+                    if($district){
+                        $mdata['district'] = $district;
+                    }
+                    if($city){
+                        $mdata['city'] = $city;
+                    }
+                    if($province){
+                        $mdata['province'] = $province;
+                    }
+                    /*用户地区END*/
+
+                    //更新数据
+                    if(isset($mdata)){
+                        model("common/Member")->save($mdata,['uid'=>$uid]);
+                    }
+                    if(isset($udata)){
+                        model('ucenter/UcenterMember')->save($udata,['uid'=>$uid]);
+                    }
+                    
+                    //清理用户缓存
+                    clean_query_user_cache($uid,['nickname','mobile','email','sex','signature']);
+                    
+                    return $this->sendSuccess('更新完成');
+                }
             break;
 
-            case 'login':
+            case 'register'://用户注册
+                //获取参数
+                $email = input('post.email','','text');
+                $mobile = input('post.mobile','','text');
+                $aRegType = input('post.reg_type', 'mobile', 'text');//注册类型，email mobile
+                $aNickname = input('post.nickname', '', 'text');
+                $aPassword = input('post.password', '', 'text');
+                $aRegVerify = input('post.reg_verify', '', 'text');
+                $aRole = input('post.role', 1, 'intval'); //初始角色
+
+                if($aRegType == 'email'){
+                    $aUsername = $username = $email;
+                }
+                if($aRegType == 'mobile'){
+                    $aUsername = $username = $mobile;
+                }
+                if(empty($aNickname)){ //昵称为空，昵称等于注册的手机或邮箱
+                    $aNickname = $aUsername;
+                }
+                
+                //注册开关关闭，直接返回错误
+                if (!modC('REG_SWITCH', '', 'USERCONFIG')) {
+                    return $this->sendError(lang('_ERROR_REGISTER_CLOSED_'));
+                }
+
+                //注册用户
+                $return = check_action_limit('reg', 'ucenter_member', 1, 1, true);
+                if ($return && !$return['state']) {
+                    return $this->sendError($return['info']);
+                }
+                if (!$aRole) {
+                    return $this->sendError(lang('_ERROR_ROLE_SELECT_').lang('_PERIOD_'));
+                }
+                //手机或邮箱的验证
+                if (($aRegType == 'mobile' && modC('MOBILE_VERIFY_TYPE', 0, 'USERCONFIG') == 1) || (modC('EMAIL_VERIFY_TYPE', 0, 'USERCONFIG') == 2 && $aRegType == 'email')) {
+                    if (!model('Verify')->checkVerify($aUsername, $aRegType, $aRegVerify, 0)) {
+                        $str = $aRegType == 'mobile' ? lang('_PHONE_') : lang('_EMAIL_');
+                        return $this->sendError($aRegType.'验证失败');
+                    }
+                }
+
+                $aUnType = 0;
+                //获取注册类型
+                check_username($aUsername, $email, $mobile, $aUnType);
+                if ($aRegType == 'email' && $aUnType != 2) {
+                    return $this->sendError(lang('_ERROR_EMAIL_FORMAT_'));
+                }
+                if ($aRegType == 'mobile' && $aUnType != 3) {
+                    return $this->sendError(lang('_ERROR_PHONE_FORMAT_'));
+                }
+                if ($aRegType == 'username' && $aUnType != 1) {
+                    return $this->sendError(lang('_ERROR_USERNAME_FORMAT_'));
+                }
+                if (!check_reg_type($aUnType)) {
+                    return $this->sendError(lang('_ERROR_REGISTER_NOT_OPENED_'));
+                }
+
+                /* 注册用户 */
+                $error_code = $uid = model('ucenter/UcenterMember')->register($aUsername, $aNickname, $aPassword, $email, $mobile, $aUnType);
+                
+                if (0 < $uid) { //注册成功
+                    model('ucenter/UcenterMember')->initRoleUser($aRole, $uid); //初始化角色用户
+                    $uid = model('ucenter/UcenterMember')->login($username, $aPassword, $aUnType); //通过账号密码取到uid
+                    
+                    $rs = $this->userModel->login($uid, 1, $aRole); //登陆
+                    if($rs){//注册成功并登陆成功后返回的数据
+                        $user_info = query_user(['uid','nickname','avatar32','avatar64','avatar128','mobile','email','title'], $uid);
+                        //组装返回的数据
+                        $user_info['token'] = $this->getToken($uid);
+                        return $this->sendSuccess('success',$user_info);
+                    }else{//注册成功未登陆成功返回的数据
+                        return $this->sendSuccess('success');
+                    }
+                    
+                } else { //注册失败，显示错误信息
+                    return $this->sendError($this->showRegError($error_code));
+                }
+  
+            break;
+
+            case 'login'://用户登陆
                 $aUsername = $username = input('post.account', '', 'text');
                 $aPassword = input('post.password', '', 'text');
                 check_username($aUsername, $email, $mobile, $aUnType);
 
-                //dump(input(''));exit;
                 //根据用户账号密码获取用户ID或返回错误码
                 $code = $uid = model('ucenter/UcenterMember')->login($username, $aPassword, $aUnType);
                 
@@ -69,20 +217,127 @@ class User extends Base
                     $rs = model('common/Member')->login($uid, 1); //登陆
                     if ($rs) {
                         $token = $this->getToken($uid);
-                        $user_info = query_user(array('uid','nickname','sex','avatar32','mobile','email','title','last_login_ip','last_login_time',), $uid);
-                        $result['msg'] = '登陆成功';
-                        $result['token']=$token; //用户持久登录token
-                        $result['data'] = $user_info;
+                        $user_info = query_user(['uid','nickname','sex','avatar32','mobile','email','title','last_login_ip','last_login_time'], $uid);
+                        $user_info['token'] = $token;//用户持久登录token
+
+                        return $this->sendSuccess('success',$user_info);
                     }
                 }else{
                     $msg = model('common/Member')->showRegError($code);
                     return $this->sendError($msg);
                 }
-                //判断是否登陆成功
-                return $this->sendSuccess('success',$result);
+                
             break;
-        }
-        
+
+            case 'quicklogin'://通过手机号和验证码快速登陆
+                $mobile = input('post.mobile','','text');
+                $verify = input('post.verify','','text');//接收到的验证码
+
+                //检查验证码是否正确
+                $ret = model('Verify')->checkVerify($mobile,'mobile',$verify,0);
+                if(!$ret){//验证码错误
+                    return $this->sendError($aRegType.'验证失败');
+                }
+                $resend_time =  modC('SMS_RESEND','60','USERCONFIG');
+                if(time() > session('verify_time')+$resend_time ){//验证超时
+                    return $this->sendError($aRegType.'验证超时');
+                }
+                
+                //验证通过后获取用户UID
+                $uid = model('UcenterMember')->where(['mobile' => $mobile])->column('id');
+                //根据ID登陆用户
+                $rs = model('Member')->login($uid, 1); //登陆
+                //判断是否登陆成功
+                if ($rs) {
+                    $token = $this->getToken($uid);
+
+                    $user_info = query_user(['uid','nickname','sex','avatar32','mobile','email','title','last_login_ip','last_login_time'], $uid);
+                    $user_info['token'] = $token;
+                    return $this->sendSuccess('success',$user_info);
+                }
+
+                return $this->sendError('login error');
+
+            break;
+
+            case 'change_password'://修改密码
+
+                //需要登陆
+                if(!$this->needLogin()){
+                    return $this->sendError('Need login');
+                }
+
+                $old_password = input('post.old_password','','text');
+                $new_password = input('post.new_password','','text');
+                $confirm_password = input('post.confirm_password','','text');
+
+                if($old_password && $new_password){
+                    //检查旧密码是否正确
+                    $ret = model('ucenter/UcenterMember')->verifyUser(get_uid(),$old_password);
+                    if($ret){
+                        //重置用户密码
+                        $rs =  model('ucenter/UcenterMember')->changePassword($old_password, $new_password, $confirm_password);
+
+                        if($rs === true){
+                            return $this->sendSuccess('密码修改成功');
+                        }
+                    }else{
+                        return $this->sendError('旧密码错误');
+                    }
+                }
+                return $this->sendError('change password error');
+
+            break;
+
+            case 'find_password'://通过手机或邮箱找回密码
+
+                $account = input('post.account','','text');
+                $type = input('post.type','','text');
+                $verify = input('post.verify','','text');//接收到的验证码
+                $password = input('post.password','','text');//新密码设置
+                
+                //检查验证码是否正确
+                $ret = model('Verify')->checkVerify($account,$type,$verify,0);
+                if(!$ret){//验证码错误
+                    return $this->sendError('验证失败');
+                }
+                $resend_time =  modC('SMS_RESEND','60','USERCONFIG');
+                if(time() > session('verify_time') + $resend_time ){//验证超时
+                    return $this->sendError('验证超时');
+                }
+                //获取用户UID
+                switch ($type) {
+                    case 'mobile':
+                    $uid = model('ucenter/UcenterMember')->where(['mobile' => $account])->column('id');
+                    break;
+                    case 'email':
+                    $uid = model('ucenter/UcenterMember')->where(['email' => $account])->column('id');
+                    break;
+                }
+                //设置新密码
+                $password = user_md5($password, config('database.auth_key'));
+                $data['id'] = $uid;
+                $data['password'] = $password;
+                
+                $ret = model('UcenterMember')->save($data,['uid'=>$uid]);
+                if($ret){
+                    //返回成功信息前处理
+                    clean_query_user_cache($uid, 'password');//删除缓存
+                    Db::name('user_token')->where('uid=' . $uid)->delete();
+                    //返回数据
+                    return $this->sendSuccess('密码修改成功');
+                }
+                return $this->sendError('error');
+
+            break;
+
+            case 'logout'://退出登录
+                model('Member')->logout();
+                
+                return $this->sendSuccess('success');
+                
+            break;
+        } 
     }
 
     /**

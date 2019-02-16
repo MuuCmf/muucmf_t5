@@ -58,7 +58,7 @@ class UcenterMember extends Model
             
             if ($uid > 0) {
                 $usercenter_member = $data;
-                $usercenter_member['password'] = user_md5($usercenter_member['password'],Config('database.auth_key'));
+                $usercenter_member['password'] = user_md5($usercenter_member['password'],config('database.auth_key'));
                 $usercenter_member['id'] = $uid;
                 $usercenter_member['status'] = 1;
                 //写ucenter_member表
