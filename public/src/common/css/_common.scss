@@ -460,12 +460,14 @@ nav.navbar.bootsnav.no-background {
 }
 nav.navbar.bootsnav .navbar-brand {
     float: left;
-    padding:0;
+    padding:4px 0;
     height:58px;
 }
 nav.navbar.bootsnav .navbar-brand img{
     width:auto;
     display: inline-block;
+    height:50px;
+    width:auto;
   }
 @media (max-width: 992px){
   nav.navbar.bootsnav .navbar-brand {
