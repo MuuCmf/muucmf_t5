@@ -57,22 +57,23 @@ class Upload extends Model
                     $data['path'] = str_replace("\\","/",$data['path']);
                     $data['md5'] = $info->md5();
                     $data['sha1'] = $info->sha1();
-                    $data['create_time'] = time();
-                    $data['status'] = 1;
-                    $data['driver'] = $driver;
-
                 }else{
                     $this->error = $file->getError();
                     return false;
                 }
             }else{
-                //获取驱动配置
-                $uploadConfig = get_upload_config($driver);
-                //文件本地路径
-                $filePath = $file->getRealPath();
+                $data['md5'] = $file->hash('md5');
+                $data['sha1'] = $file->hash('sha1');
+
+                //调用驱动上传数据
+                $res = $this->uploadDriver($driver,$file);
+                $data['path'] = $res['savepath'];
             }
 
             //写入数据库
+            $data['create_time'] = time();
+            $data['driver'] = $driver;
+            $data['status'] = 1;
             $id = Db::name('Picture')->insertGetId($data);
             if($id){
                 $data['id'] = $id;
@@ -95,7 +96,7 @@ class Upload extends Model
 	        }
             //判断是否已经存在附件
             $sha1 = $file->hash();
-            //处理已存在图片
+            //处理已存在文件
             if($sha1){
                 $file_info = Db::name('File')->where(['sha1'=>$sha1])->find();
 
@@ -104,39 +105,47 @@ class Upload extends Model
                     continue;
                 }
             }
+            
             //获取上传驱动
             $driver = modC('DOWNLOAD_UPLOAD_DRIVER','local','config');
             $driver = check_driver_is_exist($driver);
-            //构建返回数据
-            $data['driver'] = $driver;
-
+            
             if($driver == 'local'){
                 $info = $file->validate(['size'=>$config['maxsize'],'ext'=>$config['mimetype']])->move($config['savepath']);
                 if($info){
                     // 成功上传后 获取上传信息
-                    $data['name'] = $info->getInfo()['name'];
-                    $data['mime'] = $info->getMime();
-                    $data['size'] = $info->getInfo()['size'];
                     $data['savepath'] = DS . 'uploads'  . DS . 'file'  . DS . $info->getSaveName();
                     $data['savepath'] = str_replace("\\","/",$data['savepath']);
                     $data['savename'] = str_replace("\\","/",$info->getSaveName());
-                    $data['ext'] = substr(strrchr($data['savename'], '.'), 1);
+                    $data['name'] = $info->getInfo()['name'];
+                    $data['mime'] = $info->getMime();
+                    $data['size'] = $info->getInfo()['size'];
                     $data['md5'] = $info->md5();
                     $data['sha1'] = $info->sha1();
-                    $data['create_time'] = time();
+                    $data['ext'] = substr(strrchr($data['savename'], '.'), 1);
 
                 }else{
                     $this->error = $file->getError();
                     return false;
                 }
             }else{
-                //获取驱动配置
-                $uploadConfig = get_upload_config($driver);
-                //文件本地路径
-                $filePath = $file->getRealPath();
+                //构建返回数据
+                $data['driver'] = $driver;
+                $data['name'] = $file->getInfo()['name'];
+                $data['mime'] = $file->getInfo()['type'];
+                $data['size'] = $file->getInfo()['size'];
+                $data['md5'] = $file->hash('md5');
+                $data['sha1'] = $file->hash('sha1');
+
+                //调用驱动上传数据
+                $res = $this->uploadDriver($driver,$file);
+                $data['savepath'] = $res['savepath'];
+                $data['savename'] = $res['savename'];
+                $data['ext'] = substr(strrchr($data['savename'], '.'), 1);
             }
 
             //写入数据库
+            $data['create_time'] = time();
             $id = Db::name('file')->insertGetId($data);
             if($id){
                 $data['id'] = $id;
@@ -228,7 +237,26 @@ class Upload extends Model
             } else {
                 return false;
             }
-
         }
     }
+
+    /**
+     * 通过驱动上传
+     */
+    public function uploadDriver($driver,$file)
+    {
+        //使用云存储
+        $name = get_addon_class($driver);
+        if (class_exists($name)) {
+            $class = new $name();
+
+
+            if (method_exists($class, $driver)) {
+                $path = $class->$driver($file);
+                return $path;
+            }
+        }
+    }
+
+    
 }

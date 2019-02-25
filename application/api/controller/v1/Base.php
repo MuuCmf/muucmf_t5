@@ -31,6 +31,8 @@ class Base extends Api
             if ($uid) {
                 return $uid;
             }
+        }else{
+            return _need_login();
         }
 
         return false;

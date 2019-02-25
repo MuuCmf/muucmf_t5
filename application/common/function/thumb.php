@@ -122,11 +122,11 @@ function getThumbImageById($cover_id, $width = 100, $height = 'auto', $type = 0,
         return get_pic_src($attach['src']);
     } else {
         $new_img = $picture['path'];
-        $name = get_addon_class($picture['type']);
+        $name = get_addon_class($picture['driver']);
         if (class_exists($name)) {
             $class = new $name();
             if (method_exists($class, 'thumb')) {
-                $new_img = $class->thumb($picture['path'], $width, $height, $type, $replace);
+                $new_img = $class->thumb($picture['path'], $width, $height);
             }
         }
 

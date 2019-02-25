@@ -124,15 +124,21 @@ class Action extends Model
 	            $log['model'] = $model;
 	            $log['time'] = time();
 	            $log['data'] = ['user' => $user_id, 'model' => $model, 'record' => $record_id, 'time' => time()];
-	            foreach ($match[1] as $value) {
-	                $param = explode('|', $value);
-	                if (isset($param[1])) {
-	                    $replace[] = call_user_func($param[1], $log[$param[0]]);
-	                } else {
-	                    $replace[] = $log[$param[0]];
-	                }
+	            
+	            /*
+	            if(isset($match[1])){
+	            	foreach ($match[1] as $value) {
+		                $param = explode('|', $value);
+		                if (isset($param[1])) {
+		                    $replace[] = call_user_func($param[1], $log[$param[0]]);
+		                } else {
+		                    $replace[] = $log[$param[0]];
+		                }
+		            }
 	            }
+	            
 	            $data['remark'] = str_replace($match[0], $replace, $action_info['log']);
+	            */
 	        } else {
 	            $data['remark'] = $action_info['log'];
 	        }
@@ -194,6 +200,7 @@ class Action extends Model
 
 	    //解析规则:table:$table|field:$field|condition:$condition|rule:$rule[|cycle:$cycle|max:$max][;......]
 	    $rules = unserialize($info['rule']);
+
 	    foreach ($rules as $key => &$rule) {
 	        foreach ($rule as $k => &$v) {
 	            if (empty($v)) {
@@ -245,6 +252,9 @@ class Action extends Model
 	    $return = true;
 
 	    $action_log = Db::name('ActionLog')->where(['id' => $log_id])->find();
+
+	    /*
+	    //行为日志在微信登陆时报错，不知为个啥子~~~，先注释了
 	    foreach ($rules as $rule) {
 
 	        //检查执行周期
@@ -279,6 +289,7 @@ class Action extends Model
 		        $scoreModel->addScoreLog($user_id,$rule['field'],$action , substr($rule['rule'],1,strlen($rule['rule'])-1),$action_log['model'],$action_log['record_id'],$action_log['remark'].'【' . $sType['title'] . '：' . $rule['rule'] . $sType['unit'] . '】');
 	        }
 	    }
+	    */
 	    /* php7不支持exp表达式 暂取消
 	    if ($log_score) {
 	        cookie('score_tip', $log_score, 30);

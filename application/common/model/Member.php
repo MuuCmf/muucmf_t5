@@ -229,7 +229,6 @@ class Member extends Model
         session('_AUTH_LIST_' . get_uid() . '2', null);
         session('user_auth', null);
         session('user_auth_sign', null);
-
         cookie('MUU_LOGGED_USER', NULL);
     }
 
@@ -244,19 +243,6 @@ class Member extends Model
         if (!is_login()) {
             $this->rembember_login();
             //判断是否开启微信网页授权
-            if(modC('OPEN_WECHAT_AUTH',0,'userConfig')){
-                //判断浏览器类型
-                if(isWeixinBrowser()){
-                    //依赖微信基础模块；判断微信基础模块（微信公众号）模块是否安装，暂时只支持Weixin模块
-                    $needModule = model('Module')->checkInstalled('weixin');
-                    //如果微信浏览器
-                    if($needModule){
-                    //执行微信网页授权登陆
-                    $requer_url = urlencode(get_url());
-                    redirect(url('weixin/index/authorize_url').'&requer_url='.$requer_url);
-                    }
-                }
-            }
             return false;
         }else{
             return is_login();
@@ -605,31 +591,24 @@ class Member extends Model
      * @param $uid
      * @param $info
      * @return mixed
-     * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
+     * @author:大蒙 59262424@qq.com
      */
     public function addSyncData($uid, $info)
     {
         //去除特殊字符。
-        $data['nickname'] = preg_replace('/[^A-Za-z0-9_\x80-\xff\s\']/', '', $info['nick']);
+        $data['nickname'] = preg_replace('/[^A-Za-z0-9_\x80-\xff\s\']/', '', $info['nickname']);
         // 截取字数
         $data['nickname'] = mb_substr($data['nickname'], 0, 32, 'utf-8');
         // 为空则随机生成
         if (empty($data['nickname'])) {
             $data['nickname'] = $this->rand_nickname();
         } else {
-            if ($this->where(array('nickname' => $data['nickname']))->select()) {
+            if ($this->where(['nickname' => $data['nickname']])->count()) {
                 $data['nickname'] .= '_' . $uid;
             }
         }
-        $data['sex'] = $info['sex'];
-        $data = $this->validate(
-            array('signature', '0,100', -1, self::EXISTS_VALIDATE, 'length'),
-            /* 验证昵称 */
-            array('nickname', 'checkDenyNickname', -31, self::EXISTS_VALIDATE, 'callback'), //昵称禁止注册
-            array('nickname', 'checkNickname', -32, self::EXISTS_VALIDATE, 'callback'),
-            array('nickname', '', -30, self::EXISTS_VALIDATE, 'unique'))->create($data);
         $data['uid'] = $uid;
-        $res = $this->add($data);
+        $res = $this->save($data);
         return $res;
     }
     /**

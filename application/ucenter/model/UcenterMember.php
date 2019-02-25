@@ -301,7 +301,8 @@ class UcenterMember extends Model
         $data['username'] = $this->rand_username($prefix);
         $data['password'] = create_rand(10);
         $data['type'] = 1;  // 视作用用户名注册
-        $uid = $this->save($data);
+        $res = $this->save($data);
+        $uid = $this->id; //获取自增ID
         return $uid;
     }
 
