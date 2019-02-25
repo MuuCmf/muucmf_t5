@@ -298,7 +298,7 @@ class UcenterMember extends Model
      */
     public function addSyncData($prefix='')
     {
-        $data['username'] = $this->rand_username($prefix);
+        $data['username'] = rand_username($prefix);
         $data['password'] = create_rand(10);
         $data['type'] = 1;  // 视作用用户名注册
         $res = $this->save($data);
@@ -313,20 +313,6 @@ class UcenterMember extends Model
             $this->rand_email();
         } else {
             return $email;
-        }
-    }
-
-    /**随机生成一个用户名
-     * @param $prefix 前缀
-     * @return string
-     */
-    protected  function rand_username($prefix)
-    {
-        $username = $prefix.'_'.create_rand(10);
-        if ($this->where(array('username' => $username))->select()) {
-            $this->rand_username($prefix);
-        } else {
-            return $username;
         }
     }
 

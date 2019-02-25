@@ -162,7 +162,7 @@ class Member extends Model
         //记录行为
         model('action')->action_log('user_login', 'member', $uid, $uid);
         //挂载登录成功后钩子
-        hook('Login_after');
+        hook('login_after',['uid'=>$uid]);
         return true;
     }
 
@@ -601,7 +601,7 @@ class Member extends Model
         $data['nickname'] = mb_substr($data['nickname'], 0, 32, 'utf-8');
         // 为空则随机生成
         if (empty($data['nickname'])) {
-            $data['nickname'] = $this->rand_nickname();
+            $data['nickname'] = rand_nickname();
         } else {
             if ($this->where(['nickname' => $data['nickname']])->count()) {
                 $data['nickname'] .= '_' . $uid;
@@ -611,20 +611,7 @@ class Member extends Model
         $res = $this->save($data);
         return $res;
     }
-    /**
-     * 随机生成一个昵称
-     * @return [type] [description]
-     */
-    private function rand_nickname()
-    {
-        $nickname = create_rand(4);
-        if ($this->where(['nickname' => $nickname])->select()) {
-            $this->rand_nickname();
-        } else {
-            return $nickname;
-        }
-    }
-
+    
     /**
      * 获取用户注册及更改信息的错误信息
      * @param  integer $code 错误编码
