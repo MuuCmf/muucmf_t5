@@ -229,7 +229,7 @@ class Message extends Admin
             $aRole = input('get.role', 0, 'intval');
             if (empty($aUids)) {
                 $role = model('role')->selectByMap(array('status' => 1));
-                $roles = array();
+                $roles = [];
                 foreach ($role as $key => $v) {
                     array_push($roles, array('id' => $v['id'], 'value' => $v['title']));
                 }
