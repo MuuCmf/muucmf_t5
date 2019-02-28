@@ -91,28 +91,26 @@ class Menu extends Admin {
     public function edit($id = ''){
         
         if(request()->isPost()){
-            $Menu = Db::name('Menu');
             $data = input('');
             $this->checkData($data);
-            if($data['id']){
-                if($Menu->where(['id'=>$id])->update($data)!== false){
-                    //记录行为
-                    action_log('update_menu', 'Menu', $data['id'], is_login());
-                    $this->success(lang('_SUCCESS_UPDATE_'), Cookie('__forward__'));
-                } else {
-                    $this->error(lang('_FAIL_UPDATE_'));
-                }
+            $res = model('admin/Menu')->editData($data);
+            if($res){
+                //记录行为
+                action_log('update_menu', 'Menu', $data['id'], is_login());
+                $this->success(lang('_SUCCESS_UPDATE_'), Cookie('__forward__'));
+            } else {
+                $this->error(lang('_FAIL_UPDATE_'));
             }
+            
             
         } else {
             $info = array();
             /* 获取数据 */
             $info = Db::name('Menu')->where(['id'=>$id])->find();
             $menus = Db::name('Menu')->select();
-
             $menus = model('common/Tree')->toFormatTree($menus,$title = 'title',$pk='id',$pid = 'pid',$root = '0');
 
-            $menus = array_merge(array(0=>array('id'=>'0','title_show'=>lang('_MENU_TOP_'))), $menus);
+            $menus = array_merge([0=>['id'=>'0','title_show'=>lang('_MENU_TOP_')]], $menus);
 
             $this->assign('Menus', $menus);
             $this->assign('Modules',model('Module')->getAll());
