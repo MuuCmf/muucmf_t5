@@ -181,9 +181,7 @@ INSERT INTO `muucmf_articles_category` (`id`, `title`, `pid`, `can_post`, `need_
 (3, '投融资', 0, 1, 1, 4, 1),
 (4, '火木动态', 0, 1, 1, 3, 1),
 (5, '锐观察', 0, 1, 1, 4, 1),
-(6, '技术创新', 0, 1, 1, 5, 1),
-(7, 'test', 0, 1, 1, 8, -1),
-(8, 'test2', 0, 1, 1, 2, -1);
+(6, '技术创新', 0, 1, 1, 5, 1);
 
 DROP TABLE IF EXISTS `muucmf_articles_detail`;
 CREATE TABLE IF NOT EXISTS `muucmf_articles_detail` (
@@ -4594,6 +4592,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_menu` (
   `module` varchar(50) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+
 INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `type`, `tip`, `group`, `is_dev`, `icon`, `module`) VALUES
 ('2', '用户', '0', 3, 'User/index', 0, 0, '', '', 0, 'user', ''),
 ('3', '用户信息', '2', 2, 'User/index', 0, 0, '', '用户管理', 0, '', ''),
@@ -4771,7 +4770,7 @@ INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `type`, 
 ('10458', '扩展设置', '74', 3, 'Config/expandConfig', 0, 0, '', '系统设置', 0, '', ''),
 ('10001', '基本设置', '10000', 0, 'index/Admin/config', 0, 0, '', '设置', 0, '', 'index'),
 ('BD914EA5-C77D-7118-399B-2E19DEB1D44B', '基础配置', 'BD56C46E-C9B0-D24A-C7F9-93831C04820D', 0, 'index/admin/config', 0, 1, '', '', 0, '', 'index'),
-('B7135ED2-C7EA-4232-F61E-BC521D606AE2', 'Demo', '0', 1, 'demo/admin/index', 1, 1, '', '', 0, '', 'demo'),
+('B7135ED2-C7EA-4232-F61E-BC521D606AE2', 'Demo', '0', 1, 'demo/admin/index', 0, 1, '', '', 0, '', 'demo'),
 ('C2E64010-AC80-DF22-5C53-53A709B6F914', '表单演示', 'B7135ED2-C7EA-4232-F61E-BC521D606AE2', 0, 'demo/Admin/config', 0, 1, '', '', 0, '', 'demo'),
 ('A5CD3728-FB33-F213-0CD0-075F1A5BF756', '列表演示', 'B7135ED2-C7EA-4232-F61E-BC521D606AE2', 0, 'demo/Admin/listDemo', 0, 1, '', '', 0, '', 'demo'),
 ('9BE37DD3-641B-1CF0-BE1D-52A38F7BE6C4', '分类树', 'B7135ED2-C7EA-4232-F61E-BC521D606AE2', 0, 'demo/admin/tree', 0, 1, '', '', 0, '', 'demo'),
@@ -4783,8 +4782,8 @@ INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `type`, 
 ('A6E049E7-F99F-5FF2-1D4F-5AA242E3F6C8', '流失率数据', '197', 0, 'count/lost', 0, 0, '', '数据统计', 0, '', ''),
 ('A985703F-0F39-F114-5784-A693F55D5310', '留存率数据', '197', 0, 'count/remain', 0, 0, '', '数据统计', 0, '', ''),
 ('0AAED4DF-55D3-03DA-5860-3ABAEC00096D', '活跃用户数据', '197', 0, 'count/active', 0, 0, '', '数据统计', 0, '', ''),
-('BD56C46E-C9B0-D24A-C7F9-93831C04820D', '首页', '0', 0, 'index/index/index', 1, 1, '', '', 0, '', 'index'),
-('1E82B5BE-3CCF-C30D-F604-728174A3281F', '文章', '0', 0, 'articles/admin/index', 1, 1, '', '', 0, '', 'articles'),
+('BD56C46E-C9B0-D24A-C7F9-93831C04820D', '首页', '0', 0, 'index/index/index', 0, 1, '', '', 0, '', 'index'),
+('1E82B5BE-3CCF-C30D-F604-728174A3281F', '文章', '0', 0, 'articles/admin/index', 0, 1, '', '', 0, '', 'articles'),
 ('4E72609A-8EBA-A6E3-A989-5AE47240D70A', '配置管理', '1E82B5BE-3CCF-C30D-F604-728174A3281F', 0, 'articles/Admin/config', 0, 1, '', '配置管理', 0, '', 'articles'),
 ('F29D6718-A1CB-861E-438C-62F9635FF98B', '分类列表', '1E82B5BE-3CCF-C30D-F604-728174A3281F', 0, 'articles/Admin/category', 0, 1, '', '分类管理', 0, '', 'articles'),
 ('61DAFD9B-E944-AFC4-1B4D-0130E564D4CE', '文章列表', '1E82B5BE-3CCF-C30D-F604-728174A3281F', 0, 'articles/Admin/index', 0, 1, '', '文章管理', 0, '', 'articles'),
@@ -4858,7 +4857,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_module` (
 INSERT INTO `muucmf_module` (`id`, `name`, `alias`, `version`, `is_com`, `show_nav`, `summary`, `developer`, `website`, `entry`, `is_setup`, `sort`, `icon`, `can_uninstall`, `admin_entry`, `auth_role`) VALUES
 (4, 'index', '首页', '1.0.0', 0, 0, '系统主页，系统核心模块', '北京火木科技有限公司', 'http://www.muucmf.com', 'index/index/index', 1, 0, 'home', 0, 'admin/index/index', ''),
 (3, 'ucenter', '用户中心', '1.0.0', 0, 0, '用户中心模块，系统核心模块', '北京火木科技有限公司', 'http://www.muucmf.com', 'ucenter/index/index', 1, 0, 'home', 0, 'admin/index/index', ''),
-(12, 'articles', '文章', '1.0.0', 0, 1, '增强版文章模块，用户可前台投稿', '北京火木科技有限公司', 'http://www.muucmf.cn', 'articles/index/index', 0, 0, 'th-list', 1, 'admin/Articles/index', ''),
+(12, 'articles', '文章', '1.0.0', 0, 1, '增强版文章模块，用户可前台投稿', '北京火木科技有限公司', 'http://www.muucmf.cn', 'articles/index/index', 1, 0, 'th-list', 1, 'admin/Articles/index', ''),
 (11, 'demo', '模块开发演示', '1.0.0', 0, 1, '模块开发演示', '北京火木科技有限公司', 'http://www.muucmf.cn', 'demo/Index/index', 1, 0, 'th-list', 1, 'demo/Admin/index', '');
 
 DROP TABLE IF EXISTS `muucmf_picture`;
