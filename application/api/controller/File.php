@@ -13,6 +13,8 @@ class File extends Controller
     /* 图片上传 */
     public function uploadPicture()
     {   
+        //自定义目录名，暂只支持云存储
+        $dirname = input('dirname');
         $files = request()->file();
         if (empty($files)) {
             $return['code'] = 0;
@@ -20,7 +22,7 @@ class File extends Controller
             return json($return);
         }
 
-        $arr = model('api/Upload')->upload($files,'picture');
+        $arr = model('api/Upload')->upload($files,'picture',$dirname);
 
         if(is_array($arr)){
             $return['code'] = 1;
@@ -36,6 +38,8 @@ class File extends Controller
     /* 文件上传 */
     public function uploadFile()
     {   
+        //自定义目录名，暂只支持云存储
+        $dirname = input('dirname');
         $files = request()->file();
 
         if (empty($files)) {
@@ -44,7 +48,7 @@ class File extends Controller
             return json($return);
         }
 
-        $arr = model('api/Upload')->upload($files,'file');
+        $arr = model('api/Upload')->upload($files,'file',$dirname);
 
         if(is_array($arr)){
             $return['code'] = 1;

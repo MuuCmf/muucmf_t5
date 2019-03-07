@@ -7,24 +7,40 @@ use think\Db;
 class Upload extends Model
 {
 
-	public function upload($files,$type="picture")
+    /**
+     * 通用上传
+     *
+     * @param      <type>  $files   The files
+     * @param      string  $type    The type
+     * @param      array   $params  The parameters
+     *
+     * @return     <type>  ( description_of_the_return_value )
+     */
+	public function upload($files, $type = "picture", $dirname = '')
 	{
 
 		if($type=='picture'){
-			$result = $this->picture($files);
+			$result = $this->picture($files, $dirname);
 		}
 		if($type=='file'){
-			$result = $this->file($files);
+			$result = $this->file($files, $dirname);
 		}
 		if($type=='base64'){
-			$result = $this->base64($files);
+			$result = $this->base64($files, $dirname);
 		}
 
 		return $result;
 
 	}
 
-	private function picture($files)
+    /**
+     * 图片上传
+     *
+     * @param      <type>         $files  The files
+     *
+     * @return     array|boolean  ( description_of_the_return_value )
+     */
+	private function picture($files, $dirname)
 	{
 		
 		$config = config('upload.image');
@@ -66,8 +82,13 @@ class Upload extends Model
                 $data['sha1'] = $file->hash('sha1');
 
                 //调用驱动上传数据
-                $res = $this->uploadDriver($driver,$file);
-                $data['path'] = $res['savepath'];
+                $res = $this->uploadDriver($driver, $file, $dirname);
+                if(isset($res['savepath'])){
+                    $data['path'] = $res['savepath']; 
+               }else{
+                    $this->error = $res;
+                    return false;
+               }
             }
 
             //写入数据库
@@ -84,8 +105,14 @@ class Upload extends Model
         return $return['data'];
 	}
 
-	    /* 文件上传 */
-    public function file($files)
+    /**
+     * 文件上传
+     *
+     * @param      <type>         $files  The files
+     *
+     * @return     array|boolean  ( description_of_the_return_value )
+     */
+    public function file($files, $dirname)
     {   
         $config = config('upload.file');
         
@@ -138,7 +165,8 @@ class Upload extends Model
                 $data['sha1'] = $file->hash('sha1');
 
                 //调用驱动上传数据
-                $res = $this->uploadDriver($driver,$file);
+                $res = $this->uploadDriver($driver, $file, $dirname);
+
                 $data['savepath'] = $res['savepath'];
                 $data['savename'] = $res['savename'];
                 $data['ext'] = substr(strrchr($data['savename'], '.'), 1);
@@ -241,9 +269,15 @@ class Upload extends Model
     }
 
     /**
-     * 通过驱动上传
+     * Uploads a driver.
+     *
+     * @param      <string>  $driver  驱动名称
+     * @param      <type>    $file    文件
+     * @param      <array>   $diyname  自定义目录
+     *
+     * @return     <type>  ( description_of_the_return_value )
      */
-    public function uploadDriver($driver,$file)
+    public function uploadDriver($driver, $file, $dirname)
     {
         //使用云存储
         $name = get_addon_class($driver);
@@ -252,7 +286,7 @@ class Upload extends Model
 
 
             if (method_exists($class, $driver)) {
-                $path = $class->$driver($file);
+                $path = $class->$driver($file,$dirname);
                 return $path;
             }
         }

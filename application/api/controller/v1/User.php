@@ -141,7 +141,7 @@ class User extends Base
                     $aUsername = $username = $mobile;
                 }
                 if(empty($aNickname)){ //昵称为空，昵称等于注册的手机或邮箱
-                    $aNickname = $aUsername;
+                    $aNickname = rand_nickname();
                 }
                 
                 //注册开关关闭，直接返回错误
@@ -185,10 +185,10 @@ class User extends Base
                 $error_code = $uid = model('ucenter/UcenterMember')->register($aUsername, $aNickname, $aPassword, $email, $mobile, $aUnType);
                 
                 if (0 < $uid) { //注册成功
-                    model('ucenter/UcenterMember')->initRoleUser($aRole, $uid); //初始化角色用户
+                    model('common/Member')->initRoleUser($aRole, $uid); //初始化角色用户
                     $uid = model('ucenter/UcenterMember')->login($username, $aPassword, $aUnType); //通过账号密码取到uid
                     
-                    $rs = $this->userModel->login($uid, 1, $aRole); //登陆
+                    $rs = model('common/Member')->login($uid, 1, $aRole); //登陆
                     if($rs){//注册成功并登陆成功后返回的数据
                         $user_info = query_user(['uid','nickname','avatar32','avatar64','avatar128','mobile','email','title'], $uid);
                         //组装返回的数据
@@ -199,7 +199,7 @@ class User extends Base
                     }
                     
                 } else { //注册失败，显示错误信息
-                    return $this->sendError($this->showRegError($error_code));
+                    return $this->sendError(model('ucenter/Member')->showRegError($error_code));
                 }
   
             break;

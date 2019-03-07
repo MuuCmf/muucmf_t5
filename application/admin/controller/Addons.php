@@ -112,11 +112,18 @@ class Addons extends Admin
         $this->meta_title = lang('_ADDONS_SET_') . $data->info['title'];
         $db_config = $addon['config'];
         $addon['config'] = include $data->config_file;
+
+        
         if ($db_config) {
             $db_config = json_decode($db_config, true);
             foreach ($addon['config'] as $key => $value) {
                 if ($value['type'] != 'group') {
-                    $addon['config'][$key]['value'] = $db_config[$key];
+                    if(!empty($db_config[$key])){
+                        $addon['config'][$key]['value'] = $db_config[$key];
+                    }else{
+                        $addon['config'][$key]['value'] = '';
+                    }
+                    
                 } else {
                     foreach ($value['options'] as $gourp => $options) {
                         foreach ($options['options'] as $gkey => $value) {

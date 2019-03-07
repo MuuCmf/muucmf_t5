@@ -96,12 +96,12 @@ class Addons extends Model
         foreach ($dirs as $value) {
             if (!isset($addons[$value])) {
                 $class = get_addon_class($value);
-
+                
                 if (!class_exists($class)) { // 实例化插件失败忽略执行
                     \think\Log::record(lang('_PLUGIN_') . $value . lang('_THE_ENTRY_FILE_DOES_NOT_EXIST_WITH_EXCLAMATION_'));
                     continue;
                 }
-
+                
                 $obj = new $class;
                 $addons[$value] = $obj->info;
                 if ($addons[$value]) {

@@ -11,8 +11,12 @@ function get_file_by_id($file_id, $type = 0, $replace = false)
 
     $file = cache('file_' . $file_id);
     if (empty($file)) {
-        $file = Db::name('File')->find($file_id);
-        cache('file_' . $file_id, $file);
+        if($file_id>0){
+            $file = Db::name('File')->find($file_id);
+            cache('file_' . $file_id, $file);
+        }else{
+            return "文件id不存在！";
+        }
     }
 
     if ($file) {

@@ -24,8 +24,12 @@ class Base extends Api
     public function needLogin(){
 
         //验证用户授权TOKEN
-        $token = input('token', '', 'text');
-
+        //在header中获取token
+        $token = null;
+        if(isset($_SERVER['HTTP_TOKEN'])){
+            $token = $_SERVER['HTTP_TOKEN'];
+        }
+        
         if($token){
             $uid = $this->_checkToken($token);//验证用户Token合法性
             if ($uid) {
@@ -78,7 +82,6 @@ class Base extends Api
             return false;
         }
         $token = explode("|", think_decrypt($token));
-        
         $map['uid'] = $token[0];
         $user = Db::name('user_token')->where($map)->find();
 
