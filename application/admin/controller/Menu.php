@@ -47,46 +47,7 @@ class Menu extends Admin {
     }
 
     /**
-     * 新增菜单
-     */
-    public function add(){
-        if(request()->isPost()){
-            $Menu = Db::name('Menu');
-            $data = input('');
-            $this->checkData($data);
-            $data['id']= create_guid();//生成GUID
-            if($data){
-                $id = $Menu->insert($data);
-                if($id){
-                    //记录行为
-                    action_log('update_menu', 'Menu', $id, is_login());
-                    $this->success(lang('_SUCCESS_ADD_'), Cookie('__forward__'));
-                } else {
-                    $this->error(lang('_FAIL_ADD_'));
-                }
-            } else {
-                $this->error($Menu->getError());
-            }
-        } else {
-            $map['id'] = input('pid');
-            $info = Db::name('Menu')->where($map)->field('module,pid,hide,is_dev,type')->find();
-            $info['pid'] = input('pid');
-            $this->assign('info',$info);
-            //菜单树
-            $menus = Db::name('Menu')->select();
-            $menus = model('common/Tree')->toFormatTree($menus);
-            $menus = array_merge([
-                    0=>['id'=>0,'title_show'=>lang('_MENU_TOP_')]
-                ], $menus);
-            $this->assign('Modules',model('Module')->getAll());
-            $this->assign('Menus', $menus);
-            $this->setTitle(lang('_MENU_ADD_'));
-            return $this->fetch('edit');
-        }
-    }
-
-    /**
-     * 编辑配置
+     * 新增/编辑配置
      */
     public function edit($id = ''){
         
@@ -102,12 +63,16 @@ class Menu extends Admin {
                 $this->error(lang('_FAIL_UPDATE_'));
             }
             
-            
         } else {
-            $info = array();
+            $info = [];
             /* 获取数据 */
-            $info = Db::name('Menu')->where(['id'=>$id])->find();
-            $menus = Db::name('Menu')->select();
+            $info = model('admin/Menu')->where(['id'=>$id])->find();
+            if(empty($info)){
+                $map['id'] = input('pid');
+                $info = model('Menu')->where($map)->field('module,pid,hide,is_dev,type')->find();
+                $info['pid'] = input('pid');
+            }
+            $menus = collection(model('admin/Menu')->select())->toArray();
             $menus = model('common/Tree')->toFormatTree($menus,$title = 'title',$pk='id',$pid = 'pid',$root = '0');
 
             $menus = array_merge([0=>['id'=>'0','title_show'=>lang('_MENU_TOP_')]], $menus);
