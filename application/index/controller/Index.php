@@ -28,7 +28,6 @@ class Index extends Common
         // 登陆页
         if($type=='login'){
             if(is_login() == 0){
-                dump(is_login());
                 $this->redirect('ucenter/Member/login');
             }
         }
