@@ -16,16 +16,20 @@ $(function () {
 
         //如果需要的话，发出确认提示信息
         if (confirmText) {
-            var result = confirm(confirmText);
-            if (!result) {
-                return false;
-            }
+            modal_confirm(confirmText,function(){
+                execute();
+            });
+            return false;
+        }else{
+            execute();
         }
-
-        //发送AJAX请求
-        $.post(url, {}, function (a, b, c) {
-            handleAjax(a);
-        });
+        
+        function execute(){
+            //发送AJAX请求
+            $.post(url, {}, function (a, b, c) {
+                handleAjax(a);
+            });
+        }
     });
 
     $(document).on('click', '.ajax-get', function (e) {
@@ -37,16 +41,20 @@ $(function () {
 
         //如果需要的话，发出确认提示信息
         if (confirmText) {
-            var result = confirm(confirmText);
-            if (!result) {
-                return false;
-            }
+            modal_confirm(confirmText,function(){
+                execute();
+            });
+            return false;
+        }else{
+            execute();
         }
 
-        //发送AJAX请求
-        $.get(url, function (a, b, c) {
-            handleAjax(a);
-        });
+        function execute(){
+            //发送AJAX请求
+            $.get(url, function (a, b, c) {
+                handleAjax(a);
+            });
+        }
     });
 
     /**
@@ -55,57 +63,100 @@ $(function () {
      * 示例：<form class="ajax-form" method="post" action="xxx">
      */
     $(document).on('submit', 'form.ajax-form', function (e) {
+
         //取消默认动作，防止表单两次提交
         e.preventDefault();
         var confirmText = $(this).attr('data-confirm');
-
+        var form = $(this);
+        
         //如果需要的话，发出确认提示信息
         if (confirmText) {
-            var result = confirm(confirmText);
-            if (!result) {
+            modal_confirm(confirmText,function(){
+                execute();
+            });
+            return false;
+        }else{
+            execute();
+        }
+        
+        //执行ajax
+        function execute(){
+            //禁用提交按钮，防止重复提交
+
+            //var form = $(this);
+            $('[type=submit]', form).addClass('disabled');
+
+            //获取提交地址，方式
+            var action = form.attr('action');
+            var method = form.attr('method');
+            
+            //检测提交地址
+            if (!action) {
                 return false;
             }
+
+            //默认提交方式为get
+            if (!method) {
+                method = 'get';
+            }
+
+            //获取表单内容
+            var formContent = form.serialize();
+
+            //发送提交请求
+            var callable;
+            if (method == 'post') {
+                callable = $.post;
+            } else {
+                callable = $.get;
+            }
+            callable(action, formContent, function (a) {
+                handleAjax(a);
+                $('[type=submit]', form).removeClass('disabled');
+            });
         }
-        //禁用提交按钮，防止重复提交
-        var form = $(this);
-        $('[type=submit]', form).addClass('disabled');
-
-        //获取提交地址，方式
-        var action = $(this).attr('action');
-        var method = $(this).attr('method');
-
-        //检测提交地址
-        if (!action) {
-            return false;
-        }
-
-        //默认提交方式为get
-        if (!method) {
-            method = 'get';
-        }
-
-        //获取表单内容
-        var formContent = $(this).serialize();
-
-        //发送提交请求
-        var callable;
-        if (method == 'post') {
-            callable = $.post;
-        } else {
-            callable = $.get;
-        }
-        callable(action, formContent, function (a) {
-            handleAjax(a);
-            $('[type=submit]', form).removeClass('disabled');
-        });
-
+        
         //返回
         return false;
     });
     
 });
 
+/**
+ * 模态提示确认操作
+ *
+ * @return     {boolean}  { description_of_the_return_value }
+ */
+function modal_confirm(confirmText,callback,icon){
+    if(confirmText == ''){
+        confirmText = '确认执行该操作？'
+    }
+    icon = icon || 'icon-frown';
+    // 自定义模态框样式
+    var custom = '';
+        custom += '<div class="tip-model-content">';
+        custom += '<div class="tip-modal-icon text-center"><i class="icon '+ icon +' icon-5x"></i></div>';
+        custom += '<p class="tip-modal-text">'+ confirmText +'</p>';
+        custom += '<div class="tip-modal-btn">';
+        custom += '<button type="button" class="btn" data-dismiss="modal">取消</button>';
+        custom += '<button class="btn btn-primary confirm" type="button">确认</button>';
+        custom += '</div>';
+        custom += '</div>';
 
+
+    /* 使用触发器对象直接显示 */
+    (new $.zui.ModalTrigger({
+        title: confirmText,
+        custom: custom,
+    })).show();
+
+    $('.tip-model-content').on('click','.confirm',function(){
+        callback();
+        //关闭模态框
+        $('[data-dismiss="modal"]').click();
+    })
+    return false;
+}
 /**
  * 绑定回到顶部
  */

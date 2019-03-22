@@ -9,11 +9,11 @@ use think\Db;
 function get_file_by_id($file_id, $type = 0, $replace = false)
 {
 
-    $file = cache('file_' . $file_id);
+    $file = cache('file_path' . $file_id);
     if (empty($file)) {
         if($file_id>0){
             $file = Db::name('File')->find($file_id);
-            cache('file_' . $file_id, $file);
+            cache('file_path' . $file_id, $file);
         }else{
             return "文件id不存在！";
         }
@@ -35,10 +35,10 @@ function get_file_by_id($file_id, $type = 0, $replace = false)
  */
 function get_filename_by_id($file_id)
 {
-    $file = cache('file_' . $file_id);
+    $file = cache('file_name' . $file_id);
     if (empty($file)) {
         $file = Db::name('File')->find($file_id);
-        cache('file_' . $file_id, $file);
+        cache('file_name' . $file_id, $file);
     }
 
     if ($file) {
@@ -46,6 +46,28 @@ function get_filename_by_id($file_id)
         return $name;
     } else {
         return "文件id不存在！";
+    }
+}
+
+/**
+ * 获取文件所有数据
+ *
+ * @param      <type>  $file_id  The file identifier
+ *
+ * @return     string  The fileall by identifier.
+ */
+function get_fileall_by_id($file_id)
+{
+    $file = cache('file_all' . $file_id);
+    if (empty($file)) {
+        $file = Db::name('File')->field('id,name,savepath,ext,mime,size,driver')->find($file_id);
+        cache('file_all' . $file_id, $file);
+    }
+
+    if ($file) {
+        return $file;
+    } else {
+        return "文件不存在！";
     }
 }
 

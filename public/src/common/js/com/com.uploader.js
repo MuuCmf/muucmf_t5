@@ -40,10 +40,10 @@
  
         // HOOK 这个必须要再uploader实例化前面，详情见 http://fex.baidu.com/webuploader/document.html#hook
         /*
-            add-file	        files: File对象或者File数组	用来向队列中添加文件。
-            before-send-file	file: File对象	在文件发送之前request，此时还没有分片（如果配置了分片的话），可以用来做文件整体md5验证。
-            before-send	        block: 分片对象	在分片发送之前request，可以用来做分片验证，如果此分片已经上传成功了，可返回一个rejected promise来跳过此分片上传
-            after-send-file	    file: File对象	在所有分片都上传完毕后，且没有错误后request，用来做分片验证，此时如果promise被reject，当前文件上传会触发错误。
+            add-file            files: File对象或者File数组   用来向队列中添加文件。
+            before-send-file    file: File对象    在文件发送之前request，此时还没有分片（如果配置了分片的话），可以用来做文件整体md5验证。
+            before-send         block: 分片对象 在分片发送之前request，可以用来做分片验证，如果此分片已经上传成功了，可返回一个rejected promise来跳过此分片上传
+            after-send-file     file: File对象    在所有分片都上传完毕后，且没有错误后request，用来做分片验证，此时如果promise被reject，当前文件上传会触发错误。
         */
         //判断是不是分片上传，要是分片上传，则要在初始化之前去做Hook，所以添加了一个判断
         if(this.patchOpction){
