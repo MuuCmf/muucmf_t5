@@ -50,4 +50,9 @@ class Index extends Common
         dump($res);
     }
 
+    public function debug()
+    {
+        return $this->fetch();
+    }
+
 }

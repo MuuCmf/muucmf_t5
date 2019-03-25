@@ -74,20 +74,21 @@ class Message extends Admin
         $builder->title(lang('_"MASS_USER_LIST"_'));
 
         $builder
-            ->setSelectPostUrl(Url('Message/userList'))
-            ->setSearchPostUrl(Url('Message/userList'))
+            ->setSelectPostUrl(url('Message/userList'))
+            ->setSearchPostUrl(url('Message/userList'))
             ->select('排序：','user_order','select','排序','','',$order_array)
             ->select(lang('_USER_GROUP:_'), 'user_group', 'select', lang('_FILTER_ACCORDING_TO_USER_GROUP_'), '', '', $user_group)
             ->select(lang('_IDENTITY_'), 'role', 'select', lang('_FILTER_ACCORDING_TO_USER_IDENTITY_'), '', '', $user_role)
             ->search('','user_search1','',lang('_SEARCH_ACCORDING_TO_USERS_NICKNAME_'),'','','')
             ->search('','user_search2','',lang('_SEARCH_ACCORDING_TO_USER_ID_'),'','','');
-        $builder->buttonModalPopup(Url('Message/sendMessage'), array('user_group' => $aUserGroup, 'role' => $aRole), lang('_SEND_A_MESSAGE_'), array('data-title' => lang('_MASS_MESSAGE_'), 'target-form' => 'ids', 'can_null' => 'true'));
+        $builder->buttonModalPopup(url('Message/sendMessage'), array('user_group' => $aUserGroup, 'role' => $aRole), lang('_SEND_A_MESSAGE_'), array('data-title' => lang('_MASS_MESSAGE_'), 'target-form' => 'ids', 'can_null' => 'true'));
 
         //$builder->buttonModalPopup(Url('Message/sendMobileMessage'), array('user_group' => $aUserGroup),lang('_SNS_SEND_'), array('data-title' => lang('_SNS_SEND_'), 'target-form' => 'ids', 'can_null' => 'true'));
 
         $builder->keyText('uid', lang('_USER_ID_'))
                 ->keyText('nickname', lang('_"NICKNAME"_'))
                 ->keyText('mobile',lang('_CELL_PHONE_NUMBER_'))
+                ->keyText('email',lang('_EMAIL_'))
                 ->keyText('login', lang('_LOGIN_COUNT_'))
                 ->keyTime('last_login_time', lang('_LAST_LOGIN_TIME_'))
                 ->keyText('last_login_ip', lang('_LOGIN_IP_LAST_TIME_'));
