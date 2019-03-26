@@ -58,35 +58,11 @@
         {php}
             $colorPicker = 1;
         {/php}
-        <div class="color-picker" style="width:100px;height: 30px;">
-            <input type="text" name="{$field.name}" class="simple_color_callback form-control" onchange="setColorPicker(this);" value="{$field.value|default=''}">
+        <link href="__ZUI__/lib/colorpicker/zui.colorpicker.min.css" rel="stylesheet">
+        <div class="input-group" style="width:400px">
+            <input type="text" class="form-control" name="{$field.name}" data-provide="colorpicker" data-wrapper="input-group-btn" data-pull-menu-right="true" value="{$field.value|default=''}" placeholder="请输入16进制颜色值，例如 #FF00DD">
         </div>
-            <script type="text/javascript" src="__LIB__/jquery.simple-color/jquery.simple-color.js"></script>
-            <script>
-                $(function(){
-                    $('.simple_color_callback').simpleColor({
-                        boxWidth:20,
-                        cellWidth: 20,
-                        cellHeight: 20,
-                        chooserCSS:{ 'z-index': 500 },
-                        displayCSS: { 'border': 0 ,
-                            'width': '32px',
-                            'height': '32px',
-                            'margin-top': '-32px'
-                        },
-                        onSelect: function(hex, element) {
-                            $('#tw_color').val('#'+hex);
-                        }
-                    });
-                    $('.simple_color_callback').show();
-                    $('.simpleColorContainer').css('margin-left','105px');
-                    $('.simpleColorDisplay').css('border','1px solid #DFDFDF');
-                });
-                var setColorPicker=function(obj){
-                    var color=$(obj).val();
-                    $(obj).parents('.color-picker').find('.simpleColorDisplay').css('background',color);
-                }
-            </script>
+        <script src="__ZUI__/lib/colorpicker/zui.colorpicker.min.js"></script>  
     {/case}
     {case value="radio"}
         {volist name="field.opt" id="option"}
