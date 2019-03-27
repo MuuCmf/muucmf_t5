@@ -85,9 +85,9 @@ class ArticlesCategory extends Model {
 
     public function _category()
     {
-        $category=model('ArticlesCategory')->getCategoryList(['status'=>['egt',0]],1);
+        $category = $this->getCategoryList(['status'=>['egt',0]],1);
         $category = collection($category)->toArray();
-        $category=array_combine(array_column($category,'id'),$category);
+        $category = array_combine(array_column($category,'id'),$category);
         return $category;
     }
     

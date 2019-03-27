@@ -12,21 +12,22 @@ class Index extends Common
 
         $tree = model('ArticlesCategory')->getTree(0,true,['status' => 1]);
 
+        $c_menu = [];
         foreach ($tree as $v) {
             $m = [
                 'tab' => 'category_' . $v['id'], 
                 'title' => $v['title'], 
-                'href' => Url('Articles/index/category', ['id' => $v['id']])
+                'href' => url('Articles/index/category', ['id' => $v['id']])
             ];
             if (isset($v['_'])) {
                 $m['children'][] = [
                     'title' => '全部', 
-                    'href' => Url('Articles/index/category', ['id' => $v['id']])
+                    'href' => url('Articles/index/category', ['id' => $v['id']])
                 ];
                 foreach ($v['_'] as $child){
                     $m['children'][] = [
                         'title' => $child['title'], 
-                        'href' => Url('Articles/index/category', ['id' => $child['id']])
+                        'href' => url('Articles/index/category', ['id' => $child['id']])
                     ];
                 }     
             }else{
@@ -63,7 +64,7 @@ class Index extends Common
         // 文章首页
         $map['status']=1;
         // 查询数据集
-        $list = model('Articles')->where($map)->order('id', 'desc')->paginate($r);
+        $list = model('Articles')->getListByPage($map,'create_time desc','*',$r);
         foreach($list as &$val){
             $val['user']=query_user(['space_url','avatar32','nickname'],$val['uid']);
         }
@@ -92,7 +93,7 @@ class Index extends Common
         }
         $map['status']=1;
         /* 获取当前分类下文章列表 */
-        $list = model('Articles')->where($map)->order('id', 'desc')->paginate($r);
+        $list = model('Articles')->getListByPage($map,'create_time desc','*',$r);;
         foreach($list as &$val){
             $val['user']=query_user(['space_url','avatar32','nickname'],$val['uid']);
         }
@@ -114,16 +115,16 @@ class Index extends Common
             $this->error('文档ID错误！');
         }
 
-        $info=model('Articles')->getDataById($aId);
+        $info = model('Articles')->getDataById($aId);
+
         //未审核内容并不是作者浏览时报错
         if($info['status']!=1 && $info['uid']!=is_login()){
             $this->error('内容审核中...');
         }
-        
+
         $author=query_user(['uid','space_url','nickname','avatar32','avatar64','signature'],$info['uid']);
         $author['articles_count']=model('Articles')->where(['uid'=>$info['uid']])->count();
-        //关键字转化成数组
-        $keywords = explode(',',$info['keywords']);
+        
 
         /*用户所要文章访问量*/
         $author['articles_view']=model('Articles')->_totalView($info['uid']);
@@ -137,7 +138,6 @@ class Index extends Common
         $this->assign('author',$author);
         $this->assign('info', $info);
         
-        //dump($info);exit;
         return $this->fetch();
     }
     /**

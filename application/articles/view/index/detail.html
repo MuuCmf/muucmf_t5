@@ -26,14 +26,14 @@
                         
                         <div class="clearfix" style="color: #999;font-size: 14px;">{$info.description}</div>
                         
-                        {if condition="$info['keywords'] neq ''"}
+                        {notempty name="$info.keywords"}
                         <div class="keywords-box">
                             <span>关键字</span>
-                            {volist name="keywords" id="vo" key="k"}
+                            {volist name="$info.keywords" id="vo" key="k"}
                                 <span class="keywords">{$vo}</span> 
                             {/volist}
                         </div>
-                        {/if}
+                        {/notempty}
                     </div>
                     <hr/>
                     <section id="contents">
