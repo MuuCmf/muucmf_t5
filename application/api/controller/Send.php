@@ -37,7 +37,7 @@ trait Send
      * @param array $options
      * @return Response|\think\response\Json|\think\response\Jsonp|\think\response\Xml
      */
-    public function sendError($msg = 'error',  $data = [], $code = 400, $headers = [], $options = [])
+    public function sendError($msg = 'error',  $data = [], $code = 0, $headers = [], $options = [])
     {
         $responseData['code'] = 0;
         $responseData['msg'] = (string)$msg;

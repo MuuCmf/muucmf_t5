@@ -16,8 +16,16 @@ use think\Db;
 use think\Cache;
 use app\api\controller\Factory;
 
+/**************************************************/
+/* token 机制
+/* 分两种情况 1：用户授权token 命名为access_token 2：接口访问权限token oauth_token
+/* 问题：用户通过移动端登陆后可持久保持登陆状态，pc端登陆时点击记住密码后用户token会被更新，使移动端失效，原因是user_token表使用的是同一表,目前不大影响
+
+/* 
+/* 
+/**************************************************/
 class Token extends Controller
-{	
+{
 	use Send;
 	//手机客户端请求验证规则
 	public static $rule_mobile = [
@@ -47,6 +55,11 @@ class Token extends Controller
         //为了调试注释掉时间验证与前面验证，请开发者自行测试
         //$this->checkTime();
         //$this->checkSign();
+    }
+
+    public function index()
+    {
+    	
     }
 
 	public function wechat()

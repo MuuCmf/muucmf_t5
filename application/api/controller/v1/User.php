@@ -229,7 +229,7 @@ class User extends Base
                 
             break;
 
-            case 'quicklogin'://通过手机号和验证码快速登陆
+            case 'quick_login'://通过手机号和验证码快速登陆
                 $mobile = input('post.mobile','','text');
                 $verify = input('post.verify','','text');//接收到的验证码
 

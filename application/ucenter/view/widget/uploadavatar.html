@@ -1,13 +1,12 @@
 
 <link href="__COMMON__/lib/webuploader/css/webuploader.css" type="text/css" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/jquery-jcrop/0.9.15/css/jquery.Jcrop.min.css"/>
 
     <!--用来存放item-->
     <div id="fileList" class="uploader-list"></div>
     <div class="show_avatar">
             <div class=" avatar_select">
-                <div id="avatar_{$uid}_original" class="avatar_preview">
-                    <img class="img-circle"  src="{$user.avatar256}" />
+                <div id="avatar_{$uid}_original" class="avatar_preview img-cutter">
+                    <div class="canvas"><img src="{$user.avatar256}" alt=""></div>
                 </div>  
             </div>
     </div>
@@ -16,18 +15,15 @@
     <div id="upload_avatar_{$uid}" class="avatar_upload_btn" style="margin-top:5px">{:lang('_AVATAR_SELECT_')}</div>
     <button class="btn btn-block btn-lg btn-warning avatar_btn" data-role="avatar_btn"  type="button" style="margin-top:5px">{:lang('_AVATAR_SAVE_')}</button>
     </div>
- 
+
+
 <script type="text/javascript" charset="utf-8" src="__COMMON__/lib/webuploader/js/webuploader.js"></script>
-<script src="https://cdn.bootcss.com/jquery-jcrop/0.9.15/js/jquery.Jcrop.min.js"></script>
 
 <script>
     $(function () {
-        var crop;
-        var jcrop_api;
-        var ext;
-        var boundx, boundy;
-        var path;
-        var $pcnt = $('.avatar_preview');
+        
+        var avatarCutter;
+
         var uploader_{$uid}= WebUploader.create({
             // 选完文件后，是否自动上传。
             auto: false,
@@ -52,61 +48,52 @@
         /*上传成功*/
         uploader_{$uid}.on('uploadSuccess', function (file, ret) {
             toast.hideLoading();
-            console.log(ret);
+            
             if (ret.code == 0) {
                 toast.error(ret.msg);
             } else {
                 
-                path = ret.data.path;
-                var src = ret.data.path;
+                path = ret.data[0].path;
+                var src = ret.data[0].path;
+                console.log(src);
+                $("#avatar_" + "{$uid}" + "_original .canvas").html('<img src="'+src+'" />');
 
-                $("#avatar_" + "{$uid}" + "_original").html('');
-                $("#avatar_" + "{$uid}" + "_original").html('<img src="'+src+'" style="width:100%">');
-
-                $("#avatar_" + "{$uid}" + "_original img").load(function () {
-                    $("#avatar_" + "{$uid}" + "_original >img").Jcrop({
-                        aspectRatio: 1,
-                        onChange: updateCoordinate,
-                        onSelect: updateCoordinate,
-                        minSize: [10, 10],
-                        setSelect: [0, 0, 256, 256],
-                        bgOpacity: .5
-                    }, function () {
-                        var bounds = this.getBounds();
-                        boundx = bounds[0];
-                        boundy = bounds[1];
-                        jcrop_api = this;
-                        crop = jcrop_api.tellScaled();
-                        updateCoordinate(crop);
+                $("#avatar_" + "{$uid}" + "_original .canvas img").load(function () {
+                    //图片加载完成后初始化裁剪组件
+                    $("#avatar_" + "{$uid}" + "_original").imgCutter({
+                        fixedRatio: true,
+                        defaultWidth: 256,
+                        defaultHeight: 256,
                     });
                 })
+
                 //重置队列
                 uploader_{$uid}.reset();
             }
         });
-        function updateCoordinate(c) {
-            crop = c;
-            if (parseInt(c.w) > 0) {
-                var xsize = $pcnt.width();
-                var ysize = $pcnt.height();
-                var rx = xsize / c.w ;
-                var ry = ysize / c.h ;  
-            }
-        }
+
         $('[data-role=avatar_btn]').click(function(){
+            
+            // 获取 imgCutter 实例
+            avatarCutter = $("#avatar_" + "{$uid}" + "_original").data('zui.imgCutter');
+            // 调用 resetImg 方法
+            //avatarCutter.resetImage('http://zui.sexy/docs/img/img1.jpg');
+            // 调用 getData 方法
+            var avatarCutterData = avatarCutter.getData();
+
+            var crop = avatarCutterData.left + ',' + avatarCutterData.top + ',' + avatarCutterData.width + ',' + avatarCutterData.height;
+
             //检查是否已经裁剪过
             if (typeof (crop) == 'undefined') {
                 toast.error("{:lang('_AVATAR_UPLOAD_AND_CROP_')}");
                 return;
             }
-            else{
-                var crop2 = crop.x / boundx + ',' + crop.y / boundy + ',' + crop.w / boundx + ',' + crop.h / boundy;
-            }
+            
             var uid ='{$uid}';
             //提交到服务器
-            var url = "{:Url('ucenter/member/saveAvatar')}";
+            var url = "{:url('ucenter/member/saveAvatar')}";
 
-            $.post(url, {uid: uid, crop: crop2, path:path}, function (res) {
+            $.post(url, {uid: uid, crop: crop, path:path}, function (res) {
                 handleAjax(res);
             });
         })

@@ -454,7 +454,7 @@ class Member extends Controller
      */
     public function saveAvatar()
     {
-        $redirect_url = Url('ucenter/member/step', ['step' => get_next_step('change_avatar')]);
+        $redirect_url = url('ucenter/member/step', ['step' => get_next_step('change_avatar')]);
 
         $aCrop = input('post.crop', '', 'text');
         $aUid = session('temp_login_uid') ? session('temp_login_uid') : is_login();

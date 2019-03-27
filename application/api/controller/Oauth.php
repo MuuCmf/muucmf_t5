@@ -50,7 +50,6 @@ class Oauth
     {      
 
         $request = Request::instance();
-
         try {
             //验证授权
             $clientInfo = $this->getClient();
@@ -75,6 +74,7 @@ class Oauth
     public function getClient()
     {   
         $request = Request::instance();
+        dump($request->param());
         //获取头部信息
         try {
             $clientInfo = $request->param();

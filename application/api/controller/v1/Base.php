@@ -17,7 +17,10 @@ use app\api\controller\UnauthorizedException;
  */
 class Base extends Api
 {
-
+    public function _initialize()
+    {
+        parent::_initialize();
+    }
    /**
      * 通用用户是否登录验证
      */
@@ -25,18 +28,15 @@ class Base extends Api
 
         //验证用户授权TOKEN
         //在header中获取token
-        $token = null;
-        if(isset($_SERVER['HTTP_TOKEN'])){
-            $token = $_SERVER['HTTP_TOKEN'];
-        }
+        $token = Request::instance()->header('token');
         
         if($token){
             $uid = $this->_checkToken($token);//验证用户Token合法性
             if ($uid) {
                 return $uid;
+            }else{
+               return false;
             }
-        }else{
-            return _need_login();
         }
 
         return false;
@@ -53,9 +53,9 @@ class Base extends Api
         //验证用户授权TOKEN
         $uid = $this->getTokenUid($token); //根据token获取uid
 
-        if ($uid || 0 < $uid) { //UC登陆成功
+        if ($uid || 0 < $uid) {
             //判断是否已经登陆
-            if(is_login()==$uid){
+            if(is_login() == $uid){
                 return $uid;
             }else{
                 /* 登陆用户 */
@@ -102,11 +102,21 @@ class Base extends Api
      */
     protected function getToken($uid){
         $map['uid'] = $uid;
-        $open_id = Db::name('user_token')->field('token')->where($map)->find();
-        $token = think_encrypt($uid.'|'.$open_id['token']);//加密token,每次使用token验证都需要解密操作
+        $user_token = Db::name('user_token')->field('token')->where($map)->find();
+        $token = think_encrypt($uid.'|'.$user_token['token']);//加密token,每次使用token验证都需要解密操作
 
         return $token;
     }
 
+    /**
+     * 根据uid获取已绑定微信的用户openid
+     *
+     * @param      <type>  $uid    The uid
+     */
+    protected function getOpenid($uid)
+    {
+        $open_id = model('weixin/WeixinOauth')->getOpenid();
 
+        return $open_id;
+    }
 }

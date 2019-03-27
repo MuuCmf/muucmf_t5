@@ -29,7 +29,7 @@ class UploadAvatar extends Controller
                 if (class_exists($name)) {
                     $class = new $name();
                     if (method_exists($class, 'thumb')) {
-                        $new_img =  $class->thumb($avatar['path'],$size,$size);
+                        $new_img = $class->thumb($avatar['path'],$size,$size);
                     }
                 }
                 return $new_img;
@@ -40,14 +40,11 @@ class UploadAvatar extends Controller
                 $role_id = session('temp_login_role_id') ? session('temp_login_role_id') : get_role_id();
 
             }else{
-                $role_id=query_user('show_role',$uid)['show_role'];
+                $role_id = empty(query_user('show_role',$uid)['show_role'])?1:empty(query_user('show_role',$uid)['show_role']);
             }
             return $this->getImageUrlByRoleId($role_id, $size);
         }
     }
-
-
-
 
     private function getImageUrlByPath($path, $size,$isReplace = true)
     {
@@ -110,10 +107,10 @@ class UploadAvatar extends Controller
             $image = Image::open($path);
             
             //生成将单位换算成为像素
-            $x = $x * $image->width();
-            $y = $y * $image->height();
-            $w = $w * $image->width();
-            $h = $h * $image->height();
+            //$x = $x * $image->width();
+            //$y = $y * $image->height();
+            //$w = $w * $image->width();
+            //$h = $h * $image->height();
 
             //如果宽度和高度近似相等，则令宽和高一样
             if (abs($h - $w) < $h * 0.01) {

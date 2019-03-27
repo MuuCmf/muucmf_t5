@@ -16,7 +16,7 @@ class Upload extends Model
      *
      * @return     <type>  ( description_of_the_return_value )
      */
-	public function upload($files, $type = "picture", $dirname = '')
+	public function upload($files, $type = "picture", $dirname = '', $uid = 0)
 	{
 
 		if($type=='picture'){
@@ -25,6 +25,9 @@ class Upload extends Model
 		if($type=='file'){
 			$result = $this->file($files, $dirname);
 		}
+        if($type=='avatar'){
+            $result = $this->avatar($files, $dirname, $uid);
+        }
 		if($type=='base64'){
 			$result = $this->base64($files, $dirname);
 		}
@@ -175,10 +178,87 @@ class Upload extends Model
             //写入数据库
             $data['create_time'] = time();
             $id = Db::name('file')->insertGetId($data);
+            cache('file_path'.$id, NULL);
+            cache('file_name'.$id, NULL);
+            cache('file_all'.$id, NULL);
             if($id){
                 $data['id'] = $id;
                 $data['savepath'] = get_file_by_id($id);
                 $return['data'][] = $data;
+            }
+        }
+        return $return['data'];
+    }
+
+    /**
+     * 图片上传
+     *
+     * @param      <type>         $files  The files
+     *
+     * @return     array|boolean  ( description_of_the_return_value )
+     */
+    private function Avatar($files, $dirname, $uid)
+    {
+        $config = config('upload.avatar');
+        foreach($files as $file){
+            if (empty($files)) {
+                $this->error = $file->getError();
+                return false;
+            }
+            //判断是否已经存在暂不做处理 TODO
+            
+
+            //获取上传驱动
+            $driver = modC('PICTURE_UPLOAD_DRIVER','local','config');
+            $driver = check_driver_is_exist($driver);
+            //构建返回数据
+            
+            if($driver == 'local'){
+                $info = $file->validate(['size'=>$config['maxsize'],'ext'=>$config['mimetype']])->move($config['savepath'] . DS . $uid);
+                
+                if($info){
+                    // 成功上传后 获取上传信息
+                    $data['path'] = DS . 'uploads'  . DS . 'avatar' . DS . $uid . DS . $info->getSaveName();
+                    $data['path'] = str_replace("\\","/",$data['path']);
+                    //$data['md5'] = $info->md5();
+                    //$data['sha1'] = $info->sha1();
+                }else{
+                    $this->error = $file->getError();
+                    return false;
+                }
+
+            }else{
+                //驱动上传
+                //调用驱动上传数据
+                $res = $this->uploadDriver($driver, $file, $dirname);
+
+                if(isset($res['savepath'])){
+                    $data['path'] = $res['savepath']; 
+               }else{
+                    $this->error = $res;
+                    return false;
+               }
+            }
+
+            //写入数据库
+            $data['create_time'] = time();
+            $data['driver'] = $driver;
+            $data['status'] = 1;
+            $have = Db::name('Avatar')->where(['uid'=>$uid])->find();
+
+            if($have){
+                $updateAvatar = Db::name('Avatar')->where(['uid'=>$uid])->update($data);
+                if($updateAvatar){
+                    $id = $have['id'];
+                }
+
+            }else{
+                $id = Db::name('Avatar')->insertGetId($data);
+            }
+
+            if($id){
+                $data['id'] = $id;
+                $return['data'][] = $data;  
             }
         }
         return $return['data'];

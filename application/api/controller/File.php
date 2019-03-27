@@ -14,7 +14,7 @@ class File extends Controller
     public function uploadPicture()
     {   
         //自定义目录名，暂只支持云存储
-        $dirname = input('dirname');
+        $dirname = input('dirname','','text');
         $files = request()->file();
         if (empty($files)) {
             $return['code'] = 0;
@@ -39,7 +39,7 @@ class File extends Controller
     public function uploadFile()
     {   
         //自定义目录名，暂只支持云存储
-        $dirname = input('dirname');
+        $dirname = input('dirname','','text');
         $files = request()->file();
 
         if (empty($files)) {
@@ -64,49 +64,37 @@ class File extends Controller
      * 用户头像上传
      * @return [type] [description]
      */
-    public function uploadAvatar(){
-
-        $aUid = is_login();
-
-        /* 调用文件上传组件上传文件 */
-        $file = request()->file('file');
-
-        if (empty($file)) {
+    public function uploadAvatar()
+    {
+        $dirname = input('dirname','avatar','text');
+        $uid = input('uid',0,'intval');
+        //无uid时尝试获取
+        $aUid = $uid || is_login();
+        if($aUid <= 0){
             $return['code'] = 0;
-            $return['msg'] = 'No file upload or server upload limit exceeded';
+            $return['msg'] = 'Uid Error';
             return json($return);
         }
-        $return = [];
-        //获取上传驱动
-        $driver = modC('PICTURE_UPLOAD_DRIVER','local','config');
-        $driver = check_driver_is_exist($driver);
-        //构建返回数据
-        $data['driver'] = $driver;
-        $data['uid'] = $aUid;
-        if($driver == 'local'){
-            $info = $file
-            ->validate(['size'=>2*1024*1024,'ext'=>'jpg,png,gif'])
-            ->rule('uniqid')
-            ->move(ROOT_PATH . 'public' . DS . 'uploads'  . DS . 'avatar' . DS . $aUid);
-
-            if($info){
-                // 成功上传后 获取上传信息
-                $data['path'] = DS . 'uploads'  . DS . 'avatar' . DS . $aUid . DS . $info->getSaveName();
-                $return['code'] = 1;
-                $return['msg'] = 'Upload successful';
-                $return['data'] = $data;
-            }else{
-                $return['code'] = 0;
-                $return['msg'] = $file->getError();
-            }
-        }else{
-            //获取驱动配置
-            $uploadConfig = get_upload_config($driver);
-            //文件本地路径
-            $filePath = $file->getRealPath();
-        }
+        /* 调用文件上传组件上传文件 */
+        $files = request()->file();
         
-        //返回
+        if (empty($files)) {
+            $return['code'] = 0;
+            $return['msg'] = 'No Avatar Image upload or server upload limit exceeded';
+            return json($return);
+        }
+
+        $arr = model('api/Upload')->upload($files,'avatar',$dirname,$uid);
+
+        if(is_array($arr)){
+            $return['code'] = 1;
+            $return['msg'] = 'Upload successful';
+            $return['data'] = $arr;
+        }else{
+            $return['code'] = 1;
+            $return['msg'] = model('api/Upload')->getError();
+        }
+
         return json($return);
     }
     /**

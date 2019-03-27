@@ -6,6 +6,7 @@ namespace app\api\controller;
 
 use think\Controller;
 use think\Request;
+use think\Response;
 use think\Config;
 use think\Exception;
 use app\api\controller\Factory;
@@ -76,9 +77,9 @@ class Api extends Controller
 	 */
 	public function _initialize()
     {	
+        $this->init();    //请求方法检查 
     	$request = Request::instance();
     	$this->request = $request;
-        $this->init();    //请求方法检查 
         $this->clientInfo = $this->checkAuth();  //接口权限检查  
     } 
 
@@ -87,7 +88,7 @@ class Api extends Controller
      * 检测请求类型，数据格式等操作
      */
     public function init()
-    { 
+    {
     	// 资源类型检测
         $request = Request::instance();
         $ext = $request->ext();
@@ -103,11 +104,24 @@ class Api extends Controller
         $this->setType();
         // 请求方式检测
         $method = strtolower($request->method());
+
         $this->method = $method;
+        // 跨域options直接返回200,允许跨域
+        header('Access-Control-Allow-Origin: *');
+        $host_name = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : "*";
+        $headers = [
+            "Access-Control-Allow-Origin" => $host_name,
+            "Access-Control-Allow-Credentials" => 'true',
+            "Access-Control-Allow-Headers" => "token,shopid,x-token,x-uid,x-requested-with,content-type,Host"
+        ];
+
+        if ($method == "options") {
+            return self::returnmsg(200,'success',[],$headers);
+        }
+        
         //这里可以加入header，防止前端ajax跨域
         if (false === stripos($this->restMethodList, $method)) {
-
-          return self::returnmsg(405,'Method Not Allowed',[],["access-control-request-method" => $this->restMethodList]);
+            return self::returnmsg(405,'Method Not Allowed',[],["access-control-request-method" => $this->restMethodList]);
         }
     }
 
