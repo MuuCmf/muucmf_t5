@@ -112,10 +112,10 @@ class Member extends Controller
                 if(empty($step_config[1]['items']) || $step_config[1]['items']=0){
                     //跳过注册步骤直接跳转首页
                     Db::name('UserRole')->where(['uid' => $uid])->setField('step', 'finish');
-                    $step_url = Url('index/Index/index');
+                    $step_url = url('index/Index/index');
                 }else{
                     //构建注册步骤URL
-                    $step_url = Url('ucenter/member/step', ['step' => get_next_step('start')]);
+                    $step_url = url('ucenter/member/step', ['step' => get_next_step('start')]);
                 }
                 $this->success('注册成功', $step_url);
             } else { //注册失败，显示错误信息
@@ -466,8 +466,16 @@ class Member extends Controller
         $returnPath = controller('ucenter/UploadAvatar', 'widget')->cropPicture($aCrop,$aPath);
 
         $driver = modC('PICTURE_UPLOAD_DRIVER','local','config');
-        
-        $data = ['uid' => $aUid, 'status' => 1, 'is_temp' => 0, 'path' => $returnPath,'driver'=> $driver, 'create_time' => time()];
+
+        //更新数据库数据
+        $data = [
+            'uid' => $aUid,
+            'status' => 1, 
+            'is_temp' => 0,
+            'path' => $returnPath,
+            'driver'=> $driver, 
+            'create_time' => time()
+        ];
         $res = Db::name('avatar')->where(['uid' => $aUid])->update($data);
         if (!$res) {
             Db::name('avatar')->insert($data);

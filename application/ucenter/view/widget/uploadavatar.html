@@ -81,8 +81,19 @@
             // 调用 getData 方法
             var avatarCutterData = avatarCutter.getData();
 
-            var crop = avatarCutterData.left + ',' + avatarCutterData.top + ',' + avatarCutterData.width + ',' + avatarCutterData.height;
+            //计算缩放后的比例
+            var widthX = parseFloat(avatarCutterData.originWidth/avatarCutterData.scaleWidth);
+            var heightX = parseFloat(avatarCutterData.originHeight/avatarCutterData.scaleHeight);
 
+            var x = parseInt(avatarCutterData.left*widthX);
+            var y = parseInt(avatarCutterData.top*heightX);
+            var w = parseInt(avatarCutterData.width*widthX);
+            var h = parseInt(avatarCutterData.height*heightX);
+
+            var crop = x + ',' + y + ',' + w + ',' + h;
+
+            console.log(avatarCutterData);
+            //return;
             //检查是否已经裁剪过
             if (typeof (crop) == 'undefined') {
                 toast.error("{:lang('_AVATAR_UPLOAD_AND_CROP_')}");

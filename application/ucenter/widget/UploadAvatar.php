@@ -17,7 +17,7 @@ class UploadAvatar extends Controller
 
     public function getAvatar($uid = 0, $size = 256)
     {
-        $avatar = Db::name('avatar')->where(array('uid' => $uid, 'status' => 1, 'is_temp' => 0))->find();
+        $avatar = Db::name('avatar')->where(['uid' => $uid, 'status' => 1, 'is_temp' => 0])->find();
         if ($avatar) {
 
             if($avatar['driver'] == 'local'){
@@ -90,18 +90,19 @@ class UploadAvatar extends Controller
         if (!$crop) {
             $this->error('必须裁剪');
         }
+
+        //解析crop参数
+        $crop = explode(',', $crop);
+        $x = $crop[0];
+        $y = $crop[1];
+        $w = $crop[2];
+        $h = $crop[3];
+
+        $path = str_replace("\\","/",$path);
+        $path = ltrim($path,'/');
         
         $driver = modC('PICTURE_UPLOAD_DRIVER','local','config');
         if (strtolower($driver) == 'local') {
-            //解析crop参数
-            $crop = explode(',', $crop);
-            $x = $crop[0];
-            $y = $crop[1];
-            $w = $crop[2];
-            $h = $crop[3];
-
-            $path = str_replace("\\","/",$path);
-            $path = ltrim($path,'/');
             //本地环境
             
             $image = Image::open($path);
@@ -123,9 +124,11 @@ class UploadAvatar extends Controller
             //返回新文件的路径
             return  cut_str('uploads/avatar',$path,'l');
         }else{
+
             $name = get_addon_class($driver);
             $class = new $name();
             $new_img = $class->crop($path,$crop);
+
             return $new_img;
         }
     }
