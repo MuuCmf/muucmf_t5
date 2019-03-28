@@ -9,12 +9,19 @@ class UploadAvatar extends Controller
 {
     public function render($uid = 0)
     {
-        $this->assign('user', query_user(array('avatar256', 'avatar128', 'avatar64','avatar32','avatar512'), $uid));
+        $this->assign('user', query_user(['avatar256', 'avatar128', 'avatar64','avatar32','avatar512'], $uid));
         $this->assign('uid', $uid);
         return $this->fetch('ucenter@widget/uploadavatar');
     }
 
-
+    /**
+     * 获取用户头像
+     *
+     * @param      integer  $uid    The uid
+     * @param      integer  $size   The size
+     *
+     * @return     <type>   The avatar.
+     */
     public function getAvatar($uid = 0, $size = 256)
     {
         $avatar = Db::name('avatar')->where(['uid' => $uid, 'status' => 1, 'is_temp' => 0])->find();
@@ -23,6 +30,19 @@ class UploadAvatar extends Controller
             if($avatar['driver'] == 'local'){
                 $avatar_path = "/uploads/avatar".$avatar['path'];
                 return $this->getImageUrlByPath($avatar_path, $size);
+            }else if($avatar['driver'] == 'weixin'){
+
+                $url = explode('/', $avatar['path']);
+                array_pop($url);
+                $url = implode('/', $url);
+                //微信图片的处理,增加尺寸后缀42 64 132 0
+                //微信头像尺寸无法精准兼任muu,暂时定位132为统一尺寸
+                if($size == 32) $size = 64;
+                if($size == 128) $size = 132;
+                if($size == 256) $size = 0;
+                if($size == 512) $size = 0;
+
+                return $url.'/'.$size;
             }else{
                 $new_img = $avatar['path'];
                 $name = get_addon_class($avatar['driver']);
@@ -84,6 +104,14 @@ class UploadAvatar extends Controller
         return $path;
     }
 
+    /**
+     * 裁切图片
+     *
+     * @param      <type>  $crop   The crop
+     * @param      <type>  $path   The path
+     *
+     * @return     <type>  ( description_of_the_return_value )
+     */
     public function cropPicture($crop = null,$path)
     {
         //如果不裁剪，则发生错误
