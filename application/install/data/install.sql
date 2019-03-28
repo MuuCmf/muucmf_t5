@@ -568,7 +568,6 @@ CREATE TABLE IF NOT EXISTS `muucmf_avatar` (
   `uid` int(11) NOT NULL,
   `path` varchar(200) NOT NULL,
   `driver` varchar(50) NOT NULL,
-  `crop` varchar(64) NOT NULL COMMENT '云存储图片裁切数据json',
   `create_time` int(11) NOT NULL,
   `status` int(11) NOT NULL,
   `is_temp` int(11) NOT NULL
