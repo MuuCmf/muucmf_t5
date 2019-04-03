@@ -24,6 +24,28 @@ class Hooks extends Model {
     }
 
     /**
+     * 编辑/新增数据
+     *
+     * @param      <type>  $data   The data
+     *
+     * @return     <type>  ( description_of_the_return_value )
+     */
+    public function editData($data)
+    {   
+        $data['status'] = 1; //默认状态为1
+
+        if(!empty($data['id'])){
+            $res = $this->allowField(true)->save($data,$data['id']);
+        }else{
+            $res = $this->allowField(true)->save($data);
+        }
+        
+        if($res) $res = $this->id;
+
+        return $res;
+    }
+
+    /**
      * 更新插件里的所有钩子对应的插件
      */
     public function updateHooks($addons_name){
