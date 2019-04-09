@@ -195,7 +195,7 @@ class AdminListBuilder extends AdminBuilder
     public function buttonDelete($url = null, $title = '删除', $attr = [])
     {
         if (!$url) $url = $this->_setStatusUrl;
-        $attr['class']='btn ajax-post btn-danger';
+        $attr['class']='btn ajax-post btn-danger confirm';
         $attr['data-confirm'] = lang('_CONFIRM_DELETE_COMPLETELY_');
         return $this->buttonSetStatus($url, -1, $title, $attr);
     }
@@ -553,7 +553,7 @@ class AdminListBuilder extends AdminBuilder
      */
     public function keyDoActionDelete($getUrl, $text = '删除', $hide=[])
     {
-        return $this->keyDoAction($getUrl, '<i class="icon icon-trash"></i> '.$text, '操作','btn-danger ajax-get', $hide);
+        return $this->keyDoAction($getUrl, '<i class="icon icon-trash"></i> '.$text, '操作','btn-danger ajax-get confirm', $hide);
     }
     /**
      * 还原操作，存在获取数据ID BUG
