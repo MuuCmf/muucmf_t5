@@ -67,11 +67,13 @@ str;
             ->keyText('NEW_USER_FRIENDS', lang('_NEW_FRIENDS_'), lang('_ID_INPUT_SEPARATE_COMMA_'))
             ->keyKanban('REG_STEP', lang('_REGISTRATION_STEP_'), lang('_STEPS_TO_BE_MADE_AFTER_REGISTRATION_'))
             ->keyCheckBox('REG_CAN_SKIP', lang('_WHETHER_THE_REGISTRATION_STEP_CAN_BE_SKIPPED_'), lang('_CHECK_TO_SKIP_AND_YOU_CANT_SKIP_THE_DEFAULT_'),$mStep)
+            ->keyText('REG_USER_TEMPLATE','注册页模板','自定义的注册页模板，如：register_custom')
 
             //登陆配置
             ->keyRadio('OPEN_QUICK_LOGIN',lang('_QUICK_LOGIN_'),lang('_BY_DEFAULT_AFTER_THE_USER_IS_LOGGED_IN_THE_USER_IS_LOGGED_IN_'), array(0 => lang('_OFF_'), 1 => lang('_OPEN_')))
             ->keyCheckBox('LOGIN_SWITCH', lang('_LOGIN_PROMPT_SWITCH_'), lang('_JUST_THE_TIP_OF_THE_LOGIN_BOX_'), array('username' => lang('_USER_NAME_'), 'email' => lang('_MAILBOX_'), 'mobile' => lang('_MOBILE_PHONE_')))
             ->keyRadio('OPEN_WECHAT_AUTH',lang('_OPEN_WECHAT_AUTH_SWITCH_'),lang('_OPEN_WECHAT_AUTH_SWITCH_INFO_'),array(0 => lang('_OFF_'), 1 => lang('_OPEN_')))
+            ->keyText('LOGIN_USER_TEMPLATE','登陆页模板','自定义的登陆页模板，如：login_custom')
 
             //邮件验证配置
             ->keyEditor('REG_EMAIL_VERIFY', lang('_MAILBOX_VERIFICATION_TEMPLATE_'), lang('_PLEASE_EMAIL_VERIFY_'),'wangeditor')
@@ -93,8 +95,8 @@ str;
             ->keyInteger('USERNAME_MAX_LENGTH', lang('_USERNAME_LENGTH_MAXIMUM_'))->keyDefault('USERNAME_MAX_LENGTH',32)
 
             //分组
-            ->group(lang('_REGISTER_CONFIGURATION_'), 'REG_SWITCH,EMAIL_VERIFY_TYPE,MOBILE_VERIFY_TYPE,NICKNAME_SWITCH,REG_STEP,REG_CAN_SKIP,NEW_USER_FOLLOW,NEW_USER_FANS,NEW_USER_FRIENDS')
-            ->group(lang('_LOGIN_CONFIGURATION_'), 'OPEN_QUICK_LOGIN,LOGIN_SWITCH,OPEN_WECHAT_AUTH')
+            ->group(lang('_REGISTER_CONFIGURATION_'), 'REG_SWITCH,EMAIL_VERIFY_TYPE,MOBILE_VERIFY_TYPE,NICKNAME_SWITCH,REG_STEP,REG_CAN_SKIP,NEW_USER_FOLLOW,NEW_USER_FANS,NEW_USER_FRIENDS,REG_USER_TEMPLATE')
+            ->group(lang('_LOGIN_CONFIGURATION_'), 'OPEN_QUICK_LOGIN,LOGIN_SWITCH,OPEN_WECHAT_AUTH,LOGIN_USER_TEMPLATE')
             ->group(lang('_MAILBOX_VERIFICATION_ACTIVATION_'), 'REG_EMAIL_VERIFY,REG_EMAIL_ACTIVATE')
             //->group(lang('_MAILBOX_ACTIVATION_TEMPLATE_'), 'REG_EMAIL_ACTIVATE')
             ->group(lang('_SMS_VERIFICATION_CONFIG_'), 'SMS_CONTENT,SMS_RESEND')

@@ -13,7 +13,7 @@ $(function () {
 
         (new $.zui.ModalTrigger({
             'type': 'ajax',
-            'url': U('Ucenter/Invite/exchange') + '&id=' + id,
+            'url': url('Ucenter/Invite/exchange') + '&id=' + id,
             'title': '兑换 ' + title + ' 邀请名额'
         })).show();
 
@@ -27,7 +27,7 @@ $(function () {
         var title = $(this).attr('data-title');
         (new $.zui.ModalTrigger({
             'type': 'ajax',
-            'url': U('Ucenter/Invite/createCode') + '&id=' + id,
+            'url': url('ucenter/Invite/createCode') + '&id=' + id,
             'title': '生成 ' + title + ' 邀请码'
         })).show();
         myModalTrigger.show();
@@ -35,7 +35,7 @@ $(function () {
     $('[data-role="back_copy_code"]').click(function () {
         if (confirm('确定退还邀请码？')) {
             var data_id = $(this).attr('data-id');
-            $.post(U('Ucenter/Invite/backCode'), {id: data_id}, function (msg) {
+            $.post(url('ucenter/Invite/backCode'), {id: data_id}, function (msg) {
                 if (msg.status) {
                     toast.success('操作成功！');
                     setTimeout(function () {

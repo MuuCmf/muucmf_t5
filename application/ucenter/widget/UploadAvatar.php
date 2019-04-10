@@ -31,16 +31,27 @@ class UploadAvatar extends Controller
                 $avatar_path = "/uploads/avatar".$avatar['path'];
                 return $this->getImageUrlByPath($avatar_path, $size);
             }else if($avatar['driver'] == 'weixin'){
-
+                
                 $url = explode('/', $avatar['path']);
                 array_pop($url);
                 $url = implode('/', $url);
                 //微信图片的处理,增加尺寸后缀42 64 132 0
                 //微信头像尺寸无法精准兼任muu,暂时定位132为统一尺寸
-                if($size == 32) $size = 64;
-                if($size == 128) $size = 132;
-                if($size == 256) $size = 0;
-                if($size == 512) $size = 0;
+                
+                switch ($size)
+                {
+                case 32:
+                  $size = 64;
+                  break;  
+                case 64:
+                  $size = 64;
+                  break;
+                case 128:
+                  $size = 132;
+                  break;
+                default:
+                  $size = 0;
+                }
 
                 return $url.'/'.$size;
             }else{

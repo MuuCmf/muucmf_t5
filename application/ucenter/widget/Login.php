@@ -20,7 +20,10 @@ class Login extends Controller
         check_login_type('email') && $ph[] = lang('_EMAIL_');
         check_login_type('mobile') && $ph[] = lang('_PHONE_');
         $this->assign('ph', implode('/', $ph));
-        return $this->fetch('ucenter@widget/login');
+
+        //自定义模板
+        $template = modC('LOGIN_USER_TEMPLATE','login','USERCONFIG');
+        return $this->fetch('ucenter@widget/'.$template);
     }
 
     public function doLogin()

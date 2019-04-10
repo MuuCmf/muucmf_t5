@@ -124,7 +124,7 @@ class Member extends Controller
         } else {
             //显示注册表单
             if (is_login()) {
-                redirect(Url('index/Index/index'));
+                redirect(url('index/Index/index'));
             }
             $regType = $this->checkRegisterType();
             $aType = input('get.type', '', 'text');
@@ -136,7 +136,10 @@ class Member extends Controller
             $this->assign('nicknameSwitch', $nicknameSwitch);//昵称开关
             $this->assign('step', $aStep);
             $this->assign('type', $aType == '' ? 'username' : $aType);
-            return $this->fetch();
+
+            $template = modC('NEW_USER_TEMPLATE','register','USERCONFIG');
+
+            return $this->fetch($template);
         }
     }
     /**
@@ -272,12 +275,15 @@ class Member extends Controller
             $result = controller('ucenter/Login', 'widget')->doLogin();
 
             if ($result['code'] == 1) {
-                $this->success($result['msg'], Input('post.from', Url('index/index/index'), 'text'));
+                $this->success($result['msg'], Input('post.from', url('index/index/index'), 'text'));
             } else {
                 $this->error($result['msg']);
             }
         } else { //显示登录页面
-            return $this->fetch();
+            $template = modC('LOGIN_USER_TEMPLATE','login','USERCONFIG');
+
+            return $this->fetch($template);
+
         }
     }
 
