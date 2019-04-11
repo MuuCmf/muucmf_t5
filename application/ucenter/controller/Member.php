@@ -124,7 +124,7 @@ class Member extends Controller
         } else {
             //显示注册表单
             if (is_login()) {
-                redirect(url('index/Index/index'));
+                $this->redirect(url('index/Index/index'));
             }
             $regType = $this->checkRegisterType();
             $aType = input('get.type', '', 'text');
