@@ -271,7 +271,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_auth_rule` (
   `condition` varchar(300) NOT NULL DEFAULT '' COMMENT '规则附加条件',
   PRIMARY KEY (`id`),
   KEY `module` (`module`,`status`,`type`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=10000 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=10000;
 
 INSERT INTO `muucmf_auth_rule` (`id`, `module`, `type`, `name`, `title`, `status`, `condition`) VALUES
 (1, 'admin', 2, 'Admin/Index/index', '首页', 1, ''),
@@ -570,7 +570,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_avatar` (
   `driver` varchar(50) NOT NULL,
   `create_time` int(11) NOT NULL,
   `status` int(11) NOT NULL,
-  `is_temp` int(11) NOT NULL
+  `is_temp` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
