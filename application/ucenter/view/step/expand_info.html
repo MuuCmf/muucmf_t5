@@ -1,5 +1,5 @@
 <div class="tab-pane">
-    <form action="{:Url('ucenter/Member/edit_expandinfo')}" method="post" class="ajax-form">
+    <form action="{:url('ucenter/Member/edit_expandinfo')}" method="post" class="ajax-form">
 
         <div class="with-padding">
             <div class="row">
@@ -21,7 +21,7 @@
                                class="btn btn-primary expandinfo-sumbit">
                     {/if}
                     {php} if(check_step_can_skip('expand_info')){{/php}
-                    <a href="{:Url('ucenter/member/step', array('step' => get_next_step('expand_info')))}"
+                    <a href="{:url('ucenter/member/step', array('step' => get_next_step('expand_info')))}"
                        style="margin-left: 30px;line-height: 18px;display: inline-block;margin-top: 6px;">{:lang('_STEP_')}</a>
                     {php}}{/php}
                 </div>

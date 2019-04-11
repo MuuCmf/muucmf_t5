@@ -32,10 +32,12 @@
 #center_password [type=password] {
   max-width: 250px;
 }
-.usercenter-verify-icon-list img {
-  width: 18px;
-  height: 18px;
-  vertical-align: middle;
+.usercenter-verify-icon-list {
+  img {
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+  }
 }
 .expandinfo-noticeinfo {
   margin-left: 30px;
@@ -65,10 +67,13 @@
   margin: 20px 5px 20px 5px;
   padding: 0;
 }
-.expandinfo-list .alert {
-  display: none;
-  padding: 3px 8px;
-  text-align: center;
+.expandinfo-list {
+
+  .alert {
+    display: none;
+    padding: 3px 8px;
+    text-align: center;
+  }
 }
 .input-tips {
   color: #BBB3B5;
@@ -85,13 +90,19 @@
 .user-info-panel {
   padding: 20px;
 }
-.user-info-panel .nickname {
-  font-size: 16px;
-  margin-top: 10px;
-  display: block;
+.user-info-panel {
+
+  .nickname {
+    font-size: 16px;
+    margin-top: 10px;
+    display: block;
+  }
 }
-.user-config .side-menu {
-  background: white;
+.user-config {
+
+  .side-menu {
+    background: white;
+  }
 }
 .uploader-avatar-war {
   display: flex;
@@ -118,83 +129,40 @@
 }
 .avatar_upload_btn {
 
+  .webuploader-pick {
+    display: block;
+    font-size: 17px;
+    line-height: 1.25;
+    color:#fff;
+    padding: 10px 16px;
+    background:#ccc;
+    background-color: #f1a325;
+    border-color: #ed980f;
+  }
 }
-.avatar_upload_btn .webuploader-pick {
-  display: block;
-  font-size: 17px;
-  line-height: 1.25;
-  color:#fff;
-  padding: 10px 16px;
-  background:#ccc;
-  background-color: #f1a325;
-  border-color: #ed980f;
-}
+
 .avatar_preview {
   min-width:256px;
   margin:30px auto;
   text-align:center;
 }
-.avatar_preview .jcrop-holder > div > div {
-  
-}
-.avatar_256 div {
-  width: 256px;
-  height: 256px;
-  margin:0 auto;
-  overflow: hidden;
-}
-.avatar_128 div {
-  width: 128px;
-  height: 128px;
-  margin:0 auto;
-  overflow: hidden;
-}
-.avatar_64 div {
-  width: 64px;
-  height: 64px;
-  margin:0 auto;
-  overflow: hidden;
-}
-.avatar_256 {
-  display: block;
-  padding: 6px;
-  border-radius: 6px;
-}
-.avatar_128 {
-  display: block;
-  padding: 6px;
-  border-radius: 6px;
-}
-.avatar_64 {
-  display: block;
-  padding: 6px;
-  border-radius: 6px;
-}
+
+
 .avatar_btn {
   display: block;
 }
 .avatar_select {
   padding: 10px;
+  p {
+    margin: 0;
+  }
 }
-.avatar_select p {
-  margin: 0;
-}
+
 .jcrop-holder .avatar-img {
   border-radius: 0;
   max-width: none;
 }
-.ucenter-avatar .avatar_256 {
-  left: 300px;
-}
-.ucenter-avatar .avatar_128 {
-  left: 600px;
-}
-.ucenter-avatar .avatar_64 {
-  left: 600px;
-}
-.ucenter-avatar .avatar_btn {
-  left: 460px;
-}
+
 /*form_check.js 所用到的css*/
 .show_info {
   position: absolute;
@@ -245,35 +213,44 @@
 /*tag 用到的css*/
 .tag-select-block {
   margin-bottom: 10px;
-}
-.tag-select-block .select-cate {
-  width: 100px;
-  float: left;
-  text-align: right;
-  padding-right: 5px;
-  font-size: 15px;
-  line-height: 26px;
-}
-.tag-select-block .select-option {
-  margin-left: 100px;
-}
-.tag-select-block .select-option .one_tag {
-  float: left;
-  margin: 0 10px 5px 0;
-}
-.tag-select-block .select-option .one_tag .btn {
-  padding: 2px 10px;
-}
-.tag-select-block .select-option.my-tag-block {
-  border: #dcdcdc solid 1px;
-  border-top-color: #b5b5b5;
-  padding: 5px;
-  padding-bottom: 10px;
-  background: #fff;
-  max-width: 500px;
-}
-.tag-select-block .select-option.my-tag-block .one_tag .btn {
-  padding-right: 5px;
+  .select-cate {
+    width: 100px;
+    float: left;
+    text-align: right;
+    padding-right: 5px;
+    font-size: 15px;
+    line-height: 26px;
+  }
+
+  .select-option {
+    margin-left: 100px;
+
+    .one_tag {
+      float: left;
+      margin: 0 10px 5px 0;
+    }
+
+    .one_tag {
+      .btn {
+        padding: 2px 10px;
+      }
+    }
+  }
+
+  .my-tag-block {
+    border: #dcdcdc solid 1px;
+    border-top-color: #b5b5b5;
+    padding: 5px;
+    padding-bottom: 10px;
+    background: #fff;
+    max-width: 500px;
+
+    .one_tag {
+      .btn {
+        padding-right: 5px;
+      }
+    }
+  }
 }
 /*tag 用到的css end*/
 .config-content {
@@ -281,26 +258,3 @@
 	min-height: 523px;
 }
 /*用户中心css*/
-.message-body {
-  border-bottom: 1px solid #e3e3e3;
-  padding-bottom: 10px;
-  margin-left: 0px;
-  margin-right: 0px;
-}
-.message-body div {
-  font-style: normal;
-}
-.message-body .message-ctime {
-  font-weight: normal;
-}
-.message-body .message_icon {
-  text-align: center;
-}
-.message-body .message_icon img {
-  margin-bottom: 0.5em;
-}
-
-.message-body {
-  margin-top: 2em;
-  margin-bottom: 10px;
-}

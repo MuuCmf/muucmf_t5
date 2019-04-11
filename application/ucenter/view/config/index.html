@@ -53,7 +53,7 @@
 
                                 {$accountInfo.email|default=lang('_SET_NOT_')}
                                 <a class=" lh32"
-                                   data-remote="{:Url('ucenter/config/changeaccount',array('tag'=>'email'))}"
+                                   data-remote="{:url('ucenter/config/changeaccount',array('tag'=>'email'))}"
                                    data-toggle="modal">{:lang('_EMAIL_MODIFY_')}</a>
                             </div>
                         </div>
@@ -68,7 +68,7 @@
                                 {$accountInfo.mobile|default=lang('_SET_NOT_')}
 
                                 <a class=" lh32 " style="margin-left: 10px"
-                                   data-remote="{:Url('ucenter/config/changeaccount',array('tag'=>'mobile'))}"
+                                   data-remote="{:url('ucenter/config/changeaccount',array('tag'=>'mobile'))}"
                                    data-toggle="modal">{:lang('_PHONE_MODIFY_')}</a>
                             </div>
                         </div>
@@ -78,7 +78,7 @@
                 <div class="row">
                     <div class="col-xs-8">
                         <form class="form-horizontal center_info ajax-form" role="form"
-                              action="{:Url('ucenter/Config/index')}" method="post">
+                              action="{:url('ucenter/Config/index')}" method="post">
                             <div class="form-group">
                                 <label for="nickname" class="col-xs-2 control-label">{:lang('_NICKNAME_')}</label>
 
@@ -202,7 +202,7 @@
                 return false;
             }
             if (confirm("{:lang('_USERNAME_SET_ONCE_')}{:lang('_QUESTION_')}")) {
-                $.post("{:Url('ucenter/config/saveUsername')}", {username: username}, function (res) {
+                $.post("{:url('ucenter/config/saveUsername')}", {username: username}, function (res) {
                     handleAjax(res);
                 })
             }
