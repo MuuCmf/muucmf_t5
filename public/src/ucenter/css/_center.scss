@@ -1,4 +1,16 @@
+.nav-func {
+    flex: 1;
 
+    .nav-title {
+      font-size: 16px;
+      color: #29312e;
+      padding-left: 12px;
+      margin: 8px 0 8px 12px;
+      border-left: 1px solid #e9eaea;
+      height: 42px;
+      line-height: 42px;
+  }
+}
 /**/
 .center_line {
   margin-top: 0px;

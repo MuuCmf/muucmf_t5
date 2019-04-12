@@ -329,7 +329,7 @@ return array(
     '_EMAIL_INPUT_' => '输入邮箱',
     '_EMAIL_VERIFY_' => '验证邮箱',
     '_VERIFY_CODE_INPUT_' => '输入验证码',
-    '_PLACEHOLDER_PHONE_' => '请输入手机号',
+    '_PLACEHOLDER_PHONE_' => '请输入11位手机号',
     '_ERROR_PHONE_INPUT_' => '请填写手机号',
     '_PHONE_INPUT_' => '输入手机号',
     '_PHONE_VERIFY_' => '验证手机',
