@@ -20,18 +20,13 @@ class Member extends Controller
         //获取参数
         $aUsername = $username = input('post.username', '', 'text');
         $aPassword = input('post.password', '', 'text');
+        $cPassword = input('post.confirm_password', '', 'text');
         $aVerify = input('post.verify', '', 'text');
         $aRegVerify = input('post.reg_verify', '', 'text');
         $aRegType = input('post.reg_type', '', 'text');
         $aStep = input('get.step', 'start', 'text');
         $aRole = input('post.role', 0, 'intval');
-        //昵称注册开关
-        if (modC('NICKNAME_SWITCH', 0, 'USERCONFIG')) {
-            $aNickname = modC('NICKNAME_PREFIX','','USERCONFIG').create_rand(8, 'all');
-        }else{
-            $aNickname = input('post.nickname', '', 'text');
-        }
-        
+
         if (!modC('REG_SWITCH', '', 'USERCONFIG')) {
             $this->error(lang('_ERROR_REGISTER_CLOSED_'));
         }
@@ -42,6 +37,18 @@ class Member extends Controller
             
             if ($return && !$return['state']) {
                 $this->error($return['info'], $return['url']);
+            }
+
+            //昵称注册开关
+            if (modC('NICKNAME_SWITCH', 0, 'USERCONFIG') == 0) {
+                $aNickname = modC('NICKNAME_PREFIX','','USERCONFIG').create_rand(8, 'all');
+            }else{
+                $aNickname = input('post.nickname', '', 'text');
+            }
+
+            /*检测密码*/
+            if($aPassword != $cPassword){
+                $this->error('两次输入密码不一致');
             }
 
             /* 检测验证码 */
@@ -83,6 +90,44 @@ class Member extends Controller
 
             /* 注册用户 */
             $ucenterMemberModel = new UcenterMember;
+            // 验证注册
+            switch ($aRegType) {
+                case 'username':
+                    empty($aUsername) && $this->error(lang('_ERROR_USERNAME_FORMAT_').lang('_EXCLAMATION_'));
+                    $length = mb_strlen($aUsername, 'utf-8'); // 当前数据长度
+                    if ($length < modC('USERNAME_MIN_LENGTH',2,'USERCONFIG') || $length > modC('USERNAME_MAX_LENGTH',32,'USERCONFIG')) {
+                        $this->error(lang('_ERROR_USERNAME_LENGTH_1_').modC('USERNAME_MIN_LENGTH',2,'USERCONFIG').'-'.modC('USERNAME_MAX_LENGTH',32,'USERCONFIG').lang('_ERROR_USERNAME_LENGTH_2_'));
+                    }
+
+                    $id = $ucenterMemberModel->where(['username' => $aUsername])->value('id');
+                    if ($id) {
+                        $this->error(lang('_ERROR_USERNAME_EXIST_2_'));
+                    }
+                    preg_match("/^[a-zA-Z0-9_]{".modC('USERNAME_MIN_LENGTH',2,'USERCONFIG').",".modC('USERNAME_MAX_LENGTH',32,'USERCONFIG')."}$/", $aUsername, $result);
+                    if (!$result) {
+                        $this->error(lang('_ERROR_USERNAME_ONLY_PERMISSION_'));
+                    }
+                    break;
+                case 'email':
+                    empty($email) && $this->error(lang('_ERROR_EMAIL_FORMAT_').lang('_EXCLAMATION_'));
+                    $length = mb_strlen($email, 'utf-8'); // 当前数据长度
+                    if ($length < 4 || $length > 32) {
+                        $this->error(lang('_ERROR_EMAIL_EXIST_'));
+                    }
+                    $id = $ucenterMemberModel->where(['email' => $email])->value('id');
+                    if ($id) {
+                        $this->error(lang('_ERROR_EMAIL_EXIST_'));
+                    }
+                    break;
+                case 'mobile':
+                    empty($mobile) && $this->error(lang('_ERROR_PHONE_FORMAT_'));
+                    $id = $ucenterMemberModel->where(['mobile' => $mobile])->value('id');
+                    if ($id) {
+                        $this->error(lang('_ERROR_PHONE_EXIST_'));
+                    }
+                    break;
+            }
+
             $code_id = $uid=$ucenterMemberModel->register($aUsername, $aNickname, $aPassword, $email, $mobile, $aUnType);
             if (0 < $code_id) { //注册成功
 
@@ -112,7 +157,7 @@ class Member extends Controller
                 if(empty($step_config[1]['items']) || $step_config[1]['items']=0){
                     //跳过注册步骤直接跳转首页
                     Db::name('UserRole')->where(['uid' => $uid])->setField('step', 'finish');
-                    $step_url = url('index/Index/index');
+                    $step_url = modC('REG_USER_URL','index/Index/index','USERCONFIG');
                 }else{
                     //构建注册步骤URL
                     $step_url = url('ucenter/member/step', ['step' => get_next_step('start')]);
@@ -136,8 +181,8 @@ class Member extends Controller
             $this->assign('nicknameSwitch', $nicknameSwitch);//昵称开关
             $this->assign('step', $aStep);
             $this->assign('type', $aType == '' ? 'username' : $aType);
-
-            $template = modC('NEW_USER_TEMPLATE','register','USERCONFIG');
+            //自定义注册模板
+            $template = modC('REG_USER_TEMPLATE','register','USERCONFIG');
 
             return $this->fetch($template);
         }
