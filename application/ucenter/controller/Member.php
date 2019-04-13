@@ -320,7 +320,7 @@ class Member extends Controller
             $result = controller('ucenter/Login', 'widget')->doLogin();
 
             if ($result['code'] == 1) {
-                $this->success($result['msg'], Input('post.from', url('index/index/index'), 'text'));
+                $this->success($result['msg'], input('post.from', url('index/index/index'), 'text'));
             } else {
                 $this->error($result['msg']);
             }
@@ -328,7 +328,6 @@ class Member extends Controller
             $template = modC('LOGIN_USER_TEMPLATE','login','USERCONFIG');
 
             return $this->fetch($template);
-
         }
     }
 

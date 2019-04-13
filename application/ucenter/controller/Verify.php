@@ -42,7 +42,7 @@ class Verify extends Controller
         
         $checkIsExist = Db::name('UcenterMember')->where([$aType => $aAccount])->find();
         //判断是否是已存在用户，由于部分操作需要向存在的用户发送验证，在这里做判断
-        if($aAction==='find'){
+        if($aAction==='find' || $aAction==='config'){
             if (!$checkIsExist) {
                 $str = $aType == 'mobile' ? lang('_PHONE_') : lang('_EMAIL_');
                 $this->error(lang('_ERROR_USED_1_') . $str . lang('_ERROR_USED_3_').lang('_EXCLAMATION_'));//还未注册的数据返回错误
