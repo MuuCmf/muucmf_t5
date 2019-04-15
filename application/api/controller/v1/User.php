@@ -4,10 +4,10 @@ namespace app\api\controller\v1;
 
 use think\Controller;
 use think\Request;
+use Firebase\JWT\JWT;
 use app\api\controller\Api;
-use think\Response;
 use app\api\controller\UnauthorizedException;
-use app\api\controller\v1\Base;
+use app\api\controller\v2\Base;
 
 /**
  * 所有资源类接都必须继承基类控制器
@@ -31,7 +31,39 @@ class User extends Base
      */
     public function index()
     {
-        return $this->sendError('uid参数错误');  
+        $this->checkToken();
+
+        $uid = $this->uid;
+
+        if(!$uid){
+            return $this->sendError('uid error');
+        }
+
+        $user_info = query_user([
+            'uid',
+            'nickname',
+            'sex',
+            'birthday',
+            'reg_ip',
+            'last_login_ip',
+            'last_login_time',
+            'avatar32',
+            'avatar128',
+            'mobile',
+            'email',
+            'username',
+            'title',
+            'signature',
+        ], $uid);
+
+        //获取已绑定微信的用户的openid
+        $open_id = model('weixin/WeixinOauth')->getOpenid();
+
+        if($open_id){
+            $user_info['open_id'] = $open_id;
+        }
+        
+        return $this->sendSuccess('success',$user_info);
     }
 
     /**
@@ -47,10 +79,9 @@ class User extends Base
         switch($action){
             case 'save'://修改用户基本信息
                 //需要登陆
-                if(!$this->needLogin()){
-                    return $this->sendError('Need login');
-                }
-                $uid = get_uid();
+                $this->checkToken();
+
+                $uid = $this->uid;
                 $mobile = input('mobile',0,'intval');//手机号
                 $email = input('email','','text');//EMAIL
                 $verify = input('verify',0,'intval');//验证码
@@ -186,18 +217,14 @@ class User extends Base
                 
                 if (0 < $uid) { //注册成功
                     model('common/Member')->initRoleUser($aRole, $uid); //初始化角色用户
+
                     $uid = model('ucenter/UcenterMember')->login($username, $aPassword, $aUnType); //通过账号密码取到uid
-                    
-                    $rs = model('common/Member')->login($uid, 1, $aRole); //登陆
-                    if($rs){//注册成功并登陆成功后返回的数据
-                        $user_info = query_user(['uid','nickname','avatar32','avatar64','avatar128','mobile','email','title'], $uid);
-                        //组装返回的数据
-                        $user_info['token'] = $this->getToken($uid);
-                        return $this->sendSuccess('success',$user_info);
-                    }else{//注册成功未登陆成功返回的数据
-                        return $this->sendSuccess('success');
-                    }
-                    
+
+                    //返回用户jwt验证token
+                    $jwt = self::createJwt($uid);
+
+                    return $this->sendSuccess('success',$jwt);
+
                 } else { //注册失败，显示错误信息
                     return $this->sendError(model('ucenter/Member')->showRegError($error_code));
                 }
@@ -213,15 +240,12 @@ class User extends Base
                 $code = $uid = model('ucenter/UcenterMember')->login($username, $aPassword, $aUnType);
                 
                 if($code > 0){
-                    //根据ID登陆用户
-                    $rs = model('common/Member')->login($uid, 1); //登陆
-                    if ($rs) {
-                        $token = $this->getToken($uid);
-                        $user_info = query_user(['uid','nickname','sex','avatar32','mobile','email','title','last_login_ip','last_login_time'], $uid);
-                        $user_info['token'] = $token;//用户持久登录token
 
-                        return $this->sendSuccess('success',$user_info);
-                    }
+                    //返回用户jwt验证token
+                    $jwt = self::createJwt($uid);
+
+                    return $this->sendSuccess('success',$jwt);
+                    
                 }else{
                     $msg = model('common/Member')->showRegError($code);
                     return $this->sendError($msg);
@@ -246,27 +270,21 @@ class User extends Base
                 //验证通过后获取用户UID
                 $uid = model('UcenterMember')->where(['mobile' => $mobile])->column('id');
                 //根据ID登陆用户
-                $rs = model('Member')->login($uid, 1); //登陆
-                //判断是否登陆成功
-                if ($rs) {
-                    $token = $this->getToken($uid);
+                if($uid){
+                    $jwt = self::createJwt($uid);
 
-                    $user_info = query_user(['uid','nickname','sex','avatar32','mobile','email','title','last_login_ip','last_login_time'], $uid);
-                    $user_info['token'] = $token;
-                    return $this->sendSuccess('success',$user_info);
+                    return $this->sendSuccess('success',$jwt);
+                }else{
+                    return $this->sendError('login error');
                 }
-
-                return $this->sendError('login error');
-
+                
             break;
 
             case 'change_password'://修改密码
 
-                //需要登陆
-                if(!$this->needLogin()){
-                    return $this->sendError('Need login');
-                }
-
+                //需要验证登陆
+                $this->checkToken();
+                    
                 $old_password = input('post.old_password','','text');
                 $new_password = input('post.new_password','','text');
                 $confirm_password = input('post.confirm_password','','text');
@@ -330,13 +348,6 @@ class User extends Base
                 return $this->sendError('error');
 
             break;
-
-            case 'logout'://退出登录
-                model('Member')->logout();
-                
-                return $this->sendSuccess('success');
-                
-            break;
         } 
     }
 
@@ -381,6 +392,18 @@ class User extends Base
             }
             return $this->sendError('uid参数错误');  
         }
+    }
+
+    /**
+     * 根据uid获取已绑定微信的用户openid
+     *
+     * @param      <type>  $uid    The uid
+     */
+    protected function getOpenid($uid)
+    {
+        $open_id = model('weixin/WeixinOauth')->getOpenid();
+
+        return $open_id;
     }
 
     /**

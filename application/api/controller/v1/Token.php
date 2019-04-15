@@ -27,6 +27,7 @@ use app\api\controller\Factory;
 class Token extends Controller
 {
 	use Send;
+	/*
 	//手机客户端请求验证规则
 	public static $rule_mobile = [
         'app_key'     =>  'require',
@@ -35,14 +36,23 @@ class Token extends Controller
         'timestamp'   =>  'require',
         'captcha'     =>  'number'   //手机验证码
     ];
+
     //微信端请求验证规则
     public static $rule_wechat = [
         'app_key'     =>  'require',
         'open_id'     =>  'require',
         'nonce'       =>  'require',
         'timestamp'   =>  'require',
-        'union_id'    =>  'require',
-        'access_token'=>  'require' //微信端的access_token用于验证用户的信息是否真实
+        'open_id'    =>  'require',
+        //'access_token'=>  'require' //微信端的access_token用于验证用户的信息是否真实
+    ];*/
+
+    //请求验证规则
+    public static $rule_request = [
+        'app_key'     =>  'require',
+        'nonce'       =>  'require',
+        'timestamp'   =>  'require',
+        'uid'    =>  'require',
     ];
     
     /**

@@ -127,39 +127,7 @@ class Public extends Base
      */
     public function read($id)
     {   
-        $aUid = $id;
-        if($aUid){
-            $map['uid'] = $aUid;
-            $userData=model('member')->where($map)->find();
-            if($userData){
-                $data = query_user([
-                    'uid',
-                    'nickname',
-                    'sex',
-                    'birthday',
-                    'reg_ip',
-                    'last_login_ip',
-                    'last_login_time',
-                    'avatar32',
-                    'avatar128',
-                    'mobile',
-                    'email',
-                    'username',
-                    'title',
-                    'signature',
-                    'score',
-                    'score1',
-                    'score2',
-                    'score3',
-                    'score4'
-                ], $aUid);
-                
-                return $this->sendSuccess('success',$data);
-            }else{
-                return $this->sendError();  
-            }
-            return $this->sendError('uid参数错误');  
-        }
+        
     }
 
     /**
@@ -185,16 +153,4 @@ class Public extends Base
         return 'delete';
     }
 
-    /**
-     * 获取除资源方法外的方法
-     */
-    public function fans($id)
-    {
-        return $id;
-    }
-
-    public function login()
-    {
-        
-    }
 }

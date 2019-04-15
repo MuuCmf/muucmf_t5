@@ -5,8 +5,8 @@ namespace app\api\controller\v1;
 use think\Controller;
 use think\Db;
 use think\Request;
+use Firebase\JWT\JWT;
 use app\api\controller\Api;
-use think\Response;
 use app\api\controller\UnauthorizedException;
 
 /**
@@ -17,95 +17,151 @@ use app\api\controller\UnauthorizedException;
  */
 class Base extends Api
 {
+    public $key = 'muucmf';
+
+    public $uid;
+
     public function _initialize()
     {
         parent::_initialize();
-    }
-   /**
-     * 通用用户是否登录验证
-     */
-    public function needLogin(){
-
-        //验证用户授权TOKEN
-        //在header中获取token
-        $token = Request::instance()->header('token');
-        
-        if($token){
-            $uid = $this->_checkToken($token);//验证用户Token合法性
-            if ($uid) {
-                return $uid;
-            }else{
-               return false;
-            }
-        }
-
-        return false;
+        //$this->checkToken();
     }
 
     /**
-     * { function_description }
+     * 验证jwt权限
      *
-     * @param      <type>           $token  The token
-     *
-     * @return     boolean|integer  ( description_of_the_return_value )
+     * @return     boolean  ( description_of_the_return_value )
      */
-    protected function _checkToken($token){
-        //验证用户授权TOKEN
-        $uid = $this->getTokenUid($token); //根据token获取uid
-
-        if ($uid || 0 < $uid) {
-            //判断是否已经登陆
-            if(is_login() == $uid){
-                return $uid;
-            }else{
-                /* 登陆用户 */
-                $rs = model('common/Member')->login($uid,1); //登陆
-                if ($rs) { //登陆用户
-                     return $uid;
-                } else {
-                     return false;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * 通过token获取uid
-     * 在memberModel模型移植过来，原是cookie机制
-     * @param  string $token 通过登陆获取到的token
-     * @return int 用户id     
-     */
-    protected function getTokenUid($token)
+    public function checkToken()
     {
-        if(!$token){
-            return false;
-        }
-        $token = explode("|", think_decrypt($token));
-        $map['uid'] = $token[0];
-        $user = Db::name('user_token')->where($map)->find();
+        $header = Request::instance()->header();
 
-        if($user){
-        	$token_uid = ($token[1] != $user['token']) ? false : $token[0];
+        if (empty($header['token']) || $header['token'] == 'null'){
 
-	        $token_uid = $user['time'] - time() >= 3600 * 24 * 7 ? false : $token_uid;//过期时间7天
-	        return $token_uid;
+            return $this->sendError('Token不存在,拒绝访问');
+            
+        }else{
+            $checkJwtToken = $this->verifyJwt($header['token']);
+            if ($checkJwtToken['status'] == 1001) {
+                return true;
+            }
         }
-        return false;
-        
+    }
+
+    //校验jwt权限API
+    protected function verifyJwt($jwt)
+    {
+        $key = $this->key;
+        // JWT::$leeway = 3;
+        try {
+            $jwtAuth = json_encode(JWT::decode($jwt, $key, array('HS256')));
+            $authInfo = json_decode($jwtAuth, true);
+
+            $msg = [];
+            if (!empty($authInfo['uid'])) {
+
+                //赋值给$this->uid;
+                $this->uid = $authInfo['uid'];
+
+                $msg = [
+                    'status' => 1001,
+                    'uid' => $authInfo['uid'],
+                    'msg' => 'Token验证通过'
+                ];
+            } else {
+                $msg = [
+                    'status' => 1002,
+                    'msg' => 'Token验证不通过,用户不存在'
+                ];
+            }
+            return $msg;
+
+        } catch (\Firebase\JWT\SignatureInvalidException $e) {
+            echo json_encode([
+                'status' => 1002,
+                'msg' => 'Token无效'
+            ]);
+            exit;
+        } catch (\Firebase\JWT\ExpiredException $e) {
+            echo json_encode([
+                'status' => 1003,
+                'msg' => 'Token过期'
+            ]);
+            exit;
+        } catch (Exception $e) {
+            return $e;
+        }
     }
 
     /**
-     * 根据UID获取用户授权Token
-     * @param  [type] $uid [description]
-     * @return [type]      [description]
+     * 生成JWT
+     *
+     * @param      <type>  $uid    The uid
+     *
+     * @return     <type>  ( description_of_the_return_value )
      */
-    protected function getToken($uid){
-        $map['uid'] = $uid;
-        $user_token = Db::name('user_token')->field('token')->where($map)->find();
-        $token = think_encrypt($uid.'|'.$user_token['token']);//加密token,每次使用token验证都需要解密操作
+    public function createJwt($uid)
+    {
+        $key = $this->key; //jwt的签发密钥，验证token的时候需要用到
 
-        return $token;
+        $time = time(); //签发时间
+
+        $expire = $time + 14400; //过期时间
+
+        $user_info = query_user([
+            'uid',
+            'nickname',
+            'sex',
+            'birthday',
+            'reg_ip',
+            'last_login_ip',
+            'last_login_time',
+            'avatar32',
+            'avatar128',
+            'mobile',
+            'email',
+            'username',
+            'title',
+            'signature',
+            "open_id" => $this->getOpenid($uid),
+        ], $uid);
+
+        $token = [
+            "uid" => $uid,
+            "user_info" => $user_info,
+            "iss" => "https://muucmf.cn",//签发组织
+            "aud" => "https://muucmf.cn", //签发作者
+            "iat" => $time,
+            "nbf" => $time,
+            "exp" => $expire
+        ];
+
+        $jwt = JWT::encode($token, $key);
+        //根据ID登陆用户,并记录登陆数据
+        model('common/Member')->login($uid);
+
+
+        return $jwt;
+    }
+
+    /**
+     * 根据token获取uid
+     *
+     * @return     integer  The uid.
+     */
+    public function getUid()
+    {
+        $header = Request::instance()->header();
+
+        if (empty($header['token']) || $header['token'] == 'null'){
+            return 0;
+        }else{
+            $checkJwtToken = $this->verifyJwt($header['token']);
+            if ($checkJwtToken['status'] == 1001) {
+                return $checkJwtToken['uid'];
+            }
+            return 0;
+        }
     }
 
     /**
