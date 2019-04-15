@@ -44,6 +44,8 @@ class Base extends Api
             $checkJwtToken = $this->verifyJwt($header['token']);
             if ($checkJwtToken['status'] == 1001) {
                 return true;
+            }else{
+                return json_encode($checkJwtToken);
             }
         }
     }
@@ -77,17 +79,17 @@ class Base extends Api
             return $msg;
 
         } catch (\Firebase\JWT\SignatureInvalidException $e) {
-            echo json_encode([
+            $msg = [
                 'status' => 1002,
                 'msg' => 'Token无效'
-            ]);
-            exit;
+            ];
+            return $msg;
         } catch (\Firebase\JWT\ExpiredException $e) {
-            echo json_encode([
+            $msg = [
                 'status' => 1003,
                 'msg' => 'Token过期'
-            ]);
-            exit;
+            ];
+            return $msg;
         } catch (Exception $e) {
             return $e;
         }
