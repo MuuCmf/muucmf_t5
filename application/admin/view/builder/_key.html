@@ -60,7 +60,7 @@
         {/php}
         <link href="__ZUI__/lib/colorpicker/zui.colorpicker.min.css" rel="stylesheet">
         <div class="input-group" style="width:400px">
-            <input type="text" class="form-control" name="{$field.name}" data-provide="colorpicker" data-wrapper="input-group-btn" data-pull-menu-right="true" value="{$field.value|default=''}" placeholder="请输入16进制颜色值，例如 #FF00DD">
+            <input type="text" class="form-control" name="{$field.name}" data-provide="colorpicker" data-wrapper="input-group-btn" data-pull-menu-right="true" value="{$field.value|default=''}" {notempty name="field.opt"}data-colors="{$field.opt}"{/notempty} placeholder="请输入16进制颜色值，例如 #FF00DD">
         </div>
         <script src="__ZUI__/lib/colorpicker/zui.colorpicker.min.js"></script>  
     {/case}

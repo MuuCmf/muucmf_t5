@@ -114,12 +114,12 @@ class AdminConfigBuilder extends AdminBuilder
      * @param $name
      * @param $title
      * @param null $subtitle
+     * @param $opt 字符串，如：#fff,#000,#ff6600,#999999
      * @return $this
-     * @author 郑钟良<zzl@ourstu.com>
      */
-    public function keyColor($name, $title, $subtitle = null)
+    public function keyColor($name, $title, $subtitle = null ,$opt = null)
     {
-        return $this->key($name, $title, $subtitle, 'colorPicker');
+        return $this->key($name, $title, $subtitle, 'colorPicker', $opt);
     }
 
     public function keyIcon($name, $title, $subtitle = null)
