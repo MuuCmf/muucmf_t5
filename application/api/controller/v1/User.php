@@ -7,7 +7,7 @@ use think\Request;
 use Firebase\JWT\JWT;
 use app\api\controller\Api;
 use app\api\controller\UnauthorizedException;
-use app\api\controller\v2\Base;
+use app\api\controller\v1\Base;
 
 /**
  * 所有资源类接都必须继承基类控制器
@@ -348,6 +348,9 @@ class User extends Base
                 return $this->sendError('error');
 
             break;
+
+            default:
+                return $this->sendError('大小给个参数啥滴');
         } 
     }
 

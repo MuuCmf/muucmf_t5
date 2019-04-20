@@ -37,11 +37,12 @@ class Base extends Api
         $header = Request::instance()->header();
 
         if (empty($header['token']) || $header['token'] == 'null'){
-
+            return false;
             return $this->sendError('Token不存在,拒绝访问');
             
         }else{
             $checkJwtToken = $this->verifyJwt($header['token']);
+            
             if ($checkJwtToken['status'] == 1001) {
                 return true;
             }else{
@@ -91,6 +92,7 @@ class Base extends Api
             ];
             return $msg;
         } catch (Exception $e) {
+            
             return $e;
         }
     }
@@ -108,23 +110,13 @@ class Base extends Api
 
         $time = time(); //签发时间
 
-        $expire = $time + 14400; //过期时间
+        $expire = $time + 3600000; //过期时间
 
         $user_info = query_user([
             'uid',
             'nickname',
-            'sex',
-            'birthday',
-            'reg_ip',
-            'last_login_ip',
-            'last_login_time',
-            'avatar32',
-            'avatar128',
             'mobile',
             'email',
-            'username',
-            'title',
-            'signature',
             "open_id" => $this->getOpenid($uid),
         ], $uid);
 

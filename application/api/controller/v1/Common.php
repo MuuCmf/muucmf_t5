@@ -5,6 +5,7 @@ use think\Controller;
 use think\Request;
 use app\api\controller\Api;
 use think\Response;
+use think\Db;
 use app\api\controller\UnauthorizedException;
 use app\api\controller\v1\Base;
 
@@ -18,7 +19,7 @@ use app\api\controller\v1\Base;
 /**
  * 公共常用功能接口
  */
-class Public extends Base
+class Common extends Base
 {   
     /**
      * 允许访问的方式列表，资源数组如果没有对应的方式列表，请不要把该方法写上，如user这个资源，客户端没有delete操作
@@ -58,7 +59,7 @@ class Public extends Base
                 if (!check_reg_type($aType)) {
                     $str = $aType == 'mobile' ? lang('_PHONE_') : lang('_EMAIL_');
 
-                    return $this->sendError($str . lang('_ERROR_OPTIONS_CLOSED_').lang('_EXCLAMATION_'));  
+                    return $this->sendError($str . lang('_ERROR_OPTIONS_CLOSED_').lang('_EXCLAMATION_'));
                 }
 
                 if (empty($aAccount)) {
@@ -88,7 +89,7 @@ class Public extends Base
                     return $this->sendError(lang('_ERROR_PHONE_'));  
                 }
 
-                $checkIsExist = UCenterMember()->where(array($aType => $aAccount))->find();
+                $checkIsExist = Db::name('UcenterMember')->where([$aType => $aAccount])->find();
                 if ($checkIsExist) {
                     $str = $aType == 'mobile' ? lang('_PHONE_') : lang('_EMAIL_');
                     $result = lang('_ERROR_USED_1_') . $str . lang('_ERROR_USED_2_').lang('_EXCLAMATION_');
@@ -102,7 +103,34 @@ class Public extends Base
                     return $this->sendError($result);
                 }
 
-                $res = doSendVerify($aAccount, $verify, $aType);
+                switch ($aType) {
+                    case 'mobile':
+                        //发送手机短信验证
+                        $content = modC('SMS_CONTENT', '{$verify}', 'USERCONFIG');
+                        $content = str_replace('{$verify}', $verify, $content);
+                        $content = str_replace('{$account}', $aAccount, $content);
+
+                        //发送类型，暂只处理验证类
+                        if($sendType == 'verify'){
+                            $param = [
+                                'code'=>$verify,
+                            ];
+                            $param = json_encode($param);
+                        }
+                        //TODO:其它类型该版本暂不写，这里留个记号
+                        
+                        $res = sendSMS($aAccount, $content, $sendType, $param);
+                        break;
+                    case 'email':
+                        //发送验证邮箱
+                        $content = modC('REG_EMAIL_VERIFY', '{$verify}', 'USERCONFIG');
+                        $content = str_replace('{$verify}', $verify, $content);
+                        $content = str_replace('{$account}', $aAccount, $content);
+                        $res = send_mail($aAccount, modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config') . lang('_EMAIL_VERIFY_2_'), $content);
+                        
+                        break;
+                }
+
                 if ($res === true) {
                     if($aType == 'mobile'){
                         session('verify_time',$time);
@@ -113,8 +141,12 @@ class Public extends Base
 
                     return $this->sendError(lang('_ERROR_SUCCESS_SEND_'));  
                 }
-            break;  
-        } 
+            break;
+
+            default:
+
+            return $this->sendError('啊偶~大小给个参数啊');
+        }
 
         return $this->sendError('无操作参数');  
     }
