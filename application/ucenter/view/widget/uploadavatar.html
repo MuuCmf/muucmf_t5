@@ -30,7 +30,7 @@
             // swf文件路径
             swf: 'Uploader.swf',
             // 文件接收服务端。
-            server: "{:Url('api/File/uploadAvatar',array('uid'=>$uid))}",
+            server: "{:url('api/File/uploadAvatar',array('uid'=>$uid))}",
             // 选择文件的按钮。可选。
             // 内部根据当前运行是创建，可能是input元素，也可能是flash.
             pick: '#upload_avatar_{$uid}',
@@ -92,7 +92,7 @@
 
             var crop = x + ',' + y + ',' + w + ',' + h;
 
-            console.log(avatarCutterData);
+            //console.log(avatarCutterData);
             //return;
             //检查是否已经裁剪过
             if (typeof (crop) == 'undefined') {

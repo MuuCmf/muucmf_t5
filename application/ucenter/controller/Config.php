@@ -819,39 +819,7 @@ class Config extends Base
         return $this->fetch();
 
     }
-    /**
-     * 发送验证信息至手机或邮箱
-     * TODO 这里这个方法是个冗余，可完全通过公共方法处理，暂保留 20190419 <严大蒙同学>
-     * @param  [type] $account [description]
-     * @param  [type] $verify  [description]
-     * @param  [type] $type    [description]
-     * @return [type]          [description]
-     */
-    public function doSendVerify($account, $verify, $type)
-    {
-        switch ($type) {
-            case 'mobile':
-                $content = modC('SMS_CONTENT', '{$verify}', 'CONFIG');
-                //dump($content);exit;
-                $content = str_replace('{$verify}', $verify, $content);
-                $content = str_replace('{$account}', $account, $content);
-                $res = sendSMS($account, $content);
-                return $res;
-                break;
-            case 'email':
-                //发送验证邮箱
-
-                $content = modC('REG_EMAIL_VERIFY', '{$verify}', 'USERCONFIG');
-                $content = str_replace('{$verify}', $verify, $content);
-                $content = str_replace('{$account}', $account, $content);
-                $res = send_mail($account, modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config') . lang('_EMAIL_VERIFY_2_'), $content);
-
-                return $res;
-                break;
-        }
-
-    }
-
+    
     /**
      * checkVerify  验证验证码并修改数据
      */
