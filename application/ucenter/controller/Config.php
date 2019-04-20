@@ -821,6 +821,7 @@ class Config extends Base
     }
     /**
      * 发送验证信息至手机或邮箱
+     * TODO 这里这个方法是个冗余，可完全通过公共方法处理，暂保留 20190419 <严大蒙同学>
      * @param  [type] $account [description]
      * @param  [type] $verify  [description]
      * @param  [type] $type    [description]
@@ -870,7 +871,8 @@ class Config extends Base
         if (!$res) {
             $this->error(lang('_FAIL_VERIFY_'));
         }
-        Db::name('ucenterMember')->where(['id' => $aUid])->save([$aType => $aAccount]);
+
+        Db::name('ucenterMember')->where(['id' => $aUid])->update([$aType => $aAccount]);
         $this->success(lang('_SUCCESS_VERIFY_'), url('ucenter/config/index'));
 
     }
