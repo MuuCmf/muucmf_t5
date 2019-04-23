@@ -37,16 +37,14 @@ class Base extends Api
         $header = Request::instance()->header();
 
         if (empty($header['token']) || $header['token'] == 'null'){
-            return false;
-            return $this->sendError('Token不存在,拒绝访问');
-            
+            return 'Token不存在,拒绝访问';
         }else{
             $checkJwtToken = $this->verifyJwt($header['token']);
             
             if ($checkJwtToken['status'] == 1001) {
                 return true;
             }else{
-                return json_encode($checkJwtToken);
+                return $checkJwtToken['msg'];
             }
         }
     }
@@ -61,14 +59,14 @@ class Base extends Api
             $authInfo = json_decode($jwtAuth, true);
 
             $msg = [];
-            if (!empty($authInfo['uid'])) {
+            if (!empty($authInfo['data']['uid'])) {
 
                 //赋值给$this->uid;
-                $this->uid = $authInfo['uid'];
+                $this->uid = $authInfo['data']['uid'];
 
                 $msg = [
                     'status' => 1001,
-                    'uid' => $authInfo['uid'],
+                    'uid' => $authInfo['data']['uid'],
                     'msg' => 'Token验证通过'
                 ];
             } else {
@@ -110,24 +108,27 @@ class Base extends Api
 
         $time = time(); //签发时间
 
-        $expire = $time + 3600000; //过期时间
+        $expire = $time + 7200; //过期时间
 
-        $user_info = query_user([
+        /*$user_info = query_user([
             'uid',
             'nickname',
             'mobile',
             'email',
             "open_id" => $this->getOpenid($uid),
-        ], $uid);
+        ], $uid);*/
 
         $token = [
-            "uid" => $uid,
-            "user_info" => $user_info,
+            //"uid" => $uid,
+            //"user_info" => $user_info,
             "iss" => "https://muucmf.cn",//签发组织
             "aud" => "https://muucmf.cn", //签发作者
             "iat" => $time,
             "nbf" => $time,
-            "exp" => $expire
+            "exp" => $expire,
+            "data" => [
+                "uid" => $uid,
+            ]
         ];
 
         $jwt = JWT::encode($token, $key);

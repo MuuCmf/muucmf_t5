@@ -30,8 +30,11 @@ class User extends Base
      * @return \think\Response
      */
     public function index()
-    {
-        $this->checkToken();
+    {   
+        //验证权限
+        if($this->checkToken() !== true){
+            return $this->sendError($this->checkToken());
+        }
 
         $uid = $this->uid;
 
@@ -79,7 +82,10 @@ class User extends Base
         switch($action){
             case 'save'://修改用户基本信息
                 //需要登陆
-                $this->checkToken();
+
+                if($this->checkToken() !== true){
+                    return $this->sendError($this->checkToken());
+                }
 
                 $uid = $this->uid;
                 $mobile = input('mobile',0,'intval');//手机号
@@ -283,7 +289,9 @@ class User extends Base
             case 'change_password'://修改密码
 
                 //需要验证登陆
-                $this->checkToken();
+                if($this->checkToken() !== true){
+                    return $this->sendError($this->checkToken());
+                }
                     
                 $old_password = input('post.old_password','','text');
                 $new_password = input('post.new_password','','text');

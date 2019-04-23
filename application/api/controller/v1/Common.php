@@ -55,17 +55,16 @@ class Common extends Base
                 $aAccount = $cUsername = input('post.account', '', 'text');
                 $aType = input('post.type', '', 'text');
                 $aType = $aType == 'mobile' ? 'mobile' : 'email';
+                $aDriver = input('post.driver','other','text');
+                $sendType = input('post.sendtype','verify','text'); //发送的短信类型，如：验证码类、通知类，推广类
 
                 if (!check_reg_type($aType)) {
                     $str = $aType == 'mobile' ? lang('_PHONE_') : lang('_EMAIL_');
-
                     return $this->sendError($str . lang('_ERROR_OPTIONS_CLOSED_').lang('_EXCLAMATION_'));
                 }
 
-                if (empty($aAccount)) {
-                    
+                if (empty($aAccount)) { 
                     return $this->sendError(lang('_ERROR_ACCOUNT_CANNOT_EMPTY_'));  
- 
                 }
 
                 check_username($cUsername, $cEmail, $cMobile);
@@ -90,11 +89,13 @@ class Common extends Base
                 }
 
                 $checkIsExist = Db::name('UcenterMember')->where([$aType => $aAccount])->find();
-                if ($checkIsExist) {
-                    $str = $aType == 'mobile' ? lang('_PHONE_') : lang('_EMAIL_');
-                    $result = lang('_ERROR_USED_1_') . $str . lang('_ERROR_USED_2_').lang('_EXCLAMATION_');
-
-                    return $this->sendError($result);  
+                
+                //判断是否是已存在用户，由于部分操作需要向存在的用户发送验证，在这里做判断
+                if($aDriver==='edit' || $aDriver==='config'){
+                    if (!$checkIsExist) {
+                        $str = $aType == 'mobile' ? lang('_PHONE_') : lang('_EMAIL_');
+                        return $this->sendError(lang('_ERROR_USED_1_') . $str . lang('_ERROR_USED_3_').lang('_EXCLAMATION_'));//还未注册的数据返回错误
+                    }
                 }
 
                 $verify = model('Verify')->addVerify($aAccount, $aType, $uid);
@@ -139,13 +140,10 @@ class Common extends Base
                     
                 } else {
 
-                    return $this->sendError(lang('_ERROR_SUCCESS_SEND_'));  
+                    return $this->sendError($res);  
                 }
             break;
-
-            default:
-
-            return $this->sendError('啊偶~大小给个参数啊');
+            
         }
 
         return $this->sendError('无操作参数');  
