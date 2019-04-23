@@ -37,12 +37,7 @@ class Message extends Base
             return $this->sendError($this->checkToken());
         }
 
-        $all_type = model('common/Message')->getAllMessageType();
-
-        if (!deep_in_array('knowledge', $all_type)) {
-            $type = 'common_system';
-        }
-        exit;
+        
         $order = model('knowledge/KnowledgeOrders')->getDataByOrderNO('201904185799985248');
         $order = $order->toArray();
 
@@ -86,14 +81,11 @@ class Message extends Base
             case 'type':
                 //消息类型
                 $type = input('post.type','','text');
-                $messageType = model('common/Message')->getInfo($type);
+                $messageType = model('common/Message')->getMyMessageTypeList($this->uid);
 
                 return $this->sendSuccess('success',$messageType);
             break;
-
         }
-        
-
     }
 
     /**
