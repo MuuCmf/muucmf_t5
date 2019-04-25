@@ -32,6 +32,8 @@ class Common extends Controller
         $this->initRembemberLogin();
         //获取用户基本资料
         $this->initUserBaseInfo();
+        //初始化统计代码
+        $this->initCountCode();
     }
 
     /**
@@ -114,6 +116,15 @@ class Common extends Controller
         $this->assign('only_open_register',$only_open_register);
         $login_url = url('ucenter/Member/login');
         $this->assign('login_url',$login_url);
+    }
+
+    /**
+     * 初始化统计代码
+     */
+    private function initCountCode()
+    {
+        $count_code = config('COUNT_CODE');
+        $this->assign('count_code',$count_code);
     }
 
     /**
