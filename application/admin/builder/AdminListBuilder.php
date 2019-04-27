@@ -451,7 +451,9 @@ class AdminListBuilder extends AdminBuilder
     public function keyDoActionModalPopup($getUrl, $text, $title, $attr = [] ,$class='btn-primary',$hide=[], $flag = 'id')
     {
         //attr中需要设置data-title，用于设置模态弹窗标题
+        $attr['data-title'] = $text;
         $attr['data-role'] = 'modal_popup';
+
         //获取默认getUrl函数
         if (is_string($getUrl)) {
             $getUrl = $this->createDefaultGetUrlFunction($getUrl,$flag);
@@ -860,11 +862,14 @@ class AdminListBuilder extends AdminBuilder
     public function doSetStatus($model, $ids, $status = 1)
     {
         $id = array_unique((array)$ids);
+        $id = implode(',',$id);
         $rs = Db::name($model)->where(['id' => ['in', $id]])->update(['status' => $status]);
-        if ($rs === false) {
+        if ($rs) {
+            $this->success(lang('_SUCCESS_SETTING_'), $_SERVER['HTTP_REFERER']); 
+        }else{
             $this->error(lang('_ERROR_SETTING_') . lang('_PERIOD_'));
         }
-        $this->success(lang('_SUCCESS_SETTING_'), $_SERVER['HTTP_REFERER']);
+        
     }
 
 
