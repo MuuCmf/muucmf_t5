@@ -504,7 +504,8 @@ class Member extends Controller
      */
     public function saveAvatar()
     {
-        $redirect_url = url('ucenter/member/step', ['step' => get_next_step('change_avatar')]);
+        //跳回的地址
+        $redirect_url = session('temp_login_uid') ? url('ucenter/member/step', ['step' => get_next_step('change_avatar')]) : url('ucenter/config/avatar');
 
         $aCrop = input('post.crop', '', 'text');
         $aUid = session('temp_login_uid') ? session('temp_login_uid') : is_login();
@@ -531,6 +532,7 @@ class Member extends Controller
             Db::name('avatar')->insert($data);
         }
         clean_query_user_cache($aUid, array('avatars','avatars_html'));
+
         $this->success(lang('_SUCCESS_AVATAR_CHANGE_').lang('_EXCLAMATION_'), $redirect_url);
     }
 

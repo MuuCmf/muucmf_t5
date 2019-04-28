@@ -46,7 +46,8 @@ class Verify extends Controller
         if($aAction==='find' || $aAction==='config'){
             if (!$checkIsExist) {
                 $str = $aType == 'mobile' ? lang('_PHONE_') : lang('_EMAIL_');
-                $this->error(lang('_ERROR_USED_1_') . $str . lang('_ERROR_USED_3_').lang('_EXCLAMATION_'));//还未注册的数据返回错误
+                //dump(lang('_ERROR_USED_1_') . $str . lang('_ERROR_USED_3_').lang('_EXCLAMATION_'));exit;
+                //$this->error(lang('_ERROR_USED_1_') . $str . lang('_ERROR_USED_3_').lang('_EXCLAMATION_'));//还未注册的数据返回错误
             }
         }else{
             if ($checkIsExist) {
@@ -75,7 +76,6 @@ class Verify extends Controller
                     $param = json_encode($param);
                 }
                 //TODO:其它类型该版本暂不写，这里留个记号
-                
                 $res = sendSMS($aAccount, $content, $sendType, $param);
                 break;
             case 'email':
