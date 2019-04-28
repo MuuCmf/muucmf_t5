@@ -6,7 +6,7 @@
 </head>
 <body>
 <!-- 主体 -->
-{include file="config/_header"/}
+{include file="common@public/header"/}
 <div class="main-wrapper">
     <!--用户设置顶部-->
     <div class="config_header">
@@ -28,28 +28,28 @@
                         <ul id="treeMenu" class="tree tree-menu side-menu" data-ride="tree">
                             <li id="info"><a href="{:Url('index')}"><i class="icon-th"></i>
                                 {:lang('_SETTINGS_DATA_')}</a></li>
-                            <li id="tag"><a href="{:Url('tag')}"><i class="icon-tag"></i> {:lang('_USER_TAG_')}</a></li>
-                            <li id="avatar"><a href="{:Url('avatar')}"><i class="icon-user"></i>
+                            <li id="tag"><a href="{:url('tag')}"><i class="icon-tag"></i> {:lang('_USER_TAG_')}</a></li>
+                            <li id="avatar"><a href="{:url('avatar')}"><i class="icon-user"></i>
                                 {:lang('_AVATAR_MODIFY_')}</a></li>
                             <li id="password">
-                                <a href="{:Url('password')}">
+                                <a href="{:url('password')}">
                                     <i class="icon-lock"></i> {:lang('_PASSWORD_MODIFY_')}
                                 </a>
                             </li>
                             {eq name="can_show_role" value="1"}
                                 <li id="role">
-                                    <a href="{:Url('role')}">
+                                    <a href="{:url('role')}">
                                         <i class="icon-group"></i> {:lang('_SETTINGS_IDENTITY_')}
                                     </a>
                                 </li>
                             {/eq}
                             <li id="score">
-                                <a href="{:Url('score')}">
+                                <a href="{:url('score')}">
                                     <i class="icon-bar-chart"></i> {:lang('_SCORE_MY_')}
                                 </a>
                             </li>
                             <li id="other">
-                                <a href="{:Url('other')}">
+                                <a href="{:url('other')}">
                                     <i class="icon-list-ul"></i> {:lang('_OTHER_')}
                                 </a>
                             </li>
@@ -71,7 +71,7 @@
 <!-- /主体 -->
 
 <!-- 底部 -->
-{include file="common@public/footer"/}
+{include file="common@public/xy_footer"/}
 {include file="common@public/js"/}
 <!-- /底部 -->
 

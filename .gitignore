@@ -58,7 +58,6 @@ package-lock.json
 # MuuCmf
 !/addons/demo
 !/addons/chinacity
-/public/src/common/lib
 /public/uploads/*
 /runtime/*
 /.hatccess
