@@ -96,29 +96,20 @@ class Message extends Base
      */
     public function save()
     {
-        //根据action 参数判断操作类型
-        $action = input('action','save','text');
-        switch($action){
-            case 'save':
-                //获取新消息推送
-                //验证权限
-                if($this->checkToken() !== true){
-                    return $this->sendError($this->checkToken());
-                }
+        //获取新消息推送
+        //验证权限
+        if($this->checkToken() !== true){
+            return $this->sendError($this->checkToken());
+        }
 
-                //取到所有没有提示过的信息
-                $message_count = model('common/Message')->getHaventReadMessageCount($this->uid);
-                $haventToastMessages = model('common/Message')->getHaventToastMessage($this->uid);
-                //读取到推送之后，自动删除此推送来防止反复推送。
-                model('common/Message')->setAllToasted($this->uid);
-                //消息中心推送
-                
-                return $this->sendSuccess('success',['message_count'=>$message_count,'messages' => $haventToastMessages]);
-            break;
-
-            default:
-                return $this->sendError('大小给个参数啥滴');
-        } 
+        //取到所有没有提示过的信息
+        $message_count = model('common/Message')->getHaventReadMessageCount($this->uid);
+        $haventToastMessages = model('common/Message')->getHaventToastMessage($this->uid);
+        //读取到推送之后，自动删除此推送来防止反复推送。
+        model('common/Message')->setAllToasted($this->uid);
+        //消息中心推送
+        
+        return $this->sendSuccess('success',['message_count'=>$message_count,'messages' => $haventToastMessages]);
     }
 
     /**
@@ -129,39 +120,7 @@ class Message extends Base
      */
     public function read($id)
     {   
-        $aUid = $id;
-        if($aUid){
-            $map['uid'] = $aUid;
-            $userData=model('member')->where($map)->find();
-            if($userData){
-                $data = query_user([
-                    'uid',
-                    'nickname',
-                    'sex',
-                    'birthday',
-                    'reg_ip',
-                    'last_login_ip',
-                    'last_login_time',
-                    'avatar32',
-                    'avatar128',
-                    'mobile',
-                    'email',
-                    'username',
-                    'title',
-                    'signature',
-                    'score',
-                    'score1',
-                    'score2',
-                    'score3',
-                    'score4'
-                ], $aUid);
-                
-                return $this->sendSuccess('success',$data);
-            }else{
-                return $this->sendError();  
-            }
-            return $this->sendError('uid参数错误');  
-        }
+        
     }
 }
 

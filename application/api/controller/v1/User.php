@@ -78,7 +78,7 @@ class User extends Base
     public function save()
     {
         //根据action 参数判断操作类型
-        $action = input('action','save','text');
+        $action = input('action','','text');
         switch($action){
             case 'save'://修改用户基本信息
                 //需要登陆
@@ -354,6 +354,68 @@ class User extends Base
                     return $this->sendSuccess('密码修改成功');
                 }
                 return $this->sendError('error');
+
+            break;
+
+            case 'upload_avatar'://上传头像
+                
+                //验证权限
+                if($this->checkToken() !== true){
+                    return $this->sendError($this->checkToken());
+                }
+
+                $uid = $this->uid;
+                
+                /* 调用文件上传组件上传文件 */
+                $files = request()->file();
+                
+                if (empty($files)) {
+                    return $this->sendError('No Avatar Image upload or server upload limit exceeded');
+                }
+
+                $arr = model('api/Upload')->upload($files,'avatar','avatar',$uid);
+
+                if(is_array($arr)){
+                    return $this->sendSuccess('上传成功',$arr);
+                }else{
+                    return $this->sendError(model('api/Upload')->getError());
+                }
+            break;
+
+            case 'save_avatar'://保存裁切后的头像
+            
+                //验证权限
+                if($this->checkToken() !== true){
+                    return $this->sendError($this->checkToken());
+                }
+
+                $aCrop = input('post.crop', '', 'text');
+                $aUid = $uid = $this->uid;
+                $aPath = input('post.path', '', 'text');
+                
+                if (empty($aCrop)) {
+                    $this->sendSuccess(lang('_SUCCESS_SAVE_').lang('_EXCLAMATION_'));
+                }
+
+                $returnPath = controller('ucenter/UploadAvatar', 'widget')->cropPicture($aCrop,$aPath);
+
+                $driver = modC('PICTURE_UPLOAD_DRIVER','local','config');
+
+                //更新数据库数据
+                $data = [
+                    'uid' => $aUid,
+                    'status' => 1, 
+                    'is_temp' => 0,
+                    'path' => $returnPath,
+                    'driver'=> $driver, 
+                    'create_time' => time()
+                ];
+                $res = Db::name('avatar')->where(['uid' => $aUid])->update($data);
+                if (!$res) {
+                    Db::name('avatar')->insert($data);
+                }
+                clean_query_user_cache($aUid, ['avatars','avatars_html']);
+                $this->sendSuccess(lang('_SUCCESS_AVATAR_CHANGE_').lang('_EXCLAMATION_'));
 
             break;
 

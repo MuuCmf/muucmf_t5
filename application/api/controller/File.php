@@ -66,7 +66,6 @@ class File extends Controller
      */
     public function uploadAvatar()
     {
-        $dirname = input('dirname','avatar','text');
         $uid = input('uid',0,'intval');
         //无uid时尝试获取
         $aUid = $uid || is_login();
@@ -84,7 +83,7 @@ class File extends Controller
             return json($return);
         }
 
-        $arr = model('api/Upload')->upload($files,'avatar',$dirname,$uid);
+        $arr = model('api/Upload')->upload($files,'avatar','avatar',$aUid);
 
         if(is_array($arr)){
             $return['code'] = 1;
