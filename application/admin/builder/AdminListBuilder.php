@@ -159,7 +159,10 @@ class AdminListBuilder extends AdminBuilder
      * @author 郑钟良<zzl@ourstu.com> 大蒙<59262424@qq.com>
      */
     public function buttonModalPopup($url, $params, $title, $attr = [])
-    {
+    {   
+        if(!isset($attr['data-title'])){
+           $attr['data-title'] = $title; 
+        }
         //$attr中可选参数，data-title：模态框标题，target-form：要传输的数据
         $attr['modal-url'] = $this->addUrlParam($url, $params);
         $attr['data-role'] = 'modal_popup';
