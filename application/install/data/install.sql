@@ -564,7 +564,7 @@ INSERT INTO `muucmf_auth_rule` (`id`, `module`, `type`, `name`, `title`, `status
 
 DROP TABLE IF EXISTS `muucmf_avatar`;
 CREATE TABLE IF NOT EXISTS `muucmf_avatar` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `uid` int(11) NOT NULL,
   `path` varchar(200) NOT NULL,
   `driver` varchar(50) NOT NULL,
