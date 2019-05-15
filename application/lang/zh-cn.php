@@ -219,7 +219,7 @@ return array(
     '_MANAGE_BACKGROUND_' => '管理后台',
     '_LOGOUT_' => '注销',
     '_LOGIN_' => '登录',
-    '_REGISTER_' => '免费注册',
+    '_REGISTER_' => '注册',
     '_ERROR_NEED_LOGIN_' => '需要登录',
 
     /*footer*/

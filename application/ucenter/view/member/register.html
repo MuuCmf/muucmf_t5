@@ -183,15 +183,25 @@
                         </div>
                         {/eq}
                         <div class="form-group">
-                            <div class="password_block" style="position: relative;display: table;border-collapse: separate;">
+                            <div class="password_block input-group" style="position: relative;display: table;border-collapse: separate;">
                                 <input type="password" id="inputPassword" class="form-control input-lg new-input" check-length="6,30"  placeholder="请输入密码"  name="password">
 
-                                <div class="input-group-addon">
-                                    <a href="javascript:void(0);" id="change_show"><i class="icon icon-eye-open"></i></a>
-                                </div>
+                                <span class="input-group-addon">
+                                    <a href="javascript:void(0);" data-role="change_show"><i class="icon icon-eye-open"></i></a>
+                                </span>
                             </div>
                             <span class="help-block">请输入密码</span>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="password_block input-group">
+                                <input type="password" id="inputConfirmPassword" class="form-control input-lg new-input" check-length="6,30"  placeholder="请确认密码"  name="confirm_password">
 
+                                <span class="input-group-addon">
+                                    <a href="javascript:void(0);" data-role="change_show"><i class="icon icon-eye-open"></i></a>
+                                </span>
+                            </div>
+                            <span class="help-block">请确认密码</span>
                             <div class="clearfix"></div>
                         </div>
                         {if condition="check_verify_open('reg')"}
@@ -215,7 +225,7 @@
                         {/if}
                         <button type="button" data-type="submit" class="btn btn-block btn-warning btn-lg">提 交</button>
                         <div class="existing-account">
-                            已有账户， <a href="{:Url('ucenter/Member/login')}" title="" style="color: #607D8B;">点此登录</a>
+                            已有账户， <a href="{:url('ucenter/Member/login')}" title="" style="color: #607D8B;">点此登录</a>
                         </div>
                     </div>
                 </form>
@@ -288,8 +298,7 @@
                 }
             });
 
-            $('#change_show').click(function(){
-
+            $('[data-role="change_show"]').click(function(){
                 var obj = $(this);
                 if ($(obj).html().trim() == '<i class="icon icon-eye-open"></i>') {
                     $(obj).html('<i class="icon icon-eye-close"></i>');
@@ -318,7 +327,7 @@
                 toast.showLoading();
                 var account = $this.parents('.tab-pane').find('[name="username"]').val();
                 var type = $this.parents('.tab-pane').find('[name="reg_type"]').val();
-                $.post("{:Url('ucenter/verify/sendVerify')}", {account: account, type: type, action: 'member'}, function (res) {
+                $.post("{:url('ucenter/verify/sendVerify')}", {account: account, type: type, action: 'member'}, function (res) {
                     if (res.code == 200) {
                         DecTime.obj = $this
                         DecTime.time = "{: modC('SMS_RESEND','60','USERCONFIG')}";

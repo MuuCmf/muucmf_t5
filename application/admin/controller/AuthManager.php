@@ -65,9 +65,9 @@ class AuthManager extends Admin
             sort($data['rules']);
             $data['rules'] = implode(',', array_unique($data['rules']));
         }
+
         $data['module'] = 'admin';
         $data['type'] = AuthGroup::TYPE_ADMIN;
-        $AuthGroup = Db::name('AuthGroup');
         
         if ($data) {
             if(isset($data['rules'])){
@@ -77,9 +77,9 @@ class AuthManager extends Admin
             }
 
             if (empty($data['id'])) {
-                $r = $AuthGroup->insert($data);
+                $r = Db::name('AuthGroup')->insert($data);
             } else {
-                $r = $AuthGroup->update($data);
+                $r = Db::name('AuthGroup')->update($data);
             }
             if ($r === false) {
                 $this->error(lang('_FAIL_OPERATE_') . $AuthGroup->getError());
