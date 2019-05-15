@@ -66,9 +66,12 @@ class File extends Controller
      */
     public function uploadAvatar()
     {
-        $uid = input('uid',0,'intval');
+        $uid = $aUid = input('uid',0,'intval');
         //无uid时尝试获取
-        $aUid = $uid || is_login();
+        if($uid == 0){
+            $aUid = $uid || is_login();
+        }
+        
         if($aUid <= 0){
             $return['code'] = 0;
             $return['msg'] = 'Uid Error';
@@ -82,7 +85,7 @@ class File extends Controller
             $return['msg'] = 'No Avatar Image upload or server upload limit exceeded';
             return json($return);
         }
-
+        
         $arr = model('api/Upload')->upload($files,'avatar','avatar',$aUid);
 
         if(is_array($arr)){

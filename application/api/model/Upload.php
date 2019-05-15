@@ -253,6 +253,7 @@ class Upload extends Model
                 }
 
             }else{
+                $data['uid'] = $uid;
                 $id = Db::name('Avatar')->insertGetId($data);
             }
 
