@@ -415,7 +415,8 @@ class User extends Base
                     Db::name('avatar')->insert($data);
                 }
                 clean_query_user_cache($aUid, ['avatars','avatars_html']);
-                $this->sendSuccess(lang('_SUCCESS_AVATAR_CHANGE_').lang('_EXCLAMATION_'));
+                
+                return $this->sendSuccess(lang('_SUCCESS_AVATAR_CHANGE_').lang('_EXCLAMATION_'));
 
             break;
 

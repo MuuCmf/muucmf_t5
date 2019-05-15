@@ -88,10 +88,9 @@ class Common extends Base
                     return $this->sendError(lang('_ERROR_PHONE_'));  
                 }
 
-                $checkIsExist = Db::name('UcenterMember')->where([$aType => $aAccount])->find();
-                
                 //判断是否是已存在用户，由于部分操作需要向存在的用户发送验证，在这里做判断
                 if($aDriver==='edit' || $aDriver==='config'){
+                    $checkIsExist = Db::name('UcenterMember')->where([$aType => $aAccount])->find();
                     if (!$checkIsExist) {
                         $str = $aType == 'mobile' ? lang('_PHONE_') : lang('_EMAIL_');
                         return $this->sendError(lang('_ERROR_USED_1_') . $str . lang('_ERROR_USED_3_').lang('_EXCLAMATION_'));//还未注册的数据返回错误
@@ -118,7 +117,7 @@ class Common extends Base
                             ];
                             $param = json_encode($param);
                         }
-                        //TODO:其它类型该版本暂不写，这里留个记号
+                        //TODO:其它类型该版本暂不写，这里留个记
                         
                         $res = sendSMS($aAccount, $content, $sendType, $param);
                         break;
@@ -158,29 +157,6 @@ class Common extends Base
     public function read($id)
     {   
         
-    }
-
-    /**
-     * PUT方式
-     *
-     * @param  \think\Request  $request
-     * @param  int  $id
-     * @return \think\Response
-     */
-    public function update()
-    {
-        return 'update';
-    }
-
-    /**
-     * delete方式
-     *
-     * @param  int  $id
-     * @return \think\Response
-     */
-    public function delete()
-    {
-        return 'delete';
     }
 
 }
