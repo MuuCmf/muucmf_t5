@@ -4,12 +4,12 @@
     </div>
     <hr>
     <div style="height: 600px;overflow: auto;">
-        <if condition="empty($log)">
+        {if condition="empty($log)"}
             暂无日志
-        </if>
-        <volist name="log" id="vo">
+        {/if}
+        {volist name="log" id="vo"}
             <p>{$vo}</p>
-        </volist>
+        {/volist}
     </div>
 </div>
 <script>

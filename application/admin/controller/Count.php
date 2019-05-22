@@ -127,12 +127,12 @@ class Count extends Admin{
 
     /**
      * 设置活跃度绑定的行为
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function setActiveAction()
     {
         if(request()->isPost()){
-            $aActiveAction=input('post.active_action',3,'intval');
+            $aActiveAction = input('post.active_action',3,'intval');
+
             if(Db::name('Config')->where(['name'=>'COUNT_ACTIVE_ACTION'])->setField('value',$aActiveAction)===false){
                 $this->error("设置失败！");
             }else{
@@ -140,10 +140,10 @@ class Count extends Admin{
                 $this->success("设置成功！");
             }
         }else{
-            $map['status']=1;
-            $actionList=model('Action')->getAction($map);
+            $map['status'] = 1;
+            $actionList = model('Action')->getAction($map);
             $this->assign('action_list',$actionList);
-            $nowAction=config('COUNT_ACTIVE_ACTION',null,3);
+            $nowAction = config('COUNT_ACTIVE_ACTION',3);
             $this->assign('now_active_action',$nowAction);
             $this->setTitle('设置活跃度绑定的行为');
             return $this->fetch('set_active_action');

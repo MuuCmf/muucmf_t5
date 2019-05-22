@@ -9,14 +9,35 @@ class Schedule extends Model
     protected $autoWriteTimestamp = true;
 
     public $interval = 30;
-    public $lockFile;
-    public $schedule_path;
 
-    public function _initialize()
+    public $lockFile = APP_PATH.'../data/schedule/lock.txt';
+
+    public $schedule_path = APP_PATH.'../data/schedule/';
+
+    /**
+     * getScheduleList  获取全部可运行的计划任务列表
+     * @return mixed
+     */
+    public function getScheduleList()
     {
-        $this->lockFile = ROOT_PATH.'/data/schedule/lock.txt';
-        $this->schedule_path = ROOT_PATH.'/data/schedule/';
-        parent::_initialize();
+        $map['status'] = 1;
+        $list = collection($this->where($map)->select())->toArray();
+        
+        return $list;
+    }
+
+    /**
+     * 通过ID获取单个计划任务
+     *
+     * @param      <type>  $id     The identifier
+     *
+     * @return     <type>  The schedule.
+     */
+    public function getSchedule($id)
+    {
+        $result = $this->get($id);
+
+        return $result;
     }
     /**
      * editSchedule 编辑或增加计划任务
@@ -39,24 +60,6 @@ class Schedule extends Model
         return $data['id'];
     }
 
-
-    /**
-     * getScheduleList  获取全部可运行的计划任务列表
-     * @return mixed
-     */
-    public function getScheduleList()
-    {
-        $tag = 'schedule_list';
-        $list = cache($tag);
-        if (empty($list)) {
-            $map['status'] = array('egt', 0);
-            $list = collection($this->where($map)->select())->toArray();
-            cache($tag, $list);
-        }
-        return $list;
-    }
-
-
     /**
      * checkIsRunning  判断计划任务是否在运行
      * @return bool
@@ -65,11 +68,13 @@ class Schedule extends Model
     public function checkIsRunning()
     {
         $lock_file = $this->lockFile;
-        if ($this->checkLockFileExist() && $this->readFile($lock_file) == 'running' && (filemtime($lock_file) + $this->interval + 10 > $_SERVER['REQUEST_TIME'])) {
+        if (($this->checkLockFileExist()) && ($this->readFile($lock_file) == 'running') && (filemtime($lock_file) + $this->interval + 30 > $_SERVER['REQUEST_TIME'])) {
             return true;
+        }else{
+            $this->setStop('stop_abnormal');
+            return false;
         }
-        $this->setStop('stop_abnormal');
-        return false;
+        
     }
 
     /**
@@ -95,18 +100,22 @@ class Schedule extends Model
         ignore_user_abort(true); //即使Client断开(如关掉浏览器)，PHP脚本也可以继续执行.
         set_time_limit(0); // 执行时间为无限制，php默认的执行时间是30秒，通过set_time_limit(0)可以让程序无限制的执行下去
         $lock_txt = $this->lockFile;
+        
         if ($this->checkIsRunning()) { //防止重复运行，判断是否在运行，是则退出
             exit();
         } else {
             touch($lock_txt); //重新生成锁文件，更新文件访问和修改时间
             $this->writeFile($lock_txt, 'running'); //重复写入一个文件，标志已经运行计划任务
         }
+        $n = 0;
         do {
             touch($lock_txt); //更新运行时间
             $this->runScheduleList(); //执行计划任务列表
             ob_flush();
             flush();
             sleep($this->interval); //程序暂停
+            $n++;
+            $this->writeFile(APP_PATH.'../data/schedule/n.txt', $n++);
         } while ($this->readFile($lock_txt) == 'running');
 
         @unlink($lock_txt); //删除标记文件
@@ -115,13 +124,13 @@ class Schedule extends Model
     /**
      * runScheduleList  按列表执行计划任务
      * @return bool
-     * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
      */
     public function runScheduleList()
     {
         $list = $this->getScheduleList();
         $now_time = time();
         foreach ($list as $v) {
+
             if ($v['start_time'] > $now_time) { //早于设定的时间
                 continue;
             }
@@ -129,14 +138,44 @@ class Schedule extends Model
                 continue;
             }
             $next_time = $this->calculateNextTime($v);
+
             if (!empty($next_time) && $next_time <= $now_time) {
                 $this->runSchedule($v);
             } else {
                 continue;
             }
-
         }
         return true;
+    }
+
+    /**
+     * runSchedule  执行单个计划任务
+     * @param $schedule
+     */
+    public function runSchedule($schedule)
+    {
+        if ($schedule['status'] == 1) {
+            $method = explode('->', $schedule['method']);
+            parse_str($schedule['args'], $args);  //分解参数
+            try {
+                $return = model($method[0])->$method[1]($args, $schedule); //执行model中的方法
+            } catch (\Exception $exception) {
+                $return = false;
+                $this->error = '发生异常，意外终止执行';
+            }
+            if ($return) {
+                $log = '任务已运行，描述：' . $schedule['intro'];
+            } else {
+                $log = '任务运行失败，描述：' . $schedule['intro'];
+            }
+            $this->writeLog($schedule['id'], $log);
+
+            return $return;
+        }else{
+            $this->error = '该任务状态未启用';
+            return false;
+        }
+        
     }
 
     /**
@@ -325,32 +364,6 @@ class Schedule extends Model
         return $callback == '' ? $time : $callback($time);
     }
 
-
-    /**
-     * runSchedule  执行单个计划任务
-     * @param $schedule
-     * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
-     */
-    public function runSchedule($schedule)
-    {
-        if ($schedule['status'] == 1) {
-            $method = explode('->', $schedule['method']);
-            parse_str($schedule['args'], $args);  //分解参数
-            try {
-                $return = model($method[0])->$method[1]($args, $schedule); //执行model中的方法
-            } catch (\Exception $exception) {
-                $return = false;
-            }
-            if ($return) {
-                $log = '任务已运行，描述：' . $schedule['intro'];
-            } else {
-                $log = '任务运行失败，描述：' . $schedule['intro'];
-            }
-            $this->writeLog($schedule['id'], $log);
-        }
-        return true;
-    }
-
     /**
      * writeLog  写日志
      * @param $id
@@ -451,10 +464,21 @@ class Schedule extends Model
         if ($this->checkLockFileExist() && $this->readFile($lock_file) == 'stop_abnormal') {
             //异常停止则启动计划任务
             $time = time();
-            $url = Url('api/Schedule/runSchedule', array('time' => $time, 'token' => md5($time . config('DATA_AUTH_KEY'))), true, true);
+            $url = url('api/Schedule/runSchedule', ['time' => $time, 'token' => md5($time . config('database.auth_key'))],'html',true);
+            $SSL = substr($url, 0, 8) == "https://" ? true : false;  
+            $CA = false; //HTTPS时是否进行严格认证 
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_TIMEOUT, 1);  //设置过期时间为1秒，防止进程阻塞
+
+            if ($SSL && $CA) {
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);   // 只信任CA颁布的证书  
+                curl_setopt($ch, CURLOPT_CAINFO, $cacert); // CA根证书（用来验证的网站证书是否是CA颁布）  
+                curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2); // 检查证书中是否设置域名，并且是否与提供的主机名匹配  
+            } else if ($SSL && !$CA) {  
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
+                curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);  
+            }  
             curl_setopt($ch, CURLOPT_USERAGENT, '');
             curl_setopt($ch, CURLOPT_REFERER, 'b');
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -496,7 +520,6 @@ class Schedule extends Model
 
     /**
      * clearIsLogin  清空session
-     * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
      */
     public function clearIsLogin()
     {
@@ -505,8 +528,6 @@ class Schedule extends Model
             session('user_auth_sign', null);
         } catch (\Exception $exception) {
         }
-
-
     }
 
 }

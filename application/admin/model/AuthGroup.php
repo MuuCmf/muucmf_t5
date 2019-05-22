@@ -27,6 +27,25 @@ class AuthGroup extends Model {
         //TODO:自定义的初始化
         $this->error = '发生错误';
     }
+
+    /**
+     * 编辑/新增数据
+     *
+     * @param      <type>  $data   The data
+     *
+     * @return     <type>  ( description_of_the_return_value )
+     */
+    public function editData($data)
+    {
+        if(!empty($data['id'])){
+            $res = $this->allowField(true)->save($data,$data['id']);
+        }else{
+            $res = $this->allowField(true)->save($data);
+        }
+
+        return $res;
+    }
+
     /**
      * 返回用户组列表
      * 默认返回正常状态的管理员用户组列表
