@@ -502,10 +502,11 @@ class AdminListBuilder extends AdminBuilder
                 break;
             }
         }
+        
         if (!$doActionKey) {
             $this->key('DOACTIONS', $title, 'doaction', array());
         }
-
+        
         //找出第一个DOACTIONS字段
         $doActionKey = null;
         foreach ($this->_keyList as &$key) {
@@ -517,7 +518,7 @@ class AdminListBuilder extends AdminBuilder
 
         //在DOACTIONS中增加action
         $doActionKey['opt']['actions'][] = ['text' => $text, 'get_url' => $getUrl, 'class' => $class, 'hide' => $hide];
-
+        
         return $this;
     }
     /**

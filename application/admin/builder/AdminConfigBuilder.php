@@ -696,17 +696,47 @@ class AdminConfigBuilder extends AdminBuilder
     public function keyUserDefined($name,$title,$subtitle,$html='',$param=''){
         $this->assign('param',$param);
         $this->assign('name',$name);
-        //$html = $this->fetch($display);
+
+        $html = $this->parseTemplate($html);
+        
+        
         $key = array('name'=>$name, 'title' => $title, 'subtitle' => $subtitle, 'type' => 'userDefined', 'definedHtml' => $html);
         $this->_keyList[] = $key;
         return $this;
     }
+
+
     /**
      * 自定义JS
      * @param [type] $script [description]
      */
     public function customJs($script){
         $this->assign('myJs',$script);
+    }
+
+    /**
+     * 解析html是文件还是html字符串
+     * @access private
+     * @return string
+     */
+    private function parseTemplate($html)
+    {
+        $file = '';
+        // 获取视图根目录
+        if (strpos($html, '@')) {
+            // 跨模块调用
+            list($module, $template) = explode('@', $html);
+        }
+        if(isset($module)){
+            $path = APP_PATH . $module . DS . 'view' . DS;
+            $file =  $path . ltrim($template, '/') . '.' . ltrim('html', '.');
+        }
+        
+        if(is_file($file)){
+            $html = $this->fetch($html);
+        }
+
+        return $html;
     }
 
 }
