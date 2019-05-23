@@ -17,15 +17,15 @@ class Count extends Model
      */
     public function dayCount()
     {
-        $map['date']=strtotime(time_format(time(),'Y-m-d 00:00')." - 1 day");
-        //if(!Db::name('count_lost')->where($map)->find()){
+        $map['date'] = strtotime(time_format(time(),'Y-m-d 00:00')." - 1 day");
+        if(!Db::name('count_lost')->where($map)->find()){
             //流失率统计
             $this->lostCount();
             //留存率统计
             $this->remainCount();
             //活跃用户统计
             $this->activeCount();
-        //}
+        }
         return true;
     }
 
@@ -37,15 +37,15 @@ class Count extends Model
     {
         $memberModel = model('Member');
         $map['status'] = 1;
-        $totalUser=$memberModel->where($map)->count()*1;
+        $totalUser = $memberModel->where($map)->count()*1;
 
-        $date=time_format(time(),'Y-m-d 00:00');
-        $lost_long=modC('LOST_LONG',30,'Count');
-        $select_date=strtotime($date." - ".$lost_long." day");
+        $date = time_format(time(),'Y-m-d 00:00');
+        $lost_long = modC('LOST_LONG',30,'Count');
+        $select_date = strtotime($date." - ".$lost_long." day");
         $map['last_login_time'] = array('lt',$select_date);
-        $lostUser=$memberModel->where($map)->count()*1;
+        $lostUser = $memberModel->where($map)->count()*1;
 
-        $lostRate=$lostUser/$totalUser;
+        $lostRate = $lostUser/$totalUser;
 
         $map_yesterday['date'] = strtotime($date." - 2 day");
         $yesterdayInfo = Db::name('CountLost')->where($map_yesterday)->find();
@@ -57,8 +57,12 @@ class Count extends Model
         $data['lost_num'] = $lostUser;
         $data['rate'] = $lostRate;
         $data['create_time'] = time();
-        Db::name('CountLost')->insert($data);
 
+        $have = Db::name('count_lost')->where('date',$data['date'])->find();
+        if(!$have){
+            Db::name('CountLost')->insert($data);
+        }
+        
         return true;
     }
 
@@ -128,13 +132,14 @@ class Count extends Model
         }
         //统计end
 
-        if($day==8){
+        if($day == 8){
             return true;
         }
         //下面执行前一天的统计
-        $date=time_format(strtotime($date." - 1 day"),'Y-m-d 00:00');
-        $day=$day+1;
+        $date = time_format(strtotime($date." - 1 day"),'Y-m-d 00:00');
+        $day = $day+1;
         $this->_doRemainCount($date,$day);
+
         return true;
     }
 
@@ -143,23 +148,34 @@ class Count extends Model
      */
     public function activeCount()
     {
-        $activeAction = config('COUNT_ACTIVE_ACTION',3);
-
+        $activeAction = config('COUNT_ACTIVE_ACTION');
+        if(!$activeAction){
+            $activeAction = 3;
+        }
         $time = strtotime(time_format(time(),'Y-m-d'));
 
         $day_data = $this->_dayActiveCount($activeAction,$time);
-
-        Db::name('CountActive')->insert($day_data);
+        $have = Db::name('CountActive')->where('date',$day_data['date'])->find();
+        if(!$have){
+            Db::name('CountActive')->insert($day_data);
+        }
 
         if(date('w',$time) === '0'){
             $week_data = $this->_weekActiveCount($activeAction,$time);
-            Db::name('CountActive')->insert($week_data);
+            $have = Db::name('CountActive')->where('date',$week_data['date'])->find();
+            if(!$have){
+                Db::name('CountActive')->insert($week_data);
+            }
         }
 
-        if($time ===strtotime(time_format($time,'Y-m-01'))){
+        if($time === strtotime(time_format($time,'Y-m-01'))){
             $month_data = $this->_monthActiveCount($activeAction,$time);
-            Db::name('CountActive')->insert($month_data);
+            $have = Db::name('CountActive')->where('date',$month_data['date'])->find();
+            if(!$have){
+                Db::name('CountActive')->insert($month_data);
+            }
         }
+
         return true;
     }
 
@@ -189,7 +205,7 @@ class Count extends Model
      */
     private function _weekActiveCount($action,$today)
     {
-        $startTime=$today-7*24*60*60;
+        $startTime = $today-7*24*60*60;
         $map['action_id'] = $action;
         $map['create_time'] = ['between',[$startTime,$today-1]];
         $users_num = Db::name('action_log')->where($map)->count();

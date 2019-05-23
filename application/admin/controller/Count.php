@@ -31,7 +31,7 @@ class Count extends Admin{
                 }
             }
         }else{
-            $day=config('LOST_LONG',null,30);
+            $day = config('LOST_LONG',30);
             $this->assign('lost_long',$day);
             $lostList=$this->countModel->getLostListPage([]);
 
@@ -51,28 +51,29 @@ class Count extends Admin{
 
     /**
      * 留存率统计
-     * @author 郑钟良<zzl@ourstu.com>
      */
     public function remain()
     {
         if(request()->isPost()){
-            $aStartTime=input('post.startDate','','text');
-            $aEndTime=input('post.endDate','','text');
-            if($aStartTime==''||$aEndTime==''){
+            $aStartTime = input('post.startDate','','text');
+            $aEndTime = input('post.endDate','','text');
+
+            if($aStartTime == '' || $aEndTime == ''){
                 $this->error('请选择时间段!');
             }
-            $startTime=strtotime($aStartTime);
-            $endTime=strtotime($aEndTime);
-            $remainList=$this->countModel->getRemainList($startTime,$endTime);
+
+            $startTime = strtotime($aStartTime);
+            $endTime = strtotime($aEndTime);
+            $remainList = $this->countModel->getRemainList($startTime,$endTime);
             $this->assign('remainList',$remainList);
-            $html=$this->fetch('count/_remain_data');
+            $html = $this->fetch('count/_remain_data');
             $this->show($html);
         }else{
-            $today=date('Y-m-d 00:00',time());
-            $startTime=strtotime($today." - 9 day");
-            $endTime=strtotime($today." - 2 day");
-            $remainList=$this->countModel->getRemainList($startTime,$endTime);
-            $options=array('startDate'=>time_format(strtotime($today." - 9 day"),"Y-m-d"),'endDate'=>time_format(strtotime($today." - 2 day"),"Y-m-d"));
+            $today = date('Y-m-d 00:00',time());
+            $startTime = strtotime($today." - 9 day");
+            $endTime = strtotime($today." - 2 day");
+            $remainList = $this->countModel->getRemainList($startTime,$endTime);
+            $options = array('startDate'=>time_format(strtotime($today." - 9 day"),"Y-m-d"),'endDate' => time_format(strtotime($today." - 2 day"),"Y-m-d"));
             $this->assign('options',$options);
             $this->assign('remainList',$remainList);
             $this->setTitle('留存率统计');
@@ -132,8 +133,8 @@ class Count extends Admin{
     {
         if(request()->isPost()){
             $aActiveAction = input('post.active_action',3,'intval');
-
-            if(Db::name('Config')->where(['name'=>'COUNT_ACTIVE_ACTION'])->setField('value',$aActiveAction)===false){
+            
+            if(Db::name('Config')->where(['name' => 'COUNT_ACTIVE_ACTION'])->setField('value',$aActiveAction)===false){
                 $this->error("设置失败！");
             }else{
                 cache('DB_CONFIG_DATA',null);
@@ -143,9 +144,11 @@ class Count extends Admin{
             $map['status'] = 1;
             $actionList = model('Action')->getAction($map);
             $this->assign('action_list',$actionList);
-            $nowAction = config('COUNT_ACTIVE_ACTION',3);
+            $nowAction = config('COUNT_ACTIVE_ACTION');
+            dump($nowAction);exit;
             $this->assign('now_active_action',$nowAction);
             $this->setTitle('设置活跃度绑定的行为');
+
             return $this->fetch('set_active_action');
         }
     }

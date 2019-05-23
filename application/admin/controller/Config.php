@@ -25,7 +25,7 @@ class Config extends Admin
         if (isset($_GET['name'])) {
             $map['name'] = array('like', '%' . (string)input('name') . '%');
         }
-        //   $map=
+        // $map=
         list($list,$page) = $this->lists('Config', $map, 'sort,id');
         // 记录当前列表页的cookie
         Cookie('__forward__', $_SERVER['REQUEST_URI']);
@@ -39,60 +39,47 @@ class Config extends Admin
     }
 
     /**
-     * 新增配置
-     */
-    public function add()
-    {
-        if (request()->isPost()) {
-            $Config = Db::name('Config');
-            $data = input('');
-            $data['status'] = 1; //默认启用状态
-            if ($data) {
-                if ($Config->insert($data)) {
-                    cache('DB_CONFIG_DATA', null);
-                    $this->success(lang('_SUCCESS_ADD_'), url('index'));
-                } else {
-                    $this->error(lang('_FAIL_ADD_'));
-                }
-            } else {
-                $this->error($Config->getError());
-            }
-        } else {
-            $this->setTitle(lang('_CONFIG_ADD_'));
-            $this->assign('info', null);
-            return $this->fetch('edit');
-        }
-    }
-
-    /**
      * 编辑配置
      */
     public function edit($id = 0)
     {
         if (request()->isPost()) {
             $data = input('');
+            //验证器
+            $validate = $this->validate(
+                [
+                    'name'  => $data['name'],
+                    'title'   => $data['title'],
+                ],[
+                    'name'  => 'require|max:25',
+                    'title'   => 'require',
+                ],[
+                    'name.require' => '标识必须填写',
+                    'name.max'     => '标识最多不能超过25个字符',
+                    'title.require'   => '标题必须填写', 
+                ]
+            );
+            if(true !== $validate){
+                // 验证失败 输出错误信息
+                $this->error($validate);
+            }
+
+            $data['status'] = 1;//默认状态为启用
+
+            $res = $resId = model('Config')->editData($data);
+            cache('DB_CONFIG_DATA', null);
+            //记录行为
+            action_log('update_config', 'config', $resId, is_login());
+            $this->success(lang('_SUCCESS_UPDATE_'), Cookie('__forward__'));
             
-            if ($data['id']) {
-                Db::name('Config')->update($data);
-                cache('DB_CONFIG_DATA', null);
-                //记录行为
-                action_log('update_config', 'config', $data['id'], is_login());
-                $this->success(lang('_SUCCESS_UPDATE_'), Cookie('__forward__'));
-            } else {
-                $id = Db::name('Config')->insertGetId($data);
-                //记录行为
-                action_log('update_config', 'config', $id, is_login());
-                $this->success(lang('_SUCCESS_UPDATE_'), Cookie('__forward__'));
-            }
-
         } else {
-            $info = [];
             /* 获取数据 */
-            $info = Db::name('Config')->field(true)->find($id);
-
-            if (false === $info) {
-                $this->error(lang('_ERROR_CONFIG_INFO_GET_'));
+            if($id != 0){
+                $info = model('Config')->getDataById($id);
+            }else{
+                $info = [];
             }
+
             $this->assign('info', $info);
             $this->setTitle(lang('_CONFIG_EDIT_'));
             return $this->fetch();
