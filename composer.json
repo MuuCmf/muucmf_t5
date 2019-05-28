@@ -16,7 +16,7 @@
     ],
     "require": {
         "php": ">=5.5.0",
-        "topthink/framework": "~5.0.20",
+        "topthink/framework": "5.0.24",
         "topthink/think-captcha": "^1.0",
         "topthink/think-image": "^1.0.7",
         "mtdowling/cron-expression": "^1.2",

@@ -311,8 +311,13 @@ class Count extends Model
             unset($day);
         }
         unset($val);
-        //dump($max);exit;
-        $minWidth=sprintf("%.2f",substr(sprintf("%.3f", 0.05/$max*100), 0, -2));
+
+        if($max != 0){
+            $minWidth = sprintf("%.2f",substr(sprintf("%.3f", 0.05/$max*100), 0, -2));
+        }else{
+            $minWidth = 100;
+        }
+        
         foreach($list as &$val){
             foreach($val['day'] as &$day){
                 if($day['num'] == 0){
