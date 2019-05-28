@@ -12,7 +12,7 @@ class Count extends Admin{
     {
         parent::_initialize();
         $this->assign('now_table',request()->action());
-        $this->countModel=model('Count');
+        $this->countModel = model('Count');
     }
 
     /**

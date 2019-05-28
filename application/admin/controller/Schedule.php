@@ -84,6 +84,7 @@ class Schedule extends Admin
         $schedule = model('common/Schedule')->getSchedule($id);
         //执行计划任务
         $res = model('common/Schedule')->runSchedule($schedule);
+
         if($res){
             $this->success('执行了');
         }else{

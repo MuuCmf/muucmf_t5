@@ -75,6 +75,7 @@ class Count extends Model
         $date = date('Y-m-d 00:00',time());
         $date = time_format(strtotime($date." - 2 day"),'Y-m-d 00:00');
         $this->_doRemainCount($date,1);
+
         return true;
     }
 

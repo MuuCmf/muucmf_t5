@@ -154,11 +154,15 @@ class Schedule extends Model
      */
     public function runSchedule($schedule)
     {
+        !is_array($schedule)&&$schedule = $schedule->toArray();
+        //$schedule['args'] = 'a=1&b=2';
         if ($schedule['status'] == 1) {
             $method = explode('->', $schedule['method']);
             parse_str($schedule['args'], $args);  //分解参数
+            $action = $method[1]; //todo:数组方式就报错，转成变量就OK
             try {
-                $return = model($method[0])->$method[1]($args, $schedule); //执行model中的方法
+                $return = model($method[0])->$action($args, $schedule); //执行model中的方法
+                
             } catch (\Exception $exception) {
                 $return = false;
                 $this->error = '发生异常，意外终止执行';

@@ -476,7 +476,6 @@ class Admin extends Controller
                             
                             $menus['child'][$g] = list_to_tree($menuList, 'id', 'pid', 'operater', $item['id']);
                         }
-                        dump($menus);
                     }
                 }
             }
