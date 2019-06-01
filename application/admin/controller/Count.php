@@ -67,7 +67,7 @@ class Count extends Admin{
             $remainList = $this->countModel->getRemainList($startTime,$endTime);
             $this->assign('remainList',$remainList);
             $html = $this->fetch('count/_remain_data');
-            $this->show($html);
+            return $this->fetch($html);
         }else{
             $today = date('Y-m-d 00:00',time());
             $startTime = strtotime($today." - 9 day");
@@ -77,6 +77,7 @@ class Count extends Admin{
             $this->assign('options',$options);
             $this->assign('remainList',$remainList);
             $this->setTitle('留存率统计');
+            
             return $this->fetch();
         }
     }
@@ -145,7 +146,7 @@ class Count extends Admin{
             $actionList = model('Action')->getAction($map);
             $this->assign('action_list',$actionList);
             $nowAction = config('COUNT_ACTIVE_ACTION');
-            dump($nowAction);exit;
+            //dump($nowAction);exit;
             $this->assign('now_active_action',$nowAction);
             $this->setTitle('设置活跃度绑定的行为');
 

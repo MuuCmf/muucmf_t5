@@ -18,14 +18,14 @@ class Count extends Model
     public function dayCount()
     {
         $map['date'] = strtotime(time_format(time(),'Y-m-d 00:00')." - 1 day");
-        if(!Db::name('count_lost')->where($map)->find()){
+        //if(!Db::name('count_lost')->where($map)->find()){
             //流失率统计
             $this->lostCount();
             //留存率统计
             $this->remainCount();
             //活跃用户统计
             $this->activeCount();
-        }
+        //}
         return true;
     }
 
@@ -50,7 +50,7 @@ class Count extends Model
         $map_yesterday['date'] = strtotime($date." - 2 day");
         $yesterdayInfo = Db::name('CountLost')->where($map_yesterday)->find();
         if($yesterdayInfo){
-            $data['new_lost'] = $lostUser-$yesterdayInfo['lost_num'];
+            $data['new_lost'] = $lostUser - $yesterdayInfo['lost_num'];
         }
         $data['date'] = strtotime($date." - 1 day");
         $data['user_num'] = $totalUser;
@@ -60,7 +60,7 @@ class Count extends Model
 
         $have = Db::name('count_lost')->where('date',$data['date'])->find();
         if(!$have){
-            Db::name('CountLost')->insert($data);
+            Db::name('count_lost')->insert($data);
         }
         
         return true;
@@ -154,18 +154,23 @@ class Count extends Model
             $activeAction = 3;
         }
         $time = strtotime(time_format(time(),'Y-m-d'));
-
+        
         $day_data = $this->_dayActiveCount($activeAction,$time);
+        
         $have = Db::name('CountActive')->where('date',$day_data['date'])->find();
         if(!$have){
             Db::name('CountActive')->insert($day_data);
+        }else{
+            Db::name('CountActive')->where('id',$have['id'])->update($day_data);
         }
-
+        
         if(date('w',$time) === '0'){
             $week_data = $this->_weekActiveCount($activeAction,$time);
             $have = Db::name('CountActive')->where('date',$week_data['date'])->find();
             if(!$have){
                 Db::name('CountActive')->insert($week_data);
+            }else{
+                Db::name('CountActive')->where('id',$have['id'])->update($week_data);
             }
         }
 
@@ -174,6 +179,8 @@ class Count extends Model
             $have = Db::name('CountActive')->where('date',$month_data['date'])->find();
             if(!$have){
                 Db::name('CountActive')->insert($month_data);
+            }else{
+                Db::name('CountActive')->where('id',$have['id'])->update($month_data);
             }
         }
 
@@ -188,7 +195,7 @@ class Count extends Model
      */
     private function _dayActiveCount($action,$today)
     {
-        $startTime = $today-24*60*60;
+        $startTime = $today - 24*60*60;
         $map['action_id'] = $action;
         $map['create_time'] = ['between',[$startTime,$today-1]];
         $users_num = Db::name('action_log')->where($map)->count();
@@ -265,12 +272,12 @@ class Count extends Model
      * 格式化留存率数据
      * @param $list
      * @return mixed
-     * @author 郑钟良<zzl@ourstu.com>
+     * @author 大蒙 <59262424@qq.com> 重写
      */
     private function _initRemainList($list)
     {
-        $date=date('Y-m-d 00:00',time());
-        $special=array(
+        $date = date('Y-m-d 00:00',time());
+        $special = [
             strtotime($date.' - 2 day')=>1,
             strtotime($date.' - 3 day')=>2,
             strtotime($date.' - 4 day')=>3,
@@ -279,44 +286,54 @@ class Count extends Model
             strtotime($date.' - 7 day')=>6,
             strtotime($date.' - 8 day')=>7,
             strtotime($date.' - 9 day')=>8
-        );
-        $max=0;
+        ];
+
+        $max = 0;
+
         foreach($list as &$val){
-            $total=0;
-            if($val['date']>strtotime($date.' - 2 day')){
+            $total = 0;
+
+            if($val['date'] > strtotime($date.' - 2 day')){
                 continue;
-            }else if($val['date']<strtotime($date.' - 9 day')){
-                $val['day']=array($val['day1_num'],$val['day2_num'],$val['day3_num'],$val['day4_num'],$val['day5_num'],$val['day6_num'],$val['day7_num'],$val['day8_num']);
+            }else if($val['date'] < strtotime($date.' - 9 day')){
+                $val['day'] = [
+                    $val['day1_num'],$val['day2_num'],$val['day3_num'],$val['day4_num'],$val['day5_num'],$val['day6_num'],$val['day7_num'],$val['day8_num']
+                ];
             }else{
-                $num=$special[$val['date']];
+                $num = $special[$val['date']];
                 for($i=1;$i<=$num;$i++){
-                    $val['day'][]=$val['day'.$i.'_num'];
+                    $val['day'][] = $val['day'.$i.'_num'];
                 }
             }
 
-            $val['date_str']=time_format($val['date'],'y-m-d');
+            $val['date_str'] = time_format($val['date'],'y-m-d');
+            
             foreach($val['day'] as &$day){
-                if($day!=0){
-                    $day=array('num'=>$day,'value'=>$day/$val['reg_num']);
-                    $total+=$day['value']+0.0499;
+                
+                if($day != 0){
+                    $day = [
+                        'num' => $day,
+                        'value' => $day/$val['reg_num']
+                    ];
+                    $total += $day['value'] + 0.0499;
                 }else{
-                    $day=array('num'=>0,'value'=>0);
-                    $total+=0.0499;
+                    $day = [
+                        'num' => 0,
+                        'value' => 0
+                    ];
+                    $total += 0.0499;
                 }
             }
-            //dump(text($total));exit;
-            if($total>$max){
-                $max=$total;
+
+            if($total > $max){
+                $max = $total;
             }
             unset($day);
         }
         unset($val);
 
-        if($max != 0){
-            $minWidth = sprintf("%.2f",substr(sprintf("%.3f", 0.05/$max*100), 0, -2));
-        }else{
-            $minWidth = 100;
-        }
+        //$minWidth = sprintf("%.2f",substr(sprintf("%.3f", 0.0499/$max * 100), 0, -2));
+        $minWidth = sprintf("%.2f",100/8);
         
         foreach($list as &$val){
             foreach($val['day'] as &$day){
@@ -324,10 +341,11 @@ class Count extends Model
                     $day['value'] = '0%';
                     $day['width'] = $minWidth.'%';
                 }else{
-                    $width=($day['value']/$max)*100+$minWidth;
-                    $width=sprintf("%.2f",substr(sprintf("%.3f", $width), 0, -2)).'%';
-                    $day['value']=round($day['value']*100,2).'%';
-                    $day['width']=$width;
+                    $width = ($day['value']/$max) * 100 + $minWidth;
+                    $width = sprintf("%.2f",substr(sprintf("%.3f", $width), 0, -2)).'%';
+                    $day['value'] = round($day['value'] * 100,2).'%';
+                    //$day['width'] = $width;
+                    $day['width'] = $minWidth.'%';
                 }
             }
             unset($day);
