@@ -71,6 +71,7 @@ class Schedule extends Admin
         $builder->keyDoActionModalPopup('showLog?id=###', '查看日志', '日志', ['data-title' => '日志']);
         $builder->keyDoActionAjax('execute?id=###','立即执行','btn-danger');//立即执行
         $builder->data($list);
+        $builder->explain('计划任务说明','鉴于通过php执行计划任务的稳定性较差，也可第三方接口通过执行【'.url('admin/scheduleRun/index').'】以url的方式执行计划任务');
         $builder->display();
     }
 
@@ -110,9 +111,9 @@ class Schedule extends Admin
      */
     public function showLog()
     {
-        $aId = input('get.id', 0, 'intval');
-        $model = model('common/Schedule');
-        $log = $model->getLog($aId);
+        $aId = input('id', 0, 'intval');
+
+        $log = model('common/Schedule')->getLog($aId);
         if ($log) {
             $log = explode("\n", $log);
         }

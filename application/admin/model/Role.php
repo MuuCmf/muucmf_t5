@@ -8,11 +8,36 @@ use think\Model;
  */
 class Role extends Model
 {
+    //自动写入创建和更新的时间戳字段
+    protected $autoWriteTimestamp = true;
 
+    protected $auto = ['status', 1];
+    
     protected $rule = [
         'name'  => ['require','max'=>25,'checkName'=>true],
         'title' => ['require', 'max'=>64],
     ];
+
+    /**
+     * 编辑/新增数据
+     *
+     * @param      <type>  $data   The data
+     *
+     * @return     <type>  ( description_of_the_return_value )
+     */
+    public function editData($data)
+    {
+        if(!empty($data['id'])){
+            $res = $this->allowField(true)->save($data,$data['id']);
+        }else{
+            $res = $this->allowField(true)->save($data);
+        }
+        if($res){
+            return $this->id;
+        }else{
+            return $res;
+        }
+    }
 
     /**
      * 验证身份名(只能有字母和下划线组成)
@@ -24,11 +49,6 @@ class Role extends Model
         return true;
     }
     
-    protected $auto = ['status', 1];
-
-    protected $autoWriteTimestamp = true;
-    
-
     /**
      * 分页按照$map获取列表
      * @param array $map 查询条件
