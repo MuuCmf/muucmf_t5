@@ -59,9 +59,9 @@ class Action extends Admin {
      */
     public function scoreLog($r=20){
 
-        if(input('type')=='clear'){
+        if(input('type') == 'clear'){
             Db::name('ScoreLog')->where(['id'=>['>',0]])->delete();
-            $this->success('清空成功。',Url('scoreLog'));
+            $this->success('清空成功。',url('scoreLog'));
             exit;
         }else{
             $aUid=input('uid',0,'');
@@ -263,44 +263,43 @@ class Action extends Admin {
      */
     public function editAction()
     {
-        $id = input('id');
-        //empty($id) && $this->error(lang('_PARAMETERS_CANT_BE_EMPTY_'));
-        if($id){
-            $data = Db::name('Action')->field(true)->find($id);
-
+        if(request()->isPost()){
+            /* 获取数据对象 */
+            $data = input('');
+            $res = model('common/Action')->editAction($data);
+            if (!$res) {
+                $this->error(model('common/Action')->getError());
+            } else {
+                $this->success($res['id'] ? lang('_UPDATE_SUCCESS_') : lang('_NEW_SUCCESS_'), Cookie('__forward__'));
+            }
         }else{
-            //初始默认数据
-            $data = [
-                'name'=>'',
-                'title'=>'',
-                'log'=>'',
-                'module'=>'',
-                'remark'=>'',
-                'rule'=>'',
-                'id'=>''
-            ];
+            $id = input('id');
+            //empty($id) && $this->error(lang('_PARAMETERS_CANT_BE_EMPTY_'));
+            if($id){
+                $data = Db::name('Action')->field(true)->find($id);
+
+            }else{
+                //初始默认数据
+                $data = [
+                    'name'=>'',
+                    'title'=>'',
+                    'log'=>'',
+                    'module'=>'',
+                    'remark'=>'',
+                    'rule'=>'',
+                    'id'=>''
+                ];
+            }
+
+            $this->assign('data', $data);
+            $module = model('common/Module')->getAll();
+            $this->assign('module', $module);
+
+            $this->setTitle(lang('_EDITING_BEHAVIOR_'));
+
+            return $this->fetch();
         }
-
-        $this->assign('data', $data);
-        $module = model('common/Module')->getAll();
-        $this->assign('module', $module);
-
-        $this->setTitle(lang('_EDITING_BEHAVIOR_'));
-        return $this->fetch();
-    }
-
-    /**
-     * 更新行为
-     * @author dameng <59262424@qq.com>
-     */
-    public function saveAction()
-    {
-        $res = model('common/Action')->updateAction();
-        if (!$res) {
-            $this->error(model('common/Action')->getError());
-        } else {
-            $this->success($res['id'] ? lang('_UPDATE_SUCCESS_') : lang('_NEW_SUCCESS_'), Cookie('__forward__'));
-        }
+        
     }
 
 }

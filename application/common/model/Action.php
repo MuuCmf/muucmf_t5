@@ -10,10 +10,9 @@ class Action extends Model
      * 新增或更新一个行为
      * @return boolean fasle 失败 ， int  成功 返回完整的数据
      */
-    public function updateAction(){
+    public function editAction($data){
 
-        /* 获取数据对象 */
-        $data = input('');
+        
 
         if(empty($data)){
             return false;
@@ -46,13 +45,13 @@ class Action extends Model
         /* 添加或新增行为 */
         if(empty($data['id'])){ //新增数据
             
-            $res = $this->save($data); //添加行为
+            $res = $this->allowField(true)->save($data); //添加行为
             if(!$res){
                 $this->error = lang('_NEW_BEHAVIOR_WITH_EXCLAMATION_');
                 return false;
             }
         } else { //更新数据
-            $res = $this->save($data,['id'=>$data['id']]); //更新基础内容
+            $res = $this->allowField(true)->save($data,['id'=>$data['id']]); //更新基础内容
             if(!$res){
                 $this->error = lang('_UPDATE_BEHAVIOR_WITH_EXCLAMATION_');
                 return false;
