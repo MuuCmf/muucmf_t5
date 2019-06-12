@@ -159,6 +159,8 @@ return array(
     '_NO_NEED_TO_FILL_IN_WITH_DOUBLE_' => '"无需填写"',
     '_SELECT_ICON_WITH_DOUBLE_' => '"选择icon"',
     '_SELECT_PICTURES_' => '选择图片',
+    '_SELECT_VIDEO_' => '选择视频',
+    '_SELECT_AUDIO_' => '选择音频',
     '_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_' => '"点击查看大图"',
     '_F_FILE_PATH_' => 'f文件路径',
     '_AND_IT_COULD_BE_FLASH_' => '也可能是flash',
@@ -219,7 +221,7 @@ return array(
     '_MANAGE_BACKGROUND_' => '管理后台',
     '_LOGOUT_' => '注销',
     '_LOGIN_' => '登录',
-    '_REGISTER_' => '注册',
+    '_REGISTER_' => '免费注册',
     '_ERROR_NEED_LOGIN_' => '需要登录',
 
     /*footer*/
