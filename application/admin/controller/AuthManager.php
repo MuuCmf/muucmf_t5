@@ -61,13 +61,13 @@ class AuthManager extends Admin
     public function writeGroup()
     {
         $data = input('');
-        if (isset($data['rules'])) {
+        if (isset($data['rules']) && !empty($data['rules'])) {
             sort($data['rules']);
             $data['rules'] = implode(',', array_unique($data['rules']));
         }
         $data['module'] = 'admin';
         $data['type'] = AuthGroup::TYPE_ADMIN;
-        $AuthGroup = Db::name('AuthGroup');
+        $AuthGroup = model('admin/AuthGroup');
         
         if ($data) {
             if(isset($data['rules'])){
@@ -75,12 +75,8 @@ class AuthManager extends Admin
                 //大蒙没搞懂自己搞了下，先注销
                 //$data['rules'] = $this->getJoinRules($data['rules']);
             }
-
-            if (empty($data['id'])) {
-                $r = $AuthGroup->insert($data);
-            } else {
-                $r = $AuthGroup->update($data);
-            }
+            
+            $r = $AuthGroup->editData($data);
             if ($r === false) {
                 $this->error(lang('_FAIL_OPERATE_') . $AuthGroup->getError());
             } else {

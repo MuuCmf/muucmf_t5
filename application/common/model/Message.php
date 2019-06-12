@@ -54,9 +54,12 @@ class Message extends Model
         if(!count($to_uids)){
             return false;
         }
-        if (in_array($type, array('1', '2','3','0','4', '5'))) {
+
+        $all_type = model('common/Message')->getAllMessageType();
+        if (!deep_in_array($type, $all_type)) {
             $type = 'common_system';
         }
+
         $from_uid == -1 && $from_uid = is_login();
         $message_content_id = $this->addMessageContent($from_uid, $title, $content, $url, $url_args, $type);
         $to_uids = is_array($to_uids) ? $to_uids : array($to_uids);
@@ -317,7 +320,9 @@ class Message extends Model
                 }else{
                     $content['tip']=$content['content'];
                 }
-                if (in_array($content['type'], array('1', '2','3','0','4', '5'))) {
+
+                $all_type = model('common/Message')->getAllMessageType();
+                if (!deep_in_array($content['type'], $all_type)) {
                     $content['type'] = 'common_system';
                 }
             }
@@ -561,12 +566,17 @@ class Message extends Model
         $allType = $this->getAllMessageType();
         return $allType[strtolower($type)];
     }
+
     private function _initMessage(&$messages)
     {
+        $all_type = model('common/Message')->getAllMessageType();
+        
         foreach ($messages as &$v) {
-            if (in_array($v['type'], array('1', '2','3','0','4', '5'))) {
+
+            if (!deep_in_array($v['type'], $all_type)) {
                 $v['type'] = 'common_system';
             }
+
             $v['ctime'] = friendlyDate($v['create_time']);
             $v['content'] = $this->getContent($v['content_id']);
             if(is_array($v['content']['content'])){

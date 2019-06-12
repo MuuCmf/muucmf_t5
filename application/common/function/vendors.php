@@ -39,6 +39,7 @@ function get_city_by_ip($ip)
 }
 /**
  * 发送验证码
+ * TODO:该方法即将作废
  * @param $account
  * @param $verify
  * @param $type
@@ -52,7 +53,16 @@ function doSendVerify($account, $verify, $type)
             $content = modC('SMS_CONTENT', '{$verify}', 'USERCONFIG');
             $content = str_replace('{$verify}', $verify, $content);
             $content = str_replace('{$account}', $account, $content);
-            $res = sendSMS($account, $content);
+
+            //发送类型，暂只处理验证类
+            if($sendType == 'verify'){
+                $param = [
+                    'code'=>$verify,
+                ];
+                $param = json_encode($param);
+            }
+            
+            $res = sendSMS($account, $content, $sendType, $param);
             return $res;
             break;
         case 'email':
@@ -63,6 +73,35 @@ function doSendVerify($account, $verify, $type)
             $res = send_mail($account, modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config') . lang('_EMAIL_VERIFY_2_'), $content);
             return $res;
             break;
+    }
+}
+
+/**发送短消息
+ * @param        $mobile 手机号码
+ * @param        $content 内容
+ * @param        $type 短信类型
+ * @return string
+ * @auth 大蒙
+ */
+function sendSMS($mobile, $content, $type = 'verify', $param = '')
+{
+    $sms_hook = modC('SMS_HOOK','none','CONFIG');
+    $sms_hook =  check_sms_hook_is_exist($sms_hook);
+    
+    if($sms_hook == 'none'){
+        return lang('_THE_ADMINISTRATOR_HAS_NOT_CONFIGURED_THE_SMS_SERVICE_PROVIDER_INFORMATION_PLEASE_CONTACT_THE_ADMINISTRATOR_');
+    }
+    //根据电信基础运营商的规定，每条短信必须附加短信签名，否则将无法正常发送。这里将后台设置的短信签名与内容拼接成发送内容
+    $sms_sign = modC('SMS_SIGN','【MuuCmf】','CONFIG');
+    $content = $sms_sign.$content;
+    $name = get_addon_class($sms_hook);
+    $class = new $name();
+
+    //把阿里云短信单独处理
+    if($sms_hook == 'aliyunsms'){
+        return $class->sendSms($mobile, $type, $param);
+    }else{
+        return $class->sendSms($mobile,$content);
     }
 }
 
@@ -241,31 +280,6 @@ function modC($key, $default = '', $module = '')
     }
     return $result;
 }
-
-/**发送短消息
- * @param        $mobile 手机号码
- * @param        $content 内容
- * @return string
- * @auth 大蒙
- */
-function sendSMS($mobile, $content)
-{
-
-    $sms_hook = modC('SMS_HOOK','none','CONFIG');
-    $sms_hook =  check_sms_hook_is_exist($sms_hook);
-    if($sms_hook == 'none'){
-        return lang('_THE_ADMINISTRATOR_HAS_NOT_CONFIGURED_THE_SMS_SERVICE_PROVIDER_INFORMATION_PLEASE_CONTACT_THE_ADMINISTRATOR_');
-    }
-    //根据电信基础运营商的规定，每条短信必须附加短信签名，否则将无法正常发送。这里将后台设置的短信签名与内容拼接成发送内容
-    $sms_sign = modC('SMS_SIGN','【MuuCmf】','CONFIG');
-    $content = $sms_sign.$content;
-
-    $name = get_addon_class($sms_hook);
-    $class = new $name();
-    return $class->sendSms($mobile,$content);
-
-}
-
 
 /**
  * get_kanban_config  获取看板配置

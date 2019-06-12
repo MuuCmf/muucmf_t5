@@ -14,7 +14,7 @@ class Index extends Common
     {
         // 获得系统首页配置，如果为空则继续，否则跳转
         $default_url = config('DEFUALT_HOME_URL');
-        if ($default_url != ''&&strtolower($default_url)!='index/index/index') {
+        if ($default_url != '' && strtolower($default_url)!='index/index/index') {
             $this->redirect(get_nav_url($default_url));
         }
         // 获取首页类型，默认静态首页
@@ -28,7 +28,6 @@ class Index extends Common
         // 登陆页
         if($type=='login'){
             if(is_login() == 0){
-                dump(is_login());
                 $this->redirect('ucenter/Member/login');
             }
         }

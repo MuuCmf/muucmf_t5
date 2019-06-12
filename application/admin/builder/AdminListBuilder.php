@@ -159,7 +159,10 @@ class AdminListBuilder extends AdminBuilder
      * @author 郑钟良<zzl@ourstu.com> 大蒙<59262424@qq.com>
      */
     public function buttonModalPopup($url, $params, $title, $attr = [])
-    {
+    {   
+        if(!isset($attr['data-title'])){
+           $attr['data-title'] = $title; 
+        }
         //$attr中可选参数，data-title：模态框标题，target-form：要传输的数据
         $attr['modal-url'] = $this->addUrlParam($url, $params);
         $attr['data-role'] = 'modal_popup';
@@ -195,7 +198,7 @@ class AdminListBuilder extends AdminBuilder
     public function buttonDelete($url = null, $title = '删除', $attr = [])
     {
         if (!$url) $url = $this->_setStatusUrl;
-        $attr['class']='btn ajax-post btn-danger';
+        $attr['class']='btn ajax-post btn-danger confirm';
         $attr['data-confirm'] = lang('_CONFIRM_DELETE_COMPLETELY_');
         return $this->buttonSetStatus($url, -1, $title, $attr);
     }
@@ -451,7 +454,9 @@ class AdminListBuilder extends AdminBuilder
     public function keyDoActionModalPopup($getUrl, $text, $title, $attr = [] ,$class='btn-primary',$hide=[], $flag = 'id')
     {
         //attr中需要设置data-title，用于设置模态弹窗标题
+        $attr['data-title'] = $text;
         $attr['data-role'] = 'modal_popup';
+
         //获取默认getUrl函数
         if (is_string($getUrl)) {
             $getUrl = $this->createDefaultGetUrlFunction($getUrl,$flag);
@@ -497,10 +502,11 @@ class AdminListBuilder extends AdminBuilder
                 break;
             }
         }
+        
         if (!$doActionKey) {
             $this->key('DOACTIONS', $title, 'doaction', array());
         }
-
+        
         //找出第一个DOACTIONS字段
         $doActionKey = null;
         foreach ($this->_keyList as &$key) {
@@ -512,7 +518,7 @@ class AdminListBuilder extends AdminBuilder
 
         //在DOACTIONS中增加action
         $doActionKey['opt']['actions'][] = ['text' => $text, 'get_url' => $getUrl, 'class' => $class, 'hide' => $hide];
-
+        
         return $this;
     }
     /**
@@ -523,7 +529,7 @@ class AdminListBuilder extends AdminBuilder
      */
     public function keyDoActionAjax($getUrl, $text = 'Ajax', $class = 'btn-primary' ,$hide=[])
     {
-        return $this->keyDoAction($getUrl, $text, '操作', 'ajax-get'.$class, $hide);
+        return $this->keyDoAction($getUrl, $text, '操作', 'ajax-get '. $class, $hide);
     }
     /**
      * 编辑操作
@@ -553,7 +559,7 @@ class AdminListBuilder extends AdminBuilder
      */
     public function keyDoActionDelete($getUrl, $text = '删除', $hide=[])
     {
-        return $this->keyDoAction($getUrl, '<i class="icon icon-trash"></i> '.$text, '操作','btn-danger ajax-get', $hide);
+        return $this->keyDoAction($getUrl, '<i class="icon icon-trash"></i> '.$text, '操作','btn-danger ajax-get confirm', $hide);
     }
     /**
      * 还原操作，存在获取数据ID BUG
@@ -860,11 +866,14 @@ class AdminListBuilder extends AdminBuilder
     public function doSetStatus($model, $ids, $status = 1)
     {
         $id = array_unique((array)$ids);
+        $id = implode(',',$id);
         $rs = Db::name($model)->where(['id' => ['in', $id]])->update(['status' => $status]);
-        if ($rs === false) {
+        if ($rs) {
+            $this->success(lang('_SUCCESS_SETTING_'), $_SERVER['HTTP_REFERER']); 
+        }else{
             $this->error(lang('_ERROR_SETTING_') . lang('_PERIOD_'));
         }
-        $this->success(lang('_SUCCESS_SETTING_'), $_SERVER['HTTP_REFERER']);
+        
     }
 
 

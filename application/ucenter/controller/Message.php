@@ -120,7 +120,7 @@ class Message extends Base
         $messageTypeList=model('common/Message')->getMyMessageTypeList();
         $this->assign('message_type_list',$messageTypeList);
         $type_tpl=modC('MESSAGE_TYPE_TPL','type3','Message');
-        echo $this->fetch('ucenter@message/msg_type_tpl/'.$type_tpl);
+        return $this->fetch('ucenter@message/msg_type_tpl/'.$type_tpl);
     }
 
     /**

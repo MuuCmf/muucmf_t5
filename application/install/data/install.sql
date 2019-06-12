@@ -564,13 +564,13 @@ INSERT INTO `muucmf_auth_rule` (`id`, `module`, `type`, `name`, `title`, `status
 
 DROP TABLE IF EXISTS `muucmf_avatar`;
 CREATE TABLE IF NOT EXISTS `muucmf_avatar` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL,
   `uid` int(11) NOT NULL,
   `path` varchar(200) NOT NULL,
   `driver` varchar(50) NOT NULL,
   `create_time` int(11) NOT NULL,
   `status` int(11) NOT NULL,
-  `is_temp` int(11) NOT NULL,
+  `is_temp` int(11) NOT NULL
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
@@ -732,7 +732,9 @@ INSERT INTO `muucmf_config` (`id`, `name`, `type`, `title`, `group`, `extra`, `r
 (10050, '_INDEX_CONFIG_INDEX_TYPE', 0, '', 0, '', '', 1531180866, 1531180866, 1, 'static_index', 0),
 (10051, '_INDEX_BLOCK', 0, '', 0, '', '', 1531180866, 1531180866, 1, '[{"id":"disable","title":"\\u7981\\u7528","items":[{"id":"slider","title":"\\u8f6e\\u64ad"}]},{"id":"enable","title":"\\u542f\\u7528","items":[]}]', 0),
 (10052, '_INDEX_CONFIG_STATIC_TPL', 0, '', 0, '', '', 1531180866, 1531180866, 1, '', 0),
-(10053, 'MAIL_SMTP_SSL', 4, '启用SMTP验证功能', 5, '0:关闭\r\n1:开启', '是否启用SMTP验证功能', 0, 0, 1, '0', 0);
+(10053, 'MAIL_SMTP_SSL', 4, '启用SMTP验证功能', 5, '0:关闭\r\n1:开启', '是否启用SMTP验证功能', 0, 0, 1, '0', 0),
+(10134, 'COUNT_ACTIVE_ACTION', 0, '系统用户活跃统计依赖', 3, '', '', 1558578199, 1558578199, 1, '1', 0);
+
 
 DROP TABLE IF EXISTS `muucmf_count_active`;
 CREATE TABLE IF NOT EXISTS `muucmf_count_active` (

@@ -15,8 +15,8 @@ class Schedule extends Admin
      */
     public function scheduleList()
     {
-        $list = model('common/Schedule')->getScheduleList();
-
+        $list = model('common/Schedule')->where(['status'=>['neq',-1]])->select();
+        $list = collection($list)->toArray();
         foreach ($list as &$v) {
             list($type, $value) = $this->getTypeAndValue($v['type'], $v['type_value']);
             $v['type_text'] = $type;
@@ -26,33 +26,34 @@ class Schedule extends Admin
         }
         unset($v);
 
-        
         //显示页面
-        $btn_attr = model('common/Schedule')->checkIsRunning() ? array('style' => 'font-weight:700') : array('style' => 'font-weight:700');
-        $btn_attr['class'] = 'ajax-post btn-info';
-        $btn_attr[' hide-data'] = 'true';
-        $btn_attr['href'] = Url('Schedule/run');
+        $btn_attr['style'] = 'font-weight:700';
+        $btn_attr['hide-data'] = 'true';
+        $btn_attr['href'] = url('Schedule/run');
         //控制运行按钮文字
         if(model('common/Schedule')->checkIsRunning()){
-            $btn_info = 'Running（点击停止）';
+            $btn_info = '<i class="icon icon-stop"></i>（点击停止）';
+            $btn_attr['class'] = 'ajax-post btn-danger';
         }else{
-            $btn_info = 'Stop（点击运行）';
+            $btn_info = '<i class="icon icon-play"></i>（点击运行）';
+            $btn_attr['class'] = 'ajax-post btn-info';
         }
+
         $builder = new AdminListBuilder();
 
         $builder->title('计划任务')
             ->tips('Tips：执行时间较长的计划任务会影响到其他计划任务时间的计算；')
             ->button($btn_info, $btn_attr)
-            ->setStatusUrl(Url('setScheduleStatus'));
+            ->setStatusUrl(url('setScheduleStatus'));
 
-            $btn_attr['style'] = 'font-weight:700';
-            $btn_attr['href'] = Url('Schedule/reRun');
-            $btn_attr['class'] = 'btn-warning ajax-post re_run';
-            $btn_attr['onclick'] = 'javascript:$(this).text("重启中，请不要做其他操作...")';
+        $btn_attr['href'] = url('Schedule/reRun');
+        $btn_attr['class'] = 'btn-warning ajax-post re_run';
+        $btn_attr['onclick'] = 'javascript:$(this).text("重启中，请不要做其他操作...")';
+
         $builder
             ->button('重启计划任务', $btn_attr);
         $builder
-            ->buttonNew(Url('Schedule/editSchedule'))
+            ->buttonNew(url('Schedule/editSchedule'))
             ->buttonDelete()
             ->keyId()
             ->keyText('method', '执行方法')
@@ -64,16 +65,36 @@ class Schedule extends Admin
             ->keyTime('last_run', '上次执行时间')
             ->keyTime('next_run', '下次执行时间')
             //->keyCreateTime()
-            ->keyStatus()
-            ->keyDoActionEdit('editSchedule?id=###')
-            ->keyDoActionModalPopup('showLog?id=###', '查看日志', '日志', ['data-title' => '日志'])
-            ->data($list)
-            ->display();
+            ->keyStatus();
+
+        $builder->keyDoActionEdit('editSchedule?id=###');
+        $builder->keyDoActionModalPopup('showLog?id=###', '查看日志', '日志', ['data-title' => '日志']);
+        $builder->keyDoActionAjax('execute?id=###','立即执行','btn-danger');//立即执行
+        $builder->data($list);
+        $builder->explain('计划任务说明','鉴于通过php执行计划任务的稳定性较差，也可第三方接口通过执行【'.url('admin/scheduleRun/index').'】以url的方式执行计划任务');
+        $builder->display();
+    }
+
+    /**
+     * 手动立即执行一条任务
+     */
+    public function execute()
+    {
+        $id = input('id');
+        //获取该计划任务
+        $schedule = model('common/Schedule')->getSchedule($id);
+        //执行计划任务
+        $res = model('common/Schedule')->runSchedule($schedule);
+
+        if($res){
+            $this->success('执行了');
+        }else{
+            $this->error(model('common/Schedule')->getError());
+        }
     }
 
     /**
      * setScheduleStatus  禁用/启用/删除计划任务
-     * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
      */
     public function setScheduleStatus(){
         $ids = input('ids');
@@ -87,13 +108,12 @@ class Schedule extends Admin
 
     /**
      * showLog  显示日志
-     * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
      */
     public function showLog()
     {
-        $aId = input('get.id', 0, 'intval');
-        $model = model('common/Schedule');
-        $log = $model->getLog($aId);
+        $aId = input('id', 0, 'intval');
+
+        $log = model('common/Schedule')->getLog($aId);
         if ($log) {
             $log = explode("\n", $log);
         }
@@ -104,7 +124,6 @@ class Schedule extends Admin
 
     /**
      * clearLog  清空日志
-     * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
      */
     public function clearLog()
     {
@@ -116,7 +135,6 @@ class Schedule extends Admin
 
     /**
      * editSchedule  新增/编辑计划任务
-     * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
      */
     public function editSchedule()
     {
@@ -178,20 +196,21 @@ class Schedule extends Admin
                 $tip = '新增';
                 $schedule = [];
             }
+            $type_value_html = '';
+
             $builder
                 ->title($tip . '计划任务')
                 ->keyId()
                 ->keyText('method', "执行方法", "只能执行Model中的方法，如 <span style='color: red'>Home/Index->test</span> 则表示执行 model('Home/Index')->test();")
                 ->keyText('args', "执行参数", "url的写法，如 <span style='color: red'>a=1&b=2</span> ")
-
-                ->keySelect('type_key', '类型', '计划任务的类型', array(1 => '执行一次', 2 => '每隔一段时间执行', 3 => '每个时间点执行'))
-                ->keyUserDefined('type_value', '设定时间', '', 'Admin@Schedule/edit', ['schedule' => $schedule])
+                ->keySelect('type_key', '类型', '计划任务的类型', [1 => '执行一次', 2 => '每隔一段时间执行', 3 => '每个时间点执行'])
+                ->keyUserDefined('type_value', '设定时间', '', 'admin@schedule/edit', ['schedule' => $schedule])
                 ->keyTime('start_time', '开始时间')
                 ->keyTime('end_time', '结束时间')
                 ->keyTextArea('intro', '介绍', '该介绍将会被写入日志')
                 ->keyText('lever', '优先级')
                 ->data($schedule)
-                ->buttonSubmit(Url('Schedule/editSchedule'))
+                ->buttonSubmit(url('Schedule/editSchedule'))
                 ->buttonBack()
                 ->display();
         }
@@ -229,7 +248,7 @@ class Schedule extends Admin
     public function run()
     {
         $model = model('common/Schedule');
-
+        //dump(file_get_contents(APP_PATH.'../data/schedule/lock.txt'));exit;
         if ($model->checkIsRunning()) {
             $model->setStop();
             $this->success('设置成功~已停止！');
@@ -259,27 +278,29 @@ class Schedule extends Admin
     private function _run()
     {  
         $time = time();
-        $url = Url('api/Schedule/runSchedule', ['time' => $time, 'token' => md5($time . config('database.auth_key'))]);
+        $url = url('api/Schedule/runSchedule', ['time' => $time, 'token' => md5($time . config('database.auth_key'))],'html',true);
         $SSL = substr($url, 0, 8) == "https://" ? true : false;  
-        $CA = true; //HTTPS时是否进行严格认证 
+        $CA = false; //HTTPS时是否进行严格认证 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_TIMEOUT, 1);  //设置过期时间为1秒，防止进程阻塞
 
-        if ($SSL && $CA) {
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);   // 只信任CA颁布的证书  
-            curl_setopt($ch, CURLOPT_CAINFO, $cacert); // CA根证书（用来验证的网站证书是否是CA颁布）  
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2); // 检查证书中是否设置域名，并且是否与提供的主机名匹配  
-        } else if ($SSL && !$CA) {  
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // 信任任何证书  
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 1); // 检查证书中是否设置域名  
-        }  
+        if ($SSL) {  
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); // https请求 不验证证书和hosts
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);  
+        }
         curl_setopt($ch, CURLOPT_USERAGENT, '');
         curl_setopt($ch, CURLOPT_REFERER, 'b');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $content = curl_exec($ch);
 
-        //var_dump($content);  //查看报错信息 
+        //var_dump($url);  //查看报错信息 
         curl_close($ch);
     }
+
+    public function debug()
+    {
+        model('admin/Count')->dayCount();
+    }
+
 }

@@ -18,8 +18,8 @@ class Admin extends MuuAdmin
         $data = $builder->handleConfig();
         $builder->title(lang('_HOME_SETTING_'));
 
-        $builder->keyRadio('CONFIG_INDEX_TYPE','系统首页类型','',['static_index'=>'静态首页','index'=>'聚合首页','login'=>'登录页']);
-        $builder->keyText('CONFIG_STATIC_TPL','静态模板名称','系统默认static_index');
+        $builder->keyRadio('CONFIG_INDEX_TYPE','系统首页类型','',['static_index'=>'自定义首页','index'=>'聚合首页','login'=>'登录页']);
+        $builder->keyText('CONFIG_STATIC_TPL','自定义模板名称','系统默认static_index，位于application/index/view/index/目录下');
 
         $modules = model('common/Module')->getAll();
         foreach ($modules as $m) {

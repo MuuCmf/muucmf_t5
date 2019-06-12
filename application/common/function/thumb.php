@@ -122,11 +122,11 @@ function getThumbImageById($cover_id, $width = 100, $height = 'auto', $type = 0,
         return get_pic_src($attach['src']);
     } else {
         $new_img = $picture['path'];
-        $name = get_addon_class($picture['type']);
+        $name = get_addon_class($picture['driver']);
         if (class_exists($name)) {
             $class = new $name();
             if (method_exists($class, 'thumb')) {
-                $new_img = $class->thumb($picture['path'], $width, $height, $type, $replace);
+                $new_img = $class->thumb($picture['path'], $width, $height);
             }
         }
 
@@ -178,7 +178,29 @@ function get_pic_src($path)
     $not_https_remote = (strpos($path, 'https://') === false);
     if ($not_http_remote && $not_https_remote) {
         //本地url
-        return str_replace('//', '/', getRootUrl() . $path); //防止双斜杠的出现
+        return getRootUrl() . str_replace('//', '/', $path); //防止双斜杠的出现
+    } else {
+        //远端url
+        return $path;
+    }
+}
+
+/**
+ * 补全渲染图片路径http部分
+ *
+ * @param      <type>  $path   The path
+ *
+ * @return     <type>  The remote source.
+ */
+function getRemoteSrc($path)
+{
+    //不存在http://
+    $not_http_remote = (strpos($path, 'http://') === false);
+    //不存在https://
+    $not_https_remote = (strpos($path, 'https://') === false);
+    if ($not_http_remote && $not_https_remote) {
+        //本地url
+        return getRootUrl().$path;
     } else {
         //远端url
         return $path;
@@ -190,5 +212,5 @@ function get_pic_src($path)
  */
 function getRootUrl()
 {
-    return '/';
+    return get_http_https().$_SERVER['SERVER_NAME'].'/';
 }

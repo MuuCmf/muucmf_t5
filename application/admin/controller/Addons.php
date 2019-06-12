@@ -112,11 +112,18 @@ class Addons extends Admin
         $this->meta_title = lang('_ADDONS_SET_') . $data->info['title'];
         $db_config = $addon['config'];
         $addon['config'] = include $data->config_file;
+
+        
         if ($db_config) {
             $db_config = json_decode($db_config, true);
             foreach ($addon['config'] as $key => $value) {
                 if ($value['type'] != 'group') {
-                    $addon['config'][$key]['value'] = $db_config[$key];
+                    if(!empty($db_config[$key])){
+                        $addon['config'][$key]['value'] = $db_config[$key];
+                    }else{
+                        $addon['config'][$key]['value'] = '';
+                    }
+                    
                 } else {
                     foreach ($value['options'] as $gourp => $options) {
                         foreach ($options['options'] as $gkey => $value) {
@@ -305,7 +312,14 @@ class Addons extends Admin
         if(request()->isPost())
         {
             $data = input('');
-
+            $res = model('admin/Hooks')->editData($data);
+            if ($res !== false){
+                cache('hooks', null);
+                $this->success(lang('_UPDATE_'), Cookie('__forward__'));
+            }else{
+                $this->error(lang('_UPDATE_FAILED_'));
+            }
+            /*
             if ($data) {
                 if ($data['id']) {
                     $flag = Db::name('Hooks')->where(['id'=>$data['id']])->update($data);
@@ -316,7 +330,7 @@ class Addons extends Admin
                         $this->error(lang('_UPDATE_FAILED_'));
                     }
                 } else {
-                    $flag = Db::name('Hooks')->insert($data);
+                    $flag = Db::name('Hooks')->allowField(true)->insert($data);
                     if ($flag){
                         cache('hooks', null);
                         $this->success(lang('_NEW_SUCCESS_'), Cookie('__forward__'));
@@ -328,6 +342,7 @@ class Addons extends Admin
             } else {
                 $this->error($hookModel->getError());
             }
+            */
         }
         
     }

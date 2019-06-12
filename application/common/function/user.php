@@ -448,3 +448,32 @@ function get_verify()
     captcha_src();
     
 }
+/**随机生成一个用户名
+ * @param $prefix 前缀
+ * @return string
+ */
+function rand_username($prefix = 'muu')
+{
+    $username = $prefix.'_'.create_rand(10);
+    if (Db::name('ucenter_member')->where(['username' => $username])->select()) {
+        rand_username($prefix);
+    } else {
+        return $username;
+    }
+}
+/**
+ * 随机生成一个用户昵称
+ *
+ * @param      string  $prefix  The prefix
+ *
+ * @return     <type>  ( description_of_the_return_value )
+ */
+function rand_nickname($prefix = 'muu')
+{
+    $nickname = $prefix.'_'.create_rand(8);
+    if (Db::name('member')->where(['nickname' => $nickname])->select()) {
+        rand_nickname($prefix);
+    } else {
+        return $nickname;
+    }
+}

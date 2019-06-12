@@ -10,10 +10,9 @@ class Action extends Model
      * 新增或更新一个行为
      * @return boolean fasle 失败 ， int  成功 返回完整的数据
      */
-    public function updateAction(){
+    public function editAction($data){
 
-        /* 获取数据对象 */
-        $data = input('');
+        
 
         if(empty($data)){
             return false;
@@ -46,13 +45,13 @@ class Action extends Model
         /* 添加或新增行为 */
         if(empty($data['id'])){ //新增数据
             
-            $res = $this->save($data); //添加行为
+            $res = $this->allowField(true)->save($data); //添加行为
             if(!$res){
                 $this->error = lang('_NEW_BEHAVIOR_WITH_EXCLAMATION_');
                 return false;
             }
         } else { //更新数据
-            $res = $this->save($data,['id'=>$data['id']]); //更新基础内容
+            $res = $this->allowField(true)->save($data,['id'=>$data['id']]); //更新基础内容
             if(!$res){
                 $this->error = lang('_UPDATE_BEHAVIOR_WITH_EXCLAMATION_');
                 return false;
@@ -124,15 +123,21 @@ class Action extends Model
 	            $log['model'] = $model;
 	            $log['time'] = time();
 	            $log['data'] = ['user' => $user_id, 'model' => $model, 'record' => $record_id, 'time' => time()];
-	            foreach ($match[1] as $value) {
-	                $param = explode('|', $value);
-	                if (isset($param[1])) {
-	                    $replace[] = call_user_func($param[1], $log[$param[0]]);
-	                } else {
-	                    $replace[] = $log[$param[0]];
-	                }
+	            
+	            /*
+	            if(isset($match[1])){
+	            	foreach ($match[1] as $value) {
+		                $param = explode('|', $value);
+		                if (isset($param[1])) {
+		                    $replace[] = call_user_func($param[1], $log[$param[0]]);
+		                } else {
+		                    $replace[] = $log[$param[0]];
+		                }
+		            }
 	            }
+	            
 	            $data['remark'] = str_replace($match[0], $replace, $action_info['log']);
+	            */
 	        } else {
 	            $data['remark'] = $action_info['log'];
 	        }
@@ -194,6 +199,7 @@ class Action extends Model
 
 	    //解析规则:table:$table|field:$field|condition:$condition|rule:$rule[|cycle:$cycle|max:$max][;......]
 	    $rules = unserialize($info['rule']);
+
 	    foreach ($rules as $key => &$rule) {
 	        foreach ($rule as $k => &$v) {
 	            if (empty($v)) {
@@ -245,6 +251,9 @@ class Action extends Model
 	    $return = true;
 
 	    $action_log = Db::name('ActionLog')->where(['id' => $log_id])->find();
+
+	    /*
+	    //行为日志在微信登陆时报错，不知为个啥子~~~，先注释了
 	    foreach ($rules as $rule) {
 
 	        //检查执行周期
@@ -279,6 +288,7 @@ class Action extends Model
 		        $scoreModel->addScoreLog($user_id,$rule['field'],$action , substr($rule['rule'],1,strlen($rule['rule'])-1),$action_log['model'],$action_log['record_id'],$action_log['remark'].'【' . $sType['title'] . '：' . $rule['rule'] . $sType['unit'] . '】');
 	        }
 	    }
+	    */
 	    /* php7不支持exp表达式 暂取消
 	    if ($log_score) {
 	        cookie('score_tip', $log_score, 30);

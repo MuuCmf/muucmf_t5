@@ -28,7 +28,7 @@
 			<!-- 访问授权 -->
 			<div class="node-list">
             <div class="tab-pane in">
-				<form action="{:Url('AuthManager/writeGroup')}" enctype="application/x-www-form-urlencoded" method="POST" class="form-horizontal auth-form">
+				<form action="{:url('AuthManager/writeGroup')}" enctype="application/x-www-form-urlencoded" method="POST" class="form-horizontal auth-form">
 					{volist name="node_list" id="node"}
 						<dl class="checkmod">
 							<dt class="hd">
@@ -65,7 +65,7 @@
 					{/volist}
 
 			        <input type="hidden" name="id" value="{$this_group.id}" />
-                    <button type="submit" class="btn submit-btn ajax-post" target-form="auth-form">{:lang("_SURE_WITH_SPACE_")}</button>
+                    <button type="submit" class="btn btn-success submit-btn ajax-post" target-form="auth-form">{:lang("_SURE_WITH_SPACE_")}</button>
                     <button class="btn btn-return" onclick="javascript:history.back(-1);return false;">{:lang("_RETURN_WITH_SPACE_")}</button>
 			    </form>
 			</div>

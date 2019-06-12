@@ -1,5 +1,5 @@
 {
-    "name": "MuuCmf T5",
+    "name": "muucmf/muucmf_t5",
     "description": "MuuCmf T5",
     "type": "project",
     "keywords": [
@@ -16,8 +16,7 @@
     ],
     "require": {
         "php": ">=5.5.0",
-        "topthink/framework": "~5.0.20",
-        "overtrue/wechat": "~3.1",
+        "topthink/framework": "5.0.24",
         "topthink/think-captcha": "^1.0",
         "topthink/think-image": "^1.0.7",
         "mtdowling/cron-expression": "^1.2",
@@ -25,7 +24,11 @@
         "overtrue/pinyin": "~3.0",
         "phpoffice/phpexcel": "^1.8",
         "pclzip/pclzip": "^2.8",
-        "aferrandini/phpqrcode": "1.0.1"
+        "aferrandini/phpqrcode": "1.0.1",
+        "aliyuncs/oss-sdk-php": "~2.3.0",
+        "overtrue/wechat": "~3.1",
+        "firebase/php-jwt": "4.0.0",
+        "alibabacloud/client": "^1.3"
     },
     "config": {
         "preferred-install": "dist"

@@ -21,6 +21,7 @@
         }
     };
     function ucard() {
+        /*
         $('[ucard]').qtip({ // Grab some elements to apply the tooltip to
             suppress: true,
             content: {
@@ -51,11 +52,7 @@
                 delay: 500, fixed: true
             }
         })
+        */
     }
-
-    // Initialize
-    $(document).ready(function(){
-        ucard();//绑定用户小名片
-    });
 
 }(jQuery));

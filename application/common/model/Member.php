@@ -162,7 +162,7 @@ class Member extends Model
         //记录行为
         model('action')->action_log('user_login', 'member', $uid, $uid);
         //挂载登录成功后钩子
-        hook('Login_after');
+        hook('login_after',['uid'=>$uid]);
         return true;
     }
 
@@ -206,10 +206,10 @@ class Member extends Model
             $token = $user1['token'];
             if ($user1 == null) {
                 $token = build_auth_key();
-                $data['token'] = $token;
-                $data['time'] = time();
-                $data['uid'] = $user['uid'];
-                Db::name('user_token')->insert($data);
+                $data_token['token'] = $token;
+                $data_token['time'] = time();
+                $data_token['uid'] = $user['uid'];
+                Db::name('user_token')->insert($data_token);
             }
         }
 
@@ -229,7 +229,6 @@ class Member extends Model
         session('_AUTH_LIST_' . get_uid() . '2', null);
         session('user_auth', null);
         session('user_auth_sign', null);
-
         cookie('MUU_LOGGED_USER', NULL);
     }
 
@@ -244,19 +243,6 @@ class Member extends Model
         if (!is_login()) {
             $this->rembember_login();
             //判断是否开启微信网页授权
-            if(modC('OPEN_WECHAT_AUTH',0,'userConfig')){
-                //判断浏览器类型
-                if(isWeixinBrowser()){
-                    //依赖微信基础模块；判断微信基础模块（微信公众号）模块是否安装，暂时只支持Weixin模块
-                    $needModule = model('Module')->checkInstalled('weixin');
-                    //如果微信浏览器
-                    if($needModule){
-                    //执行微信网页授权登陆
-                    $requer_url = urlencode(get_url());
-                    redirect(url('weixin/index/authorize_url').'&requer_url='.$requer_url);
-                    }
-                }
-            }
             return false;
         }else{
             return is_login();
@@ -286,7 +272,7 @@ class Member extends Model
         	if($cookie){
         		$cookie = explode(".", $this->jiemi($cookie));
 	        	$map['uid'] = $cookie[1];
-		        $user = model('user_token')->where($map)->find();
+		        $user = Db::name('user_token')->where($map)->find();
 		        $cookie_uid = ($cookie[0] != $this->change()) || ($cookie[2] != $user['token']) ? false : $cookie[1];
 		        $cookie_uid = $user['time'] - time() >= 3600 * 24 * 7 ? false : $cookie_uid;//过期时间7天
         	}
@@ -605,47 +591,27 @@ class Member extends Model
      * @param $uid
      * @param $info
      * @return mixed
-     * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
+     * @author:大蒙 59262424@qq.com
      */
     public function addSyncData($uid, $info)
     {
         //去除特殊字符。
-        $data['nickname'] = preg_replace('/[^A-Za-z0-9_\x80-\xff\s\']/', '', $info['nick']);
+        $data['nickname'] = preg_replace('/[^A-Za-z0-9_\x80-\xff\s\']/', '', $info['nickname']);
         // 截取字数
         $data['nickname'] = mb_substr($data['nickname'], 0, 32, 'utf-8');
         // 为空则随机生成
         if (empty($data['nickname'])) {
-            $data['nickname'] = $this->rand_nickname();
+            $data['nickname'] = rand_nickname();
         } else {
-            if ($this->where(array('nickname' => $data['nickname']))->select()) {
+            if ($this->where(['nickname' => $data['nickname']])->count()) {
                 $data['nickname'] .= '_' . $uid;
             }
         }
-        $data['sex'] = $info['sex'];
-        $data = $this->validate(
-            array('signature', '0,100', -1, self::EXISTS_VALIDATE, 'length'),
-            /* 验证昵称 */
-            array('nickname', 'checkDenyNickname', -31, self::EXISTS_VALIDATE, 'callback'), //昵称禁止注册
-            array('nickname', 'checkNickname', -32, self::EXISTS_VALIDATE, 'callback'),
-            array('nickname', '', -30, self::EXISTS_VALIDATE, 'unique'))->create($data);
         $data['uid'] = $uid;
-        $res = $this->add($data);
+        $res = $this->save($data);
         return $res;
     }
-    /**
-     * 随机生成一个昵称
-     * @return [type] [description]
-     */
-    private function rand_nickname()
-    {
-        $nickname = create_rand(4);
-        if ($this->where(['nickname' => $nickname])->select()) {
-            $this->rand_nickname();
-        } else {
-            return $nickname;
-        }
-    }
-
+    
     /**
      * 获取用户注册及更改信息的错误信息
      * @param  integer $code 错误编码
@@ -655,7 +621,7 @@ class Member extends Model
     {
         switch ($code) {
             case -1:
-                $error = lang('_USER_NAME_MUST_BE_IN_LENGTH_').modC('USERNAME_MIN_LENGTH',2,'USERCONFIG').'-'.modC('USERNAME_MAX_LENGTH',32,'USERCONFIG').lang('_ERROR_LENGTH_2_').lang('_EXCLAMATION_'); //用户名长度不符
+                $error = lang('_USER_NAME_MUST_BE_IN_LENGTH_').modC('USERNAME_MIN_LENGTH',2,'USERCONFIG').'-'.modC('USERNAME_MAX_LENGTH',32,'USERCONFIG').lang('_BETWEEN_CHARACTERS_WITH_EXCLAMATION_'); //用户名长度不符
                 break;
             case -2:
                 $error = lang('_ERROR_USERNAME_FORBIDDEN_').lang('_EXCLAMATION_'); //用户名被禁止注册

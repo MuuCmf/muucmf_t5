@@ -78,13 +78,13 @@ str;
         if (request()->isPost()) {
             $data = input();
             if($data['id']){
-                $res = model('ArticlesCategory')->save($data,['id'=>$data['id']]);
+                $res = model('ArticlesCategory')->allowField(true)->save($data,['id'=>$data['id']]);
             }else{
-                $res = model('ArticlesCategory')->save($data);
+                $res = model('ArticlesCategory')->allowField(true)->save($data);
             }
             if ($res) {
                 cache('SHOW_EDIT_BUTTON',null);
-                $this->success($title.'成功。', Url('category'));
+                $this->success($title.'成功。', url('category'));
             } else {
                 $this->error($title.'失败!'.model('ArticlesCategory')->getError());
             }

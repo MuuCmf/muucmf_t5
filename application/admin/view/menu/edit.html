@@ -4,7 +4,7 @@
     <div class="main-title">
         <h2>{:isset($info['id'])?lang('_EDIT_WITH_SINGLE_'):lang('_NEW_WITH_SINGLE_')}{:lang("_BACKGROUND_MENU_")}</h2>
     </div>
-    <form action="{:Url()}" method="post" class="form-horizontal">
+    <form action="{:url()}" method="post" class="form-horizontal">
         <div class="with-padding">
             <div class="form-item builder_item">
                 <label class="item-label">{:lang("_TITLE_")}<span class="check-tips">{:lang("_USED_IN_THE_CONFIGURATION_HEADER_")}</span></label>

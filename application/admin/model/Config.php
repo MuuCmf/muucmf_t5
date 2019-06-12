@@ -8,6 +8,49 @@ use think\Model;
 
 class Config extends Model {
 
+    //自动写入创建和更新的时间戳字段
+    protected $autoWriteTimestamp = true; 
+    /**
+     * 新增或编辑数据
+     *
+     * @param      <type>  $data   The data
+     *
+     * @return     <type>  ( description_of_the_return_value )
+     */
+    public function editData($data)
+    {
+        if(!empty($data['id'])){
+            
+            $res = $this->allowField(true)->save($data,$data['id']);
+        }else{
+            $res = $this->allowField(true)->save($data);
+        }
+        if($res){
+            return $this->id;
+        }else{
+            return false;
+        }
+        
+    }
+
+    /**
+     * 根据ID获取配置数据
+     *
+     * @param      integer  $id     The identifier
+     *
+     * @return     <type>   The data by identifier.
+     */
+    public function getDataById($id)
+    {
+        if($id>0){
+            $data = $this->find($id);
+            if(!empty($data)){
+                return $data;
+            }
+        }
+        return null;
+    }
+
     /**
      * 获取配置列表
      * @return array 配置数组

@@ -141,6 +141,69 @@ $(function(){
         return false;
     });
 
+    /**
+     * ajax-form
+     * 通过ajax提交表单，通过oneplus提示消息
+     * 示例：<form class="ajax-form" method="post" action="xxx">
+     */
+    $(document).on('submit', 'form.ajax-form', function (e) {
+
+        //取消默认动作，防止表单两次提交
+        e.preventDefault();
+        var confirmText = $(this).attr('data-confirm');
+        var form = $(this);
+        
+        //如果需要的话，发出确认提示信息
+        if (confirmText) {
+            modal_confirm(confirmText,function(){
+                execute();
+            });
+            return false;
+        }else{
+            execute();
+        }
+        
+        //执行ajax
+        function execute(){
+            //禁用提交按钮，防止重复提交
+
+            //var form = $(this);
+            $('[type=submit]', form).addClass('disabled');
+
+            //获取提交地址，方式
+            var action = form.attr('action');
+            var method = form.attr('method');
+            
+            //检测提交地址
+            if (!action) {
+                return false;
+            }
+
+            //默认提交方式为get
+            if (!method) {
+                method = 'get';
+            }
+
+            //获取表单内容
+            var formContent = form.serialize();
+
+            //发送提交请求
+            var callable;
+            if (method == 'post') {
+                callable = $.post;
+            } else {
+                callable = $.get;
+            }
+            callable(action, formContent, function (a) {
+                handleAjax(a);
+                $('[type=submit]', form).removeClass('disabled');
+            });
+        }
+        
+        //返回
+        return false;
+    });
+
 });
 
 /**

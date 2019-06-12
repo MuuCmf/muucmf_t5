@@ -292,7 +292,8 @@ class Admin extends Controller
     {   
         if (empty($menus)) {
             // 获取主菜单
-            $where['pid'] = '0';
+            $where['pid'] = '0';//这里确实是字符串，别误会
+            $where['hide'] = 0;
             //$where['hide'] = 0;
             if (!config('DEVELOP_MODE')) { // 是否开发者模式
                 $where['is_dev'] = 0;
@@ -475,7 +476,6 @@ class Admin extends Controller
                             
                             $menus['child'][$g] = list_to_tree($menuList, 'id', 'pid', 'operater', $item['id']);
                         }
-                        dump($menus);
                     }
                 }
             }

@@ -37,6 +37,7 @@ return array(
     '_EDIT_' => ' Edit',
     '_ADD_' => ' Newly added',
     '_ADD__2' => ' Add to',
+    '_DELETE_' => ' Delete',
     '_FAIL_' => ' Failure!',
     '_SORT_' => ' Sort',
     '_RECOMMEND_' => ' Recommend',
@@ -71,6 +72,21 @@ return array(
     '_ENABLED_' => 'Enable',
     '_GO_BACK_' => 'Go back',
     '_JUMP_NOW_' => 'Jump now',
+    '_ERROR_MUST_LOGIN_' =>' Must be logged in to operate',
+    '_ERROR_NEED_LOGIN_' =>' Need to log in',
+    '__SUCCESS_LOGOUT_' =>' Exit landing success',
+    '_ERROR_PHONE_NOT_BIND_' =>' You are not bound to cell phone',
+    '_ERROR_OPTIONS_CLOSED_' =>' Option has been closed',
+    '_ERROR_ACCOUNT_CANNOT_EMPTY_' =>' Account can not be empty',
+    '_ERROR_WAIT_1_' =>' Please',
+    '_ERROR_WAIT_2_' =>' Seconds later',
+    '_ERROR__EMAIL_' =>' Verify that the mailbox format is correct',
+    '_ERROR_PHONE_' =>' Please verify that the phone is correct.',
+    '_ERROR_USED_1_' =>' The',
+    '_ERROR_USED_2_' =>' Has been used by other users',
+    '_ERROR_USED_3_' =>' no data',
+    '_ERROR_FAIL_SEND_' =>' Failed to send',
+    '_ERROR_SUCCESS_SEND_' =>' Successfully sent, please check',
 
     /*Builder*/
     '_UNAUDITED_' =>' Not audit',
@@ -155,7 +171,7 @@ return array(
     '_FAIL_UPLOAD_' => ' Upload failed',
     '_ERROR_UPLOAD_' => ' Upload error',
 
-    /*core*/
+    /*api*/
     '_SUCCESS_UPLOAD_' => ' Upload success',
     '_ERROR_PARAM_' => ' Parameter error',
     '_DOCUMENT_ID_INEXISTENT_' => ' There is no document ID',
@@ -181,28 +197,11 @@ return array(
     '_GROUP_MANAGED_' => ' My management group',
     '_LZ_' => ' The landlord',
     '_PUBLISH_AT_' => ' Published in',
-    '_DELETE_' => ' Delete',
     '_PUBLISH_TIME_' => ' Publication time',
     '_REPLY_NEWEST_' => ' Latest reply',
     '_AUTHOR_' => ' Author',
     '_PEER_VIEW_' => ' People browse',
     '_PEER_REPLY_' => ' Reply',
-
-    //WEIBO
-    '_NEWEST_WEIBO_' => ' The latest micro Bo',
-    '_REPOST_' => ' Forward',
-    '_COMMENT_' => ' Comment',
-    '_FROM_' => ' Come from',
-    '_WEBSITE_SIDE_' => ' Website',
-    '_HOT_WEIBO_' => ' Popular micro blog',
-    '_EMPTY_NOW_' => ' No content',
-    '_SHARE_TO_WEIBO_' => ' Share to microblogging',
-    '_PLACE_HOLDER_WRITE_SOMETHING_' => ' Write something about it.',
-    '_PUBLISH_CTRL_CENTER_' => ' Ctrl+Enter',
-    '_COMMENTS_' => ' Comment',
-    '_PLACE_HOLDER_SAY_SOMETHING_' => ' Say something.',
-    '_COMMENTS_CTRL_ENTER_' => ' Comment Ctrl+Enter',
-    '_REPLY_VIEW_MORE_' => ' See more replies',
 
     //ucenter
     '_FOLLOWERS_' => ' Pay attention to',

@@ -2,23 +2,9 @@
 return array(
     '_ERROR_FIRST_LOGIN_' => '请登陆后再访问本页面',
     '_DATA_EDIT_' => '编辑资料',
-    '_ERROR_NEED_LOGIN_' => '需要登录',
     '_SHE_' => '她',
-    '_ERROR_MUST_LOGIN_' => '必须登录才能操作',
     '_HE_' => '他',
-    '_SUCCESS_LOGOUT_' => '退出登陆成功',
-    '_ERROR_PHONE_NOT_BIND_' => '您尚未绑定手机',
-    '_ERROR_OPTIONS_CLOSED_' => '选项已关闭',
-    '_ERROR_ACCOUNT_CANNOT_EMPTY_' => '帐号不能为空',
-    '_ERROR_WAIT_1_' => '请',
-    '_ERROR_WAIT_2_' => '秒后再发',
-    '_ERROR__EMAIL_' => '请验证邮箱格式是否正确',
-    '_ERROR_PHONE_' => '请验证手机格式是否正确',
-    '_ERROR_USED_1_' => '该',
-    '_ERROR_USED_2_' => '已被其他用户使用',
-    '_ERROR_USED_3_' => '未注册',
-    '_ERROR_FAIL_SEND_' => '发送失败',
-    '_ERROR_SUCCESS_SEND_' => '发送成功，请查收',
+
 
 //    public
     '_PIC_SUGGEST_' => '（图片建议尺寸：1140像素 * 230像素）',
@@ -329,7 +315,7 @@ return array(
     '_EMAIL_INPUT_' => '输入邮箱',
     '_EMAIL_VERIFY_' => '验证邮箱',
     '_VERIFY_CODE_INPUT_' => '输入验证码',
-    '_PLACEHOLDER_PHONE_' => '请输入手机号',
+    '_PLACEHOLDER_PHONE_' => '请输入11位手机号',
     '_ERROR_PHONE_INPUT_' => '请填写手机号',
     '_PHONE_INPUT_' => '输入手机号',
     '_PHONE_VERIFY_' => '验证手机',

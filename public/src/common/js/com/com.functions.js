@@ -13,7 +13,7 @@ function is_login() {
  */
 function Url(url, params, rewrite) {
 
-    var website = '/index.php';
+    var website = '/';
     url = url.split('/');
     if (url[0] == '' || url[0] == '@')
         url[0] = APPNAME;
@@ -21,7 +21,7 @@ function Url(url, params, rewrite) {
         url[1] = 'Index';
     if (!url[2])
         url[2] = 'index';
-    website = website + '?s=/' + url[0] + '/' + url[1] + '/' + url[2];
+    website = website + url[0] + '/' + url[1] + '/' + url[2];
     if (params) {
         params = params.join('/');
         website = website + '/' + params;

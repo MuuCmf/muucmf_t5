@@ -74,6 +74,7 @@ class Index extends Admin
         $endTime=strtotime($today." - 2 day");
         $remainList=$countModel->getRemainList($startTime,$endTime);
         $this->assign('remainList',$remainList);
+        
         return true;
     }
     /**

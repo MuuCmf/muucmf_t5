@@ -460,12 +460,14 @@ nav.navbar.bootsnav.no-background {
 }
 nav.navbar.bootsnav .navbar-brand {
     float: left;
-    padding:0;
+    padding:4px 0;
     height:58px;
 }
 nav.navbar.bootsnav .navbar-brand img{
     width:auto;
     display: inline-block;
+    height:50px;
+    width:auto;
   }
 @media (max-width: 992px){
   nav.navbar.bootsnav .navbar-brand {
@@ -631,6 +633,34 @@ nav.navbar.bootsnav .navbar-collapse {
   margin-top:10px;
   padding:8px 0;
   border-top:1px solid #2E343B;
+}
+
+/**
+ * 模态确认提示框
+ */
+.tip-model-content {
+    
+  .tip-modal-icon {
+    text-align: center;
+    color:#ea644a;
+    margin-bottom:30px;
+  }
+
+  .tip-modal-text {
+    margin:0 auto;
+    width:300px;
+    color:#666;
+    text-align: center;
+    margin-bottom:30px;
+  }
+  .tip-modal-btn {
+    margin-bottom:30px;
+    text-align: center;
+
+    .btn {
+      margin:0 10px;
+    }
+  }
 }
 
 

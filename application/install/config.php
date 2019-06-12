@@ -8,7 +8,7 @@ return [
         '__CSS__'    => '/static/install/css',
         '__JS__'     => '/static/install/js',
         '__LIB__'    => '/static/common/lib',
-        '__ZUI__'    => 'https://cdn.bootcss.com/zui/1.8.1',
+        '__ZUI__'    => '/static/common/lib/zui-1.9.0',
         
 		'__NAME__'=>'MuuCmf T5开源开发框架',
         '__COMPANY__'=>'北京火木科技有限公司',

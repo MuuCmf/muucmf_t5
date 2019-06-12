@@ -113,21 +113,17 @@ class Role extends Admin
             }else{
                 $this->error('默认权限组不能为空');
             }
-            if ($is_edit) {
-                //$data['id'] = $aId;
-                $data['update_time'] = time();
-                $result = Db::name('Role')->where(['id'=>$aId])->update($data);
-            } else {
-                $data['create_time'] = $data['update_time'] = time();
-                $result = Db::name('Role')->insert($data);
-            }
+
+            $result = $this->roleModel->editData($data);
+            
             if ($result) {
-                $this->success($title . lang('_SUCCESS_'), Url('Role/index'));
+                $this->success($title . lang('_SUCCESS_'), url('Role/index'));
             } else {
                 $error_info = $this->roleModel->getError();
                 $this->error($title . lang('_FAILURE!__') . $error_info);
             }
         } else {
+            
             $data['status'] = 1;
             $data['invite'] = 0;
             $data['audit'] = 0;

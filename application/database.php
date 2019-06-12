@@ -18,7 +18,7 @@ return [
     // 服务器地址
     'hostname'        => Env::get('database.hostname', '127.0.0.1'),
     // 数据库名
-    'database'        => Env::get('database.database', 'muucmf_t5'),
+    'database'        => Env::get('database.database', 'muucmf_T5_2'),
     // 用户名
     'username'        => Env::get('database.username', 'root'),
     // 密码
@@ -58,5 +58,5 @@ return [
     // | MuuCmf设置
     // +----------------------------------------------------------------------
     //系统用户数据加密串
-    'auth_key' => 'FcgTDdls4XoIzZCybp52O9WEKx3rwRi0VYNn6GAQ',
+    'auth_key' => 'cCzDgwtyhBPGRkLWNmnsjOHieoV025xbTu18lJqp',
 ];

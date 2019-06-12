@@ -1,7 +1,7 @@
 {php}if(check_reg_type($type)){{/php}
 <div class="modal-body">
     <form class="form-horizontal center_info ajax-form" role="form"
-          action="{:Url('ucenter/config/checkVerify')}" method="post">
+          action="{:url('ucenter/config/checkVerify')}" method="post">
         <div class="form-group">
             <label for="account" class="col-xs-2 control-label">{:lang('_INPUT_PLEASE_')}{$cName}</label>
 
@@ -37,7 +37,7 @@
             toast.showLoading();
             var account =$this.parents('.center_info').find('#account').val();
             var type = $this.parents('.center_info').find('[name="type"]').val();
-            $.post("{:Url('ucenter/verify/sendVerify')}", {account: account, type: type,action:'config'}, function (res) {
+            $.post("{:url('ucenter/verify/sendVerify')}", {account: account, type: type,action:'config'}, function (res) {
                 toast.hideLoading();
                 if(res.code==1){
                     DecTime.obj = $this

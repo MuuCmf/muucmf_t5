@@ -21,7 +21,6 @@ class Announce extends Controller
                 return $this->fetch('common@widget/announce');
             }
         }
-        return true;
     }
 
     /**

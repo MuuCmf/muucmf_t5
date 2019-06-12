@@ -15,6 +15,7 @@ class Verify extends Controller
         $aType = input('post.type', '', 'text');
         $aType = $aType == 'mobile' ? 'mobile' : 'email';
         $aAction = input('post.action', 'config', 'text');//member或config或find:找回密码操作
+        $sendType = input('post.sendtype','verify','text'); //发送的短信类型，如：验证码类、通知类，推广类
         if (!check_reg_type($aType)) {
             $str = $aType == 'mobile' ? lang('_PHONE_') : lang('_EMAIL_');
             $this->error($str . lang('_ERROR_OPTIONS_CLOSED_').lang('_EXCLAMATION_'));
@@ -42,10 +43,11 @@ class Verify extends Controller
         
         $checkIsExist = Db::name('UcenterMember')->where([$aType => $aAccount])->find();
         //判断是否是已存在用户，由于部分操作需要向存在的用户发送验证，在这里做判断
-        if($aAction==='find'){
+        if($aAction==='find' || $aAction==='config'){
             if (!$checkIsExist) {
                 $str = $aType == 'mobile' ? lang('_PHONE_') : lang('_EMAIL_');
-                $this->error(lang('_ERROR_USED_1_') . $str . lang('_ERROR_USED_3_').lang('_EXCLAMATION_'));//还未注册的数据返回错误
+                //dump(lang('_ERROR_USED_1_') . $str . lang('_ERROR_USED_3_').lang('_EXCLAMATION_'));exit;
+                //$this->error(lang('_ERROR_USED_1_') . $str . lang('_ERROR_USED_3_').lang('_EXCLAMATION_'));//还未注册的数据返回错误
             }
         }else{
             if ($checkIsExist) {
@@ -58,12 +60,40 @@ class Verify extends Controller
         if (!$verify) {
             $this->error(lang('_ERROR_FAIL_SEND_').lang('_EXCLAMATION_'));
         }
+
+        switch ($aType) {
+            case 'mobile':
+                //发送手机短信验证
+                $content = modC('SMS_CONTENT', '{$verify}', 'USERCONFIG');
+                $content = str_replace('{$verify}', $verify, $content);
+                $content = str_replace('{$account}', $aAccount, $content);
+
+                //发送类型，暂只处理验证类
+                if($sendType == 'verify'){
+                    $param = [
+                        'code'=>$verify,
+                    ];
+                    $param = json_encode($param);
+                }
+                //TODO:其它类型该版本暂不写，这里留个记号
+                $res = sendSMS($aAccount, $content, $sendType, $param);
+                break;
+            case 'email':
+                //发送验证邮箱
+                $content = modC('REG_EMAIL_VERIFY', '{$verify}', 'USERCONFIG');
+                $content = str_replace('{$verify}', $verify, $content);
+                $content = str_replace('{$account}', $aAccount, $content);
+                $res = send_mail($aAccount, modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config') . lang('_EMAIL_VERIFY_2_'), $content);
+                //return $res;
+                break;
+        }
+        /*
         if($aAction==='find'){//找回密码
             $res =  doSendVerify($aAccount, $verify, $aType);
         }
         if($aAction==='member'){//注册会员
             $res =  doSendVerify($aAccount, $verify, $aType);
-        }
+        }*/
         
         if ($res === true) {
             if($aType == 'mobile'){

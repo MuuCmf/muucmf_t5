@@ -2,7 +2,7 @@
 <div class="login-main">
 
         <div class="clearfix"></div>
-        <form action="{:Url('login')}" method="post" class="lg_lf_form ">
+        <form action="{:url('login')}" method="post" class="lg_lf_form ">
             <div class="row">
                 <div class="form-group">
                     <label for="inputEmail" class=".sr-only col-xs-12"></label>
@@ -66,7 +66,7 @@
                 if(!empty($_SERVER['HTTP_REFERER'])){
                     $referer = $_SERVER['HTTP_REFERER'];
                 }else{
-                    $referer = Url('index/index/index');
+                    $referer = url('index/index/index');
                 }
                 session('login_http_referer',$referer);
             {/php}
@@ -83,7 +83,7 @@
 
         <h2>{:lang('_ACCOUNT_LOST_')}{:lang('_QUESTION_')} 
         <small>	
-	        <a href="{:Url('ucenter/member/register',array('type'=>'mobile'))}" class="">
+	        <a href="{:url('ucenter/member/register',array('type'=>'mobile'))}" class="">
 				{:lang('_REGISTER_NEWUSER_')}
 	        </a>
         </small>

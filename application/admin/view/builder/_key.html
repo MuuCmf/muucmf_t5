@@ -58,35 +58,11 @@
         {php}
             $colorPicker = 1;
         {/php}
-        <div class="color-picker" style="width:100px;height: 30px;">
-            <input type="text" name="{$field.name}" class="simple_color_callback form-control" onchange="setColorPicker(this);" value="{$field.value|default=''}">
+        <link href="__ZUI__/lib/colorpicker/zui.colorpicker.min.css" rel="stylesheet">
+        <div class="input-group" style="width:400px">
+            <input type="text" class="form-control" name="{$field.name}" data-provide="colorpicker" data-wrapper="input-group-btn" data-pull-menu-right="true" value="{$field.value|default=''}" {notempty name="field.opt"}data-colors="{$field.opt}"{/notempty} placeholder="请输入16进制颜色值，例如 #FF00DD">
         </div>
-            <script type="text/javascript" src="__LIB__/jquery.simple-color/jquery.simple-color.js"></script>
-            <script>
-                $(function(){
-                    $('.simple_color_callback').simpleColor({
-                        boxWidth:20,
-                        cellWidth: 20,
-                        cellHeight: 20,
-                        chooserCSS:{ 'z-index': 500 },
-                        displayCSS: { 'border': 0 ,
-                            'width': '32px',
-                            'height': '32px',
-                            'margin-top': '-32px'
-                        },
-                        onSelect: function(hex, element) {
-                            $('#tw_color').val('#'+hex);
-                        }
-                    });
-                    $('.simple_color_callback').show();
-                    $('.simpleColorContainer').css('margin-left','105px');
-                    $('.simpleColorDisplay').css('border','1px solid #DFDFDF');
-                });
-                var setColorPicker=function(obj){
-                    var color=$(obj).val();
-                    $(obj).parents('.color-picker').find('.simpleColorDisplay').css('background',color);
-                }
-            </script>
+        <script src="__ZUI__/lib/colorpicker/zui.colorpicker.min.js"></script>  
     {/case}
     {case value="radio"}
         {volist name="field.opt" id="option"}
@@ -379,74 +355,572 @@
             </div>
         </div>
         <script>
-            $(function () {
-                var id = "#upload_multi_image_{$field.name}";
-                var limit = parseInt('{$field.opt}');
-                var uploader_{$field.name}= WebUploader.create({
-                    // 选完文件后，是否自动上传。
-                      // sw{:lang("_F_FILE_PATH_")}
-                    swf: 'Uploader.swf',
-                    // 文件接收服务端。
-                    server: "{:Url('api/file/uploadPicture',array('session_id'=>session_id()))}",
-                    // 选择文件的按钮。可选。
-                    // 内部根据当前运行是创建，可能是input元素，{:lang("_AND_IT_COULD_BE_FLASH_")}.
-                    //pick: '#upload_multi_image_{$field.name}',
-                    pick: {'id': id, 'multi': true},
-                    fileNumLimit: limit,
-                    // 只允许{:lang("_SELECT_PICTURES_")}文件。
-                    accept: {
-                        title: 'Images',
-                        extensions: 'gif,jpg,jpeg,bmp,png',
-                        mimeTypes: 'image/image/jpg,image/jpeg,image/png'
-                    }
-                });
-                uploader_{$field.name}.on('fileQueued', function (file) {
-                    uploader_{$field.name}.upload();
-                    toast.showLoading();
-                });
-                uploader_{$field.name}.on('uploadFinished', function (file) {
-                    uploader_{$field.name}.reset();
-                });
-                /*上传成功**/
-                uploader_{$field.name}.on('uploadSuccess', function (file, data) {
-                  if (data.code) {
-
-                    var ids = $("[name='{$field.name}']").val();
-                    ids = ids.split(',');
-
-                  if( ids.indexOf(data.data[0].id) == -1){
-                        var rids = admin_image.upAttachVal('add',data.data[0].id, $("[name='{$field.name}']"));
-                      if(rids.length>limit){
-                          updateAlert({:lang('_EXCEED_THE_PICTURE_LIMIT_WITH_SINGLE_')});
-                          return;
-                      }
-                      $("[name='{$field.name}']").parent().find('.upload-pre-item').append(
-                            '<div class="each">'+
-                            '<a href="'+ data.data[0].path+'" data-toggle="lightbox" title={:lang("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>'+
-                            '<img src="'+ data.data[0].path+'">'+
-                            '</a>'+
-                            '<div class="text-center opacity del_btn" ></div>' +
-                                '<div onclick="admin_image.removeImage($(this),'+data.data[0].id+')"  class="text-center del_btn">{:lang("_DELETE_")}</div>'+
-                            '</div>'
-                        );
-                    }else{
-                        updateAlert({:lang('_THE_PICTURE_ALREADY_EXISTS_WITH_SINGLE_')});
-                    }
-                } else {
-                    updateAlert(data.msg);
-                    setTimeout(function () {
-                        $('#top-alert').find('button').click();
-                        $(that).removeClass('disabled').prop('disabled', false);
-                    }, 1500);
+        $(function () {
+            var id = "#upload_multi_image_{$field.name}";
+            var limit = parseInt('{$field.opt}');
+            var uploader_{$field.name}= WebUploader.create({
+                // 选完文件后，是否自动上传。
+                  // sw{:lang("_F_FILE_PATH_")}
+                swf: 'Uploader.swf',
+                // 文件接收服务端。
+                server: "{:Url('api/file/uploadPicture',array('session_id'=>session_id()))}",
+                // 选择文件的按钮。可选。
+                // 内部根据当前运行是创建，可能是input元素，{:lang("_AND_IT_COULD_BE_FLASH_")}.
+                //pick: '#upload_multi_image_{$field.name}',
+                pick: {'id': id, 'multi': true},
+                fileNumLimit: limit,
+                // 只允许{:lang("_SELECT_PICTURES_")}文件。
+                accept: {
+                    title: 'Images',
+                    extensions: 'gif,jpg,jpeg,bmp,png',
+                    mimeTypes: 'image/image/jpg,image/jpeg,image/png'
                 }
-                });
-                //上传完成
-                uploader_{$field.name}.on( 'uploadComplete', function( file ) {
-                    toast.hideLoading();
-                });
-            })
+            });
+            uploader_{$field.name}.on('fileQueued', function (file) {
+                uploader_{$field.name}.upload();
+                toast.showLoading();
+            });
+            uploader_{$field.name}.on('uploadFinished', function (file) {
+                uploader_{$field.name}.reset();
+            });
+            /*上传成功**/
+            uploader_{$field.name}.on('uploadSuccess', function (file, data) {
+              if (data.code) {
+
+                var ids = $("[name='{$field.name}']").val();
+                ids = ids.split(',');
+
+              if( ids.indexOf(data.data[0].id) == -1){
+                    var rids = admin_image.upAttachVal('add',data.data[0].id, $("[name='{$field.name}']"));
+                  if(rids.length>limit){
+                      updateAlert({:lang('_EXCEED_THE_PICTURE_LIMIT_WITH_SINGLE_')});
+                      return;
+                  }
+                  $("[name='{$field.name}']").parent().find('.upload-pre-item').append(
+                        '<div class="each">'+
+                        '<a href="'+ data.data[0].path+'" data-toggle="lightbox" title={:lang("_CLICK_TO_SEE_THE_BIG_PICTURE_WITH_DOUBLE_")}>'+
+                        '<img src="'+ data.data[0].path+'">'+
+                        '</a>'+
+                        '<div class="text-center opacity del_btn" ></div>' +
+                            '<div onclick="admin_image.removeImage($(this),'+data.data[0].id+')"  class="text-center del_btn">{:lang("_DELETE_")}</div>'+
+                        '</div>'
+                    );
+                }else{
+                    updateAlert({:lang('_THE_PICTURE_ALREADY_EXISTS_WITH_SINGLE_')});
+                }
+            } else {
+                updateAlert(data.msg);
+                setTimeout(function () {
+                    $('#top-alert').find('button').click();
+                    $(that).removeClass('disabled').prop('disabled', false);
+                }, 1500);
+            }
+            });
+            //上传完成
+            uploader_{$field.name}.on( 'uploadComplete', function( file ) {
+                toast.hideLoading();
+            });
+        })
         </script>
 
+    {/case}
+
+    {case value="singleAudio"}
+        {php}
+        //判断oss插件是否安装并启用
+        $driver = modC('DOWNLOAD_UPLOAD_DRIVER','local','config');
+        $driver = check_driver_is_exist($driver);
+
+        if($driver == 'oss'){
+            $oss_config = get_addon_config('oss');
+        }else{
+            echo "未安装或未配置OSS插件";exit;
+        }
+        {/php}
+        <div class="singleAudio">
+            <div id="upload_single_audio_{$field.name}" style="padding-bottom: 5px;">{:lang("_SELECT_AUDIO_")}</div>
+            <div class="audio-file-list" id="single_audio_list_{$field.name}">
+                <input type="hidden" name="{$field.name}" value="{$field['value']}" data-rule="audio_id" />
+                <div class="progress-box"></div>
+                <div class="action-btn-box" style="display:none">
+                    <button type="button" class="btn-mini btn-info stop-btn"><i class="icon icon-pause"></i> 暂停</button>
+                    <button type="button" class="btn-mini btn-warning remove-btn"><i class="icon icon-times"></i> 取消</button>
+                </div>
+
+                <div class="audio-item-box">
+                    <div class="audio-player">
+                        {notempty name="field.value"}
+                        <div class="each">
+                            <audio src="{$field.value|get_file_by_id='path'}" controls="controls">
+                                您的浏览器不支持html5的audio标签
+                            </audio>
+                        </div>
+                        <div class="btn btn-sm btn-warning del_btn">删除</div>
+                        {/notempty}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <script>
+        $(function(){
+
+            //删除点击事件
+            $('#single_audio_list_{$field.name}').on("click",'.del_btn',function(){
+                $('#single_audio_list_{$field.name}').find('.audio-player').empty();
+                $('#single_audio_list_{$field.name}').find('[name="{$field.name}"]').val(0);
+            });
+
+            //web直传OSS
+            uploader_video(
+                'upload_single_audio_{$field.name}',
+                '上传音频',
+                '#single_audio_list_{$field.name}',
+                2147483600,//默认最大2G
+                2147483600 //默认最大2G
+            );
+
+            function uploader_video(selectFileId, selectFileLabel, ele, fileSingleSizeLimit, fileSizeLimit){
+                
+                //上传至阿里云oss的url
+                var server = '{$oss_config["BucketUrl"]}';
+                // 初始化Web Uploader
+                var uploader = WebUploader.create({
+                    // 选完文件后，是否自动上传。
+                    auto: true,
+                    // swf文件路径
+                    swf: '__COMMON__/lib/webuploader/js/Uploader.swf',
+                    // 文件接收服务端。
+                    server: server,
+                    // 选择文件的按钮。可选。
+                    pick: {
+                        id: '#' + selectFileId,
+                        //{String} 指定按钮文字。不指定时优先从指定的容器中看是否自带文字。
+                        innerHTML: selectFileLabel || '点击选择',
+                        // {Boolean} 是否开起同时选择多个文件能力
+                        multiple: false
+                    },
+                    // 允许上传图片数量
+                    fileNumLimit: 1,
+                    fileSizeLimit: fileSizeLimit,//限制上传所有文件大小
+                    fileSingleSizeLimit: fileSingleSizeLimit,//限制上传单个文件大小
+
+                    accept:{
+                        //文字描述
+                        title: 'audio',
+                        //允许的文件后缀，不带点，多个用逗号分割。
+                        extensions: 'mp3',
+                        //多个用逗号分割。
+                        mimeTypes: 'audio/mp3'
+                    },
+                });
+
+                /**
+                * 验证文件格式以及文件大小
+                */
+                uploader.on("error", function (type) {
+                    
+                    if (type == "Q_TYPE_DENIED") {
+                        toast.error("请上传正确格式文件");
+                    } else if (type == "Q_EXCEED_SIZE_LIMIT" || type == "F_EXCEED_SIZE") {
+                        toast.error("文件大小不能超出限制");
+                    }else {
+                        toast.error("上传出错！请检查后重新上传！错误代码"+type);
+                    }
+                });
+                
+                // 当有文件添加进来的时候
+                uploader.on( 'fileQueued', function( file ) {
+
+                    $(ele + ' .progress-box').html('<div class="progress progress-striped"><div class="progress-bar progress-bar-info upload-progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"><span>0%</span></div></div>');
+                    uploader.md5File( file )
+                    // 及时显示进度
+                    .progress(function(percentage) {
+                        //console.log('Percentage:', percentage);
+                    }).then(function(val) {
+                        //console.log('md5 result:', val);
+                        md5 = val;
+                    });
+
+                    //暂停上传的文件
+                    var stat = 1;
+                    $(ele).on('click','.stop-btn',function(){
+                        if(stat == 1){
+                            uploader.stop(file);
+                            stat = 0;
+                            $(this).html('<i class="icon icon-play"></i> 继续');
+                        }else{
+                            uploader.upload(file);
+                            stat = 1;
+                            $(this).html('<i class="icon icon-pause"></i> 暂停');
+                        }
+                    })
+                    //删除上传的文件
+                    $(ele).on('click','.remove-btn',function(){
+                        //先暂停
+                        uploader.stop(file);
+                        //标记文件状态为已取消, 同时将中断文件传输
+                        uploader.removeFile(file);
+
+                        $(ele + ' .progress-box').html('');
+                        //暂停按钮默认为暂停
+                        $(ele + ' .action-btn-box .stop-btn').html('<i class="icon icon-pause"></i> 暂停');
+                        //控制按钮隐藏
+                        $(ele + ' .action-btn-box').hide();
+                    })
+                    //上传
+                });
+                
+                uploader.on('uploadBeforeSend', function( obj, data, headers ) {
+                    // expire 过期才去获取下面的信息
+                    $.ajax({
+                        type : "GET",
+                        url : "{:addons_url('oss://Webupload/get')}",
+                        timeout : 100000,  
+                        dataType:"JSON",
+                 
+                        success : function(ret) {
+                            
+                            data = $.extend(data,{
+                                'key' : ret.dir + calculate_object_name(data.name),//这里最好在后台处理好
+                                'policy': ret.policy,
+                                'OSSAccessKeyId': ret.accessid, 
+                                'success_action_status' : '200', //让服务端返回200,不然，默认会返回204
+                                'callback' : ret.callback,
+                                'signature': ret.signature,
+                            });
+                        },  
+                        error : function(XMLHttpRequest, textStatus, errorThrown) {  
+                            alert("ajax error");
+                        },
+                        async : false 
+                    }); 
+                    //扩展data自定义数据
+                    data['x:name'] = data.name; //原始文件名
+                    data['x:savepath'] = server +'/'+ data.key; //文件保存路径
+                    data['x:ext'] = get_suffix(data.name); //文件后缀名
+                    headers['Access-Control-Allow-Origin'] = "*";  
+                }),
+                //进度条
+                uploader.on('uploadProgress', function( file,percentage ) {
+                    //显示控制按钮
+                    $(ele + ' .action-btn-box').show();
+                    percentage = parseInt(percentage*100);
+                    $(ele + ' .progress .upload-progress span').html(percentage  + '%');
+                    $(ele + ' .progress .upload-progress').css( 'width', percentage  + '%' );
+                }),
+
+                // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+                uploader.on('uploadSuccess', function( file,response ) {
+                    //清除进度条
+                    $(ele + ' .progress-box').html('');
+                    //控制按钮隐藏
+                    $(ele + ' .action-btn-box').hide();
+                    $(ele + ' [data-rule="audio_id"]').val(response.data.id);
+
+                    if(response.data.savepath){
+                        //音频播放器
+                        $(ele).find('.audio-player').html(
+                            '<div class="each">'+
+                                '<audio src="'+ response.data.savepath +'" controls="controls">'+
+                                    '您的浏览器不支持html5的audio标签'+
+                                '</audio>'+
+                            '</div>'+
+                            '<div class="btn btn-sm btn-warning del_btn">删除</div>'
+                        );
+                    }
+                });
+
+                // 文件上传失败，显示上传出错。
+                uploader.on( 'uploadError', function( file ) {
+                    toast.error("上传失败");
+                });
+
+                //上传完成后
+                uploader.on( 'uploadComplete', function( file ) {
+                    uploader.reset();
+                });
+
+            }
+
+            function random_string(len) {
+            　　len = len || 32;
+            　　var chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';   
+            　　var maxPos = chars.length;
+            　　var pwd = '';
+            　　for (i = 0; i < len; i++) {
+                　　pwd += chars.charAt(Math.floor(Math.random() * maxPos));
+                }
+                return pwd;
+            }
+
+            function get_suffix(filename) {
+                pos = filename.lastIndexOf('.')
+                suffix = ''
+                if (pos != -1) {
+                    suffix = filename.substring(pos)
+                }
+                return suffix;
+            }
+
+            function calculate_object_name(filename)
+            {
+                suffix = get_suffix(filename)
+                return random_string(10) + suffix
+            }
+        });
+        </script>
+
+    {/case}
+
+    {case value="singleVideo"}
+
+        {php}
+        //判断oss插件是否安装并启用
+        $driver = modC('DOWNLOAD_UPLOAD_DRIVER','local','config');
+        $driver = check_driver_is_exist($driver);
+
+        if($driver == 'oss'){
+            $oss_config = get_addon_config('oss');
+        }else{
+            echo "未安装或未配置OSS插件";exit;
+        }
+        {/php}
+        <div class="singleVideo">
+            <div id="upload_single_video_{$field.name}" style="padding-bottom: 5px;">{:lang("_SELECT_VIDEO_")}</div>
+            <div class="video-file-list" id="single_video_list_{$field.name}">
+                <input type="hidden" name="{$field.name}" value="{$field['value']}" data-rule="video_id" />
+                <div class="progress-box"></div>
+                <div class="action-btn-box" style="display:none">
+                    <button type="button" class="btn-mini btn-info stop-btn"><i class="icon icon-pause"></i> 暂停</button>
+                    <button type="button" class="btn-mini btn-warning remove-btn"><i class="icon icon-times"></i> 取消</button>
+                </div>
+
+                <div class="video-item-box">
+                    <div class="video-player">
+                        {notempty name="field.value"}
+                        <div class="each">
+                            <video src="{$field.value|get_file_by_id='path'}" controls="controls">
+                                您的浏览器不支持 video 标签。
+                            </video>
+                        </div>
+                        <div class="btn btn-sm btn-warning del_btn">删除</div>
+                        {/notempty}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+        <script>
+
+        $(function(){
+
+            //删除点击事件
+            $('#single_video_list_{$field.name}').on("click",'.del_btn',function(){
+                $('#single_video_list_{$field.name}').find('.video-player').empty();
+                $('#single_video_list_{$field.name}').find('[name="{$field.name}"]').val(0);
+            });
+
+            //web直传OSS
+            uploader_video(
+                'upload_single_video_{$field.name}',
+                '上传视频',
+                '#single_video_list_{$field.name}',
+                2147483600,//默认最大2G
+                2147483600 //默认最大2G
+            );
+
+            function uploader_video(selectFileId, selectFileLabel, ele, fileSingleSizeLimit, fileSizeLimit){
+                
+                //上传至阿里云oss的url
+                var server = '{$oss_config["BucketUrl"]}';
+                // 初始化Web Uploader
+                var uploader = WebUploader.create({
+                    // 选完文件后，是否自动上传。
+                    auto: true,
+                    // swf文件路径
+                    swf: '__COMMON__/lib/webuploader/js/Uploader.swf',
+                    // 文件接收服务端。
+                    server: server,
+                    // 选择文件的按钮。可选。
+                    pick: {
+                        id: '#' + selectFileId,
+                        //{String} 指定按钮文字。不指定时优先从指定的容器中看是否自带文字。
+                        innerHTML: selectFileLabel || '点击选择图片',
+                        // {Boolean} 是否开起同时选择多个文件能力
+                        multiple: false
+                    },
+                    // 允许上传图片数量
+                    fileNumLimit: 1,
+                    fileSizeLimit: fileSizeLimit,//限制上传所有文件大小
+                    fileSingleSizeLimit: fileSingleSizeLimit,//限制上传单个文件大小
+
+                    accept:{
+                        //文字描述
+                        title: 'video',
+                        //允许的文件后缀，不带点，多个用逗号分割。
+                        extensions: 'mpeg,mp4',
+                        //多个用逗号分割。
+                        mimeTypes: 'video/*'
+                    },
+                });
+
+                /**
+                * 验证文件格式以及文件大小
+                */
+                uploader.on("error", function (type) {
+                    
+                    if (type == "Q_TYPE_DENIED") {
+                        toast.error("请上传正确格式文件");
+                    } else if (type == "Q_EXCEED_SIZE_LIMIT" || type == "F_EXCEED_SIZE") {
+                        toast.error("文件大小不能超出限制");
+                    }else {
+                        toast.error("上传出错！请检查后重新上传！错误代码"+type);
+                    }
+                });
+                
+                // 当有文件添加进来的时候
+                uploader.on( 'fileQueued', function( file ) {
+
+                    $(ele + ' .progress-box').html('<div class="progress progress-striped"><div class="progress-bar progress-bar-info upload-progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%"><span>0%</span></div></div>');
+                    uploader.md5File( file )
+                    // 及时显示进度
+                    .progress(function(percentage) {
+                        //console.log('Percentage:', percentage);
+                    }).then(function(val) {
+                        //console.log('md5 result:', val);
+                        md5 = val;
+                    });
+
+                    //暂停上传的文件
+                    var stat = 1;
+                    $(ele).on('click','.stop-btn',function(){
+                        if(stat == 1){
+                            uploader.stop(file);
+                            stat = 0;
+                            $(this).html('<i class="icon icon-play"></i> 继续');
+                        }else{
+                            uploader.upload(file);
+                            stat = 1;
+                            $(this).html('<i class="icon icon-pause"></i> 暂停');
+                        }
+                    })
+                    //删除上传的文件
+                    $(ele).on('click','.remove-btn',function(){
+                        //先暂停
+                        uploader.stop(file);
+                        //标记文件状态为已取消, 同时将中断文件传输
+                        uploader.removeFile(file);
+
+                        $(ele + ' .progress-box').html('');
+                        //暂停按钮默认为暂停
+                        $(ele + ' .action-btn-box .stop-btn').html('<i class="icon icon-pause"></i> 暂停');
+                        //控制按钮隐藏
+                        $(ele + ' .action-btn-box').hide();
+                    })
+                    //上传
+                });
+                
+                uploader.on('uploadBeforeSend', function( obj, data, headers ) {
+                    // expire 过期才去获取下面的信息
+                    $.ajax({
+                        type : "GET",
+                        url : "{:addons_url('oss://Webupload/get')}",
+                        timeout : 100000,  
+                        dataType:"JSON",
+                 
+                        success : function(ret) {
+                            
+                            data = $.extend(data,{
+                                'key' : ret.dir + calculate_object_name(data.name),//这里最好在后台处理好
+                                'policy': ret.policy,
+                                'OSSAccessKeyId': ret.accessid, 
+                                'success_action_status' : '200', //让服务端返回200,不然，默认会返回204
+                                'callback' : ret.callback,
+                                'signature': ret.signature,
+                            });
+                        },  
+                        error : function(XMLHttpRequest, textStatus, errorThrown) {  
+                            alert("ajax error");
+                        },
+                        async : false 
+                    }); 
+                    //扩展data自定义数据
+                    data['x:name'] = data.name; //原始文件名
+                    data['x:savepath'] = server +'/'+ data.key; //文件保存路径
+                    data['x:ext'] = get_suffix(data.name); //文件后缀名
+                    headers['Access-Control-Allow-Origin'] = "*";  
+                }),
+                //进度条
+                uploader.on('uploadProgress', function( file,percentage ) {
+                    //显示控制按钮
+                    $(ele + ' .action-btn-box').show();
+                    percentage = parseInt(percentage*100);
+                    $(ele + ' .progress .upload-progress span').html(percentage  + '%');
+                    $(ele + ' .progress .upload-progress').css( 'width', percentage  + '%' );
+                }),
+
+                // 文件上传成功，给item添加成功class, 用样式标记上传成功。
+                uploader.on('uploadSuccess', function( file,response ) {
+                    //清除进度条
+                    $(ele + ' .progress-box').html('');
+                    //控制按钮隐藏
+                    $(ele + ' .action-btn-box').hide();
+                    $(ele + ' [data-rule="video_id"]').val(response.data.id);
+
+                    if(response.data.savepath){
+                        //视频播放器
+                        $(ele).find('.video-player').html(
+                            '<div class="each">'+
+                                '<video src="'+ response.data.savepath +'" controls="controls">'+
+                                '您的浏览器不支持 video 标签。'+
+                                '</video>'+
+                            '</div>'+
+                            '<div class="btn btn-sm btn-warning del_btn">删除</div>'
+                        );
+                    }
+                });
+
+                // 文件上传失败，显示上传出错。
+                uploader.on( 'uploadError', function( file ) {
+                    toast.error("上传失败");
+                });
+
+                //上传完成后
+                uploader.on( 'uploadComplete', function( file ) {
+                    uploader.reset();
+                });
+
+            }
+
+            function random_string(len) {
+            　　len = len || 32;
+            　　var chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';   
+            　　var maxPos = chars.length;
+            　　var pwd = '';
+            　　for (i = 0; i < len; i++) {
+                　　pwd += chars.charAt(Math.floor(Math.random() * maxPos));
+                }
+                return pwd;
+            }
+
+            function get_suffix(filename) {
+                pos = filename.lastIndexOf('.')
+                suffix = ''
+                if (pos != -1) {
+                    suffix = filename.substring(pos)
+                }
+                return suffix;
+            }
+
+            function calculate_object_name(filename)
+            {
+                suffix = get_suffix(filename)
+                return random_string(10) + suffix
+            }
+        });
+        </script>
     {/case}
 
     {case value="checkbox"}
@@ -532,32 +1006,33 @@
     </div>
     {/case}
 
-    <!--弹出窗口选择并返回值（目前只支持返回ID）开始->
-    {case value="dataselect">
+    <!--弹出窗口选择并返回值（目前只支持返回ID）开始-->
+    {case value="dataselect"}
         <input type="text" name="{$field.name}" id="{$field.name}" value="{$field.value|htmlspecialchars}"
-               class="text input-large form-control" style="width: 400px;display:inline-block;"/><input class="btn" style="margin-left:10px" type="button" value={:lang("_CHOICE_WITH_DOUBLE_")} onclick="openwin('{$field.opt}','600','500')">
-			     <script type="text/javascript">
-						//弹出窗口
-						function openwin(url,width,height){
-						    var l=window.screen.width ;
-						    var w= window.screen.height;
-						    var al=(l-width)/2;
-						    var aw=(w-height)/2;
-						    var OpenWindow=window.open(url,{:lang("_POP_UP_WINDOW_WITH_DOUBLE_")},"toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,width="+width+",height="+height+",top="+aw+",left="+al+"");
-						    OpenWindow.focus();
-						if(OpenWindow!=null){ //弹出窗口关闭事件
-						//if(window.attachEvent) OpenWindow.attachEvent("onbeforeunload",   quickOut);
-						if(window.attachEvent) OpenWindow.attachEvent("onunload",   quickOut);
-						}
-						}
-						//关闭触发方法
-						function quickOut()
-						{
-						alert({:lang("_THE_WINDOW_IS_CLOSED_WITH_DOUBLE_")});
-						}
-				 </script>
+               class="text input-large form-control" style="width: 400px;display:inline-block;"/>
+        <input class="btn" style="margin-left:10px" type="button" value={:lang("_CHOICE_WITH_DOUBLE_")} onclick="openwin('{$field.opt}','600','500')">
+        <script type="text/javascript">
+        	//弹出窗口
+        	function openwin(url,width,height){
+        	    var l=window.screen.width ;
+        	    var w= window.screen.height;
+        	    var al=(l-width)/2;
+        	    var aw=(w-height)/2;
+        	    var OpenWindow=window.open(url,{:lang("_POP_UP_WINDOW_WITH_DOUBLE_")},"toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,width="+width+",height="+height+",top="+aw+",left="+al+"");
+        	    OpenWindow.focus();
+        	if(OpenWindow!=null){ //弹出窗口关闭事件
+        	//if(window.attachEvent) OpenWindow.attachEvent("onbeforeunload",   quickOut);
+        	if(window.attachEvent) OpenWindow.attachEvent("onunload",   quickOut);
+        	}
+        	}
+        	//关闭触发方法
+        	function quickOut()
+        	{
+        	alert({:lang("_THE_WINDOW_IS_CLOSED_WITH_DOUBLE_")});
+        	}
+        </script>
     {/case}
-	<!-- 弹出窗口选择并返回值（目前只支持返回ID）结束 -->
+    <!-- 弹出窗口选择并返回值（目前只支持返回ID）结束 -->
 
     {case value="kanban"}
 

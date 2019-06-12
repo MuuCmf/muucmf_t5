@@ -28,10 +28,10 @@ class Menu extends Model {
 	public function editData($data)
     {
         if($data['id']){
-            $res=$this->save($data);
+            $res=$this->allowField(true)->save($data,['id' => $data['id']]);
         }else{
-            $data['id']= create_guid();
-            $res=$this->save($data);
+            $data['id'] = create_guid();
+            $res=$this->allowField(true)->save($data);
         }
         return $res;
     }

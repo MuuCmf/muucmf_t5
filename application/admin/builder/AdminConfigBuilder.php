@@ -114,12 +114,12 @@ class AdminConfigBuilder extends AdminBuilder
      * @param $name
      * @param $title
      * @param null $subtitle
+     * @param $opt 字符串，如：#fff,#000,#ff6600,#999999
      * @return $this
-     * @author 郑钟良<zzl@ourstu.com>
      */
-    public function keyColor($name, $title, $subtitle = null)
+    public function keyColor($name, $title, $subtitle = null ,$opt = null)
     {
-        return $this->key($name, $title, $subtitle, 'colorPicker');
+        return $this->key($name, $title, $subtitle, 'colorPicker', $opt);
     }
 
     public function keyIcon($name, $title, $subtitle = null)
@@ -226,7 +226,7 @@ class AdminConfigBuilder extends AdminBuilder
 
     public function keyBool($name, $title, $subtitle = null)
     {
-        $map = array(1 => lang('_YES_'), 0 => lang('_NO_'));
+        $map = array(1 => lang('_YES_'), 0 => lang('_NOT_'));
         return $this->keyRadio($name, $title, $subtitle, $map);
     }
 
@@ -279,6 +279,34 @@ class AdminConfigBuilder extends AdminBuilder
         return $this->key($name, $title, $subtitle, 'multiImage', $limit);
     }
 
+    /**
+     * 依赖OSS插件单音频web直传
+     *
+     * @param      <type>  $name      The name
+     * @param      <type>  $title     The title
+     * @param      <type>  $subtitle  The subtitle
+     *
+     * @return     <type>  ( description_of_the_return_value )
+     */
+    public function keySingleAudio($name, $title, $subtitle = null)
+    {   
+        return $this->key($name, $title, $subtitle, 'singleAudio');
+    }
+
+    /**
+     * 依赖OSS插件单视频web直传
+     *
+     * @param      <type>  $name      The name
+     * @param      <type>  $title     The title
+     * @param      <type>  $subtitle  The subtitle
+     * @author     大蒙 <59262424@qq.com>
+     * @return     <type>  ( description_of_the_return_value )
+     */
+    public function keySingleVideo($name, $title, $subtitle = null)
+    {   
+        return $this->key($name, $title, $subtitle, 'singleVideo');
+    }
+
     public function keySingleUserGroup($name, $title, $subtitle = null)
     {
         $options = $this->readUserGroups();
@@ -305,7 +333,6 @@ class AdminConfigBuilder extends AdminBuilder
         return $this->key($name, $title, $subtitle, 'city');
     }
 
-
     /**
      * 增加数据时通过列表页选择相应的关联数据ID  -_-。sorry！表述不清楚..
      * @param  unknown $name 字段名
@@ -317,7 +344,7 @@ class AdminConfigBuilder extends AdminBuilder
      */
     public function keyDataSelect($name, $title, $subtitle = null, $url)
     {
-        $urls = Url($url, array('inputid' => $name));
+        $urls = url($url, array('inputid' => $name));
         return $this->key($name, $title, $subtitle, 'dataselect', $urls);
     }
 
@@ -330,7 +357,7 @@ class AdminConfigBuilder extends AdminBuilder
     public function buttonSubmit($url = '', $title = '确定')
     {
         if ($url == '') {
-            $url = Url(request()->action(),$_GET);
+            $url = url(request()->action(),$_GET);
         }
         $this->savePostUrl($url);
 
@@ -354,6 +381,7 @@ class AdminConfigBuilder extends AdminBuilder
         $attr['onclick'] = 'javascript:location.href=\''.$attr['href'].'\';return false;';
         return $this->button($title, $attr);
     }
+
     public function data($list)
     {
         $this->_data = $list;
@@ -369,7 +397,6 @@ class AdminConfigBuilder extends AdminBuilder
 
     public function display($templateFile = '', $charset = '', $contentType = '', $content = '', $prefix = '')
     {
-
         //将数据融入到key中
         foreach ($this->_keyList as &$e) {
             
@@ -484,7 +511,6 @@ class AdminConfigBuilder extends AdminBuilder
         }
         return $this;
     }
-
 
     /**
      * 自动处理配置存储事件，配置项必须全大写
@@ -693,21 +719,49 @@ class AdminConfigBuilder extends AdminBuilder
         return $this;
     }
 
-    public function keyUserDefined($name,$title,$subtitle,$display='',$param=''){
+    public function keyUserDefined($name,$title,$subtitle,$html='',$param=''){
         $this->assign('param',$param);
         $this->assign('name',$name);
-        $html = $this->fetch($display);
 
+        $html = $this->parseTemplate($html);
+        
         $key = array('name'=>$name, 'title' => $title, 'subtitle' => $subtitle, 'type' => 'userDefined', 'definedHtml' => $html);
         $this->_keyList[] = $key;
         return $this;
     }
+
+
     /**
      * 自定义JS
      * @param [type] $script [description]
      */
     public function customJs($script){
         $this->assign('myJs',$script);
+    }
+
+    /**
+     * 解析html是文件还是html字符串
+     * @access private
+     * @return string
+     */
+    private function parseTemplate($html)
+    {
+        $file = '';
+        // 获取视图根目录
+        if (strpos($html, '@')) {
+            // 跨模块调用
+            list($module, $template) = explode('@', $html);
+        }
+        if(isset($module)){
+            $path = APP_PATH . $module . DS . 'view' . DS;
+            $file =  $path . ltrim($template, '/') . '.' . ltrim('html', '.');
+        }
+        
+        if(is_file($file)){
+            $html = $this->fetch($html);
+        }
+
+        return $html;
     }
 
 }

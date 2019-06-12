@@ -20,11 +20,11 @@ class Database extends Admin{
             /* 数据还原 */
             case 'import':
                 //列出备份文件列表
-                $path = realpath(config('DATA_BACKUP_PATH'));
+                $path = realpath(config('data_backup_path'));
                 $flag = \FilesystemIterator::KEY_AS_FILENAME;
                 $glob = new \FilesystemIterator($path,  $flag);
 
-                $list = array();
+                $list = [];
                 foreach ($glob as $name => $file) {
                     if(preg_match('/^\d{8,8}-\d{6,6}-\d+\.sql(?:\.gz)?$/', $name)){
                         $name = sscanf($name, '%4s%2s%2s-%2s%2s%2s-%d');

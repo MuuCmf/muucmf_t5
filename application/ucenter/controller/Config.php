@@ -54,7 +54,7 @@ class Config extends Base
             }
         } else {
             $map['status'] = 1;
-            if (Db::name('Role')->where($map)->count() > 1) {
+            if (Db::name('role')->where($map)->count() > 1) {
                 $have = 1;
             }
         }
@@ -646,7 +646,7 @@ class Config extends Base
     /**分组下的字段信息及相应内容
      * @param null $id 扩展分组id
      * @param null $uid
-     * @author 郑钟良<zzl@ourstu.com>
+     * @author 大蒙 59262424@qq.com
      */
     public function _info_list($id = null, $uid = null)
     {
@@ -656,14 +656,14 @@ class Config extends Base
 
         if (isset($uid) && $uid != is_login()) {
             //查看别人的扩展信息
-            $field_setting_list = D('field_setting')->where(array('profile_group_id' => $id, 'status' => '1', 'visiable' => '1', 'id' => array('in', $fields_list)))->order('sort asc')->select();
+            $field_setting_list = Db::name('field_setting')->where(array('profile_group_id' => $id, 'status' => '1', 'visiable' => '1', 'id' => array('in', $fields_list)))->order('sort asc')->select();
 
             if (!$field_setting_list) {
                 return null;
             }
             $map['uid'] = $uid;
         } else if (is_login()) {
-            $field_setting_list = D('field_setting')->where(array('profile_group_id' => $id, 'status' => '1', 'id' => array('in', $fields_list)))->order('sort asc')->select();
+            $field_setting_list = Db::name('field_setting')->where(array('profile_group_id' => $id, 'status' => '1', 'id' => array('in', $fields_list)))->order('sort asc')->select();
 
             if (!$field_setting_list) {
                 return null;
@@ -675,7 +675,7 @@ class Config extends Base
         }
         foreach ($field_setting_list as $val) {
             $map['field_id'] = $val['id'];
-            $field = D('field')->where($map)->find();
+            $field = Db::name('field')->where($map)->find();
             $val['field_content'] = $field;
             $info_list[$val['id']] = $val;
             unset($map['field_id']);
@@ -753,7 +753,7 @@ class Config extends Base
 
     /**
      * saveUsername  修改用户名
-     * @author:xjw129xjt(肖骏涛) xjt@ourstu.com
+     * @author:xjw129xjt(肖骏涛) xjt@ourstu.com 大蒙 59262424@qq.com
      */
     public function saveUsername()
     {
@@ -812,47 +812,16 @@ class Config extends Base
      */
     public function changeAccount()
     {
-        $aTag = input('get.tag', '', 'text');
+        $aTag = input('tag', '', 'text');
         $aTag = $aTag == 'mobile' ? 'mobile' : 'email';
         $this->assign('cName', $aTag == 'mobile' ? lang('_PHONE_') : lang('_EMAIL_'));
         $this->assign('type', $aTag);
         return $this->fetch();
 
     }
+    
     /**
-     * 发送验证信息至手机或邮箱
-     * @param  [type] $account [description]
-     * @param  [type] $verify  [description]
-     * @param  [type] $type    [description]
-     * @return [type]          [description]
-     */
-    public function doSendVerify($account, $verify, $type)
-    {
-        switch ($type) {
-            case 'mobile':
-                $content = modC('SMS_CONTENT', '{$verify}', 'CONFIG');
-                //dump($content);exit;
-                $content = str_replace('{$verify}', $verify, $content);
-                $content = str_replace('{$account}', $account, $content);
-                $res = sendSMS($account, $content);
-                return $res;
-                break;
-            case 'email':
-                //发送验证邮箱
-
-                $content = modC('REG_EMAIL_VERIFY', '{$verify}', 'USERCONFIG');
-                $content = str_replace('{$verify}', $verify, $content);
-                $content = str_replace('{$account}', $account, $content);
-                $res = send_mail($account, modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config') . lang('_EMAIL_VERIFY_2_'), $content);
-
-                return $res;
-                break;
-        }
-
-    }
-
-    /**
-     * checkVerify  验证验证码
+     * checkVerify  验证验证码并修改数据
      */
     public function checkVerify()
     {
@@ -870,8 +839,9 @@ class Config extends Base
         if (!$res) {
             $this->error(lang('_FAIL_VERIFY_'));
         }
-        Db::name('ucenterMember')->where(['id' => $aUid])->save(array($aType => $aAccount));
-        $this->success(lang('_SUCCESS_VERIFY_'), U('ucenter/config/index'));
+
+        Db::name('ucenterMember')->where(['id' => $aUid])->update([$aType => $aAccount]);
+        $this->success(lang('_SUCCESS_VERIFY_'), url('ucenter/config/index'));
 
     }
 

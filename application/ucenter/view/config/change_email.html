@@ -15,7 +15,7 @@
         <p class="pull-right">{:lang('_EMAIL_NEW_INPUT_')}{:lang('_COLON_')}</p>
     </div>
     <div class="col-xs-6">
-        <form action="{:Url('ucenter/Index/doChangeEmail')}" method="post" class="ajax-form">
+        <form action="{:url('ucenter/Index/doChangeEmail')}" method="post" class="ajax-form">
             <p>
                 <input type="text" name="email" class="form-control" placeholder="{:lang('_EMAIL_INPUT_')}" value="{$user.email}"/>
             </p>

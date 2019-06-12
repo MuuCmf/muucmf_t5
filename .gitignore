@@ -58,10 +58,10 @@ package-lock.json
 # MuuCmf
 !/addons/demo
 !/addons/chinacity
-/public/src/common/lib
 /public/uploads/*
 /runtime/*
 /.hatccess
 /data/*
 /*.lock
 !.gitkeep
+public/schedule_1.txt

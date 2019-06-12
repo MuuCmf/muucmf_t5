@@ -58,7 +58,7 @@ class UcenterMember extends Model
             
             if ($uid > 0) {
                 $usercenter_member = $data;
-                $usercenter_member['password'] = user_md5($usercenter_member['password'],Config('database.auth_key'));
+                $usercenter_member['password'] = user_md5($usercenter_member['password'],config('database.auth_key'));
                 $usercenter_member['id'] = $uid;
                 $usercenter_member['status'] = 1;
                 //写ucenter_member表
@@ -298,10 +298,11 @@ class UcenterMember extends Model
      */
     public function addSyncData($prefix='')
     {
-        $data['username'] = $this->rand_username($prefix);
+        $data['username'] = rand_username($prefix);
         $data['password'] = create_rand(10);
         $data['type'] = 1;  // 视作用用户名注册
-        $uid = $this->save($data);
+        $res = $this->save($data);
+        $uid = $this->id; //获取自增ID
         return $uid;
     }
 
@@ -312,20 +313,6 @@ class UcenterMember extends Model
             $this->rand_email();
         } else {
             return $email;
-        }
-    }
-
-    /**随机生成一个用户名
-     * @param $prefix 前缀
-     * @return string
-     */
-    protected  function rand_username($prefix)
-    {
-        $username = $prefix.'_'.create_rand(10);
-        if ($this->where(array('username' => $username))->select()) {
-            $this->rand_username($prefix);
-        } else {
-            return $username;
         }
     }
 

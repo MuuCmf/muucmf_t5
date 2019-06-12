@@ -20,6 +20,12 @@ class Module extends Model
     {   
         $dir = $this->getDir(APP_PATH);
 
+        foreach($dir as $k=>$v){
+            if($v == '.htaccess' || $v == 'extra' || $v == 'lang'){
+              unset($dir[$k]);
+            }
+        }
+
         foreach ($dir as $subdir) {
             if (file_exists(APP_PATH . '/' . $subdir . '/info/info.php') && $subdir != '.' && $subdir != '..') {
 
