@@ -87,7 +87,7 @@
                 $(this).closest('li').remove()
                 re_bind()
             }else{
-                updateAlert('不能再减了~');
+                toast.error('不能再减了~');
             }
 
         })

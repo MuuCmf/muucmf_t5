@@ -64,24 +64,6 @@ var admin_image ={
     }
 }
 
-/**
-* 消息提示
-* @param  {[type]} text [description]
-* @param  {[type]} c    [description]
-* @return {[type]}      [description]
-*/
-window.updateAlert = function (text, c) {
-
-if(typeof c !='undefined')
-{
-    var msg = $.zui.messager.show(text, {placement: 'bottom',type:c});
-}else {
-    var msg =  $.zui.messager.show(text, {placement: 'bottom'})
-}
-msg.show();
-};
-
-
 var moduleManager = {
     'install': function (id) {
         $.post(Url('admin/module/install'),{id:id},function(msg){
