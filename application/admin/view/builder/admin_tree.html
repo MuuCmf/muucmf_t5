@@ -69,9 +69,9 @@
                 $.post(self.attr("action"),self.serialize(),function(data){
                     /* 提示信息 */  
                     if(data.code){
-                        updateAlert(data.msg,'success');
+                        toast.success(data.msg,'success');
                     } else {
-                        updateAlert(data.msg,'error');
+                        toast.error(data.msg,'error');
                     }
                 },"json");
                 return false;

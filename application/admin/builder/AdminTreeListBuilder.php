@@ -15,6 +15,7 @@ class AdminTreeListBuilder extends AdminBuilder
     private $_setStatusUrl;
     private $_level = 2;
     private $_model = '';
+    private $_action = 'add';
     private $_page; //分页HTML代码
 
     private $_move=false;
@@ -459,6 +460,18 @@ class AdminTreeListBuilder extends AdminBuilder
     public function setModel($model = '')
     {
         $this->_model = $model;
+        return $this;
+    }
+
+    /**
+     * 设置新增页面方法名(该方式更容易让用户立即，而setModel较容易在使用中产生歧义，setModel后期会废弃)
+     *
+     * @return     self  ( description_of_the_return_value )
+     * @author 大蒙<59262424@qq.com>
+     */
+    public function setAction($action = '')
+    {
+        $this->_action = $action;
         return $this;
     }
 
