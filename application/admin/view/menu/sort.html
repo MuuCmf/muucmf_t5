@@ -88,10 +88,10 @@
 					'ids' :  arr.join(',')
 					},
 					function(data){
-						if (data.status) {
-	                        updateAlert(data.info + {:lang('_THE_PAGE_WILL_AUTOMATICALLY_JUMP_TO_WALK_THE_WALK_TODAY_WITH_SINGLE_')},'alert-success');
+						if (data.code == 1) {
+	                        toast.success(data.msg + {:lang('_THE_PAGE_WILL_AUTOMATICALLY_JUMP_TO_WALK_THE_WALK_TODAY_WITH_SINGLE_')},'alert-success');
 	                    }else{
-	                        updateAlert(data.info,'alert-success');
+	                        toast.error(data.msg,'alert-success');
 	                    }
 	                    setTimeout(function(){
 	                        if (data.status) {
