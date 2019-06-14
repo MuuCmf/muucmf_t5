@@ -16,7 +16,7 @@ class Common extends Controller
             $result = controller('ucenter/Login', 'widget')->doLogin();
 
             if ($result['code']==1) {
-                $this->success($result['msg'], Input('post.from', Url('admin/index/index'), 'text'));
+                $this->success($result['msg'], input('post.from', url('admin/index/index'), 'text'));
             } else {
                 $this->error($result['msg']);
             }
@@ -27,12 +27,13 @@ class Common extends Controller
 
     /* 退出登录 */
     public function logout(){
+
         if(is_login()){
             model('Member')->logout();
             session('[destroy]');
-            $this->success(lang('_EXIT_SUCCESS_'), Url('login'));
+            $this->success(lang('_EXIT_SUCCESS_'), url('login'));
         } else {
-            $this->redirect('login');
+            $this->error('error');
         }
     }
 

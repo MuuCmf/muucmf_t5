@@ -1,5 +1,5 @@
 $(function(){
-	    //ajax get请求
+	//ajax get请求
     $('.ajax-get').click(function () {
         var target;
         var that = this;
@@ -12,9 +12,9 @@ $(function(){
             $.get(target).success(function (data) {
                 if (data.code == 1) {
                     if (data.url) {
-                        updateAlert(data.msg + ' 页面即将自动跳转~', 'success');
+                        toast.success(data.msg + ' 页面即将自动跳转~', 'success');
                     } else {
-                        updateAlert(data.msg, 'success');
+                        toast.success(data.msg, 'success');
                     }
                     setTimeout(function () {
                         if (data.url) {
@@ -26,7 +26,7 @@ $(function(){
                         }
                     }, 3000);
                 } else {
-                    updateAlert(data.msg);
+                    toast.error(data.msg);
                     setTimeout(function () {
                         if (data.url) {
                             location.href = data.url;
@@ -56,7 +56,7 @@ $(function(){
                 form = $('.hide-data');
                 query = form.serialize();
             } else if (form.get(0) == undefined) {
-                updateAlert('没有可操作数据。','danger');
+                toast.error('没有可操作数据。','danger');
                 return false;
             } else if (form.get(0).nodeName == 'FORM') {
                 if ($(this).hasClass('confirm')) {
@@ -101,7 +101,7 @@ $(function(){
             }
             if(query==''&&$(this).attr('hide-data') != 'true'){
                 toast.hideLoading();
-                updateAlert('请勾选操作对象!。','danger');
+                toast.error('请勾选操作对象!。','danger');
                 return false;
             }
             $(that).addClass('disabled').attr('autocomplete', 'off').prop('disabled', true);
@@ -110,9 +110,9 @@ $(function(){
                 
                 if (data.code == 1) {
                     if (data.url) {
-                        updateAlert(data.msg + ' 页面即将自动跳转~', 'success');
+                        toast.success(data.msg + ' 页面即将自动跳转~', 'success');
                     } else {
-                        updateAlert(data.msg, 'success');
+                        toast.success(data.msg, 'success');
                     }
                     setTimeout(function () {
                         if (data.url) {
@@ -125,7 +125,7 @@ $(function(){
                         }
                     }, 1500);
                 } else {
-                    updateAlert(data.msg,'error');
+                    toast.error(data.msg,'error');
                     setTimeout(function () {
                         if (data.url) {
                             location.href = data.url;
@@ -218,9 +218,9 @@ function handleAjax(data) {
 
     //弹出提示消息
     if (data.code==1) {
-        updateAlert(data.msg, 'success');
+        toast.success(data.msg, 'success');
     } else {
-        updateAlert(data.msg, 'danger');
+        toast.error(data.msg, 'danger');
     }
 
     //需要跳转的话就跳转

@@ -130,6 +130,38 @@
 				margin:5px auto;
 			}
 
+			/*视频上传盒子*/
+			.video-file-list {
+				max-width:400px;
+
+				.action-btn-box {
+					margin-bottom:5px;
+				}
+				.video-item-box {
+					max-width:400px;
+
+					.each {
+						margin-bottom:5px;
+					}
+				}
+			}
+
+			/*音频上传盒子*/
+			.audio-file-list {
+				max-width:400px;
+
+				.action-btn-box {
+					margin-bottom:5px;
+				}
+				.audio-item-box {
+					max-width:400px;
+
+					.each {
+						margin-bottom:5px;
+					}
+				}
+			}
+
 		}
 	}
 	
