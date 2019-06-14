@@ -318,9 +318,17 @@ class Member extends Controller
     {
         if (request()->isPost()) {
             $result = controller('ucenter/Login', 'widget')->doLogin();
+            //登陆成功后返回路径
+            $config_return_url = modC('LOGIN_RETURN_URL','','USERCONFIG');
 
+            if(!empty($config_return_url)){
+                $return_url = url($config_return_url);
+            }else{
+                $return_url = input('post.from', url('index/index/index'));
+            }
+            
             if ($result['code'] == 1) {
-                $this->success($result['msg'], input('post.from', url('index/index/index'), 'text'));
+                $this->success($result['msg'], $return_url, 'text');
             } else {
                 $this->error($result['msg']);
             }

@@ -41,8 +41,6 @@ class Index extends Admin
         }
     }
 
-
-
     private function getOtherCount(){
         $countModel=model('Count');
         //用户流失
@@ -92,13 +90,15 @@ class Index extends Admin
         $reg_users = Db::name('UcenterMember')->where($map)->count();
 
         unset($map['reg_time']);
-        $map['last_login_time']=[['>=',$start],['<=',$end],'and'];
+        $map['last_login_time'] = [['>=',$start],['<=',$end],'and'];
         $login_users = Db::name('UcenterMember')->where($map)->count();
+        $total_user = Db::name('UcenterMember')->count();
+        $today_action_log = Db::name('ActionLog')->where('status=1 and create_time>=' . $start)->count();
 
         $count['today_user'] = $reg_users;
         $count['login_users'] = $login_users;
-        $count['total_user'] = Db::name('UcenterMember')->where(['status' => 1])->count();
-        $count['today_action_log'] = Db::name('ActionLog')->where('status=1 and create_time>=' . $start)->count();
+        $count['total_user'] = $total_user;
+        $count['today_action_log'] = $today_action_log;
         
         $this->assign('count', $count);
     }

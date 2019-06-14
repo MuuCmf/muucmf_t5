@@ -75,6 +75,7 @@ str;
             ->keyRadio('OPEN_QUICK_LOGIN',lang('_QUICK_LOGIN_'),lang('_BY_DEFAULT_AFTER_THE_USER_IS_LOGGED_IN_THE_USER_IS_LOGGED_IN_'), array(0 => lang('_OFF_'), 1 => lang('_OPEN_')))
             ->keyCheckBox('LOGIN_SWITCH', lang('_LOGIN_PROMPT_SWITCH_'), lang('_JUST_THE_TIP_OF_THE_LOGIN_BOX_'), array('username' => lang('_USER_NAME_'), 'email' => lang('_MAILBOX_'), 'mobile' => lang('_MOBILE_PHONE_')))
             ->keyRadio('OPEN_WECHAT_AUTH',lang('_OPEN_WECHAT_AUTH_SWITCH_'),lang('_OPEN_WECHAT_AUTH_SWITCH_INFO_'),array(0 => lang('_OFF_'), 1 => lang('_OPEN_')))
+            ->keyText('LOGIN_RETURN_URL','登陆成功后跳转回地址','留空返回请求页，仅支持url()函数写法，如：demo/index/lists')
             ->keyText('LOGIN_USER_TEMPLATE','登陆页模板','自定义的登陆页模板，如：login_custom')
 
             //邮件验证配置
@@ -98,7 +99,7 @@ str;
 
             //分组
             ->group(lang('_REGISTER_CONFIGURATION_'), 'REG_SWITCH,EMAIL_VERIFY_TYPE,MOBILE_VERIFY_TYPE,NICKNAME_SWITCH,NICKNAME_PREFIX,REG_STEP,REG_CAN_SKIP,NEW_USER_FOLLOW,NEW_USER_FANS,NEW_USER_FRIENDS,REG_USER_URL,REG_USER_TEMPLATE')
-            ->group(lang('_LOGIN_CONFIGURATION_'), 'OPEN_QUICK_LOGIN,LOGIN_SWITCH,OPEN_WECHAT_AUTH,LOGIN_USER_TEMPLATE')
+            ->group(lang('_LOGIN_CONFIGURATION_'), 'OPEN_QUICK_LOGIN,LOGIN_SWITCH,OPEN_WECHAT_AUTH,LOGIN_RETURN_URL,LOGIN_USER_TEMPLATE')
             ->group(lang('_MAILBOX_VERIFICATION_ACTIVATION_'), 'REG_EMAIL_VERIFY,REG_EMAIL_ACTIVATE')
             //->group(lang('_MAILBOX_ACTIVATION_TEMPLATE_'), 'REG_EMAIL_ACTIVATE')
             ->group(lang('_SMS_VERIFICATION_CONFIG_'), 'SMS_CONTENT,SMS_RESEND')
