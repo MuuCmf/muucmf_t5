@@ -67,6 +67,7 @@ class AdminTreeListBuilder extends AdminBuilder
     public function buttonNew($href, $title = '新增', $attr = array())
     {
         $attr['href'] = $href;
+        $attr['class']='btn btn-info';
         return $this->button($title, $attr);
     }
 
