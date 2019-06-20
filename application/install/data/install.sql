@@ -82,7 +82,6 @@ INSERT INTO `muucmf_addons` (`id`, `name`, `title`, `description`, `status`, `co
 (3, 'chinacity', '中国省市区三级联动', '每个系统都需要的一个中国省市区三级联动插件。想天-駿濤修改，将镇级地区移除', 1, 'null', 'muucmf', '2.0', 0, 0),
 (46, 'demo', 'demo测试', '这就是个案例', 1, '{"can_show":"0","title":"0","select":"0"}', 'muucmf', '1.0.0', 0, 1);
 
-
 DROP TABLE IF EXISTS `muucmf_adv_pos`;
 CREATE TABLE IF NOT EXISTS `muucmf_adv_pos` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -557,7 +556,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_avatar` (
   `driver` varchar(50) NOT NULL,
   `create_time` int(11) NOT NULL,
   `status` int(11) NOT NULL,
-  `is_temp` int(11) NOT NULL
+  `is_temp` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
@@ -4349,8 +4348,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_field_group` (
 
 INSERT INTO `muucmf_field_group` (`id`, `profile_name`, `status`, `createTime`, `sort`, `visiable`) VALUES
 (1, '个人资料', 1, 1403847366, 0, 1),
-(2, '开发者资料', 1, 1423537648, 0, 0),
-(3, '开源中国资料', 1, 1423538446, 0, 0);
+(2, '开发者资料', 1, 1423537648, 0, 0);
 
 DROP TABLE IF EXISTS `muucmf_field_setting`;
 CREATE TABLE IF NOT EXISTS `muucmf_field_setting` (
@@ -4376,8 +4374,7 @@ INSERT INTO `muucmf_field_setting` (`id`, `field_name`, `profile_group_id`, `vis
 (3, '擅长语言', 2, 1, 1, 0, 'select', 'Java|C++|Python|php|object c|ruby', '', 1, 1423537693, '', ''),
 (4, '承接项目', 2, 1, 1, 0, 'radio', '是|否', '', 1, 1423537733, '', ''),
 (5, '简介', 2, 1, 1, 0, 'textarea', '', '', 1, 1423537770, '', '简单介绍入行以来的工作经验，项目经验'),
-(6, '其他技能', 2, 1, 1, 0, 'checkbox', 'PhotoShop|Flash', '', 1, 1423537834, '', ''),
-(7, '昵称', 3, 1, 1, 0, 'input', '', '', 1, 1423704462, 'string', 'OSC账号昵称');
+(6, '其他技能', 2, 1, 1, 0, 'checkbox', 'PhotoShop|Flash', '', 1, 1423537834, '', '');
 
 DROP TABLE IF EXISTS `muucmf_file`;
 CREATE TABLE IF NOT EXISTS `muucmf_file` (
@@ -4511,7 +4508,8 @@ CREATE TABLE IF NOT EXISTS `muucmf_menu` (
   `group` varchar(50) DEFAULT '' COMMENT '分组',
   `is_dev` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否仅开发者模式可见',
   `icon` varchar(20) NOT NULL COMMENT '导航图标',
-  `module` varchar(50) NOT NULL
+  `module` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `type`, `tip`, `group`, `is_dev`, `icon`, `module`) VALUES
@@ -4806,7 +4804,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_rank_user` (
   `create_time` int(11) NOT NULL,
   `status` tinyint(2) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
 DROP TABLE IF EXISTS `muucmf_role`;
 CREATE TABLE IF NOT EXISTS `muucmf_role` (
@@ -5031,6 +5029,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_score_log` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
+DROP TABLE IF EXISTS `muucmf_ucenter_user_link`;
 CREATE TABLE IF NOT EXISTS `muucmf_ucenter_user_link` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `uid` int(11) NOT NULL,
