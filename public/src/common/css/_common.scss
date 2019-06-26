@@ -15,7 +15,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 a {
-  color:#000;
+  color:#333;
   text-decoration: none;
     &:hover {
       text-decoration: none;
@@ -26,6 +26,98 @@ a {
 ul {
   padding-left: 0;
   margin-left: 0;
+}
+
+
+/*后台页面按钮样式*/
+.btn-new{
+	background: #00ce74;
+	color: #fff;
+	border: 1px solid #00ce74;
+	border-radius: 2px;
+}
+.btn-new:hover{
+	background: #03a75f;
+	color: #fff;
+	border: 1px solid #03c470;
+}
+
+
+.btn-open{
+	background: #fff;
+	color: #00ce74;
+	border: 1px solid #00ce74;
+	border-radius: 2px;
+}
+.btn-open:hover{
+	background: #fff;
+	color: #03a75f;
+	border: 1px solid #03a75f;
+}
+
+
+.btn-forbid{
+	background: #fff;
+	color: #ff8e20;
+	border: 1px solid #ff8e20;
+	border-radius: 2px;
+}
+.btn-forbid:hover{
+	background: #fff;
+	color: #de7e1f;
+	border: 1px solid #de7e1f;
+}
+
+
+.btn-delete{
+	background: #fff;
+	color: #ff2020;
+	border: 1px solid #ff2020;
+	border-radius: 2px;
+}
+.btn-delete:hover{
+	background: #fff;
+	color: #e61d1d;
+	border: 1px solid #e61d1d;
+}
+
+.btn-up{
+	background: #fff;
+	color: #666;
+	border: 1px solid #666;
+	border-radius: 2px;
+}
+.btn-up:hover{
+	background: #fff;
+	color: #00ce74;
+	border: 1px solid #00ce74;
+}
+/*后台页面按钮样式*/
+
+.nav-secondary>li>.a-active{
+	font-size: 18px;
+}
+.nav-secondary>li>.a-active:hover{
+	font-size: 18px;
+	color: #00ce74;
+	border-bottom-color: #00ce74;
+}
+.nav-secondary>li.active>.a-active{
+	font-size: 18px;
+	color: #00ce74;
+	border-bottom-color: #00ce74;
+}
+.nav-secondary>li.active>.a-active:hover,.nav-secondary>li.active>.a-active:focus{
+	font-size: 18px;
+	color: #00ce74;
+	border-bottom-color: #00ce74;
+}
+.img-avatar{
+	width: 84px;
+	height: 84px;
+}
+.control-label{
+	text-align: left!important;
 }
 /*ZUI修复*/
 .modal-open .modal {
@@ -83,7 +175,7 @@ ul {
 }
 /*布局样式end*/
 .main-wrapper {
-  padding-top:58px;
+  padding-top:70px;
 }
 #main-container {
   margin-top:10px;
@@ -399,14 +491,33 @@ ul {
   border-bottom-color: #ee4e2f;
 }
 /*提示信息颜色end*/
-/*ucard 样式*/
-.qtip {
-  max-width: 352px !important;
-  border: 1px solid #eee!important;
-}
-.qtip-bootstrap .qtip-content {
-  width: 346px !important;
-  padding: 0 !important;
+
+/**
+ * 确认操作默认框
+ */
+.tip-model-content {
+    
+  .tip-modal-icon {
+    text-align: center;
+    color:#ea644a;
+    margin-bottom:30px;
+  }
+
+  .tip-modal-text {
+    margin:0 auto;
+    width:300px;
+    color:#666;
+    text-align: center;
+    margin-bottom:30px;
+  }
+  .tip-modal-btn {
+    margin-bottom:30px;
+    text-align: center;
+
+    .btn {
+      margin:0 10px;
+    }
+  }
 }
 /**
  * 显示加载中样式
@@ -419,14 +530,14 @@ ul {
   bottom:0;
   left:0;
   text-align: center;
-  img{
-      vertical-align: middle;
-  }
-  img{
-      position: relative;
-      top: 50%;
-      transform: translateY(-50%);
-  }
+    img{
+        vertical-align: middle;
+    }
+    img{
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+    }
 }
 /*通用顶部导航*/
 nav.navbar.bootsnav {
@@ -442,12 +553,25 @@ nav.navbar.bootsnav {
 }
 nav.navbar.bootsnav.navbar-fixed {
   position: fixed;
-  display: block;
+  display: flex;
   width: 100%;
+  height: 70px;
+  align-items: center;
 }
 nav.navbar.bootsnav.no-background {
   background-color: transparent;
   border: none;
+}
+
+.nav-func{
+  height: 70px;
+  line-height: 70px;
+  .nav-func_item {
+    color: #ffffff;
+    height: 70px;
+    line-height: 70px;
+    color: #333333;
+  }
 }
 
 @media (max-width: 992px) {
@@ -460,8 +584,8 @@ nav.navbar.bootsnav.no-background {
 }
 nav.navbar.bootsnav .navbar-brand {
     float: left;
-    padding:4px 0;
-    height:58px;
+    padding:10px 0;
+    height:70px;
 }
 nav.navbar.bootsnav .navbar-brand img{
     width:auto;
@@ -499,12 +623,21 @@ nav.navbar.bootsnav .navbar-toggle i {
     margin-top: 15px;
   }
 }
-nav.bootsnav li.dropdown ul.dropdown-menu {
+nav.bootsnav li.dropdown ul.dropdown-user {
     border:0!important;
-    border-top:5px solid #03B8CF!important;
+    border-radius:0;
+
+    a {
+      color:#666;
+    }
 }
+nav.bootsnav li.dropdown ul.dropdown-user a:hover {
+    background:#ddd;
+    color:#666;
+}
+
 @media (max-width: 992px){
-  nav.bootsnav li.dropdown ul.dropdown-menu {
+  nav.bootsnav li.dropdown ul.dropdown-user {
       border:0!important;
   }
  nav.bootsnav .navbar-collapse li.dropdown a i{
@@ -597,7 +730,9 @@ nav.navbar.bootsnav .navbar-collapse {
   padding: 0;
   margin: 0 0 -7px 0;
   list-style: none;
-  display: inline-block;
+  height: 70px;
+  display: inline-flex;
+  align-items: center;
 }
 .attr-nav > ul > li {
   float: left;
@@ -608,15 +743,17 @@ nav.navbar.bootsnav .navbar-collapse {
   display: block;
   padding: 0px 10px;
   position: relative;
-  line-height: 58px;
+  line-height: 70px;
 }
 /*通用顶部导航end*/
+
 .modal {
   z-index:10050;
 }
 .modal-backdrop {
   z-index:10040;
 }
+
 /*通用footer*/
 .footer-bar {
   background:#252c34;
@@ -633,34 +770,6 @@ nav.navbar.bootsnav .navbar-collapse {
   margin-top:10px;
   padding:8px 0;
   border-top:1px solid #2E343B;
-}
-
-/**
- * 模态确认提示框
- */
-.tip-model-content {
-    
-  .tip-modal-icon {
-    text-align: center;
-    color:#ea644a;
-    margin-bottom:30px;
-  }
-
-  .tip-modal-text {
-    margin:0 auto;
-    width:300px;
-    color:#666;
-    text-align: center;
-    margin-bottom:30px;
-  }
-  .tip-modal-btn {
-    margin-bottom:30px;
-    text-align: center;
-
-    .btn {
-      margin:0 10px;
-    }
-  }
 }
 
 

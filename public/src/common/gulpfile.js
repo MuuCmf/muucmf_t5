@@ -11,7 +11,7 @@ var gulp        = require('gulp'),
     reload      = browserSync.reload;
     
 // 定义源代码的目录和编译压缩后的目录
-var src='../src',
+var src='../src/common',
     dist='../../static/common';
 // 编译全部scss 并压缩
 gulp.task('scss', function(){
