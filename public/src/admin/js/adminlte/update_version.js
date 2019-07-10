@@ -7,7 +7,7 @@
     var can_update = $('[data-toggle="can_update"]').val();
     var version = $('[data-toggle="version"]').val();
     if(can_update==1){
-        $.get("http://www.muucmf.cn/muucmf/sysupdate/index/enable_version/"+version, function(result){
+        $.get("https://www.muucmf.cn/muucmf/sysupdate/index/enable_version/"+version, function(result){
             if(result.code){
                 new $.zui.Messager('有新的版本更新！', {
                     type: 'danger',
@@ -42,6 +42,6 @@ $(function(){
         v:'T5'
     };
 
-    var url = 'http://www.muucmf.cn/muucmf/index/feedback';
+    var url = 'https://www.muucmf.cn/muucmf/index/feedback';
     $.post(url,data,function(result){});
 });
