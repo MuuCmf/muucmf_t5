@@ -81,7 +81,7 @@ $(function(){
                 })
                 if (nead_confirm && $(this).hasClass('confirm')) {
                     var confirm_info = $(that).attr('confirm-info');
-                    confirm_info=confirm_info?confirm_info:"确认要执行该操作吗?";
+                    confirm_info = confirm_info?confirm_info:"确认要执行该操作吗?";
                     if (!confirm(confirm_info)) {
                         toast.hideLoading();
                         return false;
@@ -154,6 +154,16 @@ $(function(){
         var form = $(this);
         
         //如果需要的话，发出确认提示信息
+        if(confirmText) {
+            if (!confirm('确认要执行该操作吗?')) {
+                return false;
+            }
+            execute();
+        }else{
+            execute();
+        }
+
+        /*
         if (confirmText) {
             modal_confirm(confirmText,function(){
                 execute();
@@ -161,7 +171,7 @@ $(function(){
             return false;
         }else{
             execute();
-        }
+        }*/
         
         //执行ajax
         function execute(){
