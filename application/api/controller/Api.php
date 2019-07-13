@@ -37,6 +37,7 @@ class Api extends Controller
      */
     public $restMethodList = 'get|post|put|delete|patch|head|options';
     /** 
+     * 接口权限验证
      * 默认不验证 
      * @var bool 
      */
@@ -112,7 +113,7 @@ class Api extends Controller
         $headers = [
             "Access-Control-Allow-Origin" => $host_name,
             "Access-Control-Allow-Credentials" => 'true',
-            "Access-Control-Allow-Headers" => "token,uid,shopid,authorization,x-token,x-uid,x-requested-with,content-type,Host"
+            "Access-Control-Allow-Headers" => "token,uid,shopid,authorization,access-token,refresh-token,x-token,x-uid,x-requested-with,content-type,Host"
         ];
 
         if ($method == "options") {

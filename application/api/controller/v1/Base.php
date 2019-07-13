@@ -24,7 +24,7 @@ class Base extends Api
     public function _initialize()
     {
         parent::_initialize();
-        //$this->checkToken();
+        //$this->checkAccessToken();
     }
 
     /**
@@ -32,15 +32,14 @@ class Base extends Api
      *
      * @return     boolean  ( description_of_the_return_value )
      */
-    public function checkToken()
+    public function checkAccessToken()
     {
         $header = Request::instance()->header();
 
         if (empty($header['token']) || $header['token'] == 'null'){
             return 'Token不存在,拒绝访问';
         }else{
-            $checkJwtToken = $this->verifyJwt($header['token']);
-            
+            $checkJwtToken = $this->verifyToken($header['token'], 'access');
             if ($checkJwtToken['status'] == 1001) {
                 return true;
             }else{
@@ -49,46 +48,94 @@ class Base extends Api
         }
     }
 
+    /**
+     * 验证刷新token 并返回重新生成的access_token或错误信息
+     *
+     * @return     boolean  ( description_of_the_return_value )
+     */
+    public function checkRefreshToken()
+    {
+        $header = Request::instance()->header();
+
+        if (empty($header['refresh-token']) || $header['refresh-token'] == 'null'){
+            return 'refresh_token不存在,拒绝访问';
+        }else{
+            $checkJwtToken = $this->verifyToken($header['refresh-token'], 'refresh');
+            if ($checkJwtToken['status'] == 1001) {
+                //验证成功后重新生成access_token
+                $uid = $checkJwtToken['uid'];
+                $access_token = $this->createAccessToken($uid);
+                //重新生成refresh_token
+                $refresh_token = $this->createRefreshToken($uid);
+
+                return ['status' => 1001,'access_token' => $access_token, 'refresh_token' => $refresh_token];
+
+            }else{
+                return $checkJwtToken['msg'];
+            }
+        }
+    }
+
     //校验jwt权限API
-    protected function verifyJwt($jwt)
+    protected function verifyToken($token,$type)
     {
         $key = $this->key;
         // JWT::$leeway = 3;
         try {
-            $jwtAuth = json_encode(JWT::decode($jwt, $key, array('HS256')));
+            $jwtAuth = json_encode(JWT::decode($token, $key, array('HS256')));
             $authInfo = json_decode($jwtAuth, true);
 
-            $msg = [];
+            $result = [];
+
+            if($type == 'access' && $authInfo['data']['type'] != 'access'){
+
+                return [
+                    'status' => 1002,
+                    'msg' => 'Access Token无效'
+                ];
+                
+            }
+
+            if($type == 'refresh' && $authInfo['data']['type'] != 'refresh'){
+                
+                return [
+                    'status' => 1002,
+                    'msg' => 'Refresh Token无效'
+                ];
+            
+            }
+            
             if (!empty($authInfo['data']['uid'])) {
 
                 //赋值给$this->uid;
                 $this->uid = $authInfo['data']['uid'];
+                model('common/Member')->login($this->uid);
 
-                $msg = [
+                $result = [
                     'status' => 1001,
                     'uid' => $authInfo['data']['uid'],
                     'msg' => 'Token验证通过'
                 ];
             } else {
-                $msg = [
+                $result = [
                     'status' => 1002,
                     'msg' => 'Token验证不通过,用户不存在'
                 ];
             }
-            return $msg;
+            return $result;
 
         } catch (\Firebase\JWT\SignatureInvalidException $e) {
-            $msg = [
+            $result = [
                 'status' => 1002,
                 'msg' => 'Token无效'
             ];
-            return $msg;
+            return $result;
         } catch (\Firebase\JWT\ExpiredException $e) {
-            $msg = [
+            $result = [
                 'status' => 1003,
                 'msg' => 'Token过期'
             ];
-            return $msg;
+            return $result;
         } catch (Exception $e) {
             
             return $e;
@@ -96,13 +143,13 @@ class Base extends Api
     }
 
     /**
-     * 生成JWT
+     * 生成access_token
      *
      * @param      <type>  $uid    The uid
      *
      * @return     <type>  ( description_of_the_return_value )
      */
-    public function createJwt($uid)
+    public function createAccessToken($uid)
     {
         $key = $this->key; //jwt的签发密钥，验证token的时候需要用到
 
@@ -110,33 +157,51 @@ class Base extends Api
 
         $expire = $time + 7200; //过期时间
 
-        /*$user_info = query_user([
-            'uid',
-            'nickname',
-            'mobile',
-            'email',
-            "open_id" => $this->getOpenid($uid),
-        ], $uid);*/
-
         $token = [
-            //"uid" => $uid,
-            //"user_info" => $user_info,
             "iss" => "https://muucmf.cn",//签发组织
             "aud" => "https://muucmf.cn", //签发作者
             "iat" => $time,
             "nbf" => $time,
             "exp" => $expire,
             "data" => [
+                "type" => 'access',
                 "uid" => $uid,
             ]
         ];
 
-        $jwt = JWT::encode($token, $key);
-        //根据ID登陆用户,并记录登陆数据
-        model('common/Member')->login($uid);
+        $access_token = JWT::encode($token, $key);
+        
+        return $access_token;
+    }
 
+    /**
+     * 设置刷新TOKEN
+     *
+     * @return     <type>  ( description_of_the_return_value )
+     */
+    public function  createRefreshToken($uid)
+    {
+        $key = $this->key; //jwt的签发密钥，验证token的时候需要用到
 
-        return $jwt;
+        $time = time(); //签发时间
+
+        $expire = $time + 3600 * 24 *7; //过期时间 为7天
+
+        $token = [
+            "iss" => "https://muucmf.cn",//签发组织
+            "aud" => "https://muucmf.cn", //签发作者
+            "iat" => $time,
+            "nbf" => $time,
+            "exp" => $expire,
+            "data" => [
+                "type" => 'refresh',
+                "uid" => $uid,
+            ]
+        ];
+
+        $refresh_token = JWT::encode($token, $key);
+        
+        return $refresh_token;
     }
 
     /**
@@ -151,23 +216,11 @@ class Base extends Api
         if (empty($header['token']) || $header['token'] == 'null'){
             return 0;
         }else{
-            $checkJwtToken = $this->verifyJwt($header['token']);
+            $checkJwtToken = $this->verifyToken($header['token'],'access');
             if ($checkJwtToken['status'] == 1001) {
                 return $checkJwtToken['uid'];
             }
             return 0;
         }
-    }
-
-    /**
-     * 根据uid获取已绑定微信的用户openid
-     *
-     * @param      <type>  $uid    The uid
-     */
-    protected function getOpenid($uid)
-    {
-        $open_id = model('weixin/WeixinOauth')->getOpenid();
-
-        return $open_id;
     }
 }

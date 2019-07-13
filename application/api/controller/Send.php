@@ -58,7 +58,7 @@ trait Send
     public function sendSuccess($msg = 'success', $data = [], $code = 200, $headers = [], $options = [])
     {
         $responseData['code'] = $code;
-        $responseData['msg'] = (string)$msg;
+        $responseData['msg'] = $msg;
         if (!empty($data)) $responseData['data'] = $data;
         $responseData = array_merge($responseData, $options);
         return $this->response($responseData, $code, $headers);

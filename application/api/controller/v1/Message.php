@@ -33,20 +33,19 @@ class Message extends Base
     public function index()
     {   
         //验证权限
-        if($this->checkToken() !== true){
-            return $this->sendError($this->checkToken());
+        if($this->checkAccessToken() !== true){
+            return $this->sendError($this->checkAccessToken());
         }
 
-        
-        $order = model('knowledge/KnowledgeOrders')->getDataByOrderNO('201904185799985248');
-        $order = $order->toArray();
-
         //测试发送消息
-        $title = '课程购买';
-        $content = '你成功购买了课程'.'【'.$order['order_info']['title'].'】';
-        model('common/Message')->sendMessage($this->uid, $title, $content, '', '',1,'knowledge', 2);
+        //$order = model('knowledge/KnowledgeOrders')->getDataByOrderNO('201904185799985248');
+        //$order = $order->toArray();
+        //$title = '课程购买';
+        //$content = '你成功购买了课程'.'【'.$order['order_info']['title'].'】';
+        //model('common/Message')->sendMessage($this->uid, $title, $content, '', '',1,'knowledge', 2);
 
         $action = input('action','list','text');
+
         switch($action){
             case 'list':
                 //消息类型
@@ -78,6 +77,7 @@ class Message extends Base
                 return $this->sendSuccess('success',$messages);
 
             break;
+
             case 'type':
                 //消息类型
                 $type = input('post.type','','text');
@@ -98,8 +98,8 @@ class Message extends Base
     {
         //获取新消息推送
         //验证权限
-        if($this->checkToken() !== true){
-            return $this->sendError($this->checkToken());
+        if($this->checkAccessToken() !== true){
+            return $this->sendError($this->checkAccessToken());
         }
 
         //取到所有没有提示过的信息

@@ -366,7 +366,6 @@ class Upload extends Model
         if (class_exists($name)) {
             $class = new $name();
 
-
             if (method_exists($class, $driver)) {
                 $path = $class->$driver($file,$dirname);
                 return $path;

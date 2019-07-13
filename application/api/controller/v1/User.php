@@ -32,8 +32,8 @@ class User extends Base
     public function index()
     {   
         //验证权限
-        if($this->checkToken() !== true){
-            return $this->sendError($this->checkToken());
+        if($this->checkAccessToken() !== true){
+            return $this->sendError($this->checkAccessToken());
         }
 
         $uid = $this->uid;
@@ -83,8 +83,8 @@ class User extends Base
             case 'save'://修改用户基本信息
                 //需要登陆
 
-                if($this->checkToken() !== true){
-                    return $this->sendError($this->checkToken());
+                if($this->checkAccessToken() !== true){
+                    return $this->sendError($this->checkAccessToken());
                 }
 
                 $uid = $this->uid;
@@ -227,9 +227,12 @@ class User extends Base
                     $uid = model('ucenter/UcenterMember')->login($username, $aPassword, $aUnType); //通过账号密码取到uid
 
                     //返回用户jwt验证token
-                    $jwt = self::createJwt($uid);
+                    $access_token = self::createAccessToken($uid);
+                    $refresh_token = self::createRefreshToken($uid);
 
-                    return $this->sendSuccess('success',$jwt);
+                    $token_data = ['access_token' => $access_token,'refresh_token' => $refresh_token];
+                    
+                    return $this->sendSuccess('success',$token_data);
 
                 } else { //注册失败，显示错误信息
                     return $this->sendError(model('ucenter/Member')->showRegError($error_code));
@@ -248,9 +251,12 @@ class User extends Base
                 if($code > 0){
 
                     //返回用户jwt验证token
-                    $jwt = self::createJwt($uid);
+                    $access_token = self::createAccessToken($uid);
+                    $refresh_token = self::createRefreshToken($uid);
 
-                    return $this->sendSuccess('success',$jwt);
+                    $token_data = ['access_token' => $access_token,'refresh_token' => $refresh_token];
+                    
+                    return $this->sendSuccess('success',$token_data);
                     
                 }else{
                     $msg = model('common/Member')->showRegError($code);
@@ -289,8 +295,8 @@ class User extends Base
             case 'change_password'://修改密码
 
                 //需要验证登陆
-                if($this->checkToken() !== true){
-                    return $this->sendError($this->checkToken());
+                if($this->checkAccessToken() !== true){
+                    return $this->sendError($this->checkAccessToken());
                 }
                     
                 $old_password = input('post.old_password','','text');
@@ -360,8 +366,8 @@ class User extends Base
             case 'upload_avatar'://上传头像
                 
                 //验证权限
-                if($this->checkToken() !== true){
-                    return $this->sendError($this->checkToken());
+                if($this->checkAccessToken() !== true){
+                    return $this->sendError($this->checkAccessToken());
                 }
 
                 $uid = $this->uid;
@@ -385,8 +391,8 @@ class User extends Base
             case 'save_avatar'://保存裁切后的头像
             
                 //验证权限
-                if($this->checkToken() !== true){
-                    return $this->sendError($this->checkToken());
+                if($this->checkAccessToken() !== true){
+                    return $this->sendError($this->checkAccessToken());
                 }
 
                 $aCrop = input('post.crop', '', 'text');
@@ -417,6 +423,17 @@ class User extends Base
                 clean_query_user_cache($aUid, ['avatars','avatars_html']);
                 
                 return $this->sendSuccess(lang('_SUCCESS_AVATAR_CHANGE_').lang('_EXCLAMATION_'));
+
+            break;
+
+            case 'refresh_token'://刷新token
+
+                $result = $this->checkRefreshToken();
+                if(isset($result['status']) && $result['status'] == 1001){
+                    return $this->sendSuccess('刷新成功',$result);
+                }else{
+                    return $this->sendError($result);
+                }
 
             break;
 
