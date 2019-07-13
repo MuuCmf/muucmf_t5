@@ -60,7 +60,7 @@ function get_fileall_by_id($file_id)
 {
     $file = cache('file_all' . $file_id);
     if (empty($file)) {
-        $file = Db::name('File')->field('id,name,savepath,ext,mime,size,driver')->find($file_id);
+        $file = Db::name('File')->field('id,name,savepath,savename,ext,mime,size,driver')->find($file_id);
         cache('file_all' . $file_id, $file);
     }
 

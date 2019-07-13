@@ -99,6 +99,7 @@ class Schedule extends Model
     {
         ignore_user_abort(true); //即使Client断开(如关掉浏览器)，PHP脚本也可以继续执行.
         set_time_limit(0); // 执行时间为无限制，php默认的执行时间是30秒，通过set_time_limit(0)可以让程序无限制的执行下去
+        date_default_timezone_set('PRC'); // 切换到中国的时间
         $lock_txt = $this->lockFile;
         
         if ($this->checkIsRunning()) { //防止重复运行，判断是否在运行，是则退出
@@ -115,7 +116,7 @@ class Schedule extends Model
             flush();
             sleep($this->interval); //程序暂停
             $n++;
-            $this->writeFile(APP_PATH.'../data/schedule/n.txt', $n++);
+            //$this->writeFile(APP_PATH.'../data/schedule/n.txt', $n++);
         } while ($this->readFile($lock_txt) == 'running');
 
         @unlink($lock_txt); //删除标记文件
@@ -128,6 +129,7 @@ class Schedule extends Model
     public function runScheduleList()
     {
         $list = $this->getScheduleList();
+        
         $now_time = time();
         foreach ($list as $v) {
 

@@ -36,12 +36,23 @@ class Verify extends Model
         $verify = $this->where(['id'=>$id])->value('verify');
         return $verify;
     }
-    public function checkVerify($account,$type,$verify,$uid){
-        $verify = $this->where(array('account'=>$account,'type'=>$type,'verify'=>$verify,'uid'=>$uid))->find();
+
+    /**
+     * 检测验证码
+     *
+     * @param      <type>   $account  The account
+     * @param      <type>   $type     The type
+     * @param      <type>   $verify   The verify
+     * @param      <type>   $uid      The uid
+     *
+     * @return     boolean  ( description_of_the_return_value )
+     */
+    public function checkVerify($account,$type,$verify,$uid = 0){
+        $verify = $this->where(['account'=>$account,'type'=>$type,'verify'=>$verify])->find();
         if(!$verify){
             return false;
         }
-        $this->where(array('account'=>$account,'type'=>$type))->delete();
+        $this->where(['account'=>$account,'type'=>$type])->delete();
         $this->where(['create_time'=>['<=',get_some_day(1)]])->delete();
 
         return true;

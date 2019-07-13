@@ -77,6 +77,7 @@ class Message extends Model
             $res = $this->save($message);
             unset($message);
         }
+
         return true;
     }
 
@@ -226,7 +227,7 @@ class Message extends Model
      * @param $to_uids
      * @return array
      */
-    private function _removeOldUser($to_uids)
+    public function _removeOldUser($to_uids)
     {
         $map['uid']=array('in',$to_uids);
         $map['status']=1;
@@ -240,9 +241,8 @@ class Message extends Model
      * @param $uids
      * @param $type
      * @return bool
-     * @author 郑钟良<zzl@ourstu.com>
      */
-    private function _initUserMessageSession($uids, $type)
+    public function _initUserMessageSession($uids, $type)
     {
         
         $map['uid'] = array('in', $uids);
@@ -278,7 +278,7 @@ class Message extends Model
      * @param string $type 消息类型，对应各模块message_config.php中设置的会话类型
      * @return mixed
      */
-    private function addMessageContent($from_uid, $title, $content, $url, $url_args, $type)
+    public function addMessageContent($from_uid, $title, $content, $url, $url_args, $type)
     {
         $data_content['from_id'] = $from_uid;
         $data_content['title'] = $title;
@@ -411,7 +411,6 @@ class Message extends Model
         if (empty($message_session)) {
 
             $message_session = config('message.session');
-            //dump($message_session);
             //$message_session = $message_session['session'];
             foreach ($message_session as &$val) {
                 if ($val['name'] == '') {
