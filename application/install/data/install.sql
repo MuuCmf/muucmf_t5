@@ -474,7 +474,6 @@ INSERT INTO `muucmf_auth_rule` (`id`, `module`, `type`, `name`, `title`, `status
 (260, 'admin', 1, 'Admin/User/sortField', '字段排序', 1, ''),
 (261, 'admin', 1, 'Admin/Update/quick', '全部补丁', 1, ''),
 (262, 'admin', 1, 'Admin/Update/addpack', '新增补丁', 1, ''),
-(263, 'admin', 1, 'Admin/User/expandinfo_select', '用户扩展资料列表', 1, ''),
 (264, 'admin', 1, 'Admin/User/expandinfo_details', '扩展资料详情', 1, ''),
 
 (278, 'admin', 1, 'Admin/Rank/rankVerify', '待审核用户头衔', 1, ''),
