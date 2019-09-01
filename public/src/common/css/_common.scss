@@ -237,31 +237,36 @@ ul {
   right: 50px;
   width: 46px;
   z-index: 999;
+  >a {
+    display: block;
+    width: 48px;
+    height: 46px;
+    margin-bottom: 10px;
+    background-image: url(../images/tools.png);
+    border: 1px solid #dddddd;
+  }
+  a:last-child {
+    margin-bottom: 0;
+  }
+
+  .go-top {
+    background-position: 0 0;
+    display: none;
+
+    &:hover {
+      background-position: 0 -46px;
+    }
+  }
+
+  .admin-view {
+    background-position: 0 -92px;
+
+    &:hover {
+      background-position: 0 -137px;
+    }
+  }
 }
-.tool > a {
-  display: block;
-  width: 48px;
-  height: 46px;
-  margin-bottom: 10px;
-  background-image: url(../images/tools.png);
-  border: 1px solid #dddddd;
-}
-.tool a:last-child {
-  margin-bottom: 0;
-}
-.tool .go-top {
-  background-position: 0 0;
-  display: none;
-}
-.tool .go-top:hover {
-  background-position: 0 -46px;
-}
-.tool .admin-view {
-  background-position: 0 -92px;
-}
-.tool .admin-view:hover {
-  background-position: 0 -137px;
-}
+
 /*用户注册*/
 .register_header {
   border-radius: 8px 8px 0 0;
@@ -370,8 +375,10 @@ ul {
   }
 }
 /*找回密码*/
-.mi_form_box #mi_tab li a {
+.mi_form_box {
+   #mi_tab li a {
     font-size: 18px;
+  }
 }
 /*悬浮样式end*/
 .user-card {
@@ -419,15 +426,16 @@ ul {
   border-collapse: collapse;
   width: 100%;
   margin: auto;
+
+  td, th {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-left: none;
+    border-right: none;
+    color: #555;
+  }
 }
-.tb_rank td,
-.tb_rank th {
-  padding: 5px 10px;
-  border: 1px solid #ccc;
-  border-left: none;
-  border-right: none;
-  color: #555;
-}
+
 /*头衔end*/
 /*编辑器修复*/
 .edui-btn-toolbar {
@@ -540,204 +548,6 @@ ul {
     }
 }
 
-/*通用顶部导航*/
-nav.navbar.bootsnav {
-  margin-bottom: 0;
-  -moz-border-radius: 0px;
-  -webkit-border-radius: 0px;
-  -o-border-radius: 0px;
-  border-radius: 0px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-  background-color: #fff;
-  border: none;
-  z-index: 10002;
-}
-nav.navbar.bootsnav.navbar-fixed {
-  position: fixed;
-  display: block;
-  width: 100%;
-}
-nav.navbar.bootsnav.no-background {
-  background-color: transparent;
-  border: none;
-}
-
-@media (max-width: 992px) {
-  nav.navbar.bootsnav .navbar-header {
-    float: none;
-    display: block;
-    text-align: center;
-    padding-right: 30px;
-  }
-}
-nav.navbar.bootsnav .navbar-brand {
-    float: left;
-    padding: 4px 0;
-    height: 58px;
-}
-nav.navbar.bootsnav .navbar-brand img{
-    width:auto;
-    display: inline-block;
-    width:auto;
-  }
-@media (max-width: 992px){
-  nav.navbar.bootsnav .navbar-brand {
-    display: inline-block;
-    line-height: 58px;
-    float: none!important;
-    margin: 0!important;
-  }
-
-  nav.navbar.bootsnav .navbar-brand img{
-    width:120px;
-    display: inline-block;
-  }
-}
-nav.navbar.bootsnav .navbar-toggle {
-    background: rgba(0,0,0,0.0)!important;
-    top: 0; 
-}
-nav.navbar.bootsnav .navbar-toggle i {
-    font-size:22px;
-    color:#666;
-}
-
-@media (max-width: 992px) {
-  nav.navbar.bootsnav .navbar-toggle {
-    display: inline-block;
-    float: left;
-    margin-right: -200px;
-    margin-top: 15px;
-  }
-}
-nav.bootsnav li.dropdown ul.dropdown-user {
-    border:0!important;
-    border-radius:0;
-
-    a {
-      color:#666;
-    }
-}
-nav.bootsnav li.dropdown ul.dropdown-user a:hover {
-    background:#ddd;
-    color:#666;
-}
-
-@media (max-width: 992px){
-  nav.bootsnav li.dropdown ul.dropdown-user {
-      border:0!important;
-  }
- nav.bootsnav .navbar-collapse li.dropdown a i{
-      float:right;
-  }
-}
-@media (max-width: 992px){
-  nav.navbar.bootsnav .navbar-nav {
-      float: none !important;
-      margin: 0px -10px;
-  }
-}
-
-@media (max-width: 992px) {
-  .navbar-nav > li {
-     float: none;
-  }
-}
-
-.navbar-toggle {
-  position: relative;
-  float: left;
-  background-color: transparent;
-  border: 0;
-}
-@media (min-width: 992px) {
-  nav.navbar.bootsnav ul.nav > li > a {
-    padding: 0 15px;
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 56px;
-    color:#666;
-  }
-}
-nav.navbar.bootsnav .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
-  color: #ff9900;
-  background-color: #fff;
-}
-nav.navbar.bootsnav .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
-  color: #ff9900;
-  background-color: #fff;
-}
-
-@media (max-width: 992px) {
-  nav.navbar.bootsnav .navbar-collapse.collapse.in {
-    display: block !important;
-  }
-}
-@media (max-width: 992px) {
-  nav.navbar.bootsnav .navbar-collapse.collapse {
-    display: none !important;
-  }
-}
-@media (max-width: 992px) {
-  nav.navbar.bootsnav.no-full .navbar-collapse {
-    max-height: 350px;
-    overflow-y: auto !important;
-    overflow-x:hidden;
-  }
-}
-@media (max-width: 992px) {
-  nav.navbar.bootsnav .navbar-collapse {
-    border: none;
-    margin-bottom: 0;
-  }
-}
-@media (min-width: 992px) {
-  .navbar-toggle {
-    display: none;
-  }
-}
-@media (max-width: 767px) {
-  .attr-nav {
-    right: 30px;
-  }
-}
-@media (max-width: 992px) {
-  .attr-nav {
-    position: absolute;
-    top:0;
-    right: 15px;
-  }
-}
-.attr-nav {
-  float: right;
-  display: inline-block;
-  margin-left: 13px;
-
-  >ul {
-    padding: 0;
-    margin: 0 0 -7px 0;
-    list-style: none;
-    height: 58px;
-    display: inline-flex;
-    align-items: center;
-
-    >li {
-      float: left;
-      display: block;
-
-      >a {
-        color: #6f6f6f;
-        display: block;
-        padding: 0px 10px;
-        position: relative;
-        line-height: 58px;
-      }
-    }
-  }
-}
-
-/*通用顶部导航end*/
-
 .modal {
   z-index:10050;
 }
@@ -750,17 +560,18 @@ nav.navbar.bootsnav .navbar-nav > .active > a, .navbar-default .navbar-nav > .ac
   background:#252c34;
   margin-top:20px;
   padding-top:30px;
+  div {
+    color:#fff;
+  }
+  a {
+    color:#999;
+  }
+  .power-by {
+    margin-top:10px;
+    padding:8px 0;
+    border-top:1px solid #2E343B;
+  }
 }
-.footer-bar div {
-  color:#fff;
-}
-.footer-bar a {
-  color:#999;
-}
-.footer-bar .power-by {
-  margin-top:10px;
-  padding:8px 0;
-  border-top:1px solid #2E343B;
-}
+
 
 
