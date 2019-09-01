@@ -539,6 +539,7 @@ ul {
         transform: translateY(-50%);
     }
 }
+
 /*通用顶部导航*/
 nav.navbar.bootsnav {
   margin-bottom: 0;
@@ -553,25 +554,12 @@ nav.navbar.bootsnav {
 }
 nav.navbar.bootsnav.navbar-fixed {
   position: fixed;
-  display: flex;
+  display: block;
   width: 100%;
-  height: 70px;
-  align-items: center;
 }
 nav.navbar.bootsnav.no-background {
   background-color: transparent;
   border: none;
-}
-
-.nav-func{
-  height: 70px;
-  line-height: 70px;
-  .nav-func_item {
-    color: #ffffff;
-    height: 70px;
-    line-height: 70px;
-    color: #333333;
-  }
 }
 
 @media (max-width: 992px) {
@@ -584,13 +572,12 @@ nav.navbar.bootsnav.no-background {
 }
 nav.navbar.bootsnav .navbar-brand {
     float: left;
-    padding:10px 0;
-    height:70px;
+    padding: 4px 0;
+    height: 58px;
 }
 nav.navbar.bootsnav .navbar-brand img{
     width:auto;
     display: inline-block;
-    height:50px;
     width:auto;
   }
 @media (max-width: 992px){
@@ -682,14 +669,14 @@ nav.navbar.bootsnav .navbar-nav > .active > a, .navbar-default .navbar-nav > .ac
 }
 
 @media (max-width: 992px) {
-nav.navbar.bootsnav .navbar-collapse.collapse.in {
-  display: block !important;
-}
+  nav.navbar.bootsnav .navbar-collapse.collapse.in {
+    display: block !important;
+  }
 }
 @media (max-width: 992px) {
-nav.navbar.bootsnav .navbar-collapse.collapse {
-  display: none !important;
-}
+  nav.navbar.bootsnav .navbar-collapse.collapse {
+    display: none !important;
+  }
 }
 @media (max-width: 992px) {
   nav.navbar.bootsnav.no-full .navbar-collapse {
@@ -699,10 +686,10 @@ nav.navbar.bootsnav .navbar-collapse.collapse {
   }
 }
 @media (max-width: 992px) {
-nav.navbar.bootsnav .navbar-collapse {
-  border: none;
-  margin-bottom: 0;
-}
+  nav.navbar.bootsnav .navbar-collapse {
+    border: none;
+    margin-bottom: 0;
+  }
 }
 @media (min-width: 992px) {
   .navbar-toggle {
@@ -725,26 +712,30 @@ nav.navbar.bootsnav .navbar-collapse {
   float: right;
   display: inline-block;
   margin-left: 13px;
+
+  >ul {
+    padding: 0;
+    margin: 0 0 -7px 0;
+    list-style: none;
+    height: 58px;
+    display: inline-flex;
+    align-items: center;
+
+    >li {
+      float: left;
+      display: block;
+
+      >a {
+        color: #6f6f6f;
+        display: block;
+        padding: 0px 10px;
+        position: relative;
+        line-height: 58px;
+      }
+    }
+  }
 }
-.attr-nav > ul {
-  padding: 0;
-  margin: 0 0 -7px 0;
-  list-style: none;
-  height: 70px;
-  display: inline-flex;
-  align-items: center;
-}
-.attr-nav > ul > li {
-  float: left;
-  display: block;
-}
-.attr-nav > ul > li > a {
-  color: #6f6f6f;
-  display: block;
-  padding: 0px 10px;
-  position: relative;
-  line-height: 70px;
-}
+
 /*通用顶部导航end*/
 
 .modal {
