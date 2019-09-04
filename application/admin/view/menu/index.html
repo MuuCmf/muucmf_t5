@@ -34,11 +34,12 @@
         </div>
 
         <form class="ids">
-            <table class="table table-bordered table-striped table-hover">
+            <table class="table table-bordered table-striped table-hover muu-table">
                 <thead>
                 <tr>
                     <th class="row-selected">
-                        <input class="checkbox check-all" type="checkbox">
+                        <input type="checkbox" class="check-all" id="check-all">
+                    <label for="check-all"></label>
                     </th>
                     <th class="hidden">{:lang('_ID_')}</th>
                     <th>{:lang('_NAME_')}</th>
@@ -56,23 +57,26 @@
                 {notempty name="list"}
                     {volist name="list" id="menu"}
                         <tr>
-                            <td><input class="ids row-selected" type="checkbox" name="id[]" value="{$menu.id}"></td>
+                            <td>
+                                <input class="ids" id="menu-{$menu.id}" type="checkbox" name="id[]" value="{$menu.id}">
+                                <label for="menu-{$menu.id}"></label>
+                            </td>
                             <td class="hidden">{$menu.id}</td>
                             <td>
-                                <a href="{:Url('index?pid='.$menu['id'])}">{$menu.title}</a>
+                                <a href="{:url('index?pid='.$menu['id'])}">{$menu.title}</a>
                             </td>
                             <td>{$menu.up_title|default=lang('_NONE_')}</td>
                             <td>{$menu.group}</td>
                             <td>{$menu.url}</td>
                             <td>{$menu.sort}</td>
                             <td>
-                                <a href="{:Url('toogleDev',array('id'=>$menu['id'],'value'=>abs($menu['is_dev']-1)))}"
+                                <a href="{:url('toogleDev',array('id'=>$menu['id'],'value'=>abs($menu['is_dev']-1)))}"
                                    class="ajax-get">
                                     {$menu.is_dev_text}
                                 </a>
                             </td>
                             <td>
-                                <a href="{:Url('toogleHide',array('id'=>$menu['id'],'value'=>abs($menu['hide']-1)))}"
+                                <a href="{:url('toogleHide',array('id'=>$menu['id'],'value'=>abs($menu['hide']-1)))}"
                                    class="ajax-get">
                                     {$menu.hide_text}
                                 </a>
@@ -84,7 +88,7 @@
                                 </a>
                             </td>
                             <td>
-                                <a title="{:lang('_EDIT_')}" href="{:Url('edit?id='.$menu['id'])}">{:lang('_EDIT_')}</a>
+                                <a title="{:lang('_EDIT_')}" href="{:url('edit?id='.$menu['id'])}">{:lang('_EDIT_')}</a>
                                 <a class="confirm ajax-get" title="{:lang('_DELETE_')}" href="{:Url('del?id='.$menu['id'])}">{:lang('_DELETE_')}</a>
                             </td>
                         </tr>

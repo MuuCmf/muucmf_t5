@@ -23,22 +23,20 @@
         <div>
             <!-- 访问授权 -->
             <div class="node-list in">
-                <form action="{:Url()}" enctype="application/x-www-form-urlencoded" method="POST" class="form-horizontal auth-form">
+                <form action="{:url()}" enctype="application/x-www-form-urlencoded" method="POST" class="form-horizontal auth-form">
                     {notempty name="tag_list"}
                         {volist name="tag_list" id="tag_group"}
                             <dl class="checkmod">
                                 <dt class="hd">
-                                    <label class="checkbox"><input class="auth_fields fields_all" type="checkbox">{$tag_group.title}</label>
+                                    <input class="auth_fields fields_all" id="auth_fields_all" type="checkbox">
+                                    <label for="auth_fields_all">{$tag_group.title}</label>
                                 </dt>
                                 <dd class="bd">
                                     {present name="tag_group['tag_list']"}
                                         {volist name="tag_group['tag_list']" id="tag"}
                                             <div class="filed_check">
-                                                <div>
-                                                    <label class="checkbox">
-                                                        <input class="auth_fields fields_row" type="checkbox" name="tags[]" value="{$tag.id}"/>【{$tag.id}】{$tag.title}
-                                                    </label>
-                                                </div>
+                                                <input class="auth_fields fields_row" id="auth_fields" type="checkbox" name="tags[]" value="{$tag.id}"/>
+                                                <label for="auth_fields_row_{$tag.id}">【{$tag.id}】{$tag.title}</label>
                                             </div>
                                         {/volist}
                                     {/present}

@@ -42,13 +42,14 @@
             </div>
         </div>
 
-
         <!-- 数据列表 -->
         <div class="data-table">
-            <table class="table table-bordered table-striped table-hover">
+            <table class="table table-bordered table-striped table-hover muu-table">
                 <thead>
                 <tr>
-                    <th class="row-selected row-selected" style="width: 20px"><input class="check-all" type="checkbox"/>
+                    <th class="row-selected row-selected">
+                        <input class="check-all" id="check-all" type="checkbox"/>
+                        <label for="check-all"></label>
                     </th>
                     <th class="">{:lang("_NO_")}</th>
                     <th class="">{:lang("_IDENTIFICATION_")}</th>
@@ -64,7 +65,10 @@
                 <tbody>
                 {volist name="_list" id="vo"}
                     <tr>
-                        <td><input class="ids" type="checkbox" name="ids[]" value="{$vo.id}"/></td>
+                        <td>
+                            <input class="ids" id="ids-{$vo.id}" type="checkbox" name="ids[]" value="{$vo.id}">
+                            <label for="ids-{$vo.id}"></label>
+                        </td>
                         <td>{$vo.id}</td>
                         <td><a href="{:Url('ActionLimit/limitlist',array('action'=>$vo['name']))}" title={:lang("_CHECK_THE_LIMIT_WITH_DOUBLE_")}>{$vo.name}</a>
                         </td>

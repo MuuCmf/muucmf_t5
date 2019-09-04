@@ -10,14 +10,17 @@
 
         <div class="tool-box button-box">
             <a id="export" class="btn btn-info" href="javascript:;" autocomplete="off">{:lang("_IMMEDIATE_BACKUP_")}</a>
-            <a id="optimize" class="btn btn-warning" href="{:Url('optimize')}">{:lang("_OPTIMIZATION_TABLE_")}</a>
-            <a id="repair" class="btn btn-warning" href="{:Url('repair')}">{:lang("_REPAIR_TABLE_")}</a>
+            <a id="optimize" class="btn btn-warning" href="{:url('optimize')}">{:lang("_OPTIMIZATION_TABLE_")}</a>
+            <a id="repair" class="btn btn-warning" href="{:url('repair')}">{:lang("_REPAIR_TABLE_")}</a>
         </div>
-        <form id="export-form" method="post" action="{:Url('export')}">
+        <form id="export-form" method="post" action="{:url('export')}">
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th width="48"><input class="check-all" checked="chedked" type="checkbox" value=""></th>
+                        <th>
+                            <input type="checkbox" checked="chedked" class="check-all" id="check-all">
+                            <label for="check-all"></label>
+                        </th>
                         <th>{:lang("_TABLE_NAME_")}</th>
                         <th width="120">{:lang("_DATA_QUANTITY_")}</th>
                         <th width="120">{:lang("_DATA_SIZE_")}</th>
@@ -30,7 +33,8 @@
                     {volist name="list" id="table"}
                         <tr>
                             <td class="num">
-                                <input class="ids" checked="chedked" type="checkbox" name="tables[]" value="{$table.name}">
+                                <input class="ids" id="table-{$table.name}" checked="chedked" type="checkbox" name="tables[]" value="{$table.name}">
+                                <label for="table-{$table.name}"></label>
                             </td>
                             <td>{$table.name}</td>
                             <td>{$table.rows}</td>

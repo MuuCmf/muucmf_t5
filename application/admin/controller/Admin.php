@@ -484,7 +484,7 @@ class Admin extends Controller
         return $menus;
     }
 
-    /**
+        /**
      * 通用分页列表数据集获取方法
      *
      *  可以通过url参数传递where条件,例如:  userList.html?name=asdfasdfasdfddds
@@ -553,7 +553,7 @@ class Admin extends Controller
         $this->assign('page', $page);
         return [$list,$page];
     }
-
+    
     public function  _empty(){
         $this->error(lang('_ERROR_404_2_'));
     }

@@ -11,9 +11,8 @@
 			<label class="item-label">{$nickname}{:lang("_USER_GROUP_LIST_")}</label>
             <div class="clearfix">
                 {volist name="auth_groups" id="vo"}
-                    <label class="checkbox checkbox-inline">
-                        <input class="auth_groups" type="checkbox" name="group_id[]" value="{$vo.id}">{$vo.title}
-                    </label>
+                    <input class="auth_groups" id="auth-groups-{$vo.id}" type="checkbox" name="group_id[]" value="{$vo.id}">
+                    <label for="auth-groups-{$vo.id}">{$vo.title}</label>
                 {/volist}
             </div>
 

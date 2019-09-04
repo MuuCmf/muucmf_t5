@@ -2,17 +2,16 @@
 {extend name="common/main" /}
 {block name="body"}
 <div class="main-title">
-        <h2>{:lang("_USER_GROUP_MEMBERSHIP_")}</h2>
+  <h2>{:lang("_USER_GROUP_MEMBERSHIP_")}</h2>
 </div>
 
-    
-    <!-- 数据列表 -->
-    <div class="with-padding">
+  <!-- 数据列表 -->
+  <div class="with-padding">
     <div class="clearfix">
         <div class="col-xs-10">
             <ul class="nav nav-secondary">
-                <li><a href="{:Url('AuthManager/access',array('group_name'=>input('group_name') ,'group_id'=> input('group_id')))}">{:lang("_MANAGEMENT_BACKGROUND_AUTHORIZATION_")}</a></li>
-                <li><a href="{:Url('AuthManager/accessUser',array('group_name'=>input('group_name') ,'group_id'=> input('group_id')))}">{:lang("_FRONT_DESK_ACCESS_AUTHORIZATION_")}</a></li>
+                <li><a href="{:url('AuthManager/access',array('group_name'=>input('group_name') ,'group_id'=> input('group_id')))}">{:lang("_MANAGEMENT_BACKGROUND_AUTHORIZATION_")}</a></li>
+                <li><a href="{:url('AuthManager/accessUser',array('group_name'=>input('group_name') ,'group_id'=> input('group_id')))}">{:lang("_FRONT_DESK_ACCESS_AUTHORIZATION_")}</a></li>
                 <li class="active"><a href="javascript:;">{:lang("_MEMBER_DELEGATION_")}</a></li>
 
             </ul>
@@ -20,7 +19,7 @@
        <div class="col-xs-2 text-right">
                <select name="group" class="form-control">
                    {volist name="auth_group" id="vo"}
-                       <option value="{:Url('AuthManager/user',array('group_id'=>$vo['id'],'group_name'=>$vo['title']))}" {eq name="vo['id']" value="$group_id"}selected{/eq} >
+                       <option value="{:url('AuthManager/user',array('group_id'=>$vo['id'],'group_name'=>$vo['title']))}" {eq name="vo['id']" value="$group_id"}selected{/eq} >
                         {$vo.title}
                        </option>
                    {/volist}
@@ -29,15 +28,15 @@
     </div>
 
 
-	<table class="table table-bordered table-striped">
+	<table class="table table-bordered table-striped muu-table">
     <thead>
-        <tr>
-		<th class="">UID</th>
-		<th class="">{:lang("_NICKNAME_")}</th>
-		<th class="">{:lang("_LAST_LOGIN_TIME_")}</th>
-		<th class="">{:lang("_LAST_LOGIN_IP_")}</th>
-		<th class="">{:lang("_STATE_")}</th>
-		<th class="">{:lang("_OPERATION_")}</th>
+    <tr>
+  		<th class="">UID</th>
+  		<th class="">{:lang("_NICKNAME_")}</th>
+  		<th class="">{:lang("_LAST_LOGIN_TIME_")}</th>
+  		<th class="">{:lang("_LAST_LOGIN_IP_")}</th>
+  		<th class="">{:lang("_STATE_")}</th>
+  		<th class="">{:lang("_OPERATION_")}</th>
 		</tr>
     </thead>
     <tbody>
@@ -49,13 +48,13 @@
 			<td><span>{$vo.last_login_ip|long2ip}</span></td>
 			<td>{$vo.status_text}</td>
 			<td>
-                <a href="{:Url('AuthManager/removeFromGroup?uid='.$vo['uid'].'&group_id='.input('group_id'))}" class="ajax-get">{:lang("_RELEASE_AUTHORITY_")}
-                </a>
-            </td>
+          <a href="{:url('AuthManager/removeFromGroup?uid='.$vo['uid'].'&group_id='.input('group_id'))}" class="ajax-get">{:lang("_RELEASE_AUTHORITY_")}
+          </a>
+      </td>
 		</tr>
 		{/volist}
-	</tbody>
-    </table>
+	 </tbody>
+  </table>
 
     <div class="page">
         {$page}
