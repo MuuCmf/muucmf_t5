@@ -3,11 +3,11 @@
 {block name="body"}
 	<div class="main-title">
 		<h2>
-			{:lang("_MENU_SORT_")}[ <a href="{:Url('index',array('pid'=>input('pid')))}">{:lang("_RETURN_LIST_")}</a> ]
+			{:lang("_MENU_SORT_")}[ <a href="{:url('index',array('pid'=>input('pid')))}">{:lang("_RETURN_LIST_")}</a> ]
 		</h2>
 	</div>
 	<div class="sort with-padding">
-		<form action="{:Url('sort')}" method="post">
+		<form action="{:url('sort')}" method="post">
 <!-- 			<div class="sort_top">
 				{:lang("_SEARCH_")}{:lang("_COLON_")}<input type="text"><button class="btn search" type="button">{:lang("_SEARCH_")}</button>
 			</div> -->

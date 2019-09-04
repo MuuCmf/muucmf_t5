@@ -33,42 +33,48 @@
     </div>
     <!-- 数据列表 -->
     <div class="data-table">
-    <table class="table table-bordered table-striped table-hover">
-    <thead>
-        <tr>
-        <th class="row-selected row-selected"><input class="check-all" type="checkbox"/></th>
-        <th class="">{:lang("_NO_")}</th>
-        <th class="">{:lang("_BEHAVIOR_NAME_")}</th>
+        <table class="table table-bordered table-striped table-hover muu-table">
+            <thead>
+                <tr>
+                <th class="row-selected row-selected">
+                    <input class="check-all" id="check-all" type="checkbox"/>
+                    <label for="check-all"></label>
+                </th>
+                <th class="">{:lang("_NO_")}</th>
+                <th class="">{:lang("_BEHAVIOR_NAME_")}</th>
 
-        <th class="">{:lang("_EXECUTIVE_")}</th>
-        <th>执行者IP</th>
-        <th class="">{:lang("_LOG_CONTENT_")}</th>
-        <th class="">{:lang("_EXECUTION_TIME_")}</th>
-        <th class="">{:lang("_OPERATION_")}</th>
-        </tr>
-    </thead>
-    <tbody>
-        {notempty name="_list"}
-        {volist name="_list" id="vo"}
-        <tr>
-            <td><input class="ids" type="checkbox" name="ids[]" value="{$vo.id}" /></td>
-            <td>{$vo.id} </td>
-            <td>{:get_action($vo['action_id'],'title')}</td>
-            <td><a href="{:url('Action/actionlog',array('uid'=>$vo['user_id']))}">{:get_nickname($vo['user_id'])}</a></td>
-            <td>{$vo.ip}</td>
-            <td>{$vo['remark']}</td>
-            <td><span>{$vo.create_time|time_format}</span></td>
+                <th class="">{:lang("_EXECUTIVE_")}</th>
+                <th>执行者IP</th>
+                <th class="">{:lang("_LOG_CONTENT_")}</th>
+                <th class="">{:lang("_EXECUTION_TIME_")}</th>
+                <th class="">{:lang("_OPERATION_")}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {notempty name="_list"}
+                {volist name="_list" id="vo"}
+                <tr>
+                    <td>
+                        <input class="ids" id="ids-{$vo.id}" type="checkbox" name="ids[]" value="{$vo.id}">
+                        <label for="ids-{$vo.id}"></label>
+                    </td>
+                    <td>{$vo.id} </td>
+                    <td>{:get_action($vo['action_id'],'title')}</td>
+                    <td><a href="{:url('Action/actionlog',array('uid'=>$vo['user_id']))}">{:get_nickname($vo['user_id'])}</a></td>
+                    <td>{$vo.ip}</td>
+                    <td>{$vo['remark']}</td>
+                    <td><span>{$vo.create_time|time_format}</span></td>
 
-            <td><a href="{:url('Action/edit?id='.$vo['id'])}">{:lang("_DETAILED_")}</a>
-                <a class="confirm ajax-get" href="{:url('Action/remove?ids='.$vo['id'])}">{:lang("_DELETE_")}</a>
-                </td>
-        </tr>
-        {/volist}
-        {else/}
-        <td colspan="7" class="text-center"> aOh!{:lang("_THERE_IS_NO_CONTENT_")} </td>
-        {/notempty}
-    </tbody>
-    </table>
+                    <td><a href="{:url('Action/edit?id='.$vo['id'])}">{:lang("_DETAILED_")}</a>
+                        <a class="confirm ajax-get" href="{:url('Action/remove?ids='.$vo['id'])}">{:lang("_DELETE_")}</a>
+                        </td>
+                </tr>
+                {/volist}
+                {else/}
+                <td colspan="7" class="text-center"> aOh!{:lang("_THERE_IS_NO_CONTENT_")} </td>
+                {/notempty}
+            </tbody>
+        </table>
     </div>
     <!-- 分页 -->
     <div class="page">{$page}</div>

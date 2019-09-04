@@ -16,12 +16,12 @@
     $(function () {
         $('[data-role="clear_log"]').click(function () {
             if(confirm('确定要删除日志么？')){
-                var id = $(this).attr('data-id')
-                $.post(U('admin/schedule/clearlog'),{id:id},function(a){
+                var id = $(this).attr('data-id');
+                var url = "{:url('admin/schedule/clearlog')}";
+                $.post(url,{id:id},function(a){
                     handleAjax(a)
                 })
             }
-
         })
     })
 </script>

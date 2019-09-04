@@ -120,12 +120,13 @@
     <!-- 数据表格 -->
     <div class="with-padding">
 
-        <table id="table-data" class="table table-bordered table-striped table-hover">
+        <table id="table-data" class="table table-bordered table-striped table-hover muu-table">
             <!-- 表头 -->
             <thead>
             <tr>
                 <th class="row-selected row-selected" style="width: 20px">
-                    <input class="check-all" type="checkbox"/>
+                    <input type="checkbox" class="check-all" id="check-all">
+                    <label for="check-all"></label>
                 </th>
                 {volist name="keyList" id="field"}
                     <th>{$field.title|htmlspecialchars}</th>
@@ -138,7 +139,10 @@
             {notempty name="list"}
             {volist name="list" id="e"}
                 <tr>
-                    <td><input class="ids" type="checkbox" value="{notempty name="e['id']"}{$e['id']}{/notempty}" name="ids[]"></td>
+                    <td>
+                        <input class="ids" type="checkbox" id="ids-{notempty name="e['id']"}{$e['id']}{/notempty}" value="{notempty name="e['id']"}{$e['id']}{/notempty}" name="ids[]">
+                        <label for="ids-{notempty name="e['id']"}{$e['id']}{/notempty}"></label>
+                    </td>
                     {volist name="keyList" id="field"}
                         <td style="width:auto;max-width: {$field['width']};"  class="text-ellipsis">
                             {$e[$field['name']]}

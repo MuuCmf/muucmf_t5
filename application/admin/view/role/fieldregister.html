@@ -22,7 +22,7 @@
         <div>
             <!-- 访问授权 -->
             <div class="node-list in">
-                <form action="{:Url()}" enctype="application/x-www-form-urlencoded" method="POST" class="form-horizontal auth-form">
+                <form action="{:url()}" enctype="application/x-www-form-urlencoded" method="POST" class="form-horizontal auth-form">
                     {notempty name="field_list"}
                         {volist name="field_list" id="group" }
                             <dl class="checkmod">

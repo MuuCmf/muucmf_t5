@@ -75,10 +75,13 @@
     </div>
     <!-- 数据列表 -->
     <div class="data-table with-padding">
-        <table class="table table-bordered table-striped user-table">
+        <table class="table table-bordered table-striped user-table muu-table">
             <thead>
             <tr>
-                <th class="row-selected row-selected"><input class="check-all" type="checkbox"/></th>
+                <th class="row-selected row-selected">
+                    <input type="checkbox" class="check-all" id="check-all">
+                    <label for="check-all"></label>
+                </th>
                 <th class="">{:lang('_UID_')}</th>
                 <th class="">{:lang('_NICKNAME_')}</th>
                 <th class="">{:lang('_USERNAME_')}</th>
@@ -98,7 +101,10 @@
             {notempty name="_list"}
                 {volist name="_list" id="vo"}
                     <tr>
-                        <td><input class="ids" type="checkbox" name="id[]" value="{$vo.uid}"/></td>
+                        <td>
+                            <input class="ids" id="user-{$vo.uid}" type="checkbox" name="id[]" value="{$vo.uid}"/>
+                            <label for="user-{$vo.uid}"></label>
+                        </td>
                         <td>{$vo.uid}</td>
                         <td><a href="{:Url('Admin/User/expandinfo_details',array('uid'=>$vo['uid']))}" >{$vo.nickname|text}</a></td>
                         <td>{$vo.username}</td>

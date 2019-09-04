@@ -47,16 +47,15 @@
                                                   
                                 <div class="card-actions clearfix">
                                         <a class="btn btn-default"
-                                           href="{:Url('edit?', array('name' => $vo['name']))}">{:lang("_EDIT_")}</a>
-
+                                           href="{:url('edit?', array('name' => $vo['name']))}">{:lang("_EDIT_")}</a>
 
                                         {notempty name="$vo['can_uninstall'] "}
                                             {if condition="$vo['is_setup']"}
                                                 <a class="btn btn-danger"
-                                                   href="{:Url('uninstall', array('id' => $vo['id']))}">{:lang("_UNINSTALL_")}</a>
+                                                   href="{:url('uninstall', array('id' => $vo['id']))}">{:lang("_UNINSTALL_")}</a>
                                             {else/}
                                                 <a class="btn btn-info"
-                                                   href="{:Url('install', array('name' => $vo['name']))}">{:lang("_INSTALL_")}</a>
+                                                   href="{:url('install', array('name' => $vo['name']))}">{:lang("_INSTALL_")}</a>
                                             {/if}
                                         {/notempty}
 
@@ -64,7 +63,7 @@
 
                                         {else/}
                                             <a class="btn btn-success"
-                                               href="{:Url('Cloud/updateGoods',array('token'=>$vo['token']))}">{:lang("_TO_UPDATE_")}</a>
+                                               href="{:url('Cloud/updateGoods',array('token'=>$vo['token']))}">{:lang("_TO_UPDATE_")}</a>
                                         {/empty}
                                 </div>
                                 <div class="card-actions clearfix">

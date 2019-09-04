@@ -1,5 +1,5 @@
-<extend name="Public/base"/>
-<block name="style">
+{extend name="common/main"/}
+{block name="style"}
     <style>
     .install-database {
         padding:15px;
@@ -23,8 +23,8 @@
         color:#EA644A;
     }
     </style>
-</block>
-<block name="body">
+{/block}
+{block name="body"}
     <div class="main-title">
         <h2>系统在线更新</h2>
     </div>
@@ -33,8 +33,8 @@
             <h2>系统在线更新即将开始！请勿关闭和刷新浏览器...</h2>
         </div>
     </div>
-    
-<block name="script">
+{/block}   
+{block name="script"}
     <script type="text/javascript">
         var list   = document.getElementById('show-list');
         function showmsg(msg, classname){
@@ -52,5 +52,5 @@
             }
         }
     </script>
-</block>
+{/block}
 

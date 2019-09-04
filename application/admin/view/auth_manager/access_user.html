@@ -47,11 +47,11 @@
 								{volist name="node['child']" id="child" }
                                     <div class="rule_check">
                                         <div>
-                                            <label class="checkbox" >
-                                           <input class="auth_rules rules_row" type="checkbox" name="rules[]" value="{$child.id}"/>{$child.title}
-                                            </label>
                                             
-                                                <a class="btn btn-info btn-mini" data-toggle="modal" data-remote="{:Url('addnode',['id'=>$child['id'],'group_id'=>input('group_id')])}">
+                                            <input class="auth_rules rules_row" id="auth-rules-{$child.id}" type="checkbox" name="rules[]" value="{$child.id}"/>
+                                            <label for="auth-rules-{$child.id}">{$child.title}</label>
+                                            
+                                                <a class="btn btn-info btn-mini" data-toggle="modal" data-remote="{:url('addnode',['id'=>$child['id'],'group_id'=>input('group_id')])}">
                                                     {:lang("_EDIT_")}
                                                 </a>
                                                 <a class="btn btn-danger btn-mini" data-toggle="del" data-href="{:Url('deletenode',array('id'=>$child['id']))}">
@@ -63,10 +63,9 @@
                                            <span class="divsion">&nbsp;</span>
                                            <div class="child_row">
                                                {volist name="child['operator']" id="op"}
-                                                   <label class="checkbox" >
-                                                       <input class="auth_rules" type="checkbox" name="rules[]"
-                                                       value="<?php echo $auth_rules[$op['url']] ?>"/>{$op.title}
-                                                   </label>
+                                                   
+                                                    <input class="auth_rules" id="auth-child-rules-<?php echo $auth_rules[$op['url']] ?>" type="checkbox" name="rules[]" value="<?php echo $auth_rules[$op['url']] ?>"/>{$op.title}
+                                                    <label for="auth-child-rules-<?php echo $auth_rules[$op['url']] ?>"></label>
                                                {/volist}
                                            </div>
                                         {/notempty}

@@ -12,7 +12,7 @@
             <div class="col-xs-2 text-right">
                 <select name="role" class="form-control">
                     {volist name="role_list" id="vo"}
-                        <option value="{:Url('Role/configScore',array('id'=>$vo['id']))}" {eq name="vo['id']" value="$this_role['id']"}selected{/eq} >
+                        <option value="{:url('Role/configScore',array('id'=>$vo['id']))}" {eq name="vo['id']" value="$this_role['id']"}selected{/eq} >
                             {$vo.title}
                         </option>
                     {/volist}

@@ -16,27 +16,33 @@
     </div>
     <!-- 数据列表 -->
     <div class="data-table with-padding">
-	<table class="table table-bordered table-striped ">
+	<table class="table table-bordered table-striped muu-table">
     <thead>
         <tr>
-		<th class="row-selected row-selected"><input class="check-all" type="checkbox"/></th>
-		<th class="">UID</th>
-		<th class="">{:lang("_NICKNAME_")}</th>
-		<th class="">{:lang("_STATE_")}</th>
-		<th class="">{:lang("_OPERATION_")}</th>
+		<th class="row-selected row-selected">
+			<input type="checkbox" class="check-all" id="check-all">
+            <label for="check-all"></label>
+		</th>
+		<th>UID</th>
+		<th>{:lang("_NICKNAME_")}</th>
+		<th>{:lang("_STATE_")}</th>
+		<th>{:lang("_OPERATION_")}</th>
 		</tr>
     </thead>
     <tbody>
 		{notempty name="_list"}
 		{volist name="_list" id="vo"}
 		<tr>
-            <td><input class="ids" type="checkbox" name="id[]" value="{$vo.uid}" /></td>
+            <td>
+            	<input class="ids" type="checkbox" id="uid-{$vo.uid}" name="id[]" value="{$vo.uid}" />
+            	<label for="uid-{$vo.uid}"></label>
+            </td>
 			<td>{$vo.uid} </td>
 			<td>{$vo.nickname}</td>
 			<td>{$vo.status_text}</td>
 			<td>
-                <a href="{:Url('Rank/userRankList?id='.$vo['uid'])}">{:lang("_USER_TITLE_LIST_")}</a>
-                <a href="{:Url('Rank/userAddRank?id='.$vo['uid'])}">{:lang("_ASSOCIATED_NEW_TITLE_")}</a>
+                <a href="{:url('Rank/userRankList?id='.$vo['uid'])}">{:lang("_USER_TITLE_LIST_")}</a>
+                <a href="{:url('Rank/userAddRank?id='.$vo['uid'])}">{:lang("_ASSOCIATED_NEW_TITLE_")}</a>
             </td>
 		</tr>
 		{/volist}
