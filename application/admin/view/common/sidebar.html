@@ -8,7 +8,7 @@
         {volist name="__MENU__" id="menu"}
           {neq name="$menu.type" value="1"}
           <li class="treeview" data-id="{$menu.id}" class="{$menu.class|default=''}">
-              <a href="{$menu.url|Url}" target="main_iframe">
+              <a href="{$menu.url|url}" target="main_iframe">
                   {notempty name="menu.icon"}
                       <i class="fa fa-{$menu.icon}"></i>
                   {else /}
@@ -49,8 +49,9 @@
         <li class="header">模块管理</li>
         {volist name="__MENU__" id="menu"}
         {neq name="menu.type" value="0"}
+        {eq name="menu.custom_admin" value="0"}
         <li class="treeview" data-id="{$menu.id}" class="{$menu.class|default=''}">
-            <a href="{$menu.url|Url}" target="main_iframe">
+            <a href="{$menu.url|url}" target="main_iframe">
                 {notempty name="menu.icon"}
                     <i class="fa fa-{$menu.icon}"></i>
                 {else /}
@@ -85,7 +86,24 @@
 
               {/volist}
             </ul>
+            
         </li>
+        {else /}
+        <!--自定义后台入口-->
+        <li data-role="custom_admin">
+            <a href="{$menu.url|url}" target="_blank">
+                {notempty name="menu.icon"}
+                    <i class="fa fa-{$menu.icon}"></i>
+                {else /}
+                    <i class="fa fa-circle-o"></i>
+                {/notempty}
+                <span>{$menu.title}</span>
+                <span class="pull-right-container">
+                  <i class="fa fa-cog pull-right"></i>
+                </span>
+            </a>
+        </li>
+        {/eq}
         {/neq}
         {/volist}
         

@@ -19,7 +19,11 @@ class Module extends Admin
         parent::_initialize();
     }
 
-
+    /**
+     * 模块列表首页
+     *
+     * @return     <type>  ( description_of_the_return_value )
+     */
     public function index()
     {
         $this->setTitle(lang('_MODULE_MANAGEMENT_'));
@@ -129,6 +133,9 @@ class Module extends Admin
 
     }
 
+    /**
+     * 卸载模块
+     */
     public function uninstall()
     {
         $aId = input('id', 0, 'intval');
@@ -136,7 +143,7 @@ class Module extends Admin
         $moduleModel = model('module');
 
         $module = $moduleModel->getModuleById($aId);
-        //dump($module);
+        
         if (request()->isPost()) {
             $aWithoutData = input('withoutData', 1, 'intval');//是否保留数据
             $res = $this->moduleModel->uninstall($aId, $aWithoutData);

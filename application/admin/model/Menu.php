@@ -35,6 +35,18 @@ class Menu extends Model {
         }
         return $res;
     }
+
+    /**
+     * 获取菜单列表
+     *
+     * @return     <type>  The lists.
+     */
+    public function getLists($where)
+    {
+        $menus = $this->where($where)->order('sort asc')->select();
+
+        return $menus;
+    }
     /**
      * 判断、读取下级菜单
      * @param  [type] $pid [description]

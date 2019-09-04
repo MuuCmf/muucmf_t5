@@ -353,13 +353,15 @@ class Module extends Model
             return false;
         }
         
-        if (file_exists(APP_PATH . '/' . $module['name'] . '/info/guide.json')) {
+        if (file_exists(APP_PATH . $module['name'] . DS . 'info' .DS. 'guide.json')) {
+
             //如果存在guide.json
-            $guide = file_get_contents(APP_PATH . '/' . $module['name'] . '/info/guide.json');
+            $guide = file_get_contents(APP_PATH . $module['name'] . DS . 'info' . DS . 'guide.json');
             $data = json_decode($guide, true);
 
             //导入菜单项,menu
             $menu = json_decode($data['menu'], true);
+            
             if (!empty($menu)) {
                 $this->cleanMenus($module['name']);
                 if ($this->addMenus($menu[0]) == true) {

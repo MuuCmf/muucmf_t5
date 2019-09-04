@@ -298,10 +298,19 @@ class Admin extends Controller
             if (!config('DEVELOP_MODE')) { // 是否开发者模式
                 $where['is_dev'] = 0;
             }
-            $menus = Db::name('Menu')->where($where)->order('sort asc')->select();
-
-
+            $menus = model('menu')->getLists($where);
+            $menus = collection($menus)->toArray();
+            
             foreach ($menus as $key=>&$item) {
+
+                if($item['module'] != '' || !empty($item['module'])){
+                    
+                    $module = model('common/Module')->getModule($item['module']);
+                    //模块配置文件图标写入后端导航菜单
+                    $item['icon'] = $module['icon'];
+                    //后端自定义入口写入后端导航菜单内
+                    $item['custom_admin'] = $module['custom_admin'];
+                }
 
                 $item['_child'] = [];
 
@@ -310,7 +319,7 @@ class Admin extends Controller
                     }
                     if(empty($item['module']) || $item['module'] == ''){
                         if (stripos($item['url'], request()->module()) !== 0) {
-                        $item['url'] = request()->module() . '/' . $item['url'];
+                            $item['url'] = request()->module() . '/' . $item['url'];
                         }
                     }
                     
@@ -376,6 +385,7 @@ class Admin extends Controller
                 }
                 unset($item);
             }
+
         return $menus;
     }
 
