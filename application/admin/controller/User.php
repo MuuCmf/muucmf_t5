@@ -72,7 +72,7 @@ class User extends Admin
 
 
         $map['status'] = array('egt', 0);
-        list($list,$page) = $this->lists('Member', $map, $order);
+        list($list,$page) = $this->commonLists('Member', $map, $order);
         $list_arr = $list->toArray()['data'];
         foreach($list_arr as $key=>$v){
             //初始化ext键，避免报错

@@ -29,7 +29,7 @@ class Role extends Admin
     {
         $map['status'] = array('egt', 0);
 
-        list($roleList,$page) = $this->lists('Role', $map, 'sort acs');
+        list($roleList,$page) = $this->commonLists('Role', $map, 'sort acs');
         
         $roleList = $roleList->toArray()['data'];
 

@@ -503,7 +503,7 @@ class Admin extends Controller
      * @return array|false
      * 返回数据集
      */
-    protected function lists($model, $where = [], $order = '', $base = ['status' => ['egt', 0]], $field = true)
+    public function commonLists($model, $where = [], $order = '', $base = ['status' => ['egt', 0]], $field = true)
     {
         $options = [];
         $REQUEST = (array)input('request.');

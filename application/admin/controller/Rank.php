@@ -170,7 +170,7 @@ class Rank extends Admin
             if ($nickname !== '')
                 $map['nickname'] = ['like', '%' . (string)$nickname . '%'];
         }
-        list($list,$page) = $this->lists('Member', $map);
+        list($list,$page) = $this->commonLists('Member', $map);
         $list = $list->toArray()['data'];
 
         int_to_string($list);

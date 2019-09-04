@@ -19,7 +19,7 @@ class Seo extends Admin
         }
         //$model = Db::name('SeoRule');
         //$ruleList = $model->where($map)->order('sort asc')->select();
-        list($ruleList,$page) = $this->lists('SeoRule', $map, 'sort asc');
+        list($ruleList,$page) = $this->commonLists('SeoRule', $map, 'sort asc');
         $page = $ruleList->render();
 
         $module = model('common/Module')->getAll();
@@ -62,7 +62,7 @@ class Seo extends Admin
         $map = array('status' => -1);
         //$model = Db::name('SeoRule');
         //$ruleList = Db::name('SeoRule')->where($map)->order('sort asc')->select();
-        list($ruleList,$page) = $this->lists('SeoRule', $map, 'sort asc');
+        list($ruleList,$page) = $this->commonLists('SeoRule', $map, 'sort asc');
         $page = $ruleList->render();
 
 

@@ -26,7 +26,7 @@ class Config extends Admin
             $map['name'] = array('like', '%' . (string)input('name') . '%');
         }
         // $map=
-        list($list,$page) = $this->lists('Config', $map, 'sort,id');
+        list($list,$page) = $this->commonLists('Config', $map, 'sort,id');
         // 记录当前列表页的cookie
         Cookie('__forward__', $_SERVER['REQUEST_URI']);
         $list = $list->toArray()['data'];

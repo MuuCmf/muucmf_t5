@@ -216,7 +216,7 @@ class Addons extends Admin
         $this->setTitle(lang('_HOOK_LIST_'));
         $map = $fields = ['id'=>['>',0]];
 
-        list($list,$page) = $this->lists('Hooks', $map, 'id desc', []);
+        list($list,$page) = $this->commonLists('Hooks', $map, 'id desc', []);
         $list = $list->toArray()['data'];
         int_to_string($list, ['type' => config('HOOKS_TYPE')]);
         // 记录当前列表页的cookie

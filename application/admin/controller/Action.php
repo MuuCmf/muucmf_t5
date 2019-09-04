@@ -31,7 +31,7 @@ class Action extends Admin {
         }
 
         $map['status']    =   array('gt', -1);
-        list($list,$page)   =   $this->lists('ActionLog', $map);
+        list($list,$page)   =   $this->commonLists('ActionLog', $map);
         
         $list = $list->toArray()['data'];
         int_to_string($list);
@@ -211,7 +211,7 @@ class Action extends Admin {
         //获取列表数据
         $Action = Db::name('Action')->where(['status' => ['gt', -1]]);
 
-        list($list,$page) = $this->lists($Action, $map);
+        list($list,$page) = $this->commonLists($Action, $map);
         
         $list = $list->toArray()['data'];
 
