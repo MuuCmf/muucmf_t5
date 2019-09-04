@@ -22,7 +22,6 @@ class Module extends Admin
 
     public function index()
     {
-
         $this->setTitle(lang('_MODULE_MANAGEMENT_'));
         $aType = input('type', 'installed', 'text');
         $this->assign('type', $aType);
@@ -96,7 +95,6 @@ class Module extends Admin
             //    }
 
             //}
-
 
             if ($this->moduleModel->save($module,['id'=>$module['id']]) == false) {
                 $this->error(lang('_EDIT_MODULE_FAILED_'));
@@ -224,7 +222,7 @@ class Module extends Admin
                 ->keyRadio('mode', lang('_INSTALLATION_MODE_'), '', array('install' => lang('_COVER_INSTALLATION_MODE_')));
                 //, 'repair' => lang('_FIX_MODE_')修复模式不会导入模块专用数据表，只导入菜单、权限、行为、行为限制
             if ($module['entry']) {
-                $_Link_ = Url('channel/index');
+                $_Link_ = url('channel/index');
                 $builder->keyBool('add_nav', lang('_ADD_NAVIGATION_'), lang('_INSTALL_AUTO_ADD_MENU_'));
             }
 

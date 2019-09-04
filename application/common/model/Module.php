@@ -442,7 +442,8 @@ class Module extends Model
             }
         }
         $module['is_setup'] = 1;
-        $module['auth_role']=input('post.auth_role','','text');
+        $module['auth_role'] = input('post.auth_role','','text');
+
         $rs = $this->save($module,['id'=>$module['id']]);
         if ($rs === false) {
             $this->error = lang('_MODULE_INFORMATION_MODIFICATION_FAILED_WITH_PERIOD_');
