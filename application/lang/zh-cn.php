@@ -122,7 +122,8 @@ return array(
     '_COMMENTS_PAGE_DISPLAY_COUNT_DESC'=>'每页默认展示的评论数量，超过则分页',
     '_BACKGROUND_GENERATION_'=>'后台生成',
     '_SUCCESS_SETTING_'=>'设置成功',
-
+    '_ERROR_404_2_' => '404，找不到您想要的页面。',
+    
     //admin_config
     '_LOADING_' => '正在载入 ',
     '_PICTURE_' => '图片 ',

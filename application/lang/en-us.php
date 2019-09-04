@@ -117,6 +117,7 @@ return array(
     '_SUCCESS_SORT_' =>' Sort of success',
     '_DISABLE_' => 'Disable',
     '_ENABLED_' => 'Enable',
+    '_ERROR_404_2_' =>' 404, can not find the page you want.',
 
     /*header*/
     '_TIP_BROWSER_DEPRECATED_1_' => ' You are using',
