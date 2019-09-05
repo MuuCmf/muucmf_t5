@@ -47,6 +47,18 @@ class Menu extends Model {
 
         return $menus;
     }
+
+    /**
+     * 获取一级菜单
+     *
+     * @return     <type>  ( description_of_the_return_value )
+     */
+    public function mainMenu()
+    {
+        $pid = '0';
+        $res =  $this->where(array('pid'=>(string)$pid))->select();
+        return $res;
+    }
     /**
      * 判断、读取下级菜单
      * @param  [type] $pid [description]

@@ -13,6 +13,15 @@ class Module extends Model
     protected $tokenFile = '/Info/token.ini';
     protected $moduleName = '';
 
+    /**
+     * 获取已安装模块分页列表
+     */
+    public function getListByPage($map,$order='create_time desc',$field='*',$r=20)
+    {
+        $list = $this->where($map)->order($order)->field($field)->paginate($r,false,['query'=>request()->param()]);
+        
+        return $list;
+    }
     /**获取全部的模块信息
      * @return array|mixed
      */
@@ -316,7 +325,8 @@ class Module extends Model
     }
 
 
-    /**检查某个模块是否已经是安装的状态
+    /**
+     * 检查某个模块是否已经是安装的状态
      * @param $name
      * @return bool
      */

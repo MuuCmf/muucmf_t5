@@ -20,7 +20,43 @@ class Module extends Admin
     }
 
     /**
-     * 模块列表首页
+     * 已安装模块使用列表（后台模块菜单底部，更多模块点击后进入）
+     */
+    public function lists()
+    {
+        $map['is_setup'] = 1;//已安装
+        $modules = model('Module')->getListByPage($map,'sort desc','*',20);
+
+        /*
+        foreach ($modules as $val) {
+            if (file_exists(APP_PATH . '/' . $val['name'] . '/info/info.php') && $subdir != '.' && $subdir != '..') {
+
+                $info = $this->getModule($subdir);
+                
+                if ($is_installed == 1 && $info['is_setup'] == 0) {
+                    continue;
+                }
+                $this->moduleName = $info['name'];
+                //如果icon图片存在
+                if(file_exists('/static/'. $subdir .'images/icon.png')){
+                    $info['icon_photo'] = '/static/'. $subdir .'images/icon.png';
+                }else{
+                    $info['icon_photo'] = '/static/admin/images/module_default_icon.png';
+                }
+                
+                $module[] = $info;
+            }
+        }
+
+        dump($modules);exit;
+        */
+        $this->assign('modules', $modules);
+
+        return $this->fetch();
+    }
+
+    /**
+     * 模块管理列表首页
      *
      * @return     <type>  ( description_of_the_return_value )
      */

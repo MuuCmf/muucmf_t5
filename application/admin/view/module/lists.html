@@ -7,25 +7,6 @@
 
     <div class="with-padding">
 
-        <div class="button-box tool-box clearfix">
-            <ul class="pull-left nav nav-primary nav-warning">
-                <li id="type_all"><a href="{:Url('Index',array('type'=>'all'))}">{:lang("_ALL_")}</a></li>
-                <li id="type_installed"><a href="{:Url('Index',array('type'=>'installed'))}">{:lang("_INSTALLED_")}</a></li>
-                <li id="type_uninstalled"><a href="{:Url('Index',array('type'=>'uninstalled'))}">{:lang("_NOT_INSTALLED_")}</a></li>
-                <li id="type_core"><a href="{:Url('Index',array('type'=>'core'))}">{:lang("_SYSTEM_MODULE_")}</a></li>
-                <script>
-                    $('#type_{$type}').addClass('active');
-                </script>
-            </ul>
-            <div class="pull-right">
-                <a href="{:url('Module/Index',array_merge($_GET,array('refresh'=>2)))}" class="btn btn-success"><i
-                        class="icon-level-up"></i>{:lang("_CHECK_FOR_UPDATES_IMMEDIATELY_")}</a>
-             &nbsp;<a
-                    href="{:url('Module/Index',array_merge($_GET,array('refresh'=>1)))}" class="btn btn-danger"><i class="icon-undo"></i>
-               {:lang("_RESET_ALL_MODULE_INFORMATION_IS_NOT_SYNCHRONIZED_TO_USE_")}</a>&nbsp;
-
-            </div>
-        </div>
         <section class="module-list cards clearfix">
             {volist name="modules" id="vo"}
                 <div class="col-lg-3 col-md-4">
@@ -87,7 +68,7 @@
                                         {else/}
                                             <a style="text-decoration: none" href="javascript:void(0)" data-role="update_btn"
                                                data-type="ajax"
-                                               data-url="{:Url('Cloud/getVersionList',array('token'=>$vo['token']))}"
+                                               data-url="{:url('Cloud/getVersionList',array('token'=>$vo['token']))}"
                                                data-toggle="modal" data-title={:lang("_A_NEW_VERSION_CAN_BE_UPDATED_WITH_DOUBLE_")}><span class=" label label-success ">{:lang("_THERE_IS_A_NEW_VERSION_")}{$vo.update_list.0.title}</span></a>
                                                 <script>$(function () {
                                                     $('[data-role="update_btn"]').tooltip('show');

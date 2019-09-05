@@ -70,7 +70,6 @@ class User extends Admin
             $order = 'login desc';
         }
 
-
         $map['status'] = array('egt', 0);
         list($list,$page) = $this->commonLists('Member', $map, $order);
         $list_arr = $list->toArray()['data'];

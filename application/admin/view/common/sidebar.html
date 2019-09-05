@@ -26,7 +26,6 @@
                       {notempty name="key"}
                       <li class="child-header"><i class="fa fa-chevron-down"></i> {$key}</li>
                       {/notempty}
-
                       {volist name="sub_menu" id="c_menu"}
                           <li>
                               <a href="{$c_menu.url|Url}" target="main_iframe">
@@ -86,7 +85,6 @@
 
               {/volist}
             </ul>
-            
         </li>
         {else /}
         <!--自定义后台入口-->
@@ -99,14 +97,23 @@
                 {/notempty}
                 <span>{$menu.title}</span>
                 <span class="pull-right-container">
-                  <i class="fa fa-cog pull-right"></i>
+                  <i class="fa fa-window-maximize pull-right"></i>
                 </span>
             </a>
         </li>
         {/eq}
         {/neq}
         {/volist}
-        
+        <!--更多模块-->
+        <li data-role="more">
+          <a href="{:url('admin/Module/lists')}" target="main_iframe">
+            <i class="fa fa-ellipsis-h"></i>
+            <span>更多模块</span>
+            <span class="pull-right-container">
+              
+            </span>
+          </a>
+        </li>
         <li class="header">插件管理</li>
         {volist name="__ADDONS_MENU__" id="menu"}
         <li>

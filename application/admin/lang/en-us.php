@@ -313,7 +313,6 @@
 '_FORBID_403_' =>' 403: no access',
 '_DISABLE_FAIL_' =>' Disable failed',
 '_CLASS_CONTROLLER_ERROR_PARAM_' =>' Controller class {:menus} attribute element configuration is incorrect',
-'_ERROR_404_2_' =>' 404, can not find the page you want.',
 '_INSURE_PLEASE_' =>' Please make sure you have finished all the questions.',
 '_UNZIP_START_' =>' > start extracting file......',
 '_FAIL_UNZIP_' =>' > extract failure.',

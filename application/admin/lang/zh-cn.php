@@ -351,7 +351,6 @@ return array(
     '_FORBID_403_' => '403:禁止访问',
     '_DISABLE_FAIL_' => '禁用失败',
     '_CLASS_CONTROLLER_ERROR_PARAM_' => '控制器基类{:menus}属性元素配置有误',
-    '_ERROR_404_2_' => '404，找不到您想要的页面。',
     '_INSURE_PLEASE_' => '请确保已经答完所有题目了',
 
     //    cloud
