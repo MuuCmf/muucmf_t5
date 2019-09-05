@@ -25,31 +25,21 @@ class Module extends Admin
     public function lists()
     {
         $map['is_setup'] = 1;//已安装
+        $map['is_com'] = 1; //是否商业模块
         $modules = model('Module')->getListByPage($map,'sort desc','*',20);
 
-        /*
-        foreach ($modules as $val) {
-            if (file_exists(APP_PATH . '/' . $val['name'] . '/info/info.php') && $subdir != '.' && $subdir != '..') {
-
-                $info = $this->getModule($subdir);
-                
-                if ($is_installed == 1 && $info['is_setup'] == 0) {
-                    continue;
-                }
-                $this->moduleName = $info['name'];
-                //如果icon图片存在
-                if(file_exists('/static/'. $subdir .'images/icon.png')){
-                    $info['icon_photo'] = '/static/'. $subdir .'images/icon.png';
-                }else{
-                    $info['icon_photo'] = '/static/admin/images/module_default_icon.png';
-                }
-                
-                $module[] = $info;
+        foreach ($modules as &$val) {
+            
+            //如果icon图片存在
+            if(file_exists('/static/'. $val['name'] .'/images/icon.png')){
+                $val['icon_photo'] = '/static/'. $subdir .'images/icon.png';
+            }else{
+                $val['icon_photo'] = '/static/admin/images/module_default_icon.png';
             }
+            
         }
+        unset($val);
 
-        dump($modules);exit;
-        */
         $this->assign('modules', $modules);
 
         return $this->fetch();

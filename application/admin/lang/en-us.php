@@ -544,6 +544,7 @@
 '_CHOOSE_THE_DATA_TABLE_TO_GENERATE_' =>' Select the data table to generate!',
 '_GENERATIVE_MODEL_SUCCESS_' =>' Model success!',
 '_MODULE_MANAGEMENT_' =>' Module management',
+'_MODULE_LISTS_' => 'Module lists',
 '_MODULE_NAME_CAN_NOT_BE_EMPTY_' =>' Module name can not be empty.',
 '_MODULE_CHINESE_NAME_CAN_NOT_BE_EMPTY_' =>' Module Chinese name can not be empty.',
 '_ICONS_CANT_BE_EMPTY_' =>' Icon can not be empty.',

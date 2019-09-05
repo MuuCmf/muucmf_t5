@@ -10,15 +10,15 @@
             <div class="col-xs-10">
                 <ul class="nav nav-secondary">
                     <li class="active"><a href="javascript:;">{:lang("_MANAGEMENT_BACKGROUND_AUTHORIZATION_")}</a></li>
-                    <li><a href="{:Url('AuthManager/accessUser',array('group_name'=>input('group_name') ,'group_id'=> input('group_id')))}">{:lang("_FRONT_DESK_ACCESS_AUTHORIZATION_")}</a></li>
-                    <li><a href="{:Url('AuthManager/user',array('group_name'=>input('group_name') ,'group_id'=> input('group_id')))}">{:lang("_MEMBER_DELEGATION_")}</a></li>
+                    <li><a href="{:url('AuthManager/accessUser',array('group_name'=>input('group_name') ,'group_id'=> input('group_id')))}">{:lang("_FRONT_DESK_ACCESS_AUTHORIZATION_")}</a></li>
+                    <li><a href="{:url('AuthManager/user',array('group_name'=>input('group_name') ,'group_id'=> input('group_id')))}">{:lang("_MEMBER_DELEGATION_")}</a></li>
 
                 </ul>
             </div>
             <div class="col-xs-2 text-right">
                 <select name="group" class="form-control">
                     {volist name="auth_group" id="vo"}
-                        <option value="{:Url('AuthManager/access',['group_id'=>$vo['id'],'group_name'=>$vo['title']])}" {eq name="vo['id']" value="$this_group['id']"}selected{/eq} >{$vo.title}</option>
+                        <option value="{:url('AuthManager/access',['group_id'=>$vo['id'],'group_name'=>$vo['title']])}" {eq name="vo['id']" value="$this_group['id']"}selected{/eq} >{$vo.title}</option>
                     {/volist}
                 </select>
             </div>
@@ -32,28 +32,25 @@
 					{volist name="node_list" id="node"}
 						<dl class="checkmod">
 							<dt class="hd">
-								<label class="checkbox">
-                                    <input class="auth_rules rules_all" type="checkbox" name="rules[]" value="<?php echo $main_rules[$node['url']] ?>" >
-                                    {$node.title}{:lang("_ADMINISTRATION_")}
-                                </label>
+								
+                                <input class="auth_rules rules_all" type="checkbox" id="<?php echo $main_rules[$node['url']] ?>" name="rules[]" value="<?php echo $main_rules[$node['url']] ?>" >
+                                <label for="<?php echo $main_rules[$node['url']] ?>">{$node.title}{:lang("_ADMINISTRATION_")}</label>
 							</dt>
 							<dd class="bd">
 								{present name="node['child']"}
 								{volist name="node['child']" id="child"}
                                     <div class="rule_check">
                                         <div>
-                                            <label class="checkbox">
-                                            <input class="auth_rules rules_row" type="checkbox" name="rules[]" value="<?php echo $auth_rules[$child['url']] ?>"/>{$child.title}
-                                            </label>
+                                            <input class="auth_rules rules_row" type="checkbox" id="<?php echo $auth_rules[$child['url']] ?>" name="rules[]" value="<?php echo $auth_rules[$child['url']] ?>"/>
+                                            <label for="<?php echo $auth_rules[$child['url']] ?>">{$child.title}</label>
                                         </div>
                                        {notempty name="child['operator']"}
                                            <span class="divsion">&nbsp;</span>
                                            <span class="child_row">
                                                 {volist name="child['operator']" id="op"}
-                                                   <label class="checkbox">
-                                                       <input class="auth_rules" type="checkbox" name="rules[]"
-                                                       value="<?php echo $auth_rules[$op['url']] ?>"/>{$op.title}
-                                                   </label>
+                                                   <input class="auth_rules" type="checkbox" id="<?php echo $auth_rules[$op['url']] ?>" name="rules[]"
+                                                   value="<?php echo $auth_rules[$op['url']] ?>"/>
+                                                   <label for="<?php echo $auth_rules[$op['url']] ?>">{$op.title}</label>
                                                 {/volist}
                                            </span>
                                         {/notempty}

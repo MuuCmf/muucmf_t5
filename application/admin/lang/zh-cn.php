@@ -605,6 +605,7 @@ return array(
 
 //    module
     '_MODULE_MANAGEMENT_' => '模块管理',
+    '_MODULE_LISTS_' => '模块列表',
     '_MODULE_NAME_CAN_NOT_BE_EMPTY_' => '模块名不能为空。',
     '_MODULE_CHINESE_NAME_CAN_NOT_BE_EMPTY_' => '模块中文名不能为空。',
     '_ICONS_CANT_BE_EMPTY_' => '图标不能为空。',
