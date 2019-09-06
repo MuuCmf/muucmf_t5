@@ -68,7 +68,7 @@ class Role extends Admin
         ->buttonEnable()
         ->buttonDisable()
         ->button(lang('_DELETE_'), array('class' => 'btn btn-danger ajax-post confirm', 'url' => Url('doSetStatus', array('status' => -1)), 'target-form' => 'ids', 'confirm-info' => "确认删除身份？删除后不可恢复！"))
-        ->buttonSort(Url('sort'));
+        ->buttonSort(url('sort'));
 
         $builder->keyId()
             ->keyText('title', lang('_ROLE_NAME_'))
@@ -530,78 +530,6 @@ class Role extends Admin
             $this->assign('this_role', ['id' => $aRoleId, 'avatar' => $avatar_id]);
             $this->assign('tab', 'avatar');
             return $this->fetch('avatar');
-        }
-    }
-
-    /**
-     * 身份默认头衔配置
-     */
-    public function configRank()
-    {
-        $aRoleId = input('id', 0, 'intval');
-        if (!$aRoleId) {
-            $this->error(lang('_PLEASE_CHOOSE_YOUR_IDENTITY_'));
-        }
-        $map = getRoleConfigMap('rank', $aRoleId);
-
-        if (request()->isPost()) {
-            $data['value'] = '';
-            if (isset($_POST['ranks'])) {
-                sort($_POST['ranks']);
-                $data['value'] = implode(',', array_unique($_POST['ranks']));
-            }
-            $aReason['reason'] = input('post.reason', '', 'text');
-            $data['data'] = json_encode($aReason, true);
-            if (Db::name('RoleConfig')->where($map)->find()) {
-                $result = Db::name('RoleConfig')->saveData($map, $data);
-            } else {
-                $data = array_merge($map, $data);
-                $result = Db::name('RoleConfig')->addData($data);
-            }
-            if ($result) {
-                $this->success(lang('_OPERATION_SUCCESS_'), Url('Admin/Role/configrank', array('id' => $aRoleId)));
-            } else {
-                $this->error(lang('_OPERATION_FAILED_') . Db::name('RoleConfig')->getError());
-            }
-        } else {
-
-            $mRole_list = $this->roleModel->field('id,title')->select();
-            $mRole_list = collection($mRole_list)->toArray();
-            $mRole_list = array_combine(array_column($mRole_list, 'id'), $mRole_list);
-
-            //获取默认配置值
-            $rank = Db::name('RoleConfig')->where($map)->field('value,data')->find();
-            if ($rank) {
-                $rank['data'] = json_decode($rank['data'], true);
-                if (!$rank['data']['reason']) {
-                    $rank['data']['reason'] = "{$mRole_list[$aRoleId]['title']}".lang('_TITLE_OWNED_DEFAULT_').lang('_EXCLAMATION_');
-                }
-            } else {
-                $rank['data']['reason'] = "{$mRole_list[$aRoleId]['title']}".lang('_TITLE_OWNED_DEFAULT_').lang('_EXCLAMATION_');
-                $rank['value'] = json_encode(array());
-            }
-
-            //获取头衔列表
-            $list = Db::name('Rank')->select();
-            $canApply = $unApply = array();
-            foreach ($list as $val) {
-                $val['name'] = query_user(array('nickname'), $val['uid']);
-                $val['name'] = $val['name']['nickname'];
-                if ($val['types']) {
-                    $canApply[] = $val;
-                } else {
-                    $unApply[] = $val;
-                }
-            }
-            unset($val);
-            
-            $this->assign('can_apply', $canApply);
-            $this->assign('un_apply', $unApply);
-            $this->assign('reason', $rank['data']['reason']);
-            $this->assign('role_list', $mRole_list);
-            $this->assign('this_role', array('id' => $aRoleId, 'ranks' => $rank['value']));
-            $this->assign('tab', 'rank');
-            return $this->fetch('rank');
         }
     }
 
