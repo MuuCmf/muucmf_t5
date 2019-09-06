@@ -74,7 +74,8 @@ str;
             //登陆配置
             ->keyRadio('OPEN_QUICK_LOGIN',lang('_QUICK_LOGIN_'),lang('_BY_DEFAULT_AFTER_THE_USER_IS_LOGGED_IN_THE_USER_IS_LOGGED_IN_'), array(0 => lang('_OFF_'), 1 => lang('_OPEN_')))
             ->keyCheckBox('LOGIN_SWITCH', lang('_LOGIN_PROMPT_SWITCH_'), lang('_JUST_THE_TIP_OF_THE_LOGIN_BOX_'), array('username' => lang('_USER_NAME_'), 'email' => lang('_MAILBOX_'), 'mobile' => lang('_MOBILE_PHONE_')))
-            ->keyRadio('OPEN_WECHAT_AUTH',lang('_OPEN_WECHAT_AUTH_SWITCH_'),lang('_OPEN_WECHAT_AUTH_SWITCH_INFO_'),array(0 => lang('_OFF_'), 1 => lang('_OPEN_')))
+            /*
+            ->keyRadio('OPEN_WECHAT_AUTH',lang('_OPEN_WECHAT_AUTH_SWITCH_'),lang('_OPEN_WECHAT_AUTH_SWITCH_INFO_'),array(0 => lang('_OFF_'), 1 => lang('_OPEN_')))*/
             ->keyText('LOGIN_RETURN_URL','登陆成功后跳转回地址','留空返回请求页，仅支持url()函数写法，如：demo/index/lists')
             ->keyText('LOGIN_USER_TEMPLATE','登陆页模板','自定义的登陆页模板，如：login_custom')
 

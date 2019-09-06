@@ -39,7 +39,7 @@ class Module extends Admin
             
         }
         unset($val);
-
+        //dump($modules);
         $this->assign('modules', $modules);
 
         return $this->fetch();
