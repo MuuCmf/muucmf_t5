@@ -16,25 +16,25 @@ class Upload extends Model
      *
      * @return     <type>  ( description_of_the_return_value )
      */
-	public function upload($files, $type = "picture", $dirname = '', $uid = 0)
-	{
+    public function upload($files, $type = "picture", $dirname = '', $uid = 0)
+    {
 
-		if($type=='picture'){
-			$result = $this->picture($files, $dirname);
-		}
-		if($type=='file'){
-			$result = $this->file($files, $dirname);
-		}
+        if($type=='picture'){
+            $result = $this->picture($files, $dirname);
+        }
+        if($type=='file'){
+            $result = $this->file($files, $dirname);
+        }
         if($type=='avatar'){
             $result = $this->avatar($files, $dirname, $uid);
         }
-		if($type=='base64'){
-			$result = $this->base64($files, $dirname);
-		}
+        if($type=='base64'){
+            $result = $this->base64($files, $dirname);
+        }
 
-		return $result;
+        return $result;
 
-	}
+    }
 
     /**
      * 图片上传
@@ -43,15 +43,15 @@ class Upload extends Model
      *
      * @return     array|boolean  ( description_of_the_return_value )
      */
-	private function picture($files, $dirname)
-	{
-		
-		$config = config('upload.image');
-		foreach($files as $file){
-			if (empty($files)) {
-	            $this->error = $file->getError();
-	            return false;
-	        }
+    private function picture($files, $dirname)
+    {
+        
+        $config = config('upload.image');
+        foreach($files as $file){
+            if (empty($files)) {
+                $this->error = $file->getError();
+                return false;
+            }
             //判断是否已经存在
             $sha1 = $file->hash();
             //处理已存在图片
@@ -106,7 +106,7 @@ class Upload extends Model
             }
         }
         return $return['data'];
-	}
+    }
 
     /**
      * 文件上传
@@ -121,9 +121,9 @@ class Upload extends Model
         
         foreach($files as $file){
             if (empty($files)) {
-	            $this->error = $file->getError();
-	            return false;
-	        }
+                $this->error = $file->getError();
+                return false;
+            }
             //判断是否已经存在附件
             $sha1 = $file->hash();
             //处理已存在文件
@@ -200,6 +200,8 @@ class Upload extends Model
     private function Avatar($files, $dirname, $uid)
     {
         $config = config('upload.avatar');
+
+        $return = [];
         foreach($files as $file){
             if (empty($files)) {
                 $this->error = $file->getError();
@@ -259,11 +261,11 @@ class Upload extends Model
 
             if($id){
                 $data['id'] = $id;
-                $return['data'][] = $data;  
+                $return[] = $data;  
             }
         }
 
-        return $return['data'];
+        return $return;
     }
 
     /**
@@ -315,7 +317,7 @@ class Upload extends Model
             if($driver == 'local'){
                 //本地上传
                 if(!file_exists('.' . $savePath)){
-                	mkdir('.' . $savePath, 0777, true);
+                    mkdir('.' . $savePath, 0777, true);
                 }
                 
                 $data = base64_decode($base64_body);
@@ -343,7 +345,7 @@ class Upload extends Model
                 $pic['create_time'] = time();
                 $id = Db::name('picture')->insertGetId($pic);
 
-               	return ['id' => $id, 'path' => get_pic_src($path)];
+                return ['id' => $id, 'path' => get_pic_src($path)];
             } else {
                 return false;
             }

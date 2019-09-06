@@ -22,13 +22,14 @@
     <!--用户设置顶部end-->
     <div id="main-container" class="container user-config">
         <div class="row">
-            <div class=" col-md-3">
+            <div class="col-md-3">
                 <div>
                     <nav class="menu" data-ride="menu">
                         <ul id="treeMenu" class="tree tree-menu side-menu" data-ride="tree">
-                            <li id="info"><a href="{:Url('index')}"><i class="icon-th"></i>
+                            <li id="info"><a href="{:url('index')}"><i class="icon-th"></i>
                                 {:lang('_SETTINGS_DATA_')}</a></li>
-                            <li id="tag"><a href="{:url('tag')}"><i class="icon-tag"></i> {:lang('_USER_TAG_')}</a></li>
+
+                            <!--<li id="tag"><a href="{:url('tag')}"><i class="icon-tag"></i> {:lang('_USER_TAG_')}</a></li>-->
                             <li id="avatar"><a href="{:url('avatar')}"><i class="icon-user"></i>
                                 {:lang('_AVATAR_MODIFY_')}</a></li>
                             <li id="password">
@@ -117,7 +118,9 @@
         })
     })
 </script>
-{block name="script"}{/block}
+{block name="script"}
+
+{/block}
 <!-- 调用消息部件-->
 {:widget('common/Message/render')}
 </body>
