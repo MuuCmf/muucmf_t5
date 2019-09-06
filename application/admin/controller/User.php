@@ -206,30 +206,33 @@ class User extends Admin
     {   
         
         if (request()->isPost()) {
-            /* 修改积分 */
+            
             $data = input('post.');
             $uid = $data['id'];
+            /* 修改积分 */
             foreach ($data as $key => $val) {
                 if (substr($key, 0, 5) == 'score') {
                     $data_score[$key] = $val;
                 }
             }
-            unset($key, $val);
-            $res = Db::name('Member')->where(array('uid' => $data['id']))->update($data_score);
+            
+            $res_score = Db::name('Member')->where(['uid' => $uid])->update($data_score);
+            
             foreach ($data_score as $key => $val) {
-                $value = query_user(array($key), $data['id']);
+                $value = query_user(array($key), $uid);
                 if ($val == $value[$key]) {
                     continue;
                 }
+                //写积分变化日志
                 model('ucenter/Score')->addScoreLog($data['id'], cut_str('score', $key, 'l'), 'to', $val, '', 0, get_nickname(is_login()) . lang('_BACKGROUND_ADJUSTMENT_'));
+                //清理用户积分缓存
                 model('ucenter/Score')->cleanUserCache($data['id'], cut_str('score', $key, 'l'));
             }
-            unset($key, $val);
-            $rs_score = true;
             /* 修改积分 end*/
 
             /*用户组设置*/
-            model('AuthGroup')->addToGroup($data['id'], $data['auth_group']);
+            //如果设置了默认积分会新增积分
+            model('AuthGroup')->addToGroup($uid, $data['auth_group']);
             /*用户组END*/
 
             /*身份设置*/
@@ -243,16 +246,17 @@ class User extends Admin
             
             //基础设置 大蒙
             $map['uid'] = $uid;
-            $aNickname = input('post.nickname', '', 'text');
+            $aNickname = $data['nickname'];
             $this->checkNickname($aNickname, $uid);
             $user['nickname'] = $aNickname;
+
             $rs_member = Db::name('Member')->where($map)->update($user);
 
             //用户名、邮箱、手机变成可编辑内容
-            $aUsername=input('post.username','','text');
-            $aEmail=input('post.email','','text');
-            $aMobile=input('post.mobile','','text');
-            if($aUsername==''&&$aEmail==''&&$aMobile==''){
+            $aUsername = $data['username'];
+            $aEmail = $data['email'];
+            $aMobile = $data['mobile'];
+            if($aUsername ==''&&$aEmail==''&&$aMobile==''){
                 $this->error('用户名、邮箱、手机号，至少填写一项！');
             }
             if($aEmail!=''){
@@ -265,10 +269,17 @@ class User extends Admin
                     $this->error('请正确填写手机号！');
                 }
             }
-            $ucenterMemberData=array('id'=>$uid,'username'=>$aUsername,'email'=>$aEmail,'mobile'=>$aMobile);
+            $ucenterMemberData = [
+                'id' => $uid,
+                'username' => $aUsername,
+                'email' => $aEmail,
+                'mobile' => $aMobile
+            ];
+
             $rs_register = Db::name('UcenterMember')->update($ucenterMemberData);
             //用户名、邮箱、手机变成可编辑内容end
 
+            //清理用户缓存
             clean_query_user_cache($uid, 'expand_info');
             if ($rs_member || $rs_register || $rs_role || $is_success) {
                 $this->success(lang('_SUCCESS_SAVE_').lang('_EXCLAMATION_'));

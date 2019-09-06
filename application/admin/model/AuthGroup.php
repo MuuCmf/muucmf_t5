@@ -61,31 +61,30 @@ class AuthGroup extends Model {
      * 把用户添加到用户组,支持批量添加用户到用户组
      * 示例: 把uid=1的用户添加到group_id为1,2的组 `AuthGroupModel->addToGroup(1,'1,2');`
      */
-    public function addToGroup($uid=0,$group_id=''){
+    public function addToGroup($uid = 0,$group_id = ''){
 
         if($uid && $group_id){
             $uid = is_array($uid)?implode(',',$uid):trim($uid,',');
             $group_id = is_array($group_id)?$group_id:explode( ',',trim($group_id,',') );
 
             $Access = Db::name(self::AUTH_GROUP_ACCESS);
-            //if( isset($_REQUEST['batch']) ){
-                //为单个用户批量添加用户组时,先删除旧数据
-                $del = $Access->where(['uid'=>['in',$uid]])->delete();
-            //}
-
+            
+            //为单个用户批量添加用户组时,先删除旧数据
+            $del = $Access->where(['uid'=>['in',$uid]])->delete();
+            
             $uid_arr = explode(',',$uid);
             
             $add = [];
-            //if( $del!==false ){
-                foreach ($uid_arr as $u){
-                    foreach ($group_id as $g){
-                        if( is_numeric($u) && is_numeric($g) ){
-                            $add[] = ['group_id'=>$g,'uid'=>$u];
-                        }
+
+            foreach ($uid_arr as $u){
+                foreach ($group_id as $g){
+                    if( is_numeric($u) && is_numeric($g) ){
+                        $add[] = ['group_id'=>$g,'uid'=>$u];
                     }
                 }
-                $res = $Access->insertAll($add);
-            //}
+            }
+            $res = $Access->insertAll($add);
+
         }else{
             return false;
         }
