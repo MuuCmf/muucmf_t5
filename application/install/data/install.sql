@@ -457,15 +457,7 @@ INSERT INTO `muucmf_auth_rule` (`id`, `module`, `type`, `name`, `title`, `status
 (225, 'admin', 1, 'Admin/SEO/sortRule', '排序', 1, ''),
 (226, 'admin', 1, 'Admin/SEO/index', 'SEO规则管理', 1, ''),
 (230, 'admin', 1, 'Admin/SEO/ruleTrash', 'SEO规则回收站', 1, ''),
-(231, 'admin', 1, 'Admin/Rank/userList', '查看用户', 1, ''),
-(232, 'admin', 1, 'Admin/Rank/userRankList', '用户头衔列表', 1, ''),
-(233, 'admin', 1, 'Admin/Rank/userAddRank', '关联新头衔', 1, ''),
-(234, 'admin', 1, 'Admin/Rank/userChangeRank', '编辑头衔关联', 1, ''),
-(239, 'admin', 1, 'Admin/Rank/index', '头衔列表', 1, ''),
-(242, 'admin', 1, 'Admin/Rank/editRank', '添加头衔', 1, ''),
-
 (251, 'admin', 2, 'Admin/SEO/index', 'SEO', -1, ''),
-(252, 'admin', 2, 'Admin/Rank/index', '头衔', -1, ''),
 (255, 'admin', 1, 'Admin/User/profile', '扩展资料', 1, ''),
 (256, 'admin', 1, 'Admin/User/editProfile', '添加、编辑分组', 1, ''),
 (257, 'admin', 1, 'Admin/User/sortProfile', '分组排序', 1, ''),
@@ -475,10 +467,6 @@ INSERT INTO `muucmf_auth_rule` (`id`, `module`, `type`, `name`, `title`, `status
 (261, 'admin', 1, 'Admin/Update/quick', '全部补丁', 1, ''),
 (262, 'admin', 1, 'Admin/Update/addpack', '新增补丁', 1, ''),
 (264, 'admin', 1, 'Admin/User/expandinfo_details', '扩展资料详情', 1, ''),
-
-(278, 'admin', 1, 'Admin/Rank/rankVerify', '待审核用户头衔', 1, ''),
-(279, 'admin', 1, 'Admin/Rank/rankVerifyFailure', '被驳回的头衔申请', 1, ''),
-
 (297, 'Home', 1, 'deleteLocalComment', '删除本地评论', 1, ''),
 (313, 'admin', 1, 'Admin/module/install', '模块安装', 1, ''),
 (315, 'admin', 1, 'Admin/module/lists', '模块管理', 1, ''),
@@ -505,7 +493,6 @@ INSERT INTO `muucmf_auth_rule` (`id`, `module`, `type`, `name`, `title`, `status
 (359, 'admin', 1, 'Admin/Role/configScore', '默认积分配置', 1, ''),
 (360, 'admin', 1, 'Admin/Role/configAuth', '默认权限配置', 1, ''),
 (361, 'admin', 1, 'Admin/Role/configAvatar', '默认头像配置', 1, ''),
-(362, 'admin', 1, 'Admin/Role/configRank', '默认头衔配置', 1, ''),
 (363, 'admin', 1, 'Admin/Role/configField', '默认字段管理', 1, ''),
 (364, 'admin', 1, 'Admin/Role/group', '角色分组', 1, ''),
 (365, 'admin', 1, 'Admin/Role/editGroup', '编辑分组', 1, ''),
@@ -4543,24 +4530,16 @@ INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `type`, 
 ('30', '删除权限节点', '12', 0, 'AuthManager/deleteNode', 1, 0, '', '', 0, '', ''),
 ('31', '行为日志', '113', 4, 'Action/actionlog', 0, 0, '', '行为管理', 0, '', ''),
 ('32', '查看行为日志', '31', 0, 'action/edit', 1, 0, '', '', 0, '', ''),
-('35', '查看用户', '197', 1, 'Rank/userList', 0, 0, '', '头衔管理', 0, '', ''),
-('36', '用户头衔列表', '35', 0, 'Rank/userRankList', 1, 0, '', '', 0, '', ''),
-('37', '关联新头衔', '35', 0, 'Rank/userAddRank', 1, 0, '', '', 0, '', ''),
-('38', '编辑头衔关联', '35', 0, 'Rank/userChangeRank', 1, 0, '', '', 0, '', ''),
 ('39', '扩展资料', '2', 6, 'User/profile', 0, 0, '', '身份管理', 0, '', ''),
 ('40', '添加、编辑分组', '39', 0, 'Admin/User/editProfile', 0, 0, '', '', 0, '', ''),
 ('41', '分组排序', '39', 0, 'Admin/User/sortProfile', 0, 0, '', '', 0, '', ''),
 ('42', '字段列表', '39', 0, 'Admin/User/field', 0, 0, '', '', 0, '', ''),
 ('43', '添加、编辑字段', '39', 0, 'Admin/User/editFieldSetting', 0, 0, '', '', 0, '', ''),
 ('44', '字段排序', '39', 0, 'Admin/User/sortField', 0, 0, '', '', 0, '', ''),
-('47', '待审核用户头衔', '197', 2, 'Rank/rankVerify', 0, 0, '', '头衔管理', 0, '', ''),
-('48', '被驳回的头衔申请', '197', 3, 'Rank/rankVerifyFailure', 0, 0, '', '头衔管理', 0, '', ''),
 ('50', '用户注册配置', '2', 1, 'UserConfig/index', 0, 0, '', '注册配置', 0, '', ''),
 ('51', '积分类型列表', '113', 1, 'User/scoreList', 0, 0, '', '积分管理', 0, '', ''),
 ('52', '新增/编辑类型', '113', 2, 'User/editScoreType', 1, 0, '', '行为管理', 0, '', ''),
 ('53', '充值积分', '113', 5, 'User/recharge', 1, 0, '', '', 0, '用户管理', ''),
-('54', '头衔列表', '197', 6, 'Rank/index', 0, 0, '', '头衔管理', 0, '', ''),
-('55', '添加头衔', '54', 2, 'Rank/editRank', 1, 0, '', '头衔管理', 0, '', ''),
 ('57', '插件管理', '105', 4, 'Addons/index', 0, 0, '', '本地', 0, '', ''),
 ('58', '钩子管理', '57', 2, 'Addons/hooks', 0, 0, '', '本地', 0, '', ''),
 ('59', '创建', '57', 0, 'Addons/create', 0, 0, '服务器上创建插件结构向导', '', 0, '', ''),
@@ -4619,7 +4598,6 @@ INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `type`, 
 ('121', '默认积分配置', '117', 0, 'Role/configScore', 1, 0, '', '', 0, '', ''),
 ('122', '默认权限配置', '117', 0, 'Role/configAuth', 1, 0, '', '', 0, '', ''),
 ('123', '默认头像配置', '117', 0, 'Role/configAvatar', 1, 0, '', '', 0, '', ''),
-('124', '默认头衔配置', '117', 0, 'Role/configRank', 1, 0, '', '', 0, '', ''),
 ('125', '默认字段管理', '117', 0, 'Role/configField', 1, 0, '', '', 0, '', ''),
 ('126', '身份分组', '2', 5, 'Role/group', 0, 0, '', '身份管理', 0, '', ''),
 ('127', '编辑分组', '126', 0, 'Role/editGroup', 1, 0, '', '', 0, '', ''),
@@ -4651,7 +4629,6 @@ INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `type`, 
 ('198', '群发消息用户列表', '197', 4, 'message/userList', 0, 0, '', '群发消息', 0, '', ''),
 ('201', '重置用户密码', '3', 0, 'User/initpass', 1, 0, '', '', 0, '', ''),
 ('10453', '公告编辑', '10311', 0, 'announce/edit', 0, 0, '', '公告管理', 0, '', ''),
-('217', '用户头衔审核', '47', 2, 'Rank/setVerifyStatus', 1, 0, '', '头衔管理', 0, '', ''),
 ('218', '获取扩展升级列表', '106', 0, 'Cloud/getVersionList', 1, 0, '', '', 0, '', ''),
 ('225', '广告位', '197', 0, 'Adv/pos', 0, 0, '', '广告配置', 0, '', ''),
 ('226', '广告管理', '225', 0, 'Adv/adv', 0, 0, '', '', 0, '', ''),
@@ -4775,32 +4752,6 @@ CREATE TABLE IF NOT EXISTS `muucmf_picture` (
   `create_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
-DROP TABLE IF EXISTS `muucmf_rank`;
-CREATE TABLE IF NOT EXISTS `muucmf_rank` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `uid` int(11) NOT NULL COMMENT '上传者id',
-  `title` varchar(50) NOT NULL,
-  `logo` int(11) NOT NULL,
-  `create_time` int(11) NOT NULL,
-  `types` tinyint(2) NOT NULL DEFAULT '1' COMMENT '前台是否可申请',
-  `label_content` varchar(10) NOT NULL COMMENT '文字头衔内容',
-  `label_color` varchar(10) NOT NULL COMMENT '文字颜色',
-  `label_bg` varchar(10) NOT NULL COMMENT 'label背景色',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
-
-DROP TABLE IF EXISTS `muucmf_rank_user`;
-CREATE TABLE IF NOT EXISTS `muucmf_rank_user` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `uid` int(11) NOT NULL,
-  `rank_id` int(11) NOT NULL,
-  `reason` varchar(255) NOT NULL,
-  `is_show` tinyint(4) NOT NULL COMMENT '是否显示在昵称右侧（必须有图片才可）',
-  `create_time` int(11) NOT NULL,
-  `status` tinyint(2) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
 DROP TABLE IF EXISTS `muucmf_role`;
 CREATE TABLE IF NOT EXISTS `muucmf_role` (
