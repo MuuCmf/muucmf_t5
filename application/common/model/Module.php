@@ -46,12 +46,12 @@ class Module extends Model
                 $this->moduleName = $info['name'];
                 //如果icon图片存在
                 //图标所在位置为模块静态目录跟下（推荐）
-                if(file_exists(PUBLIC_PATH . '/static/' . $val['name'] . '/images/icon.png')){
-                    $val['icon_photo'] = '/static/'. $val['name'] .'/images/icon.png';
-                }elseif(file_exists(PUBLIC_PATH . '/static/' . $val['name'] . '/icon.png')){
-                    $val['icon_photo'] = '/static/'. $val['name'] .'/icon.png';
+                if(file_exists(PUBLIC_PATH . '/static/' . $info['name'] . '/images/icon.png')){
+                    $info['icon_photo'] = '/static/'. $info['name'] .'/images/icon.png';
+                }elseif(file_exists(PUBLIC_PATH . '/static/' . $info['name'] . '/icon.png')){
+                    $info['icon_photo'] = '/static/'. $info['name'] .'/icon.png';
                 }else{
-                    $val['icon_photo'] = '/static/admin/images/module_default_icon.png';
+                    $info['icon_photo'] = '/static/admin/images/module_default_icon.png';
                 }
                 
                 $module[] = $info;
