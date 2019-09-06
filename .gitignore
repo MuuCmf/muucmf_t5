@@ -62,6 +62,7 @@ package-lock.json
 /runtime/*
 /.hatccess
 /data/*
+!/data/schedule
 /*.lock
 !.gitkeep
 public/schedule_1.txt
