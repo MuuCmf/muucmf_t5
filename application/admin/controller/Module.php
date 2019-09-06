@@ -29,17 +29,16 @@ class Module extends Admin
         $modules = model('Module')->getListByPage($map,'sort desc','*',20);
 
         foreach ($modules as &$val) {
-            
             //如果icon图片存在
-            if(file_exists('/static/'. $val['name'] .'/images/icon.png')){
-                $val['icon_photo'] = '/static/'. $subdir .'images/icon.png';
+            if(file_exists(PUBLIC_PATH . '/static/' . $val['name'] . '/images/icon.png')){
+                $val['icon_photo'] = '/static/'. $val['name'] .'/images/icon.png';
+            }elseif(file_exists(PUBLIC_PATH . '/static/' . $val['name'] . '/icon.png')){
+                $val['icon_photo'] = '/static/'. $val['name'] .'/icon.png';
             }else{
                 $val['icon_photo'] = '/static/admin/images/module_default_icon.png';
             }
-            
         }
         unset($val);
-        //dump($modules);
         $this->assign('modules', $modules);
 
         return $this->fetch();
