@@ -19,7 +19,19 @@ class Module extends Model
     public function getListByPage($map,$order='create_time desc',$field='*',$r=20)
     {
         $list = $this->where($map)->order($order)->field($field)->paginate($r,false,['query'=>request()->param()]);
-        
+
+        foreach ($list as &$val) {
+            //如果icon图片存在
+            if(file_exists(PUBLIC_PATH . '/static/' . $val['name'] . '/images/icon.png')){
+                $val['icon_photo'] = '/static/'. $val['name'] .'/images/icon.png';
+            }elseif(file_exists(PUBLIC_PATH . '/static/' . $val['name'] . '/icon.png')){
+                $val['icon_photo'] = '/static/'. $val['name'] .'/icon.png';
+            }else{
+                $val['icon_photo'] = '/static/admin/images/module_default_icon.png';
+            }
+        }
+        unset($val);
+
         return $list;
     }
     /**获取全部的模块信息
@@ -61,6 +73,13 @@ class Module extends Model
         return $module;
     }
 
+    /**
+     * 获取application目录下模块
+     *
+     * @param      <type>  $dir    The dir
+     *
+     * @return     <type>  The dir.
+     */
     public function getDir($dir) {
         $dirArray[]=NULL;
         if (false != ($handle = opendir ( $dir ))) {

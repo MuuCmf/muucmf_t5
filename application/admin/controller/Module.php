@@ -26,19 +26,10 @@ class Module extends Admin
     {
         $map['is_setup'] = 1;//已安装
         $map['is_com'] = 1; //是否商业模块
-        $modules = model('Module')->getListByPage($map,'sort desc','*',20);
+        $modules = model('Module')->getListByPage($map,'sort desc,id desc','*',20);
+        $page = $modules->render();
 
-        foreach ($modules as &$val) {
-            //如果icon图片存在
-            if(file_exists(PUBLIC_PATH . '/static/' . $val['name'] . '/images/icon.png')){
-                $val['icon_photo'] = '/static/'. $val['name'] .'/images/icon.png';
-            }elseif(file_exists(PUBLIC_PATH . '/static/' . $val['name'] . '/icon.png')){
-                $val['icon_photo'] = '/static/'. $val['name'] .'/icon.png';
-            }else{
-                $val['icon_photo'] = '/static/admin/images/module_default_icon.png';
-            }
-        }
-        unset($val);
+        $this->assign('page', $page);
         $this->assign('modules', $modules);
 
         return $this->fetch();
@@ -65,97 +56,32 @@ class Module extends Admin
             model('Module')->cleanModulesCache();
         }
         /*刷新模块列表时清空缓存 end*/
+        switch($aType){
 
-        //$modules = cache('admin_modules');
-        //if ($modules === false) {
-            $modules = model('Module')->getAll();
-            //cache('admin_modules', $modules);
-        //}
+            case 'all':
+                $map = [];
+            break;
 
-        foreach ($modules as $key => $m) {
-            switch ($aType) {
-                case 'all':
-                    break;
-                case 'installed':
-                    if(!empty($m['can_uninstall'])){
-                        if ($m['can_uninstall'] && $m['is_setup']) {
-                        } else unset($modules[$key]);
-                    }
-                    break;
-                case 'uninstalled':
-                    if ($m['can_uninstall'] && $m['is_setup'] == 0) {
-                    } else unset($modules[$key]);
-                    break;
-                case 'core':
-                    if ($m['can_uninstall'] == 0) {
-                    } else unset($modules[$key]);
-                    break;
-            }
-        }
-        unset($m);
+            case 'installed':
+                $map['is_setup'] = 1;
+            break;
+
+            case 'uninstalled':
+                $map['is_setup'] = 0;
+            break;
+
+            case 'core':
+                $map['can_uninstall'] = 0;
+            break;
+        };
+
+        $modules = model('Module')->getListByPage($map,'sort desc,id desc','*',20);
+        $page = $modules->render();
+        
+        $this->assign('page', $page);
         $this->assign('modules', $modules);
+
         return $this->fetch();
-    }
-
-    /**
-     * 编辑模块
-     */
-    public function edit()
-    {
-        if (request()->isPost()) {
-            $aName = input('name', '', 'text');
-            $module['id'] = input('id', 0, 'intval');
-            $module['name'] = empty($aName) ? $this->error(lang('_MODULE_NAME_CAN_NOT_BE_EMPTY_')) : $aName;
-            $aAlias = input('alias', '', 'text');
-            $module['alias'] = empty($aAlias) ? $this->error(lang('_MODULE_CHINESE_NAME_CAN_NOT_BE_EMPTY_')) : $aAlias;
-            $aIcon = input('icon', '', 'text');
-            $module['icon'] = empty($aIcon) ? $this->error(lang('_ICONS_CANT_BE_EMPTY_')) : $aIcon;
-            $aSummary = input('summary', '', 'text');
-            $module['summary'] = empty($aSummary) ? $this->error(lang('_THE_INTRODUCTION_CAN_NOT_BE_EMPTY_')) : $aSummary;
-            
-            //$aToken=input('token','','text');
-            //$aToken=trim($aToken);
-
-            //if($aToken!=''){
-            //    if(model('common/Module')->setToken($module['name'],$aToken)){
-            //        $tokenStr=lang('_TOKEN_WRITE_SUCCESS_');
-            //    }else{
-            //        $tokenStr=lang('_TOKEN_WRITE_FAILURE_');
-            //    }
-
-            //}
-
-            if ($this->moduleModel->save($module,['id'=>$module['id']]) == false) {
-                $this->error(lang('_EDIT_MODULE_FAILED_'));
-            } else {
-                $this->moduleModel->cleanModuleCache($aName);
-                $this->moduleModel->cleanModulesCache();
-                $this->success(lang('_EDIT_MODULE_'),Url('module/index'));
-            }
-        } else {
-            $aName = input('name', '', 'text');
-            $module = $this->moduleModel->getModule($aName);
-            //$module['token']=model('common/Module')->getToken($module['name']);
-            $builder = new AdminConfigBuilder();
-            $builder->title(lang('_MODULE_EDIT_') . $module['alias']);
-            $builder
-                ->keyId()
-                ->keyReadOnly('name', lang('_MODULE_NAME_'))->keyText('alias', lang('_MODULE_CHINESE_NAME_'))
-                ->keyReadOnly('version', lang('_VERSION_'))
-                ->keyText('icon', lang('_ICON_'))
-                ->keyTextArea('summary', lang('_MODULE_INTRODUCTION_'))
-                ->keyReadOnly('developer', lang('_DEVELOPER_'))
-                ->keyText('entry', lang('_FRONT_ENTRANCE_'))
-                ->keyText('admin_entry', lang('_BACKGROUND_ENTRY_'));
-                //->keyText('token', lang('_MODULE_KEY_TOKEN_'),lang('_MODULE_KEY_TOKEN_VICE_'));
-
-            $builder
-            ->data($module)
-            ->buttonSubmit()
-            ->buttonBack()
-            ->display();
-        }
-
     }
 
     /**
