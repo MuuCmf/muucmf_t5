@@ -80,6 +80,49 @@ class Count extends Model
     }
 
     /**
+     * 每日执行活跃用户统计
+     */
+    public function activeCount()
+    {
+        $activeAction = config('COUNT_ACTIVE_ACTION');
+        if(!$activeAction){
+            $activeAction = 3;
+        }
+        $time = strtotime(time_format(time(),'Y-m-d'));
+
+        $day_data = $this->_dayActiveCount($activeAction,$time);
+        
+        $have = Db::name('CountActive')->where('date',$day_data['date'])->find();
+        if(!$have){
+            Db::name('CountActive')->insert($day_data);
+        }else{
+            Db::name('CountActive')->where('id',$have['id'])->update($day_data);
+        }
+        
+        if(date('w',$time) === '0'){
+            $week_data = $this->_weekActiveCount($activeAction,$time);
+            $have = Db::name('CountActive')->where('date',$week_data['date'])->find();
+            if(!$have){
+                Db::name('CountActive')->insert($week_data);
+            }else{
+                Db::name('CountActive')->where('id',$have['id'])->update($week_data);
+            }
+        }
+
+        $month_data = $this->_monthActiveCount($activeAction,$time);
+
+        $have = Db::name('CountActive')->where('date',$month_data['date'])->find();
+        if(!$have){
+            Db::name('CountActive')->insert($month_data);
+        }else{
+            Db::name('CountActive')->where('id',$have['id'])->update($month_data);
+        }
+
+
+        return true;
+    }
+
+    /**
      * @param null $date 统计日期
      * @param int $day 统计几日留存率（1~8）
      * @return bool
@@ -145,49 +188,6 @@ class Count extends Model
     }
 
     /**
-     * 每日执行活跃用户统计
-     */
-    public function activeCount()
-    {
-        $activeAction = config('COUNT_ACTIVE_ACTION');
-        if(!$activeAction){
-            $activeAction = 3;
-        }
-        $time = strtotime(time_format(time(),'Y-m-d'));
-        
-        $day_data = $this->_dayActiveCount($activeAction,$time);
-        
-        $have = Db::name('CountActive')->where('date',$day_data['date'])->find();
-        if(!$have){
-            Db::name('CountActive')->insert($day_data);
-        }else{
-            Db::name('CountActive')->where('id',$have['id'])->update($day_data);
-        }
-        
-        if(date('w',$time) === '0'){
-            $week_data = $this->_weekActiveCount($activeAction,$time);
-            $have = Db::name('CountActive')->where('date',$week_data['date'])->find();
-            if(!$have){
-                Db::name('CountActive')->insert($week_data);
-            }else{
-                Db::name('CountActive')->where('id',$have['id'])->update($week_data);
-            }
-        }
-
-        if($time === strtotime(time_format($time,'Y-m-01'))){
-            $month_data = $this->_monthActiveCount($activeAction,$time);
-            $have = Db::name('CountActive')->where('date',$month_data['date'])->find();
-            if(!$have){
-                Db::name('CountActive')->insert($month_data);
-            }else{
-                Db::name('CountActive')->where('id',$have['id'])->update($month_data);
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * 每日活跃度统计
      * @param $action
      * @param $today
@@ -232,7 +232,8 @@ class Count extends Model
      */
     private function _monthActiveCount($action,$today)
     {
-        $startTime=strtotime(time_format($today,'Y-m-d 00:00').' - 1 month');
+        $startTime = strtotime(date('Y-m-01 00:00:00',strtotime('-1 month')));
+
         $map['action_id'] = $action;
         $map['create_time'] = ['between',[$startTime,$today-1]];
         $users_num = Db::name('action_log')->where($map)->count();

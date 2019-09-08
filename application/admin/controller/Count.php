@@ -105,7 +105,7 @@ class Count extends Admin{
             return json($activeList);
 
         }else{
-            $aType=input('get.type','day','text');
+            $aType = input('get.type','day','text');
             switch($aType){
                 case 'week':
                     $startTime=strtotime(date('Y-m-d').' - '.date('w').' day - 91 day');
@@ -113,11 +113,11 @@ class Count extends Admin{
                 case 'month':
                     $startTime=strtotime(date('Y-m-01').' - 9 month');
                     break;
-                case 'day':
                 default:
                     $aType='day';
                     $startTime=strtotime(date('Y-m-d').' - 9 day');
             }
+            
             $this->assign('type',$aType);
             $options=array('startDate'=>time_format($startTime,"Y-m-d"),'endDate'=>time_format(time(),"Y-m-d"));
             $this->assign('options',$options);
