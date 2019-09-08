@@ -1,5 +1,13 @@
 {extend name="common/main"/}
 
+{block name="style"}
+<style>
+.box-tools {
+    padding:10px 0;
+}
+</style>
+{/block}
+
 {block name="body"}
     <div class="main-title">
         <h2>用户流失率</h2>
@@ -14,12 +22,13 @@
             </button>
         </div>
         <div class="box-body">
-            <table id="table-data" class="table table-bordered table-striped table-hover">
+            <table id="table-data" class="table table-bordered table-hover muu-table">
                 <!-- 表头 -->
                 <thead>
                 <tr>
-                    <th class="row-selected row-selected" style="width: 20px">
-                        <input class="check-all" type="checkbox">
+                    <th class="row-selected row-selected">
+                        <input class="checkbox check-all" id="check-all" type="checkbox">
+                        <label for="check-all"></label>
                     </th>
                     <th>日期</th>
                     <th>用户总数</th>
@@ -34,13 +43,28 @@
                 <tbody>
                 {volist name="lostList" id="oneLost"}
                     <tr>
-                        <td><input class="ids" type="checkbox" value="{$oneLost['id']}" name="ids[]"></td>
-                        <td style="width:auto;max-width: 150px;" class="text-ellipsis">{$oneLost['date']}</td>
-                        <td style="width:auto;max-width: 150px;" class="text-ellipsis">{$oneLost['user_num']}</td>
-                        <td style="width:auto;max-width: 150px;" class="text-ellipsis">{$oneLost['lost_num']}</td>
-                        <td style="width:auto;max-width: 150px;" class="text-ellipsis">{$oneLost['new_lost']}</td>
-                        <td style="width:auto;max-width: 150px;" class="text-ellipsis">{$oneLost['rate']}</td>
-                        <td style="width:auto;max-width: 150px;" class="text-ellipsis">{$oneLost['create_time']|time_format}</td>
+                        <td>
+                            <input class="ids" id="ids-{$oneLost['id']}" type="checkbox" value="{$oneLost['id']}" name="ids[]">
+                            <label for="ids-{$oneLost['id']}"></label>
+                        </td>
+                        <td class="text-ellipsis">
+                            {$oneLost['date']}
+                        </td>
+                        <td class="text-ellipsis">
+                            {$oneLost['user_num']}
+                        </td>
+                        <td class="text-ellipsis">
+                            {$oneLost['lost_num']}
+                        </td>
+                        <td class="text-ellipsis">
+                            {$oneLost['new_lost']}
+                        </td>
+                        <td class="text-ellipsis">
+                            {$oneLost['rate']}
+                        </td>
+                        <td class="text-ellipsis">
+                            {$oneLost['create_time']|time_format}
+                        </td>
                     </tr>
                 {/volist}
             </table>
@@ -84,8 +108,9 @@
     </div>
     <script>
         var before_lost_long="{$lost_long}";
+
         $('[data-role=saveCountSetting]').click(function () {
-            $.post("{:Url()}", {lost_long: $('[name=lost_long]').val()}, function (msg) {
+            $.post("{:url()}", {lost_long: $('[name=lost_long]').val()}, function (msg) {
                 if(msg.status!=1){
                     $('[name=lost_long]').val(before_lost_long);
                 }else{

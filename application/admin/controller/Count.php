@@ -91,17 +91,19 @@ class Count extends Admin{
             $aType=input('post.type','day','text');
             $aStartTime=input('post.startDate','','text');
             $aEndTime=input('post.endDate','','text');
-            if($aStartTime==''||$aEndTime==''){
+            if($aStartTime == ''||$aEndTime == ''){
                 $this->error('请选择时间段!');
             }
             $startTime=strtotime($aStartTime);
             $endTime=strtotime($aEndTime);
             if(!in_array($aType,array('week','month','day'))){
-                $aType='day';
+                $aType = 'day';
             }
-            $activeList=$this->countModel->getActiveList($startTime,$endTime,$aType);
+            $activeList = $this->countModel->getActiveList($startTime,$endTime,$aType);
             $activeList['status']=1;
+
             return json($activeList);
+
         }else{
             $aType=input('get.type','day','text');
             switch($aType){

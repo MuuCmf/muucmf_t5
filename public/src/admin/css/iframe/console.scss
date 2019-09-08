@@ -111,37 +111,57 @@
   float: left;
   line-height: 30px;
 }
-.remain .checkbox_block label {
-  margin-left: 5px;
-  line-height: 20px;
-  padding: 0 5px;
-  border-radius: 5px!important;
-  color: #fff;
+.remain .checkbox_block {
+
+  .day_label {
+    padding: 0 5px;
+    border-radius: 5px;
+    label {
+      color: #fff;
+    }
+  }
+
+  .day1_label {
+    background-color: #c3c3c3;
+    display: inline-block;
+  }
+
+  .day2_label {
+    background-color: #7e7dc3;
+    display: inline-block;
+  }
+
+  .day3_label {
+    background-color: #c37d7a;
+    display: inline-block;
+  }
+
+  .day4_label {
+    background-color: #65c356;
+    display: inline-block;
+  }
+
+  .day5_label {
+    background-color: #8a5ec3;
+    display: inline-block;
+  }
+
+  .day6_label {
+    background-color: #c33c38;
+    display: inline-block;
+  }
+
+  .day7_label {
+    background-color: #13c356;
+    display: inline-block;
+  }
+
+  .day8_label {
+    background-color: #c324c2;
+    display: inline-block;
+  }
 }
-.remain .checkbox_block .day1_label {
-  background-color: #c3c3c3;
-}
-.remain .checkbox_block .day2_label {
-  background-color: #7e7dc3;
-}
-.remain .checkbox_block .day3_label {
-  background-color: #c37d7a;
-}
-.remain .checkbox_block .day4_label {
-  background-color: #65c356;
-}
-.remain .checkbox_block .day5_label {
-  background-color: #8a5ec3;
-}
-.remain .checkbox_block .day6_label {
-  background-color: #c33c38;
-}
-.remain .checkbox_block .day7_label {
-  background-color: #13c356;
-}
-.remain .checkbox_block .day8_label {
-  background-color: #c324c2;
-}
+
 .remain .remain-table {
   width: 100%;
   text-align: center;

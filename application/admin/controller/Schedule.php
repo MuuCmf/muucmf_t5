@@ -80,7 +80,7 @@ class Schedule extends Admin
      */
     public function execute()
     {
-        $id = input('id');
+        $id = input('id',0,'intval');
         //获取该计划任务
         $schedule = model('common/Schedule')->getSchedule($id);
         //执行计划任务

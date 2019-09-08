@@ -9,10 +9,11 @@
     <script src="__ZUI__/lib/datetimepicker/datetimepicker.min.js"></script>
     
     <script>
+
         var startDate="{$options.startDate}",
-                endDate="{$options.endDate}";
+            endDate="{$options.endDate}";
         $(function(){
-            $('#reservation').daterangepicker({
+            $('#reservation').datetimepicker({
                 locale:{
                     applyLabel: '确定',
                     cancelLabel: '取消',
@@ -28,7 +29,7 @@
             });
             
             $('#reservation').on('apply.daterangepicker',function(ev, picker) {
-                $.post("{:Url()}", {startDate:picker.startDate.format('YYYY-MM-DD'),endDate:picker.endDate.format('YYYY-MM-DD')}, function (msg) {
+                $.post("{:url()}", {startDate:picker.startDate.format('YYYY-MM-DD'),endDate:picker.endDate.format('YYYY-MM-DD')}, function (msg) {
                     $('#remain_data').html(msg);
                     change_show_day();
                     if(msg.status==0){
@@ -38,6 +39,7 @@
             });
             $('[name="day_show[]"]').click(change_show_day);
         });
+
         var change_show_day=function(){
             $('.day').hide();
             var day=$('[name="day_show[]"]');
@@ -60,14 +62,46 @@
             <div class="box-header with-border">
                 <div class="box-tools pull-right">
                     <div class="checkbox_block">
-                        <label class="day1_label"><input type="checkbox" name="day_show[]" value="day1" checked/>次日</label>
-                        <label class="day2_label"><input type="checkbox" name="day_show[]" value="day2" checked/>2日</label>
-                        <label class="day3_label"><input type="checkbox" name="day_show[]" value="day3" checked/>3日</label>
-                        <label class="day4_label"><input type="checkbox" name="day_show[]" value="day4" checked/>4日</label>
-                        <label class="day5_label"><input type="checkbox" name="day_show[]" value="day5" checked/>5日</label>
-                        <label class="day6_label"><input type="checkbox" name="day_show[]" value="day6" checked/>6日</label>
-                        <label class="day7_label"><input type="checkbox" name="day_show[]" value="day7" checked/>7日</label>
-                        <label class="day8_label"><input type="checkbox" name="day_show[]" value="day8" checked/>8日</label>
+
+                        <div class="day_label day1_label">
+                            <input type="checkbox" id="day1_label" name="day_show[]" value="day1" checked/>
+                            <label for="day1_label" >次日</label>
+                        </div>
+                        
+                        <div class="day_label day2_label">
+                            <input type="checkbox" id="day2_label" name="day_show[]" value="day2" checked/>
+                            <label for="day2_label">2日</label>
+                        </div>
+                        
+                        <div class="day_label day3_label">
+                            <input type="checkbox" id="day3_label" name="day_show[]" value="day3" checked/>
+                            <label for="day3_label">3日</label>
+                        </div>
+                        
+                        <div class="day_label day4_label">
+                            <input type="checkbox" id="day4_label" name="day_show[]" value="day4" checked/>
+                            <label for="day4_label">4日</label>
+                        </div>
+                        
+                        <div class="day_label day5_label">
+                            <input type="checkbox" id="day5_label" name="day_show[]" value="day5" checked/>
+                            <label for="day5_label">5日</label>
+                        </div>
+                        
+                        <div class="day_label day6_label">
+                            <input type="checkbox" id="day6_label" name="day_show[]" value="day6" checked/>
+                            <label for="day6_label">6日</label>
+                        </div>
+                        
+                        <div class="day_label day7_label">
+                            <input type="checkbox" id="day7_label" name="day_show[]" value="day7" checked/>
+                            <label for="day7_label">7日</label>
+                        </div>
+                        
+                        <div class="day_label day8_label">
+                            <input type="checkbox" id="day8_label" name="day_show[]" value="day8" checked/>
+                            <label for="day8_label">8日</label>
+                        </div>
                     </div>
                 </div>
             </div>

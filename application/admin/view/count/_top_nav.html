@@ -1,14 +1,21 @@
-
-<div class="clearfix text-center button-box tool-box">
-    <ul id="myTab" class="nav nav-primary new-index-ul">
+<style>
+    .tool-box {
+        margin-bottom: 10px;
+    }
+    .tool-box li a {
+        background-color: #fff;
+    }
+</style>
+<div class="clearfix text-center tool-box">
+    <ul id="myTab" class="nav nav-primary">
         <li>
-            <a href="{:Url('Admin/Count/active')}" class="tab_active">活跃用户统计</a>
+            <a href="{:url('admin/Count/active')}" class="tab_active">活跃用户统计</a>
         </li>
         <li>
-            <a href="{:Url('Admin/Count/remain')}" class="tab_remain">留存率统计</a>
+            <a href="{:url('admin/Count/remain')}" class="tab_remain">留存率统计</a>
         </li>
         <li>
-            <a href="{:Url('Admin/Count/lost')}" class="tab_lost">流失率统计</a>
+            <a href="{:url('admin/Count/lost')}" class="tab_lost">流失率统计</a>
         </li>
     </ul>
 </div>
