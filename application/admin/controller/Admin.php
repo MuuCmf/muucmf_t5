@@ -51,8 +51,6 @@ class Admin extends Controller
         
         // 获取插件后台管理列表
         $addons_admin = model('admin/Addons')->getAdminList();
-        //获取本地版本
-        $version = $this->localVersion();
         //获取管理员数据
         $auth_user = query_user(['nickname','username','sex','avatar32','title','fans', 'following','signature'],is_login());
         
@@ -61,7 +59,7 @@ class Admin extends Controller
         $this->assign('__MANAGE_COULD__',$this->checkRule('admin/module/lists',array('in','1,2')));
         $this->assign('__MENU__', $this->getTreeMenus());
         $this->assign('__ADDONS_MENU__', $addons_admin );
-        $this->assign('version',$version);
+        $this->assign('version',$this->localVersion());
         $this->checkUpdate();
     }
 
@@ -586,11 +584,15 @@ class Admin extends Controller
     }
 
     /**
-     * 本地版本号
-     * @return [type] [description]
+     * 获取版本号
+     *
+     * @return     <type>  ( description_of_the_return_value )
      */
     private function localVersion()
-    {
-        return config('muucmf.version');
+    {   
+        $path = PUBLIC_PATH . '/../data/version.ini';
+        $version = file_get_contents($path);
+
+        return $version;
     }
 }

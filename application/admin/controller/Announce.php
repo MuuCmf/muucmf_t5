@@ -195,7 +195,7 @@ class Announce extends Admin{
     {
         if($announce_id!=0){
             $time=time();
-            $url = Url('Api/Announce/sendAnnounceMessage', array('announce_id' => $announce_id,'time' => $time, 'token' => md5($time . config('DATA_AUTH_KEY'))), true, true);
+            $url = url('Api/Announce/sendAnnounceMessage', array('announce_id' => $announce_id,'time' => $time, 'token' => md5($time . config('DATA_AUTH_KEY'))), true, true);
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_TIMEOUT, 1);  //设置过期时间为1秒，防止进程阻塞
