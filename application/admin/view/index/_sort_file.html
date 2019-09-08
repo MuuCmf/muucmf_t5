@@ -40,7 +40,7 @@
         </div>
         <div class="box-footer clearfix">
             <div class="btn-arrow-link pull-right">
-                <a href="{:Url('Count/active',array('type'=>'day'))}">查看更多</a>
+                <a href="{:url('Count/active',array('type'=>'day'))}">查看更多</a>
                 <i class="icon-arrow-right"></i>
             </div>
         </div>
@@ -63,7 +63,7 @@
         </div>
         <div class="box-footer clearfix">
             <div class="btn-arrow-link pull-right">
-                <a href="{:Url('action/actionlog')}">查看更多</a>
+                <a href="{:url('action/actionlog')}">查看更多</a>
                 <i class="icon-arrow-right"></i>
             </div>
         </div>
@@ -82,14 +82,38 @@
         <div class="box-body">
             <div class="actions">
                 <div class="checkbox_block">
-                    <label class="day1_label"><input type="checkbox" name="day_show[]" value="day1" checked/>次日</label>
-                    <label class="day2_label"><input type="checkbox" name="day_show[]" value="day2" checked/>2日</label>
-                    <label class="day3_label"><input type="checkbox" name="day_show[]" value="day3" checked/>3日</label>
-                    <label class="day4_label"><input type="checkbox" name="day_show[]" value="day4" checked/>4日</label>
-                    <label class="day5_label"><input type="checkbox" name="day_show[]" value="day5" checked/>5日</label>
-                    <label class="day6_label"><input type="checkbox" name="day_show[]" value="day6" checked/>6日</label>
-                    <label class="day7_label"><input type="checkbox" name="day_show[]" value="day7" checked/>7日</label>
-                    <label class="day8_label"><input type="checkbox" name="day_show[]" value="day8" checked/>8日</label>
+
+                    <div class="day_label day1_label">
+                        <label for="day1_label" >次日</label>
+                    </div>
+                    
+                    <div class="day_label day2_label">
+                        <label for="day2_label">2日</label>
+                    </div>
+                    
+                    <div class="day_label day3_label">
+                        <label for="day3_label">3日</label>
+                    </div>
+                    
+                    <div class="day_label day4_label">
+                        <label for="day4_label">4日</label>
+                    </div>
+                    
+                    <div class="day_label day5_label">
+                        <label for="day5_label">5日</label>
+                    </div>
+                    
+                    <div class="day_label day6_label">
+                        <label for="day6_label">6日</label>
+                    </div>
+                    
+                    <div class="day_label day7_label">
+                        <label for="day7_label">7日</label>
+                    </div>
+                    
+                    <div class="day_label day8_label">
+                        <label for="day8_label">8日</label>
+                    </div>
                 </div>
             </div>
             <table class="remain-table">
@@ -169,7 +193,7 @@
         </div>
         <div class="box-footer clearfix">
             <div class="btn-arrow-link pull-right">
-                <a href="{:Url('Count/active',array('type'=>'week'))}">查看更多</a>
+                <a href="{:url('Count/active',array('type'=>'week'))}">查看更多</a>
                 <i class="icon-arrow-right"></i>
             </div>
         </div>
@@ -193,7 +217,7 @@
         </div>
         <div class="box-footer clearfix">
             <div class="btn-arrow-link pull-right">
-                <a href="{:Url('Count/active',array('type'=>'month'))}">查看更多</a>
+                <a href="{:url('Count/active',array('type'=>'month'))}">查看更多</a>
                 <i class="icon-arrow-right"></i>
             </div>
         </div>
@@ -203,9 +227,11 @@
         <div class="box-header count_common_box">
             <span class="caption-subject">用户流失率统计</span>
             <div class="box-tools pull-right">
-                <button type="button" class="btn btn-primary btn-sm" data-widget="collapse"><i class="icon icon-minus"></i></i>
+                <button type="button" class="btn btn-primary btn-sm" data-widget="collapse">
+                    <i class="icon icon-minus"></i>
                 </button>
-                <button type="button" class="btn btn-danger btn-sm" data-widget="remove"><i class="icon icon-times"></i>
+                <button type="button" class="btn btn-danger btn-sm" data-widget="remove">
+                    <i class="icon icon-times"></i>
                 </button>
             </div>
         </div>
@@ -227,19 +253,19 @@
                 <tbody>
                 {volist name="lostList" id="oneLost"}
                     <tr>
-                        <td style="width:auto;max-width: 150px;" class="text-ellipsis">{$oneLost['date']}</td>
-                        <td style="width:auto;max-width: 150px;" class="text-ellipsis">{$oneLost['user_num']}</td>
-                        <td style="width:auto;max-width: 150px;" class="text-ellipsis">{$oneLost['lost_num']}</td>
-                        <td style="width:auto;max-width: 150px;" class="text-ellipsis">{$oneLost['new_lost']}</td>
-                        <td style="width:auto;max-width: 150px;" class="text-ellipsis">{$oneLost['rate']}</td>
-                        <td style="width:auto;max-width: 150px;" class="text-ellipsis">{$oneLost['create_time']|time_format}</td>
+                        <td class="text-ellipsis">{$oneLost['date']}</td>
+                        <td class="text-ellipsis">{$oneLost['user_num']}</td>
+                        <td class="text-ellipsis">{$oneLost['lost_num']}</td>
+                        <td class="text-ellipsis">{$oneLost['new_lost']}</td>
+                        <td class="text-ellipsis">{$oneLost['rate']}</td>
+                        <td class="text-ellipsis">{$oneLost['create_time']|time_format}</td>
                     </tr>
                 {/volist}
             </table>
         </div>
         <div class="box-footer clearfix">
             <div class="btn-arrow-link pull-right">
-                <a href="{:Url('Count/lost')}">查看更多</a>
+                <a href="{:url('Count/lost')}">查看更多</a>
                 <i class="icon-arrow-right"></i>
             </div>
         </div>

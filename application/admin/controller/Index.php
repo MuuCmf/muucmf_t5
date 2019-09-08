@@ -42,35 +42,29 @@ class Index extends Admin
     }
 
     private function getOtherCount(){
-        $countModel=model('Count');
+        
         //用户流失
-        $lostList=$countModel->getLostListPage($map=1,1,5);
-        foreach($lostList as &$val){
-            $val['date']=time_format($val['date'],'Y-m-d');
-            $val['rate']=($val['rate']*100)."%";
-        }
-        unset($val);
+        $lostList = model('CountLost')->getListByPage([],'create_time desc','*',$r=20);
         $this->assign('lostList',$lostList);
         //日活跃
-        $today=date('Y-m-d 00:00',time());
-        $startTime=strtotime($today." - 10 day");
-        $endTime=strtotime($today);
-        $startTime=strtotime(date('Y-m-d').' - 9 day');
-        $activeList=$countModel->getActiveList($startTime,time(),'day');
+        $today = date('Y-m-d 00:00',time());
+        $startTime = strtotime($today." - 10 day");
+        $endTime = strtotime($today);
+        $startTime = strtotime(date('Y-m-d').' - 9 day');
+        $activeList = model('CountActive')->getActiveList($startTime,time(),'day');
         $this->assign('activeList',json_encode($activeList));
-        
         //周活跃
-        $startTime=strtotime(date('Y-m-d').' - '.date('w').' day - 49 day');
-        $weekActiveList=$countModel->getActiveList($startTime,time(),'week');
+        $startTime = strtotime(date('Y-m-d').' - '.date('w').' day - 49 day');
+        $weekActiveList = model('CountActive')->getActiveList($startTime,time(),'week');
         $this->assign('weekActiveList',json_encode($weekActiveList));
         //月活跃
-        $startTime=strtotime(date('Y-m-01').' - 9 month');
-        $monthActiveList=$countModel->getActiveList($startTime,time(),'month');
+        $startTime = strtotime(date('Y-m-01').' - 9 month');
+        $monthActiveList = model('CountActive')->getActiveList($startTime,time(),'month');
         $this->assign('monthActiveList',json_encode($monthActiveList));
         //前8日留存率
-        $startTime=strtotime($today." - 9 day");
-        $endTime=strtotime($today." - 2 day");
-        $remainList=$countModel->getRemainList($startTime,$endTime);
+        $startTime = strtotime($today." - 9 day");
+        $endTime = strtotime($today." - 2 day");
+        $remainList = model('CountRemain')->getRemainList($startTime,$endTime);
         $this->assign('remainList',$remainList);
         
         return true;

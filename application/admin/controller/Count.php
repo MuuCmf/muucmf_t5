@@ -12,7 +12,6 @@ class Count extends Admin{
     {
         parent::_initialize();
         $this->assign('now_table',request()->action());
-        $this->countModel = model('Count');
     }
 
     /**
@@ -33,18 +32,14 @@ class Count extends Admin{
         }else{
             $day = config('LOST_LONG',30);
             $this->assign('lost_long',$day);
-            $lostList=$this->countModel->getLostListPage([]);
 
+            $lostList = model('CountLost')->getListByPage([],'create_time desc','*',$r=20);
             $page = $lostList->render();
             
-            foreach($lostList as &$val){
-                $val['date']=time_format($val['date'],'Y-m-d');
-                $val['rate']=($val['rate']*100)."%";
-            }
-            unset($val);
             $this->assign('lostList',$lostList);
             $this->assign('page', $page);
             $this->setTitle('流失率统计');
+
             return $this->fetch();
         }
     }
@@ -64,7 +59,7 @@ class Count extends Admin{
 
             $startTime = strtotime($aStartTime);
             $endTime = strtotime($aEndTime);
-            $remainList = $this->countModel->getRemainList($startTime,$endTime);
+            $remainList = model('CountRemain')->getRemainList($startTime,$endTime);
             $this->assign('remainList',$remainList);
             $html = $this->fetch('count/_remain_data');
             return $this->fetch($html);
@@ -72,7 +67,7 @@ class Count extends Admin{
             $today = date('Y-m-d 00:00',time());
             $startTime = strtotime($today." - 9 day");
             $endTime = strtotime($today." - 2 day");
-            $remainList = $this->countModel->getRemainList($startTime,$endTime);
+            $remainList = model('CountRemain')->getRemainList($startTime,$endTime);
             $options = array('startDate'=>time_format(strtotime($today." - 9 day"),"Y-m-d"),'endDate' => time_format(strtotime($today." - 2 day"),"Y-m-d"));
             $this->assign('options',$options);
             $this->assign('remainList',$remainList);
@@ -88,19 +83,19 @@ class Count extends Admin{
     public function active()
     {
         if(request()->isPost()){
-            $aType=input('post.type','day','text');
-            $aStartTime=input('post.startDate','','text');
-            $aEndTime=input('post.endDate','','text');
+            $aType = input('post.type','day','text');
+            $aStartTime = input('post.startDate','','text');
+            $aEndTime = input('post.endDate','','text');
             if($aStartTime == ''||$aEndTime == ''){
                 $this->error('请选择时间段!');
             }
-            $startTime=strtotime($aStartTime);
-            $endTime=strtotime($aEndTime);
+            $startTime = strtotime($aStartTime);
+            $endTime = strtotime($aEndTime);
             if(!in_array($aType,array('week','month','day'))){
                 $aType = 'day';
             }
-            $activeList = $this->countModel->getActiveList($startTime,$endTime,$aType);
-            $activeList['status']=1;
+            $activeList = model('CountActive')->getActiveList($startTime,$endTime,$aType);
+            $activeList['status'] = 1;
 
             return json($activeList);
 
@@ -108,20 +103,20 @@ class Count extends Admin{
             $aType = input('get.type','day','text');
             switch($aType){
                 case 'week':
-                    $startTime=strtotime(date('Y-m-d').' - '.date('w').' day - 91 day');
+                    $startTime = strtotime(date('Y-m-d').' - '.date('w').' day - 91 day');
                     break;
                 case 'month':
-                    $startTime=strtotime(date('Y-m-01').' - 9 month');
+                    $startTime = strtotime(date('Y-m-01').' - 9 month');
                     break;
                 default:
-                    $aType='day';
-                    $startTime=strtotime(date('Y-m-d').' - 9 day');
+                    $aType = 'day';
+                    $startTime = strtotime(date('Y-m-d').' - 9 day');
             }
-            
+
             $this->assign('type',$aType);
             $options=array('startDate'=>time_format($startTime,"Y-m-d"),'endDate'=>time_format(time(),"Y-m-d"));
             $this->assign('options',$options);
-            $activeList=$this->countModel->getActiveList($startTime,time(),$aType);
+            $activeList = model('CountActive')->getActiveList($startTime,time(),$aType);
             $this->assign('activeList',json_encode($activeList));
             
             $this->setTitle('活跃用户统计');
