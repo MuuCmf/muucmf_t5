@@ -384,7 +384,10 @@ class Admin extends Controller
                     $map['is_dev'] = 0;
                 }
                 $menuList = Db::name('Menu')->where($map)->order('sort asc')->select();
-                
+                foreach($menuList as &$val){
+                    $val['url'] = strtolower($val['url']);
+                }
+                unset($val);
                 $item['_child'][$g] = list_to_tree($menuList, 'id', 'pid', 'operater', $item['id']);
 
             }
