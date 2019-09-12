@@ -1,6 +1,7 @@
 <?php 
 return array(
 
+
 	'_DISPLAY_BLOCK_' =>' Display module',
 	'_HOME_SETTING_' =>' Home settings',
 	'_CAROUSEL_' =>' Carousel',
