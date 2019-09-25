@@ -19,6 +19,7 @@ body {
 .skin-red-light, 
 .skin-yellow-light, 
 .skin-purple-light {
+
   .main-sidebar::-webkit-scrollbar {/*滚动条整体样式*/
     width: 8px;     /*高宽分别对应横竖滚动条的尺寸*/
     height: 1px;
@@ -38,6 +39,7 @@ body {
     overflow-y:auto; 
 
     .sidebar-menu {
+
       .treeview-menu {
         background:#fff;
 
@@ -54,7 +56,7 @@ body {
         li {
           a {
             padding: 10px 5px 10px 20px;
-            color:#666;
+            color:#fff;
 
             &:hover,&:active {
               color:#000;
@@ -89,6 +91,7 @@ body {
 .skin-red, 
 .skin-yellow, 
 .skin-purple {
+
   .main-sidebar::-webkit-scrollbar {/*滚动条整体样式*/
     width: 8px;     /*高宽分别对应横竖滚动条的尺寸*/
     height: 1px;
@@ -97,16 +100,21 @@ body {
     background: rgba(0,0,0,0.5);
   }
   .main-sidebar::-webkit-scrollbar-track {/*滚动条里面轨道*/
-    background: #1A2429;
+    background: #383e4b;
   }
   .main-sidebar {
-    background-color: #1A2429;
+    background-color: #383e4b;
     z-index:860;
     overflow-y:auto; 
 
     .sidebar-menu {
+
+      .header {
+        background-color: #2d323d;
+      }
+
       .treeview-menu {
-        background:#232F37;
+        background: #383e4b;
 
         li.active {
           a {
@@ -121,7 +129,8 @@ body {
         li {
           a {
             padding: 10px 5px 10px 20px;
-            color:#BEC3C7;
+            background: #383e4b;
+            color:#fff;
 
             &:hover,&:active {
               color:#fff;
@@ -131,11 +140,14 @@ body {
             }
           }
         }
+        li:last-child {
+          border-bottom: 1px solid #2d323d;
+        }
         
         .child-header {
           margin-left:-5px;
           margin-top:1px;
-          background: #1A2429;
+          background: #2d323d;
           color:#ddd; 
           padding: 5px 5px 5px 15px;
           display: block;
@@ -160,11 +172,24 @@ body {
 .skin-blue, 
 .skin-blue-light {
 
+  .main-header {
+
+    .logo {
+      background-color: #0BA0B3;
+      &:hover {
+        background-color: #0BA0B3;
+      }
+    }
+    .navbar {
+      background-color: #03b8cf;
+    }
+  }
   .sidebar-menu {
     li:hover > a,
     li.active > a,
     li.menu-open > a {
-      border-left-color: #09c;
+      border-left-color: #03b8cf;
+      background-color: #2d323d;
       i {
         color:#09c;
       }
