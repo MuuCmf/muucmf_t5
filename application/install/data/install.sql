@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_action` (
   `update_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '修改时间',
   `module` varchar(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='系统行为表' AUTO_INCREMENT=11000 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='系统行为表' AUTO_INCREMENT=11000 ;
 
 INSERT INTO `muucmf_action` (`id`, `name`, `title`, `remark`, `rule`, `log`, `type`, `status`, `update_time`, `module`) VALUES
 (1, 'reg', '用户注册', '用户注册', '', '', 1, 1, 1426070545, ''),
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_action_limit` (
   `create_time` int(11) NOT NULL,
   `module` varchar(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
 
 INSERT INTO `muucmf_action_limit` (`id`, `title`, `name`, `frequency`, `time_number`, `time_unit`, `punish`, `if_message`, `message_content`, `action_list`, `status`, `create_time`, `module`) VALUES
 (1, 'reg', '注册限制', 1, 1, 'minute', 'warning', 0, '', '[reg]', 1, 0, ''),
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_action_log` (
   KEY `action_ip_ix` (`action_ip`),
   KEY `action_id_ix` (`action_id`),
   KEY `user_id_ix` (`user_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='行为日志表' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED COMMENT='行为日志表' AUTO_INCREMENT=1 ;
 
 DROP TABLE IF EXISTS `muucmf_addons`;
 CREATE TABLE IF NOT EXISTS `muucmf_addons` (
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_addons` (
   `create_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '安装时间',
   `has_adminlist` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否有后台列表',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='插件表' AUTO_INCREMENT=15 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='插件表' AUTO_INCREMENT=15 ;
 
 INSERT INTO `muucmf_addons` (`id`, `name`, `title`, `description`, `status`, `config`, `author`, `version`, `create_time`, `has_adminlist`) VALUES
 (3, 'chinacity', '中国省市区三级联动', '每个系统都需要的一个中国省市区三级联动插件。想天-駿濤修改，将镇级地区移除', 1, 'null', 'muucmf', '2.0', 0, 0),
@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_adv_pos` (
   `padding` varchar(50) NOT NULL COMMENT '留白',
   `theme` varchar(50) NOT NULL DEFAULT 'all' COMMENT '适用主题，默认为all，通用',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='广告位置表';
+) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='广告位置表';
 
 DROP TABLE IF EXISTS `muucmf_adv`;
 CREATE TABLE IF NOT EXISTS `muucmf_adv` (
@@ -114,7 +114,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_adv` (
   `end_time` int(11) unsigned DEFAULT '0' COMMENT '结束时间',
   `target` varchar(20) DEFAULT '_blank',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='广告表';
+) ENGINE=InnoDB AUTO_INCREMENT=10000 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='广告表';
 
 DROP TABLE IF EXISTS `muucmf_announce`;
 CREATE TABLE IF NOT EXISTS `muucmf_announce` (
@@ -129,7 +129,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_announce` (
   `sort` int(11) NOT NULL,
   `arrive` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='公告表' AUTO_INCREMENT=9 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='公告表' AUTO_INCREMENT=9 ;
 
 DROP TABLE IF EXISTS `muucmf_announce_arrive`;
 CREATE TABLE IF NOT EXISTS `muucmf_announce_arrive` (
@@ -138,7 +138,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_announce_arrive` (
   `announce_id` int(11) NOT NULL,
   `create_time` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='公告确认记录' AUTO_INCREMENT=12 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='公告确认记录' AUTO_INCREMENT=12 ;
 
 DROP TABLE IF EXISTS `muucmf_articles`;
 CREATE TABLE IF NOT EXISTS `muucmf_articles` (
@@ -160,7 +160,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_articles` (
   `create_time` int(11) NOT NULL,
   `update_time` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='文章' AUTO_INCREMENT=9;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='文章' AUTO_INCREMENT=9;
 
 DROP TABLE IF EXISTS `muucmf_articles_category`;
 CREATE TABLE IF NOT EXISTS `muucmf_articles_category` (
@@ -172,7 +172,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_articles_category` (
   `sort` tinyint(4) unsigned NOT NULL DEFAULT '0',
   `status` tinyint(4) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COMMENT='文章分类';
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COMMENT='文章分类';
 
 INSERT INTO `muucmf_articles_category` (`id`, `title`, `pid`, `can_post`, `need_audit`, `sort`, `status`) VALUES
 (1, '早期创业', 0, 1, 1, 3, 1),
@@ -190,7 +190,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_articles_detail` (
   `content` text NOT NULL COMMENT '内容',
   `template` varchar(50) NOT NULL COMMENT '模板',
   PRIMARY KEY (`articles_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='文章详情';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='文章详情';
 
 DROP TABLE IF EXISTS `muucmf_attachment`;
 CREATE TABLE IF NOT EXISTS `muucmf_attachment` (
@@ -209,7 +209,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_attachment` (
   `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
   PRIMARY KEY (`id`),
   KEY `idx_record_status` (`record_id`,`status`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='附件表' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='附件表' AUTO_INCREMENT=1 ;
 
 DROP TABLE IF EXISTS `muucmf_auth_extend`;
 CREATE TABLE IF NOT EXISTS `muucmf_auth_extend` (
@@ -219,7 +219,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_auth_extend` (
   UNIQUE KEY `group_extend_type` (`group_id`,`extend_id`,`type`),
   KEY `uid` (`group_id`),
   KEY `group_id` (`extend_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='用户组与分类的对应关系表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户组与分类的对应关系表';
 
 INSERT INTO `muucmf_auth_extend` (`group_id`, `extend_id`, `type`) VALUES
 (1, 1, 1),
@@ -241,7 +241,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_auth_group` (
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '用户组状态：为1正常，为0禁用,-1为删除',
   `rules` text NOT NULL COMMENT '用户组拥有的规则id，多个规则 , 隔开',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 
 INSERT INTO `muucmf_auth_group` (`id`, `module`, `type`, `title`, `description`, `status`, `rules`) VALUES
 (1, 'admin', 1, '普通用户', '', 1, ',338,340,341,344'),
@@ -254,7 +254,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_auth_group_access` (
   UNIQUE KEY `uid_group_id` (`uid`,`group_id`),
   KEY `uid` (`uid`),
   KEY `group_id` (`group_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `muucmf_auth_group_access` (`uid`, `group_id`) VALUES
 (1, 1);
@@ -270,7 +270,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_auth_rule` (
   `condition` varchar(300) NOT NULL DEFAULT '' COMMENT '规则附加条件',
   PRIMARY KEY (`id`),
   KEY `module` (`module`,`status`,`type`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=10000 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=10000 ;
 
 INSERT INTO `muucmf_auth_rule` (`id`, `module`, `type`, `name`, `title`, `status`, `condition`) VALUES
 (1, 'admin', 2, 'Admin/Index/index', '首页', 1, ''),
@@ -544,7 +544,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_avatar` (
   `status` int(11) NOT NULL,
   `is_temp` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 DROP TABLE IF EXISTS `muucmf_channel`;
 CREATE TABLE IF NOT EXISTS `muucmf_channel` (
@@ -563,7 +563,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_channel` (
   `icon` varchar(20) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `pid` (`pid`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
 INSERT INTO `muucmf_channel` (`id`, `pid`, `title`, `url`, `sort`, `create_time`, `update_time`, `status`, `target`, `color`, `band_color`, `band_text`, `icon`) VALUES
 (1, 0, '首页', 'index/index/index', 0, 0, 0, 1, 0, '', '#000000', '', ''),
@@ -584,7 +584,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_user_nav` (
   `band_text` varchar(30) NOT NULL,
   `icon` varchar(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8;
 INSERT INTO `muucmf_user_nav` VALUES ('1', '个人主页', 'ucenter/Index/index', '0', '0', '0', '1', '0', '', '', '', '');
 INSERT INTO `muucmf_user_nav` VALUES ('2', '用户设置', 'ucenter/config/index', '0', '0', '0', '1', '0', '', '', '', '');
 
@@ -607,7 +607,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_config` (
   UNIQUE KEY `uk_name` (`name`),
   KEY `type` (`type`),
   KEY `group` (`group`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=10000 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=10000 ;
 
 INSERT INTO `muucmf_config` (`id`, `name`, `type`, `title`, `group`, `extra`, `remark`, `create_time`, `update_time`, `status`, `value`, `sort`) VALUES
 (100, 'WEB_SITE_CLOSE', 4, '关闭站点', 1, '0:关闭,1:开启', '站点关闭后其他用户不能访问，管理员可以正常访问', 1378898976, 1379235296, 1, '1', 11),
@@ -716,7 +716,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_count_active` (
   `total` int(11) NOT NULL COMMENT '总人数',
   PRIMARY KEY (`id`),
   UNIQUE KEY `date` (`date`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='活跃统计表' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='活跃统计表' AUTO_INCREMENT=1 ;
 
 DROP TABLE IF EXISTS `muucmf_count_lost`;
 CREATE TABLE IF NOT EXISTS `muucmf_count_lost` (
@@ -729,7 +729,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_count_lost` (
   `create_time` int(11) NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `date` (`date`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='用户流失率统计' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='用户流失率统计' AUTO_INCREMENT=1 ;
 
 DROP TABLE IF EXISTS `muucmf_count_remain`;
 CREATE TABLE IF NOT EXISTS `muucmf_count_remain` (
@@ -746,7 +746,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_count_remain` (
   `reg_num` int(11) NOT NULL COMMENT '当天注册人数',
   PRIMARY KEY (`id`),
   UNIQUE KEY `date` (`date`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='留存率统计表' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='留存率统计表' AUTO_INCREMENT=1 ;
 
 DROP TABLE IF EXISTS `muucmf_district`;
 CREATE TABLE IF NOT EXISTS `muucmf_district` (
@@ -755,7 +755,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_district` (
   `level` tinyint(4) unsigned NOT NULL DEFAULT '0',
   `upid` mediumint(8) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='中国省市区乡镇数据表' AUTO_INCREMENT=910007 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='中国省市区乡镇数据表' AUTO_INCREMENT=910007 ;
 
 INSERT INTO `muucmf_district` (`id`, `name`, `level`, `upid`) VALUES
 (110000, '北京市', 1, 0),
@@ -4319,7 +4319,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_field` (
   `createTime` int(11) NOT NULL,
   `changeTime` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 DROP TABLE IF EXISTS `muucmf_field_group`;
 CREATE TABLE IF NOT EXISTS `muucmf_field_group` (
@@ -4330,7 +4330,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_field_group` (
   `sort` int(11) NOT NULL,
   `visiable` tinyint(4) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
 INSERT INTO `muucmf_field_group` (`id`, `profile_name`, `status`, `createTime`, `sort`, `visiable`) VALUES
 (1, '个人资料', 1, 1403847366, 0, 1),
@@ -4352,7 +4352,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_field_setting` (
   `child_form_type` varchar(25) NOT NULL,
   `input_tips` varchar(100) NOT NULL COMMENT '输入提示',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=8 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=8 ;
 
 INSERT INTO `muucmf_field_setting` (`id`, `field_name`, `profile_group_id`, `visiable`, `required`, `sort`, `form_type`, `form_default_value`, `validation`, `status`, `createTime`, `child_form_type`, `input_tips`) VALUES
 (1, 'qq', 1, 1, 1, 0, 'input', '', '', 1, 1409045825, 'string', ''),
@@ -4378,7 +4378,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_file` (
   `driver` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_md5` (`md5`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='文件表' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='文件表' AUTO_INCREMENT=1 ;
 
 CREATE TABLE IF NOT EXISTS `muucmf_follow` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id',
@@ -4388,7 +4388,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_follow` (
   `alias` varchar(40) NOT NULL COMMENT '备注',
   `group_id` int(11) NOT NULL COMMENT '分组ID',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='关注表' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='关注表' AUTO_INCREMENT=1 ;
 
 DROP TABLE IF EXISTS `muucmf_hooks`;
 CREATE TABLE IF NOT EXISTS `muucmf_hooks` (
@@ -4400,7 +4400,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_hooks` (
   `addons` varchar(255) NOT NULL DEFAULT '' COMMENT '钩子挂载的插件 ''，''分割',
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=10000 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=10000 ;
 
 INSERT INTO `muucmf_hooks` (`id`, `name`, `description`, `type`, `update_time`, `addons`) VALUES
 (38, 'pageHeader', '页面header钩子，一般用于加载插件CSS文件和代码', 1, 0, ''),
@@ -4447,7 +4447,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_local_comment` (
   `ip` bigint(20) NOT NULL,
   `area` varchar(30) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 DROP TABLE IF EXISTS `muucmf_member`;
 CREATE TABLE IF NOT EXISTS `muucmf_member` (
@@ -4478,7 +4478,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_member` (
   PRIMARY KEY (`uid`),
   KEY `status` (`status`),
   KEY `name` (`nickname`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='会员表' AUTO_INCREMENT=100 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='会员表' AUTO_INCREMENT=100 ;
 
 
 DROP TABLE IF EXISTS `muucmf_menu`;
@@ -4496,7 +4496,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_menu` (
   `icon` varchar(20) NOT NULL COMMENT '导航图标',
   `module` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `type`, `tip`, `group`, `is_dev`, `icon`, `module`) VALUES
 ('2', '用户', '0', 3, 'User/index', 0, 0, '', '', 0, 'user', ''),
@@ -4684,7 +4684,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_message` (
   `type` varchar(25) NOT NULL COMMENT '类型',
   `tpl` varchar(255) NOT NULL COMMENT '消息模板',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='消息表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='消息表';
 
 DROP TABLE IF EXISTS `muucmf_message_content`;
 CREATE TABLE IF NOT EXISTS `muucmf_message_content` (
@@ -4698,7 +4698,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_message_content` (
   `create_time` int(11) NOT NULL,
   `status` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 DROP TABLE IF EXISTS `muucmf_message_type`;
 CREATE TABLE IF NOT EXISTS `muucmf_message_type` (
@@ -4707,7 +4707,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_message_type` (
   `type` varchar(25) NOT NULL COMMENT '消息类型',
   `status` tinyint(4) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='用户消息类型表';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='用户消息类型表';
 
 DROP TABLE IF EXISTS `muucmf_module`;
 CREATE TABLE IF NOT EXISTS `muucmf_module` (
@@ -4731,7 +4731,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_module` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`),
   KEY `name_2` (`name`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='模块管理表' AUTO_INCREMENT=12 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='模块管理表' AUTO_INCREMENT=12 ;
 
 INSERT INTO `muucmf_module` (`id`, `name`, `alias`, `version`, `is_com`, `show_nav`, `summary`, `developer`, `website`, `entry`, `is_setup`, `sort`, `icon`, `can_uninstall`, `admin_entry`, `auth_role`) VALUES
 (4, 'index', '首页', '1.0.0', 0, 0, '系统主页，系统核心模块', '北京火木科技有限公司', 'http://www.muucmf.com', 'index/index/index', 1, 0, 'home', 0, 'admin/index/index', ''),
@@ -4751,7 +4751,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_picture` (
   `status` tinyint(2) NOT NULL DEFAULT '0' COMMENT '状态',
   `create_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 DROP TABLE IF EXISTS `muucmf_role`;
 CREATE TABLE IF NOT EXISTS `muucmf_role` (
@@ -4768,7 +4768,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_role` (
   `create_time` int(11) NOT NULL,
   `update_time` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='角色表' AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='角色表' AUTO_INCREMENT=2 ;
 
 INSERT INTO `muucmf_role` (`id`, `group_id`, `name`, `title`, `description`, `user_groups`, `invite`, `audit`, `sort`, `status`, `create_time`, `update_time`) VALUES
 (1, 0, 'default', '普通用户', '普通用户', '1', 0, 0, 0, 1, 1432791711, 1432791711);
@@ -4783,7 +4783,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_role_config` (
   `data` text NOT NULL COMMENT '该配置的其它值',
   `update_time` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='角色配置表' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='角色配置表' AUTO_INCREMENT=1 ;
 
 DROP TABLE IF EXISTS `muucmf_role_group`;
 CREATE TABLE IF NOT EXISTS `muucmf_role_group` (
@@ -4791,7 +4791,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_role_group` (
   `title` varchar(25) NOT NULL,
   `update_time` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='角色分组' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='角色分组' AUTO_INCREMENT=1 ;
 
 DROP TABLE IF EXISTS `muucmf_schedule`;
 CREATE TABLE IF NOT EXISTS `muucmf_schedule` (
@@ -4808,7 +4808,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_schedule` (
   `create_time` int(11) NOT NULL,
   `update_time` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 INSERT INTO `muucmf_schedule` (`id`, `method`, `args`, `type`, `type_value`, `start_time`, `end_time`, `intro`, `lever`, `status`, `create_time`, `update_time`) VALUES
 (1, 'Admin/Count->dayCount', '', 3, 'Daily=02:20', 1493571600, 2145888000, '执行了数据统计', 0, 1, 1469167281,1469167281);
@@ -4827,7 +4827,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_seo_rule` (
   `sort` int(11) NOT NULL,
   `summary` varchar(500) NOT NULL COMMENT 'seo变量介绍',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=10000 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=10000 ;
 
 INSERT INTO `muucmf_seo_rule` (`id`, `title`, `app`, `controller`, `action`, `status`, `seo_keywords`, `seo_description`, `seo_title`, `sort`, `summary`) VALUES
 (1000, '整站标题', '', '', '', 1, '', '', '', 7, '-'),
@@ -4840,7 +4840,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_ucenter_admin` (
   `member_id` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '管理员用户ID',
   `status` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '管理员状态',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='管理员表' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='管理员表' AUTO_INCREMENT=1 ;
 
 DROP TABLE IF EXISTS `muucmf_ucenter_member`;
 CREATE TABLE IF NOT EXISTS `muucmf_ucenter_member` (
@@ -4858,7 +4858,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_ucenter_member` (
   `type` tinyint(4) NOT NULL COMMENT '1为用户名注册，2为邮箱注册，3为手机注册',
   PRIMARY KEY (`id`),
   KEY `status` (`status`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='用户表' AUTO_INCREMENT=100 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='用户表' AUTO_INCREMENT=100 ;
 
 DROP TABLE IF EXISTS `muucmf_ucenter_score_type`;
 CREATE TABLE IF NOT EXISTS `muucmf_ucenter_score_type` (
@@ -4867,7 +4867,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_ucenter_score_type` (
   `status` tinyint(4) NOT NULL,
   `unit` varchar(20) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
 
 INSERT INTO `muucmf_ucenter_score_type` (`id`, `title`, `status`, `unit`) VALUES
 (1, '积分', 1, '分'),
@@ -4881,7 +4881,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_ucenter_setting` (
   `type` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '配置类型（1-用户配置）',
   `value` text NOT NULL COMMENT '配置数据',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='设置表' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='设置表' AUTO_INCREMENT=1 ;
 
 DROP TABLE IF EXISTS `muucmf_url`;
 CREATE TABLE IF NOT EXISTS `muucmf_url` (
@@ -4892,7 +4892,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_url` (
   `create_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_url` (`url`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='链接表' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='链接表' AUTO_INCREMENT=1 ;
 
 DROP TABLE IF EXISTS `muucmf_user_config`;
 CREATE TABLE IF NOT EXISTS `muucmf_user_config` (
@@ -4903,7 +4903,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_user_config` (
   `model` varchar(30) NOT NULL,
   `value` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='用户配置信息表' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户配置信息表' AUTO_INCREMENT=1 ;
 
 DROP TABLE IF EXISTS `muucmf_user_role`;
 CREATE TABLE IF NOT EXISTS `muucmf_user_role` (
@@ -4914,7 +4914,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_user_role` (
   `step` varchar(50) NOT NULL COMMENT '记录当前执行步骤',
   `init` tinyint(2) NOT NULL DEFAULT '0' COMMENT '是否初始化',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='用户角色关联' AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='用户角色关联' AUTO_INCREMENT=2 ;
 
 
 DROP TABLE IF EXISTS `muucmf_user_tag`;
@@ -4925,7 +4925,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_user_tag` (
   `pid` int(11) NOT NULL,
   `sort` tinyint(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='标签分类表' AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='标签分类表' AUTO_INCREMENT=4 ;
 
 INSERT INTO `muucmf_user_tag` (`id`, `title`, `status`, `pid`, `sort`) VALUES
 (1, '默认', 1, 0, 0),
@@ -4938,7 +4938,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_user_tag_link` (
   `uid` int(11) NOT NULL,
   `tags` varchar(200) NOT NULL COMMENT '标签ids',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='用户标签关联表' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户标签关联表' AUTO_INCREMENT=1 ;
 
 DROP TABLE IF EXISTS `muucmf_user_token`;
 CREATE TABLE IF NOT EXISTS `muucmf_user_token` (
@@ -4947,7 +4947,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_user_token` (
   `token` varchar(255) NOT NULL,
   `time` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 DROP TABLE IF EXISTS `muucmf_verify`;
 CREATE TABLE IF NOT EXISTS `muucmf_verify` (
@@ -4958,7 +4958,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_verify` (
   `verify` varchar(50) NOT NULL,
   `create_time` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 DROP TABLE IF EXISTS `muucmf_score_log`;
 CREATE TABLE IF NOT EXISTS `muucmf_score_log` (
@@ -4974,7 +4974,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_score_log` (
   `model` varchar(20) NOT NULL,
   `record_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 DROP TABLE IF EXISTS `muucmf_ucenter_user_link`;
 CREATE TABLE IF NOT EXISTS `muucmf_ucenter_user_link` (
@@ -4984,5 +4984,5 @@ CREATE TABLE IF NOT EXISTS `muucmf_ucenter_user_link` (
   `uc_username` varchar(50) NOT NULL,
   `uc_email` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
