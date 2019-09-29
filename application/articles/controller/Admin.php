@@ -42,8 +42,9 @@ str;
             ->keyRadio('ARTICLES_SHOW_ORDER_TYPE', '排序方式', '展示模块的数据排序方式', array('desc' => '倒序，从大到小', 'asc' => '正序，从小到大'))->keyDefault('ARTICLES_SHOW_ORDER_TYPE','desc')
             ->keyText('ARTICLES_SHOW_CACHE_TIME', '缓存时间', '默认600秒，以秒为单位')->keyDefault('ARTICLES_SHOW_CACHE_TIME','600')
 
-            ->group('基本配置', 'ARTICLES_SHOW_POSITION')->group('首页展示配置', 'ARTICLES_SHOW_COUNT,ARTICLES_SHOW_TITLE,ARTICLES_SHOW_DESCRIPTION,ARTICLES_SHOW_TYPE,ARTICLES_SHOW_ORDER_TYPE,ARTICLES_SHOW_ORDER_FIELD,ARTICLES_SHOW_CACHE_TIME')
-            ->groupLocalComment('本地评论配置','index')
+            ->group('基本配置', 'ARTICLES_SHOW_POSITION')
+            ->group('首页展示配置', 'ARTICLES_SHOW_COUNT,ARTICLES_SHOW_TITLE,ARTICLES_SHOW_DESCRIPTION,ARTICLES_SHOW_TYPE,ARTICLES_SHOW_ORDER_TYPE,ARTICLES_SHOW_ORDER_FIELD,ARTICLES_SHOW_CACHE_TIME')
+
             ->buttonSubmit()
             ->buttonBack()
             ->display();

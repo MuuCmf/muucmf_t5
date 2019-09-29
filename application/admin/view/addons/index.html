@@ -16,7 +16,7 @@
             </script>
         </ul>
         <div class="btn-group pull-right">
-            <a class="btn btn-danger" href="{:Url('hooks')}">{:lang("_HOOK_MANAGEMENT_")}</a>
+            <a class="btn btn-danger" href="{:url('hooks')}">{:lang("_HOOK_MANAGEMENT_")}</a>
         </div>
         </div>
         <div class="module-list cards">
@@ -29,7 +29,7 @@
                                 {empty name="vo.id"}
                                 <a href="#">
                                 {else /}
-                                <a href="{:Url('config',['id'=>$vo['id']])}">
+                                <a href="{:url('config',['id'=>$vo['id']])}">
                                 {/empty}
                                 
                                 {empty name="vo.icon_photo"}

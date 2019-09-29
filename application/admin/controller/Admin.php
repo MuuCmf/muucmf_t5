@@ -19,7 +19,7 @@ class Admin extends Controller
 
     public function _initialize()
     {   
-        $this->_seo = ['title' => '','setKeywords' => '', 'description' => ''];
+        $this->_seo = ['title' => 'MuuCmf T5','setKeywords' => '', 'description' => ''];
         // 判断登陆
         $this->needLogin();
         // 是否是超级管理员
@@ -54,12 +54,13 @@ class Admin extends Controller
         //获取管理员数据
         $auth_user = query_user(['nickname','username','sex','avatar32','title','fans', 'following','signature'],is_login());
         
+        $this->assign('module', $this->getModule(request()->module()));
+        dump($this->getModule(request()->module()));exit;
         $this->assign('controller', request()->controller());
         $this->assign('action', request()->action());
         $this->assign('seo', $this->_seo);
         $this->assign('__AUTH_USER__',$auth_user);
         $this->assign('__MANAGE_COULD__',$this->checkRule('admin/module/lists',array('in','1,2')));
-        $this->assign('__MENU__', $this->getTreeMenus());   //获取全部菜单
         $this->assign('__MODULE_MENU__', $this->getMenus()); //当前模块菜单
         $this->assign('__ADDONS_MENU__', $addons_admin );
         $this->assign('version',$this->localVersion());
@@ -277,126 +278,12 @@ class Admin extends Controller
     /**
      * 获取模块列表，用于显示在左侧
      */
-    public function getModules()
+    public function getModule($name)
     {
-        $modules=collection(model('Module')->getAll())->toArray();
-        foreach($modules as $key=> &$v){
-            $rule = strtolower($v['admin_entry']);
-        }
+        $modules = model('common/Module')->getModule($name);
+        
         return $modules;
     }
-
-    /**
-     * 获取控制器菜单数组,二级菜单元素位于'_child'子元素中
-     */
-    final public function getTreeMenus($pid = '0')
-    {   
-        $pid = (string)$pid;
-        // 获取主菜单
-        if (!config('DEVELOP_MODE')) { // 是否开发者模式
-            $where['is_dev'] = 0;
-        }
-        //所有菜单格式化
-        if($pid == '0'){
-            //$where['pid'] = $pid;//这里确实是字符串，别误会
-            $where['pid'] = $pid;
-        }else{
-            $where['id'] = $pid;
-        }
-
-        $where['hide'] = 0;
-
-        $menus = model('admin/Menu')->getLists($where);
-        $menus = collection($menus)->toArray();
-
-        foreach ($menus as $key=>&$item) {
-
-            if($item['module'] != '' || !empty($item['module'])){
-                
-                $module = model('common/Module')->getModule($item['module']);
-                //模块配置文件图标写入后端导航菜单
-                $item['icon'] = $module['icon'];
-                //后端自定义入口写入后端导航菜单内
-                $item['custom_admin'] = $module['custom_admin'];
-            }
-
-            $item['_child'] = [];
-
-            if (!is_array($item) || empty($item['title']) || empty($item['url'])) {
-                $this->error(lang('_CLASS_CONTROLLER_ERROR_PARAM_',array('menus'=>$menus)));
-            }
-
-            if(empty($item['module']) || $item['module'] == ''){
-                if (stripos($item['url'], request()->module()) !== 0) {
-                    $item['url'] = request()->module() . '/' . $item['url'];
-                }
-            }
-            
-            // 判断主菜单权限
-            if (!$this->checkRule($item['url'], AuthRule::RULE_MAIN, null)) {
-                unset($menus[$key]);
-                continue;//继续循环
-            }
-
-            //生成child树
-            $groups = Db::name('Menu')->where("pid = '{$item['id']}'")->distinct(true)->field("`group`")->order('sort asc')->select();
-
-            if ($groups) {
-                $groups = array_column($groups, 'group');
-            } else {
-                $groups = array();
-            }
-
-            //获取二级分类的合法url
-            $where = array();
-            $where['pid'] = $item['id'];
-            $where['hide'] = 0;
-            if (!config('DEVELOP_MODE')) { // 是否开发者模式
-                $where['is_dev'] = 0;
-            }
-            $second_urls = Db::name('Menu')->where($where)->select();
-
-            if (!$this->is_root) {
-                // 检测菜单权限
-                $to_check_urls = [];
-                foreach ($second_urls as $key => $to_check_url) {
-                    if(empty($to_check_url['module']) || $to_check_url['module'] == ''){
-                        if (stripos($to_check_url['url'], request()->module()) !== 0) {
-                            $to_check_url['url'] = request()->module() . '/' . $to_check_url['url'];
-                        }
-                    }
-
-                    if ($this->checkRule($to_check_url['url'], AuthRule::RULE_URL, null))
-                        $to_check_urls[] = $to_check_url['url'];
-                }
-            }
-            // 按照分组生成子菜单树
-            foreach ($groups as $g) {
-                $map = array('group' => $g);
-                if (isset($to_check_urls)) {
-                    if (empty($to_check_urls)) {
-                        // 没有任何权限
-                        continue;
-                    } else {
-                        $map['url'] = array('in', $to_check_urls);
-                    }
-                }
-                $map['pid'] = $item['id'];
-                $map['hide'] = 0;
-                if (!config('DEVELOP_MODE')) { // 是否开发者模式
-                    $map['is_dev'] = 0;
-                }
-                $menuList = Db::name('Menu')->where($map)->order('sort asc')->select();
-
-                $item['_child'][$g] = list_to_tree($menuList, 'id', 'pid', 'operater', $item['id']);
-
-            }
-        }
-        unset($item);
-        
-        return $menus;
-    }
-
 
     /**
      * 获取控制器菜单数组,二级菜单元素位于一级菜单的'_child'元素中

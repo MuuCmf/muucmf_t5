@@ -20,6 +20,4 @@ return [
     'entry' => 'articles/Index/index',
     //后台入口
     'admin_entry' => 'articles/Admin/index',
-    //图标 兼容fa图标库
-    'icon' => 'home',
 ];

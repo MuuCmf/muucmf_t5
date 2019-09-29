@@ -59,11 +59,11 @@ class Module extends Model
                 //如果icon图片存在
                 //图标所在位置为模块静态目录跟下（推荐）
                 if(file_exists(PUBLIC_PATH . '/static/' . $info['name'] . '/images/icon.png')){
-                    $info['icon_photo'] = '/static/'. $info['name'] .'/images/icon.png';
+                    $info['icon'] = '/static/'. $info['name'] .'/images/icon.png';
                 }elseif(file_exists(PUBLIC_PATH . '/static/' . $info['name'] . '/icon.png')){
-                    $info['icon_photo'] = '/static/'. $info['name'] .'/icon.png';
+                    $info['icon'] = '/static/'. $info['name'] .'/icon.png';
                 }else{
-                    $info['icon_photo'] = '/static/admin/images/module_default_icon.png';
+                    $info['icon'] = '/static/admin/images/module_default_icon.png';
                 }
                 
                 $module[] = $info;
@@ -260,64 +260,23 @@ class Module extends Model
      */
     public function getModule($name)
     {
-        $module = $this->where(['name'=>$name])->find();
-
         if($name=='admin'){
             return false;
         }
         
-        if ($module === false || $module == null) {
-            $m = $this->getInfo($name);
+        $info = $this->where(['name'=>$name])->find();
 
-            if(empty($m['can_uninstall'])){
-                if(!empty($m['is_com'])){
-                    if($m['is_com']==1){
-                        $m['can_uninstall'] = 1;
-                    }else{
-                        $m['can_uninstall'] = 0;
-                    }
-                }else{
-                    $m['can_uninstall'] = 1;
-                }
-            }
-
-            $m['is_setup'] = 0;
-            $res = $this->save($m);
-            $m['id'] = $this->id;
-   
-            return $m;
-        } else {
-            $module = $module->toArray();
-            return $module;
+        if(file_exists(PUBLIC_PATH . '/static/' . $info['name'] . '/images/icon.png')){
+            $info['icon_photo'] = '/static/'. $info['name'] .'/images/icon.png';
+        }elseif(file_exists(PUBLIC_PATH . '/static/' . $info['name'] . '/icon.png')){
+            $info['icon_photo'] = '/static/'. $info['name'] .'/icon.png';
+        }else{
+            $info['icon_photo'] = '/static/admin/images/module_default_icon.png';
         }
-    }
 
-    /**获取模块的token
-     * @param $name 模块名
-     * @return string
-     */
-    public function getToken($name)
-    {
-        $this->moduleName = $name;
-        $token='';
-        if (file_exists($this->getRelativePath($this->tokenFile))) {
-            $token = file_get_contents($this->getRelativePath($this->tokenFile));
-        }
-        return $token;
-    }
-
-    /**设置模块的token
-     * @param $name 模块名
-     * @param $token Token
-     * @return string
-     */
-    public function setToken($name, $token)
-    {
-        $this->moduleName = $name;
-        @chmod($this->getRelativePath($this->tokenFile), 0777);
-        $result = file_put_contents($this->getRelativePath($this->tokenFile), $token);
-        @chmod($this->getRelativePath($this->tokenFile), 0777);
-        return $result;
+        
+        
+        return $info;
     }
 
     /**通过ID获取模块信息
