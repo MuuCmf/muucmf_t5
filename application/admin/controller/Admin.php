@@ -54,10 +54,13 @@ class Admin extends Controller
         //获取管理员数据
         $auth_user = query_user(['nickname','username','sex','avatar32','title','fans', 'following','signature'],is_login());
         
+        $this->assign('controller', request()->controller());
+        $this->assign('action', request()->action());
         $this->assign('seo', $this->_seo);
         $this->assign('__AUTH_USER__',$auth_user);
         $this->assign('__MANAGE_COULD__',$this->checkRule('admin/module/lists',array('in','1,2')));
-        $this->assign('__MENU__', $this->getTreeMenus());
+        $this->assign('__MENU__', $this->getTreeMenus());   //获取全部菜单
+        $this->assign('__MODULE_MENU__', $this->getMenus()); //当前模块菜单
         $this->assign('__ADDONS_MENU__', $addons_admin );
         $this->assign('version',$this->localVersion());
         $this->checkUpdate();
@@ -398,7 +401,7 @@ class Admin extends Controller
     /**
      * 获取控制器菜单数组,二级菜单元素位于一级菜单的'_child'元素中
      */
-    final public function getMenus($controller=null)
+    final public function getMenus()
     {   
         if(empty($controller)) $controller = request()->controller();
         $menus  =   session('ADMIN_MENU_LIST'.$controller);
@@ -409,20 +412,21 @@ class Admin extends Controller
             if (!config('DEVELOP_MODE')) { // 是否开发者模式
                 $where['is_dev'] = 0;
             }
-            $menus['main'] = Db::name('Menu')->where($where)->order('sort asc')->select();
-
-
-            $menus['child'] = array(); //设置子节点
+            $menus['main'] = model('admin/Menu')->getLists($where);
+            $menus['main'] = collection($menus['main'])->toArray();
+            
+            $menus['child'] = []; //设置子节点
 
             //高亮主菜单
             $current = Db::name('Menu')->where("url like '{$controller}/" . request()->action() . "%' OR url like '%/{$controller}/" . request()->action() . "%'  ")->field('id')->find();
             
             if ($current) {
-                $nav = model('Menu')->getPath($current['id']);
+                $nav = collection(model('admin/Menu')->getPath($current['id']))->toArray();
                 $nav_first_title = $nav[0]['title'];
 
-                echo $nav_first_title;
+                //echo $nav_first_title;
                 foreach ($menus['main'] as $key => $item) {
+                    
                     if (!is_array($item) || empty($item['title']) || empty($item['url'])) {
                         $this->error(lang('_CLASS_CONTROLLER_ERROR_PARAM_',array('menus'=>$menus)));
                     }
@@ -455,7 +459,7 @@ class Admin extends Controller
                         if (!config('DEVELOP_MODE')) { // 是否开发者模式
                             $where['is_dev'] = 0;
                         }
-                        $second_urls = Db::name('Menu')->where($where)->field('id,url')->select();
+                        $second_urls = model('admin/Menu')->getLists($where);
 
                         if (!$this->is_root) {
                             // 检测菜单权限
@@ -486,7 +490,7 @@ class Admin extends Controller
                             if (!config('DEVELOP_MODE')) { // 是否开发者模式
                                 $map['is_dev'] = 0;
                             }
-                            $menuList = Db::name('Menu')->where($map)->field('id,pid,title,url,tip')->order('sort asc')->select();
+                            $menuList = Db::name('Menu')->where($map)->field('id,pid,title,url,icon,tip')->order('sort asc')->select();
 
                             
                             $menus['child'][$g] = list_to_tree($menuList, 'id', 'pid', 'operater', $item['id']);
@@ -495,7 +499,7 @@ class Admin extends Controller
                 }
             }
         }
-
+        //dump($menus);exit;
         return $menus;
     }
 

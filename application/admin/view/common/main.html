@@ -1,32 +1,79 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>{$seo['title']} - MuuCMF T5</title>
-<!-- Tell the browser to be responsive to screen width -->
-<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-<!-- ZUI -->
-<link href="__ZUI__/css/zui.min.css" rel="stylesheet">
-<!-- MAIN IFRAME BASE -->
-<link href="__STATIC__/admin/css/main.min.css" rel="stylesheet">
-{block name="style"}{/block}
-<script src="__ZUI__/lib/jquery/jquery.js"></script>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>{$seo['title']} - MuuCMF T5</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <!-- BOOTSTRAP -->
+  <link href="__STATIC__/common/lib/bootstrap/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.0/css/ionicons.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="__STATIC__/admin/css/AdminLTE.min.css">
+  <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+  <link rel="stylesheet" href="__STATIC__/admin/css/skins/_all-skins.min.css">
+  <link rel="stylesheet" href="__STATIC__/admin/css/muucmf_plugins.min.css">
+  <!-- Muu BASE style -->
+  <link href="__STATIC__/admin/css/main.min.css" rel="stylesheet">
+  {block name="style"}{/block}
+
+  <script src="__STATIC__/common/lib/jquery/jquery.js"></script>
+  <script>
+      //全局内容的定义
+      var cookie_config={
+          "prefix":"{:Config('COOKIE_PREFIX')}"
+      }
+      var Config={
+          'GET_INFORMATION':{:modC('GET_INFORMATION',1,'Config')},
+          'GET_INFORMATION_INTERNAL':{:modC('GET_INFORMATION_INTERNAL',10,'Config')}*1000
+      }
+      var MID = "{:is_login()}";
+  </script>
 </head>
-<body class="hold-transition">
+<body class="hold-transition skin-blue sidebar-mini fixed">
+<div class="wrapper">
 
-<section class="container-fluid">
-	<div class="wrapper">
-		<!-- builder 构建器外层盒子 -->
-		<div class="builder">
-		{block name="body"}{/block}
-		</div>
-	</div>
-</section>
+  {include file="admin@common/_header" /}
+  <!-- Left side column. contains the logo and sidebar -->
+  {include file="admin@common/_sidebar" /}
 
+  <!-- Content Wrapper. Contains page content -->
+  <section class="content-wrapper container-fluid">
+    <div class="muu-wrapper">
+      <!-- builder 构建器外层盒子 -->
+      <div class="builder">
+      {block name="body"}{/block}
+
+      </div>
+    </div>
+  </section>
+
+  <!-- /.content-wrapper -->
+  
+  <!-- Control Sidebar -->
+  {include file="admin@common/_control_sidebar" /}
+  <div class="control-sidebar-bg"></div>
+
+</div>
+
+<input data-toggle="location_href" value="{:url('admin'.'/'.$controller.'/'.$action,$_GET)}" type="hidden" />
+<input data-toggle="can_update" value="{$can_update}" type="hidden" />
+<input data-toggle="version" value="{$version}" type="hidden" />
+<input data-toggle="server_ip" value="{php}echo $_SERVER['SERVER_ADDR']{/php}" type="hidden" />
+<input data-toggle="server_name" value="{php}echo $_SERVER['SERVER_NAME']{/php}" type="hidden" />
+<!-- ./wrapper -->
+<script src="__STATIC__/common/lib/bootstrap/bootstrap.min.js"></script>
+<script src="__STATIC__/admin/js/adminlte.min.js"></script>
 <!-- ZUI -->
-<script src="__ZUI__/js/zui.min.js"></script>
+<script src="__STATIC__/common/lib/js/zui.min.js"></script>
 <script src="__STATIC__/admin/js/main.min.js"></script>
 {block name="script"}{/block}
+<!-- 调用消息部件-->
+{:widget('common/Message/render')}
 </body>
 </html>

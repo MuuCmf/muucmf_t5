@@ -7,19 +7,10 @@ use think\Db;
 class Index extends Admin
 {
     /**
-     * 后台首页
-     */
-    public function index()
-    {
-
-        return $this->fetch();
- 
-    }
-    /**
      * 控制台首页
      * @return [type] [description]
      */
-    public function console()
+    public function index()
     {
         if(request()->isPost()){
             $count_day=input('post.count_day', config('COUNT_DAY'),'intval',7);

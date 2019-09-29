@@ -1,0 +1,43 @@
+<aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+
+      <!-- sidebar menu: : style can be found in sidebar.less -->
+      <ul class="sidebar-menu" data-widget="tree">
+        
+        {volist name="__MODULE_MENU__.child" id="sub_menu"}
+        <li class="treeview menu-open">
+          <a>
+              {notempty name="sub_menu.icon"}
+                  <i class="fa fa-{$menu.icon}"></i>
+              {else /}
+                  <i class="fa fa-circle-o"></i>
+              {/notempty}
+              
+              {notempty name="key"}
+                <span>{$key}</span>
+              {/notempty}
+              <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+              </span>
+          </a>
+          <ul class="treeview-menu" style="display: block">
+              {volist name="sub_menu" id="c_menu"}
+              <li data-id="{$c_menu.id}">
+                  <a href="{$c_menu.url|url}">
+                    {notempty name="c_menu.icon"}
+                        <i class="fa fa-{$c_menu.icon}"></i>
+                    {else /}
+                        <i class="fa fa-circle-o"></i>
+                    {/notempty}
+                    {$c_menu.title}
+                </a>
+              </li>
+              {/volist}
+          </ul>
+        </li>
+        {/volist}
+      </ul>
+    </section>
+    <!-- /.sidebar -->
+  </aside>

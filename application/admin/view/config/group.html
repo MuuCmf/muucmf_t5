@@ -8,19 +8,17 @@
     <div class="tab-content with-padding clearfix">
 
     <div class="tab-wrap">
-        <ul class="nav nav-primary">
+        <ul class="nav nav-pills">
             {volist name="type" id="group"}
-
                 <li {eq name="id" value="$key"}class="active"{/eq}>
                     <a href="{:Url('?id='.$key)}">{$group}{:lang("_TO_CONFIGURE_")}</a>
                 </li>
-
             {/volist}
         </ul>
 
     </div>
     <div class="col-md-12">
-        <form action="{:Url('save')}" method="post" class="form-horizontal">
+        <form action="{:url('save')}" method="post" class="form-horizontal">
             {volist name="list" id="config"}
                 <div class="form-item builder_item">
                     <label class="item-label">{$config.title}<span class="check-tips">（{$config.remark}）</span>

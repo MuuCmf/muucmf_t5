@@ -724,17 +724,6 @@ throw new Error('AdminLTE requires jQuery')
     collapsed: 'collapsed.pushMenu'
   };
 
-  //muucmf 新增fixed后定义高度
-  var windowHeight  = $(window).height();
-  $(Selector.mainSidebar).css('height', windowHeight);
-
-  
-  $(window).resize(function () {
-      var windowHeight  = $(window).height();
-      $(Selector.mainSidebar).css('height', windowHeight);
-  });
-  
-
   // PushMenu Class Definition
   // =========================
   var PushMenu = function (options) {
@@ -1085,7 +1074,8 @@ throw new Error('AdminLTE requires jQuery')
     var that = this;
 
     $(this.element).on('click', this.options.trigger, function (event) {
-      that.toggle($(this), event);
+      //禁止菜单关闭
+      //that.toggle($(this), event);
     });
   };
 

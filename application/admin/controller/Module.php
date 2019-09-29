@@ -20,22 +20,6 @@ class Module extends Admin
     }
 
     /**
-     * 已安装模块使用列表（后台模块菜单底部，更多模块点击后进入）
-     */
-    public function lists()
-    {
-        $map['is_setup'] = 1;//已安装
-        $map['is_com'] = 1; //是否商业模块
-        $modules = model('Module')->getListByPage($map,'sort desc,id desc','*',20);
-        $page = $modules->render();
-
-        $this->assign('page', $page);
-        $this->assign('modules', $modules);
-
-        return $this->fetch();
-    }
-
-    /**
      * 模块管理列表首页
      *
      * @return     <type>  ( description_of_the_return_value )
@@ -78,6 +62,22 @@ class Module extends Admin
         $modules = model('Module')->getListByPage($map,'sort desc,id desc','*',20);
         $page = $modules->render();
         
+        $this->assign('page', $page);
+        $this->assign('modules', $modules);
+
+        return $this->fetch();
+    }
+
+    /**
+     * 已安装模块使用列表（后台模块菜单底部，更多模块点击后进入）
+     */
+    public function lists()
+    {
+        $map['is_setup'] = 1;//已安装
+        $map['is_com'] = 1; //是否商业模块
+        $modules = model('Module')->getListByPage($map,'sort desc,id desc','*',20);
+        $page = $modules->render();
+
         $this->assign('page', $page);
         $this->assign('modules', $modules);
 
