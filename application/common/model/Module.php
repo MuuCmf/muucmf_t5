@@ -263,19 +263,17 @@ class Module extends Model
         if($name=='admin'){
             return false;
         }
-        
+
         $info = $this->where(['name'=>$name])->find();
 
         if(file_exists(PUBLIC_PATH . '/static/' . $info['name'] . '/images/icon.png')){
-            $info['icon_photo'] = '/static/'. $info['name'] .'/images/icon.png';
+            $info['icon'] = '/static/'. $info['name'] .'/images/icon.png';
         }elseif(file_exists(PUBLIC_PATH . '/static/' . $info['name'] . '/icon.png')){
-            $info['icon_photo'] = '/static/'. $info['name'] .'/icon.png';
+            $info['icon'] = '/static/'. $info['name'] .'/icon.png';
         }else{
-            $info['icon_photo'] = '/static/admin/images/module_default_icon.png';
+            $info['icon'] = '/static/admin/images/module_default_icon.png';
         }
 
-        
-        
         return $info;
     }
 
