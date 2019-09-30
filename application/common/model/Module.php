@@ -10,7 +10,6 @@ use think\Db;
 
 class Module extends Model
 {
-    protected $tokenFile = '/info/token.ini';
     protected $moduleName = '';
 
     /**
@@ -18,6 +17,8 @@ class Module extends Model
      */
     public function getListByPage($map,$order='create_time desc',$field='*',$r=20)
     {
+        $this->reload();
+
         $list = $this->where($map)->order($order)->field($field)->paginate($r,false,['query'=>request()->param()]);
 
         foreach ($list as &$val) {
@@ -34,43 +35,16 @@ class Module extends Model
 
         return $list;
     }
-    /**获取全部的模块信息
-     * @return array|mixed
+
+    /**
+     * [getAll description]
+     * @return [type] [description]
      */
-    public function getAll($is_installed = '')
-    {   
-        $dir = $this->getDir(APP_PATH);
+    public function getAll()
+    {
+        $result = $this->order('sort desc')->select();
 
-        foreach($dir as $k=>$v){
-            if($v == '.htaccess' || $v == 'extra' || $v == 'lang'){
-              unset($dir[$k]);
-            }
-        }
-
-        foreach ($dir as $subdir) {
-            if (file_exists(APP_PATH . '/' . $subdir . '/info/info.php') && $subdir != '.' && $subdir != '..') {
-
-                $info = $this->getModule($subdir);
-                
-                if ($is_installed == 1 && $info['is_setup'] == 0) {
-                    continue;
-                }
-                $this->moduleName = $info['name'];
-                //如果icon图片存在
-                //图标所在位置为模块静态目录跟下（推荐）
-                if(file_exists(PUBLIC_PATH . '/static/' . $info['name'] . '/images/icon.png')){
-                    $info['icon'] = '/static/'. $info['name'] .'/images/icon.png';
-                }elseif(file_exists(PUBLIC_PATH . '/static/' . $info['name'] . '/icon.png')){
-                    $info['icon'] = '/static/'. $info['name'] .'/icon.png';
-                }else{
-                    $info['icon'] = '/static/admin/images/module_default_icon.png';
-                }
-                
-                $module[] = $info;
-            }
-        }
-
-        return $module;
+        return $result;
     }
 
     /**
@@ -102,17 +76,47 @@ class Module extends Model
      */
     public function reload()
     {
-        $modules = collection($this->select())->toArray();
-        $info = [];
-        foreach ($modules as $m) {
-            if (file_exists(APP_PATH . '/' . $m['name'] . '/info/info.php') || file_exists(APP_PATH . '/' . $m['name'] . '/info/Info.php')) {
-                $info[] = array_merge($m, $this->getInfo($m['name']));
-            } 
-        }
-        
-        $this->saveAll($info);
+        //获取所有本地模块
+        $dir = $this->getDir(APP_PATH);
 
-        $this->cleanModulesCache();
+        foreach($dir as $k=>$v){
+            if($v == '.htaccess' || $v == 'extra' || $v == 'lang'){
+              unset($dir[$k]);
+            }
+        }
+
+        foreach ($dir as $subdir) {
+            if (file_exists(APP_PATH . '/' . $subdir . '/info/info.php') && $subdir != '.' && $subdir != '..')
+            {
+                $info = $this->getInfo($subdir);
+                //如果icon图片存在
+                //图标所在位置为模块静态目录跟下（推荐）
+                if(file_exists(PUBLIC_PATH . '/static/' . $info['name'] . '/images/icon.png')){
+                    $info['icon'] = '/static/'. $info['name'] .'/images/icon.png';
+                }elseif(file_exists(PUBLIC_PATH . '/static/' . $info['name'] . '/icon.png')){
+                    $info['icon'] = '/static/'. $info['name'] .'/icon.png';
+                }else{
+                    $info['icon'] = '/static/admin/images/module_default_icon.png';
+                }
+
+                //合并数据表内模块
+                $module_info = $this->getModule($info['name']);
+                if($module_info){
+                    $module_info = $module_info->toArray();
+
+                    if(is_array($module_info)){
+                        $info = array_merge($info, $module_info);
+                    }
+                }
+                $module[] = $info;
+            }
+
+
+        }
+
+        $this->saveAll($module);
+
+        //$this->cleanModulesCache();
     }
 
     /**重置单个模块信息
@@ -140,14 +144,13 @@ class Module extends Model
      */
     public function checkCanVisit($name)
     {
-        $modules = $this->getAll();
+        $m = getModule($name);
 
-        foreach ($modules as $m) {
-            if (isset($m['is_setup']) && $m['is_setup'] == 0 && $m['name'] == ucfirst($name)) {
-                header("Content-Type: text/html; charset=utf-8");
-                exit('您所访问的模块未安装，禁止访问，请管理员到后台应用-模块管理中安装。');
-            }
+        if (isset($m['is_setup']) && $m['is_setup'] == 0 && $m['name'] == ucfirst($name)) {
+            header("Content-Type: text/html; charset=utf-8");
+            exit('您所访问的模块未安装，禁止访问，请管理员到后台应用-模块管理中安装。');
         }
+        
 
     }
 
@@ -157,39 +160,13 @@ class Module extends Model
      */
     public function checkInstalled($name)
     {
-        $modules = $this->getAll();
+        $m = getModule($name);
 
-        foreach ($modules as $m) {
-            if ($m['name'] == $name && $m['is_setup']) {
-                return true;
-            }
+        if ($m['name'] == $name && $m['is_setup']) {
+            return true;
         }
+        
         return false;
-    }
-
-    /**
-     * 清理全部模块的缓存
-     */
-    public function cleanModulesCache()
-    {
-        $modules = $this->getAll();
-
-        foreach ($modules as $m) {
-            $this->cleanModuleCache($m['name']);
-        }
-        cache('module_all', null);
-        cache('admin_modules', null);
-        cache('ALL_MESSAGE_SESSION',null);
-        cache('ALL_MESSAGE_TPLS',null);
-    }
-
-    /**清理某个模块的缓存
-     * @param $name 模块名
-     */
-    public function cleanModuleCache($name)
-    {
-        cache('common_module_' . strtolower($name), null);
-
     }
 
     /**卸载模块
@@ -229,7 +206,7 @@ class Module extends Model
                     return false;
                 }
             }
-            //兼容老的卸载方式，执行一边uninstall.sql
+            //兼容老的卸载方式，执行uninstall.sql
             if (file_exists(APP_PATH . '/' . $module['name'] . '/info/uninstall.sql')) {
                 $uninstallSql = APP_PATH . '/' . $module['name'] . '/info/uninstall.sql';
 
@@ -247,10 +224,10 @@ class Module extends Model
                 }
             }
         }
+        
         $module['is_setup'] = 0;
         $this->save($module,['id'=>$id]);
 
-        $this->cleanModulesCache();
         return true;
     }
 
@@ -266,12 +243,14 @@ class Module extends Model
 
         $info = $this->where(['name'=>$name])->find();
 
-        if(file_exists(PUBLIC_PATH . '/static/' . $info['name'] . '/images/icon.png')){
-            $info['icon'] = '/static/'. $info['name'] .'/images/icon.png';
-        }elseif(file_exists(PUBLIC_PATH . '/static/' . $info['name'] . '/icon.png')){
-            $info['icon'] = '/static/'. $info['name'] .'/icon.png';
-        }else{
-            $info['icon'] = '/static/admin/images/module_default_icon.png';
+        if($info){
+            if(file_exists(PUBLIC_PATH . '/static/' . $info['name'] . '/images/icon.png')){
+                $info['icon'] = '/static/'. $info['name'] .'/images/icon.png';
+            }elseif(file_exists(PUBLIC_PATH . '/static/' . $info['name'] . '/icon.png')){
+                $info['icon'] = '/static/'. $info['name'] .'/icon.png';
+            }else{
+                $info['icon'] = '/static/admin/images/module_default_icon.png';
+            }
         }
 
         return $info;
@@ -293,12 +272,10 @@ class Module extends Model
                     $m['is_setup'] = 1;
                 }
                 $m['id'] = $this->add($m);
-                $m['token'] = $this->getToken($m['name']);
+                
                 return $m;
             }
-
         } else {
-            $module['token'] = $this->getToken($module['name']);
             return $module;
         }
     }
@@ -440,7 +417,7 @@ class Module extends Model
             $this->error = lang('_MODULE_INFORMATION_MODIFICATION_FAILED_WITH_PERIOD_');
             return false;
         }
-        $this->cleanModulesCache();//清除全站缓存
+
         $this->error = $log;
         return true;
     }

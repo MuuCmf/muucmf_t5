@@ -290,7 +290,10 @@ class Admin extends Controller
      */
     final public function getMenus()
     {   
-        if(empty($controller)) $controller = request()->controller();
+        $module = request()->module();
+        $controller = request()->controller();
+        $action = request()->action();
+
         $menus  =   session('ADMIN_MENU_LIST'.$controller);
         if (empty($menus)) {
             // 获取主菜单
@@ -304,15 +307,25 @@ class Admin extends Controller
             
             $menus['child'] = []; //设置子节点
 
-            //高亮主菜单
-            $current = Db::name('Menu')->where("url like '{$controller}/" . request()->action() . "%' OR url like '%/{$controller}/" . request()->action() . "%'  ")->field('id')->find();
-            
-            if ($current) {
-                $nav = collection(model('admin/Menu')->getPath($current['id']))->toArray();
-                $nav_first_title = $nav[0]['title'];
+            //当前菜单
+            $current_map['url'] = [
+                ['=', $module .'/'. $controller .'/'. $action],
+                ['=', $controller .'/'. $action],
+                'OR'
+            ];
+            $current = Db::name('Menu')->where($current_map)->find();
 
+            if ($current) {
+                //获取顶级菜单数据
+                $nav = model('admin/Menu')->getPath($current['id']);
+                $nav_current_id = $nav[0]['id'];
                 //echo $nav_first_title;
                 foreach ($menus['main'] as $key => $item) {
+
+                    //如果是模块菜单获取模块信息
+                    if($item['module'] != '' || !empty($item['module'])){
+                        $module = model('common/Module')->getModule($item['module']);
+                    }
                     
                     if (!is_array($item) || empty($item['title']) || empty($item['url'])) {
                         $this->error(lang('_CLASS_CONTROLLER_ERROR_PARAM_',array('menus'=>$menus)));
@@ -327,8 +340,7 @@ class Admin extends Controller
                     }
 
                     // 获取当前主菜单的子菜单项
-                    if ($item['title'] == $nav_first_title) {
-
+                    if ($item['id'] == $nav_current_id) {
                         $menus['main'][$key]['class'] = 'active';
                         //生成child树
                         $groups = Db::name('Menu')->where("pid = '{$item['id']}'")->distinct(true)->field("`group`")->order('sort asc')->select();
@@ -336,11 +348,11 @@ class Admin extends Controller
                         if ($groups) {
                             $groups = array_column($groups, 'group');
                         } else {
-                            $groups = array();
+                            $groups = [];
                         }
 
                         //获取二级分类的合法url
-                        $where = array();
+                        $where = [];
                         $where['pid'] = $item['id'];
                         $where['hide'] = 0;
                         if (!config('DEVELOP_MODE')) { // 是否开发者模式
@@ -362,6 +374,7 @@ class Admin extends Controller
                             }
                         }
                         // 按照分组生成子菜单树
+                        $map = [];
                         foreach ($groups as $g) {
                             $map = array('group' => $g);
                             if (isset($to_check_urls)) {
@@ -377,16 +390,16 @@ class Admin extends Controller
                             if (!config('DEVELOP_MODE')) { // 是否开发者模式
                                 $map['is_dev'] = 0;
                             }
+                            
                             $menuList = Db::name('Menu')->where($map)->field('id,pid,title,url,icon,tip')->order('sort asc')->select();
 
-                            
                             $menus['child'][$g] = list_to_tree($menuList, 'id', 'pid', 'operater', $item['id']);
                         }
                     }
                 }
             }
         }
-        //dump($menus);exit;
+
         return $menus;
     }
 

@@ -16,6 +16,15 @@ class Admin extends MuuAdmin
         parent::_initialize();
     }
 
+    public function index()
+    {
+                //list 所有方法查看AdminListBuilder类
+        $builder=new AdminListBuilder();
+        
+
+        $builder->display();
+    }
+
    	/**
    	 * 配置
    	 * @return [type] [description]

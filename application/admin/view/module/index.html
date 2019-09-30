@@ -18,10 +18,8 @@
                 </script>
             </ul>
             <div class="pull-right">
-                <a href="{:url('Module/Index',array_merge($_GET,array('refresh'=>2)))}" class="btn btn-success"><i
-                        class="icon-level-up"></i>{:lang("_CHECK_FOR_UPDATES_IMMEDIATELY_")}</a>
-             &nbsp;<a
-                    href="{:url('Module/Index',array_merge($_GET,array('refresh'=>1)))}" class="btn btn-danger"><i class="icon-undo"></i>
+                
+             <a href="{:url('Module/Index',array_merge($_GET,array('refresh'=>1)))}" class="btn btn-default"><i class="icon-undo"></i>
                {:lang("_RESET_ALL_MODULE_INFORMATION_IS_NOT_SYNCHRONIZED_TO_USE_")}</a>&nbsp;
 
             </div>
@@ -46,7 +44,7 @@
                             </div>
                             <div class="content">
                                 <div class="card-heading title">
-                                    <h3>{$vo.alias}</h3>
+                                    <h3>{$vo.alias} <small>{$vo.version}</small></h1></h3>
                                 </div>
                                 <div class="card-content text-muted">
                                     <p class="text-muted text-ellipsis" title="{$vo.summary}">{$vo.summary}</p>
@@ -58,40 +56,23 @@
                                 <div class="card-actions clearfix">
                                     {notempty name="$vo['can_uninstall'] "}
                                         {if condition="$vo['is_setup']"}
-                                            <a class="btn btn-danger"
+                                            <!--进入模块-->
+                                            <a class="btn btn-block btn-info"
+                                               href="{:url($vo.admin_entry)}" {if $vo.custom_admin == 1}target="_blank"{/if}>进入模块</a>
+                                            <a class="btn btn-block btn-danger"
                                                href="{:url('uninstall', array('id' => $vo['id']))}">{:lang("_UNINSTALL_")}</a>
                                         {else/}
-                                            <a class="btn btn-info"
+                                            <!--进入模块-->
+                                            <a class="btn btn-block btn-info disabled"
+                                               href="{:url($vo.admin_entry)}" {if $vo.custom_admin == 1}target="_blank"{/if}>进入模块</a>
+                                            <a class="btn btn-block btn-success"
                                                href="{:url('install', array('name' => $vo['name']))}">{:lang("_INSTALL_")}</a>
                                         {/if}
                                     {else /}
-                                        <a disabled class="btn btn-default">系统模块</a>
+                                        <a class="btn btn-block btn-info"
+                                               href="{:url($vo.admin_entry)}" {if $vo.custom_admin == 1}target="_blank"{/if}>进入模块</a>
+                                        <a disabled class="btn btn-block btn-default">系统模块</a>
                                     {/notempty}
-
-                                    {empty name="vo.update_list"}
-
-                                    {else/}
-                                        <a class="btn btn-success"
-                                           href="{:url('admin/Cloud/update',array('token'=>$vo['token']))}">{:lang("_TO_UPDATE_")}</a>
-                                    {/empty}
-                                </div>
-                                <div class="card-actions clearfix">
-                                    <div class="pull-left">
-                                        {empty name="vo.token"}
-                                            <span class="btn btn-xs btn-warning">{:lang("_LOCAL_MODULE_")}</span>
-                                        {else/}
-                                            <a target="_blank"
-                                               href="{:appstoreUrl('Appstore/Index/Info',array('token'=>$vo['token']))}"
-                                               class="btn btn-xs btn-info">{:lang("_GO_TO_THE_CLOUD_MARKET_VIEW_")}</a>
-                                        {/empty}
-                                    </div>
-                                    <div class="pull-right">
-                                        {empty name="vo.token"}
-                                            <span class="label label-info">{$vo.version}</span>
-                                        {else/}
-                                            <span class="label label-info">{$vo.version_info.title}</span>
-                                        {/empty}
-                                    </div>
                                 </div>
                             </div>
                         </div>
