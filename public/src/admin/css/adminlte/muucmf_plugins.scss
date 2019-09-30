@@ -51,13 +51,13 @@ body {
     overflow-y:auto; 
 
     .expand-info {
-
-      padding-top: 10px;
+      padding-top: 20px;
+      padding-bottom: 10px;
       text-align: center;
       .expand-icon {
         margin: 0 auto;
-        width:60px;
-        height:60px;
+        width:80px;
+        height:80px;
         border-radius: 5px;
         overflow: hidden;
 
@@ -131,12 +131,13 @@ body {
     overflow-y:auto; 
 
     .expand-info {
-      padding-top: 10px;
+      padding-top: 20px;
+      padding-bottom: 10px;
       text-align: center;
       .expand-icon {
         margin: 0 auto;
-        width:60px;
-        height:60px;
+        width:80px;
+        height:80px;
         border-radius: 5px;
         overflow: hidden;
 
@@ -149,6 +150,11 @@ body {
         color: #fff;
       }
       p {
+        color: #fff;
+      }
+      .btn-module {
+        
+        background-color: rgba(0,0,0,0.1);
         color: #fff;
       }
     }
