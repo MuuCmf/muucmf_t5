@@ -54,7 +54,7 @@ class Admin extends Controller
         //获取管理员数据
         $auth_user = query_user(['nickname','username','sex','avatar32','title','fans', 'following','signature'],is_login());
         
-        $this->assign('module', $this->getModule(request()->module()));
+        $this->assign('__MODULE__', $this->getModule(request()->module()));
         //dump($this->getModule(request()->module()));exit;
         $this->assign('controller', request()->controller());
         $this->assign('action', request()->action());

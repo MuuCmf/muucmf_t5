@@ -17,9 +17,20 @@
     };
 
     var target_change = function(){
-        $('.target').change(function(){
-            $(this).closest('.new-blank').find('.target_input').val($(this).is(':checked')?1:0);
+        $('.channel-ul').off('click').on('click','label.target-blank',function(event){
+            event.preventDefault();
+            if($(this).prev().prop('checked')){
+                $(this).prev().prop("checked",false);
+                $(this).closest('.new-blank').find('.target_input').val(0);
+            }else{
+                $(this).prev().prop("checked",true);
+                $(this).closest('.new-blank').find('.target_input').val(1);
+            }
         })
+        /*
+        $('.target').change(function(){
+            $(this).closest('.new-blank').find('.target_input').val($(this).prev().is(':checked')?1:0);
+        })*/
     };
 
     var change_select = function () {

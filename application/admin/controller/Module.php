@@ -115,7 +115,7 @@ class Module extends Admin
             $builder->keyReadOnly('id', lang('_MODULE_NUMBER_'));
             $builder->suggest('<span class="text-danger">'.lang('_OPERATE_CAUTION_').'</span>');
             $builder->keyReadOnly('alias', lang('_UNINSTALL_MODULE_'));
-            $builder->keyBool('withoutData', lang('_KEEP_DATA_MODULE_').'?', lang('_DEFAULT_RESERVATION_MODULE_DATA_'))->keyBool('remove_nav', lang('_REMOVE_NAVIGATION_'), lang('_UNINSTALL_AUTO_UNINSTALL_MENU_',array('link'=>Url('channel/index'))));
+            $builder->keyBool('withoutData', lang('_KEEP_DATA_MODULE_').'?', lang('_DEFAULT_RESERVATION_MODULE_DATA_'))->keyBool('remove_nav', lang('_REMOVE_NAVIGATION_'), lang('_UNINSTALL_AUTO_UNINSTALL_MENU_',array('link'=>url('channel/index'))));
 
             $module['withoutData'] = 1;
             $builder->data($module);

@@ -49,7 +49,10 @@ input[type=checkbox]+label:before, input[type=radio]+label:before {
     transition: all .3s ease-in-out;
 }
 
-input[type=checkbox]+label:after, input[type=checkbox]+label:before, input[type=radio]+label:after, input[type=radio]+label:before {
+input[type=checkbox]+label:after
+, input[type=checkbox]+label:before
+, input[type=radio]+label:after
+, input[type=radio]+label:before {
     content: '';
     font-family: helvetica;
     display: inline-block;
@@ -62,7 +65,7 @@ input[type=checkbox]+label:after, input[type=checkbox]+label:before, input[type=
     position: absolute;
 }
 
-input[type=checkbox]+label:after, input[type=radio]+label:after {
+input[type=checkbox]+label:after, input[type=radio]+label:after ,label.muu-check:after {
     color: #fff;
 }
 

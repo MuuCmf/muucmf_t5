@@ -18,6 +18,7 @@ class Channel extends Admin
     {
         $Channel = Db::name('Channel');
         if (request()->isPost()) {
+
             $one = $_POST['nav'][1];
             if (count($one) > 0) {
                 Db::execute('TRUNCATE TABLE ' . config('database.prefix') . 'channel');
@@ -28,7 +29,7 @@ class Channel extends Admin
                         'title' => html($one['title'][$i]),
                         'url' => text($one['url'][$i]),
                         'sort' => intval($one['sort'][$i]),
-                        'target' => intval($one['target'][$i]),
+                        'target' => empty($one['target'][$i]) ? 0:intval($one['target'][$i]),
                         'band_text' => text($one['band_text'][$i]),
                         'band_color' => text($one['band_color'][$i]),
                         'status' => 1
@@ -66,6 +67,7 @@ class Channel extends Admin
             $list = $Channel->where($map)->order('sort asc,id asc')->select();
             foreach ($list as $k => &$v) {
                 $module = Db::name('Module')->where(array('entry' => $v['url']))->find();
+
                 $v['module_name'] = $module['name'];
                 $child = $Channel->where(array('status' => array('gt', -1), 'pid' => $v['id']))->order('sort asc,id asc')->select();
                 foreach ($child as $key => &$val) {
@@ -103,7 +105,7 @@ class Channel extends Admin
                         'url' => text($one['url'][$i]),
                         'sort' => intval($one['sort'][$i]),
                         'target' => intval($one['target'][$i]),
-                        'color' => text($one['color'][$i]),
+                        //'color' => text($one['color'][$i]),
                         'band_text' => text($one['band_text'][$i]),
                         'band_color' => text($one['band_color'][$i]),
                         'status' => 1
@@ -133,6 +135,12 @@ class Channel extends Admin
             $this->setTitle(lang('_NAVIGATION_MANAGEMENT_'));
             return $this->fetch();
         }
+    }
+
+    private function getModules()
+    {
+        $result = model('common/Module')->getAll(['is_setup' => 1]);
+        return $result;
     }
 
 

@@ -40,9 +40,9 @@ class Module extends Model
      * [getAll description]
      * @return [type] [description]
      */
-    public function getAll()
+    public function getAll($where = [])
     {
-        $result = $this->order('sort desc')->select();
+        $result = $this->where($where)->order('sort desc')->select();
 
         return $result;
     }

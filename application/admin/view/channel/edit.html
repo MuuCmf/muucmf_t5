@@ -9,7 +9,7 @@
 			</notempty>
 		</h2>
 	</div>
-	<form action="{:Url()}" method="post" class="form-horizontal">
+	<form action="{:url()}" method="post" class="form-horizontal">
         <div class="with-padding">
             <div class="form-item">
                 <label class="item-label">{:lang("_NAVIGATION_TITLE_")}<span class="check-tips">{:lang("_USED_TO_DISPLAY_TEXT_")}</span></label>
@@ -77,7 +77,7 @@
 
 		<div class="form-item with-padding">
 			<input type="hidden" name="id" value="{$info.id|default=''}">
-			<button class="btn submit-btn ajax-post" id="submit" type="submit" target-form="form-horizontal">{:lang("_SURE_WITH_SPACE_")}</button>
+			<button class="btn btn-success submit-btn ajax-post" id="submit" type="submit" target-form="form-horizontal">{:lang("_SURE_WITH_SPACE_")}</button>
 			<button class="btn btn-return" onclick="javascript:history.back(-1);return false;">{:lang("_RETURN_WITH_SPACE_")}</button>
 		</div>
 	</form>

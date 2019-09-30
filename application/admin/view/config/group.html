@@ -11,7 +11,7 @@
         <ul class="nav nav-pills">
             {volist name="type" id="group"}
                 <li {eq name="id" value="$key"}class="active"{/eq}>
-                    <a href="{:Url('?id='.$key)}">{$group}{:lang("_TO_CONFIGURE_")}</a>
+                    <a href="{:url('?id='.$key)}">{$group}{:lang("_TO_CONFIGURE_")}</a>
                 </li>
             {/volist}
         </ul>
@@ -140,9 +140,8 @@
                                         $checked = in_array($key,$config['value_array']) ? 'checked' : '';
                                         $inputId = "id_$config[name]_$key";
                                     {/php}
-                                    <label for="{$inputId}">
-                                        <input type="checkbox" value="{$key}" id="{$inputId}" class="oneplus-checkbox" data-field-name="{$config.name}" {$checked}/>
-                                        {$option|htmlspecialchars}</label>
+                                    <input type="checkbox" value="{$key}" id="{$inputId}" class="oneplus-checkbox" data-field-name="{$config.name}" {$checked}/>
+                                    <label for="{$inputId}">{$option|htmlspecialchars}</label>
                                 {/volist}
                                 <input type="hidden" name="config[{$config.name}]" class="oneplus-checkbox-hidden"
                                        data-field-name="{$config.name}" value="{$config.value}"/>
@@ -192,7 +191,7 @@
                                 target-form="form-horizontal">{:lang("_SURE_WITH_SPACE_")}
                         </button>
                     {else/}
-                        <button type="submit" class="btn submit-btn ajax-post" target-form="form-horizontal">{:lang("_SURE_WITH_SPACE_")}
+                        <button type="submit" class="btn submit-btn btn-success ajax-post" target-form="form-horizontal">{:lang("_SURE_WITH_SPACE_")}
                         </button>
                     {/empty}
 

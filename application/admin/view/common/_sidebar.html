@@ -1,13 +1,13 @@
 <aside class="main-sidebar">
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
-      {notempty name="module"}
+      {notempty name="__MODULE__"}
       <div class="expand-info">
         <div class="expand-icon">
-          <img src="{$module.icon}" />
+          <img src="{$__MODULE__.icon}" />
         </div>
-        <h3 class="title">{$module.alias}</h3>
-        <p class="version">版本：{$module.version}</p>
+        <h3 class="title">{$__MODULE__.alias}</h3>
+        <p class="version">版本：{$__MODULE__.version}</p>
         <a href="{:url('admin/module/index')}" class="btn btn-module">切换应用</a>
       </div>
       {/notempty}
