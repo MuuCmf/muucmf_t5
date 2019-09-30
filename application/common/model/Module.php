@@ -10,7 +10,7 @@ use think\Db;
 
 class Module extends Model
 {
-    protected $tokenFile = '/Info/token.ini';
+    protected $tokenFile = '/info/token.ini';
     protected $moduleName = '';
 
     /**
@@ -23,11 +23,11 @@ class Module extends Model
         foreach ($list as &$val) {
             //如果icon图片存在
             if(file_exists(PUBLIC_PATH . '/static/' . $val['name'] . '/images/icon.png')){
-                $val['icon_photo'] = '/static/'. $val['name'] .'/images/icon.png';
+                $val['icon'] = '/static/'. $val['name'] .'/images/icon.png';
             }elseif(file_exists(PUBLIC_PATH . '/static/' . $val['name'] . '/icon.png')){
-                $val['icon_photo'] = '/static/'. $val['name'] .'/icon.png';
+                $val['icon'] = '/static/'. $val['name'] .'/icon.png';
             }else{
-                $val['icon_photo'] = '/static/admin/images/module_default_icon.png';
+                $val['icon'] = '/static/admin/images/module_default_icon.png';
             }
         }
         unset($val);
@@ -145,7 +145,7 @@ class Module extends Model
         foreach ($modules as $m) {
             if (isset($m['is_setup']) && $m['is_setup'] == 0 && $m['name'] == ucfirst($name)) {
                 header("Content-Type: text/html; charset=utf-8");
-                exit('您所访问的模块未安装，禁止访问，请管理员到后台扩展-本地-模块中安装。');
+                exit('您所访问的模块未安装，禁止访问，请管理员到后台应用-模块管理中安装。');
             }
         }
 

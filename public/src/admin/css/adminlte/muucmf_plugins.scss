@@ -50,7 +50,33 @@ body {
     z-index:860;
     overflow-y:auto; 
 
+    .expand-info {
+
+      padding-top: 10px;
+      text-align: center;
+      .expand-icon {
+        margin: 0 auto;
+        width:60px;
+        height:60px;
+        border-radius: 5px;
+        overflow: hidden;
+
+        img {
+          width: 100%;
+        }
+      }
+      .title {
+        font-size:16px;
+        color: #666;
+      }
+    }
+
     .sidebar-menu {
+
+      li.active > a,
+      li.menu-open > a {
+        background-color: #f1f1f1;
+      }
 
       .treeview-menu {
         background:#fff;
@@ -103,6 +129,29 @@ body {
     background-color: #383e4b;
     z-index:860;
     overflow-y:auto; 
+
+    .expand-info {
+      padding-top: 10px;
+      text-align: center;
+      .expand-icon {
+        margin: 0 auto;
+        width:60px;
+        height:60px;
+        border-radius: 5px;
+        overflow: hidden;
+
+        img {
+          width: 100%;
+        }
+      }
+      .title {
+        font-size:16px;
+        color: #fff;
+      }
+      p {
+        color: #fff;
+      }
+    }
 
     .sidebar-menu {
 

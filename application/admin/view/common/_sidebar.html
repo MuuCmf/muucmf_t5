@@ -1,10 +1,16 @@
 <aside class="main-sidebar">
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
-      <div class="">
-        {$module.name}
-        <img src="{$module.icon}" />
+      {notempty name="module"}
+      <div class="expand-info">
+        <div class="expand-icon">
+          <img src="{$module.icon}" />
+        </div>
+        <h3 class="title">{$module.alias}</h3>
+        <p class="name">{$module.name}</p>
+        <p class="version">{$module.version}</p>
       </div>
+      {/notempty}
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu" data-widget="tree">
         
