@@ -6,7 +6,7 @@
     </div>
 	<div class="with-padding">
 
-        <div class="clearfix">
+        <div class="tab-wrap rows clearfix">
             <div class="col-xs-10">
                 <ul class="nav nav-pills nav-secondary">
                     <li><a href="{:Url('AuthManager/access',['group_name'=>input('group_name') ,'group_id'=> input('group_id')])}">{:lang("_MANAGEMENT_BACKGROUND_AUTHORIZATION_")}</a></li>
@@ -74,7 +74,7 @@
 
 								{/present}
 
-                                <a class="btn btn-success btn-mini" data-remote="{:Url('addnode',array('module'=>$node['name'],'group_id'=>input('group_id')))}" data-toggle="modal">+ {:lang("_NEW_NODE_")}</a>
+                                <a class="btn btn-success btn-sm btn-mini" data-remote="{:Url('addnode',array('module'=>$node['name'],'group_id'=>input('group_id')))}" data-toggle="modal">+ {:lang("_NEW_NODE_")}</a>
 							</dd>
 						</dl>
 					{/volist}
