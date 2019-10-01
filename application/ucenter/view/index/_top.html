@@ -23,14 +23,7 @@
         </div>
         <div class="">
             <div class="uc_main_info">
-                <div class="uc_info_box uc_uname text-center">
-                    <span>
-                        <a ucard="{$user_info.uid}" href="{$user_info.space_url}" title="">{$user_info.nickname|htmlspecialchars}</a>
-                    </span>
-                    <span>
-                        {:widget('common/UserRank/render',array($user_info['uid']))}
-                    </span>
-                </div>
+
                 <div class="uc_info_box text-more text-center" style="width: 100%">
                 <span>
                     {if condition="$user_info['signature'] eq ''"}

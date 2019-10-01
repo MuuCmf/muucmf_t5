@@ -289,10 +289,10 @@ class Member extends Controller
                                 $memberModel->logout();
                                 $this->initInviteUser($uid, $aCode, $aRoleId);
                                 model('ucenter/UcenterMember')->initRoleUser($aRoleId, $uid);
-                                clean_query_user_cache($uid,array('avatar64','avatar128','avatar32','avatar256','avatar512','rank_link'));
+                                clean_query_user_cache($uid,array('avatar64','avatar128','avatar32','avatar256','avatar512'));
                                 $memberModel->login($uid, false, $aRoleId); //登陆
                                 $result['status'] = 1;
-                                $result['url'] = Url('ucenter/Member/register', array('code' => $aCode));
+                                $result['url'] = url('ucenter/Member/register', array('code' => $aCode));
                             }
                         } else {
                             $result['info'] = lang('_INFO_INV_HIGH_LEVEL_NEEDED_').lang('_EXCLAMATION_');
@@ -660,7 +660,7 @@ class Member extends Controller
             if ($roleUser) {
                 $memberModel = model('common/Member');
                 $memberModel->logout();
-                clean_query_user_cache($uid, array('avatar64', 'avatar128', 'avatar32', 'avatar256', 'avatar512', 'rank_link'));
+                clean_query_user_cache($uid, array('avatar64', 'avatar128', 'avatar32', 'avatar256', 'avatar512'));
                 $result = $memberModel->login($uid, false, $aRoleId);
                 if ($result) {
                     $data['msg'] = lang('_INFO_ROLE_CHANGE_');
@@ -688,7 +688,7 @@ class Member extends Controller
             } else {
                 $memberModel = model('common/Member');
                 $memberModel->initRoleUser($aRoleId, $uid);
-                clean_query_user_cache($uid, array('avatar64', 'avatar128', 'avatar32', 'avatar256', 'avatar512', 'rank_link'));
+                clean_query_user_cache($uid, array('avatar64', 'avatar128', 'avatar32', 'avatar256', 'avatar512'));
                 $memberModel->logout();
                 $memberModel->login($uid, false, $aRoleId); //登陆
             }

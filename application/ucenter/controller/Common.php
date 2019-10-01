@@ -12,26 +12,13 @@ class Common extends Controller
     private function getProfile($uid)
     {
         $uid = intval($_REQUEST['uid']);
-        $userProfile = query_user(array('uid', 'nickname', 'avatar64', 'space_url', 'following', 'fans', 'signature', 'rank_link'), $uid);
+        $userProfile = query_user(array('uid', 'nickname', 'avatar64', 'space_url', 'following', 'fans', 'signature'), $uid);
         $follow['follow_who'] = $userProfile['uid'];
         $follow['who_follow'] = is_login();
         $userProfile['followed'] = Db::name('Follow')->where($follow)->count();
-        $userProfile['following_url'] = Url('ucenter/Index/following', array('uid' => $uid));
-        $userProfile['fans_url'] = Url('ucenter/Index/fans', array('uid' => $uid));
-        $html = '';
-        if (count($userProfile['rank_link'])) {
-            foreach ($userProfile['rank_link'] as $val) {
-                if ($val['is_show']) {
-                    if (empty($val['label_content'])) {
-                        $html = $html . '<img class="img-responsive" src="' . $val['logo_url'] . '" title="' . $val['title'] . '" alt="' . $val['title'] . '" style="width: 18px;height: 18px;vertical-align: middle;margin-left: 3px;display: inline;"/>';
-                    } else {
-                        $html = $html . '<span class="label label-badge rank-label" title="' . $val['title'] . '" style="background:' . $val['label_bg'] . ' !important;color:' . $val['label_color'] . ' !important;vertical-align: middle;margin-left: 3px;">' . $val['label_content'] . '</span>';
-                    }
-                }
-            }
-            unset($val);
-        }
-        $userProfile['rank_link'] = $html;
+        $userProfile['following_url'] = url('ucenter/Index/following', array('uid' => $uid));
+        $userProfile['fans_url'] = url('ucenter/Index/fans', array('uid' => $uid));
+
         //获取用户封面path
         $map = getUserConfigMap('user_cover', '', $uid);
         $map['role_id'] = 0;

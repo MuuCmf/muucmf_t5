@@ -46,10 +46,9 @@ class Index extends Base
 
     private function userInfo($uid = null)
     {
-        $user_info = query_user(array('avatar32','avatar64', 'nickname', 'uid', 'space_url', 'score', 'title', 'fans', 'following', 'rank_link', 'signature'), $uid);
-        //dump($user_info);exit;
+        $user_info = query_user(array('avatar32','avatar64', 'nickname', 'uid', 'space_url', 'score', 'title', 'fans', 'following', 'signature'), $uid);
         //获取用户封面id
-        $map=getUserConfigMap('user_cover','',$uid);
+        $map = getUserConfigMap('user_cover','',$uid);
         $map['role_id']=0;
         $config_model = model('ucenter/UserConfig');
         $cover = $config_model->findData($map);
@@ -68,7 +67,7 @@ class Index extends Base
     {
         //调用API获取基本信息
         
-        $user = query_user(array('nickname', 'signature', 'email', 'mobile', 'rank_link', 'sex', 'pos_province', 'pos_city', 'pos_district', 'pos_community'), $uid);
+        $user = query_user(array('nickname', 'signature', 'email', 'mobile', 'sex', 'pos_province', 'pos_city', 'pos_district', 'pos_community'), $uid);
 
         //TODO tox 获取省市区数据
         if ($user['pos_province'] != 0) {

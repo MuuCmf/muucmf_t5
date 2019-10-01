@@ -63,8 +63,6 @@ class User Extends Model
         
         $user_data = $this->getUrls($fields, $uid, $user_data);
 
-        $user_data = $this->getRankLink($fields, $uid, $user_data);
-
         $user_data = $this->getExpandInfo($fields, $uid, $user_data);
 
         //粉丝数、关注数
@@ -392,44 +390,6 @@ class User Extends Model
         return $ucenterResult;
     }
 
-
-
-    /**
-     * @param $fields
-     * @param $uid
-     * @param $val
-     * @param $result
-     * @return array
-     */
-    public function getRankLink($fields, $uid, $result)
-    {
-        //获取用户头衔链接
-        if (in_array('rank_link', $fields)) {
-            $rank_List = Db::name('rank_user')->where(array('uid' => $uid, 'status' => 1))->select();
-            $num = 0;
-            foreach ($rank_List as &$val) {
-                $rank = Db::name('rank')->where('id=' . $val['rank_id'])->find();
-                $val['title'] = $rank['title'];
-                $val['logo_url'] = get_pic_src(db('picture')->where('id=' . $rank['logo'])->field('path')->getField('path'));
-                $val['label_content'] = $rank['label_content'];
-                $val['label_bg'] = $rank['label_bg'];
-                $val['label_color'] = $rank['label_color'];
-                if ($val['is_show']) {
-                    $num = 1;
-                }
-            }
-
-            if ($rank_List) {
-                $rank_List[0]['num'] = $num;
-                $result['rank_link'] = $rank_List;
-            } else {
-                $result['rank_link'] = array();
-            }
-            $this->write_query_user_cache($uid, 'rank_link', $result['rank_link']);
-        }
-        return $result;
-    }
-
     /**
      * @param $fields
      * @param $uid
@@ -475,7 +435,7 @@ class User Extends Model
     {
     //写入缓存
         foreach ($result as $field => $value) {
-            if (!in_array($field, array('rank_link', 'expand_info'))) {
+            if (!in_array($field, array('expand_info'))) {
                 $value = str_replace('"', '', text($value));
             }
 
