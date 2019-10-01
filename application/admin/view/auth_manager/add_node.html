@@ -6,7 +6,7 @@
     <div class="main-title">
         <h2>{:isset($info['id'])?lang('_EDIT_WITH_SINGLE_'):lang('_NEW_WITH_SINGLE_')}{:lang("_FRONT_RIGHT_NODE_")}</h2>
     </div>
-    <form action="{:Url('AuthManager/addNode',['group_id'=>input('group_id')])}" method="post" class="form-horizontal">
+    <form action="{:url('AuthManager/addNode',['group_id'=>input('group_id')])}" method="post" class="form-horizontal">
 
     <div class="with-padding">
 

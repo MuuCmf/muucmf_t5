@@ -8,17 +8,17 @@
 
         <div class="clearfix">
             <div class="col-xs-10">
-                <ul class="nav nav-secondary">
+                <ul class="nav nav-pills nav-secondary">
                     <li><a href="{:Url('AuthManager/access',['group_name'=>input('group_name') ,'group_id'=> input('group_id')])}">{:lang("_MANAGEMENT_BACKGROUND_AUTHORIZATION_")}</a></li>
                     <li class="active"><a href="javascript:;">{:lang("_FRONT_DESK_ACCESS_AUTHORIZATION_")}</a></li>
-                    <li><a href="{:Url('AuthManager/user',array('group_name'=>input('group_name') ,'group_id'=> input('group_id')))}">{:lang("_MEMBER_DELEGATION_")}</a></li>
+                    <li><a href="{:url('AuthManager/user',array('group_name'=>input('group_name') ,'group_id'=> input('group_id')))}">{:lang("_MEMBER_DELEGATION_")}</a></li>
 
                 </ul>
             </div>
             <div class="col-xs-2 text-right">
                     <select name="group" class="form-control">
                         {volist name="auth_group" id="vo"}
-                            <option value="{:Url('AuthManager/accessuser',['group_id'=>$vo['id'],'group_name'=>$vo['title']])}" {eq name="vo['id']" value="$this_group['id']"}selected{/eq} >{$vo.title}</option>
+                            <option value="{:url('AuthManager/accessuser',['group_id'=>$vo['id'],'group_name'=>$vo['title']])}" {eq name="vo['id']" value="$this_group['id']"}selected{/eq} >{$vo.title}</option>
                         {/volist}
                     </select>
             </div>
@@ -27,7 +27,7 @@
 		<div class="node-list">
 			<!-- 访问授权 -->
 			<div class="tab-pane in">
-				<form action="{:Url('AuthManager/accessUser')}" enctype="application/x-www-form-urlencoded" method="POST" class="form-horizontal auth-form">
+				<form action="{:url('AuthManager/accessUser')}" enctype="application/x-www-form-urlencoded" method="POST" class="form-horizontal auth-form">
 
                     <input type="hidden" name="old_rules" value="{$this_group.rules}">
 					{volist name="node_list" id="node" }
@@ -54,7 +54,7 @@
                                                 <a class="btn btn-info btn-mini" data-toggle="modal" data-remote="{:url('addnode',['id'=>$child['id'],'group_id'=>input('group_id')])}">
                                                     {:lang("_EDIT_")}
                                                 </a>
-                                                <a class="btn btn-danger btn-mini" data-toggle="del" data-href="{:Url('deletenode',array('id'=>$child['id']))}">
+                                                <a class="btn btn-danger btn-mini" data-toggle="del" data-href="{:url('deletenode',array('id'=>$child['id']))}">
                                                     {:lang("_DELETE_")}
                                                 </a>
                                             

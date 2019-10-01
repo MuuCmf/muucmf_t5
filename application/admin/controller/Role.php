@@ -63,8 +63,8 @@ class Role extends Admin
         $builder = new AdminListBuilder;
         $builder->title(lang('_IDENTITY_LIST_'));
         $builder
-        ->buttonNew(Url('Role/editRole'))
-        ->setStatusUrl(Url('DoSetStatus'))
+        ->buttonNew(url('Role/editRole'))
+        ->setStatusUrl(url('DoSetStatus'))
         ->buttonEnable()
         ->buttonDisable()
         ->button(lang('_DELETE_'), array('class' => 'btn btn-danger ajax-post confirm', 'url' => Url('doSetStatus', array('status' => -1)), 'target-form' => 'ids', 'confirm-info' => "确认删除身份？删除后不可恢复！"))
@@ -77,7 +77,6 @@ class Role extends Admin
             ->keyText('description', lang('_DESCRIPTION_'))
             ->keyText('user_groups', lang('_DEFAULT_USER_GROUP_'))
             ->keytext('sort', lang('_SORT_'))
-            ->keyYesNo('invite', lang('_DO_YOU_NEED_AN_INVITATION_TO_REGISTER_'))
             ->keyYesNo('audit', lang('_REGISTRATION_WILL_NEED_TO_AUDIT_'))
             ->keyStatus()
             ->keyCreateTime()

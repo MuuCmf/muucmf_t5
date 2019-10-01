@@ -6,9 +6,9 @@
     </div>
 	<div class="tab-wrap with-padding">
 
-        <div class="clearfix">
+        <div class="tab-wrap clearfix">
             <div class="col-xs-10">
-                <ul class="nav nav-secondary">
+                <ul class="nav nav-pills nav-secondary">
                     <li class="active"><a href="javascript:;">{:lang("_MANAGEMENT_BACKGROUND_AUTHORIZATION_")}</a></li>
                     <li><a href="{:url('AuthManager/accessUser',array('group_name'=>input('group_name') ,'group_id'=> input('group_id')))}">{:lang("_FRONT_DESK_ACCESS_AUTHORIZATION_")}</a></li>
                     <li><a href="{:url('AuthManager/user',array('group_name'=>input('group_name') ,'group_id'=> input('group_id')))}">{:lang("_MEMBER_DELEGATION_")}</a></li>
