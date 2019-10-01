@@ -128,36 +128,12 @@ class Menu extends Admin {
         }
     }
     
-
     public function toogleHide($id,$value = 1){
-        $this->editRow('Menu', array('hide'=>$value), array('id'=>$id));
+        $this->editRow('Menu', array('hide'=>$value), array('id'=>$id),array('success' => '操作成功！', 'error' => '操作失败！'));
     }
 
     public function toogleDev($id,$value = 1){
-        $this->editRow('Menu', array('is_dev'=>$value), array('id'=>$id));
-    }
-
-    public function importFile($tree = null, $pid=0){
-        if($tree == null){
-            $file = APP_PATH."Admin/Conf/Menu.php";
-            $tree = require_once($file);
-        }
-        $menuModel = D('Menu');
-        foreach ($tree as $value) {
-            $add_pid = $menuModel->add(
-                array(
-                    'title'=>$value['title'],
-                    'url'=>$value['url'],
-                    'pid'=>$pid,
-                    'hide'=>isset($value['hide'])? (int)$value['hide'] : 0,
-                    'tip'=>isset($value['tip'])? $value['tip'] : '',
-                    'group'=>$value['group'],
-                )
-            );
-            if($value['operator']){
-                $this->import($value['operator'], $add_pid);
-            }
-        }
+        $this->editRow('Menu', array('is_dev'=>$value), array('id'=>$id),array('success' => '操作成功！', 'error' => '操作失败！'));
     }
 
     public function import(){

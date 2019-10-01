@@ -179,7 +179,7 @@ class Admin extends Controller
         }else{
             $where = ['id' => array('in', $id)];
         }
-        //$where = array_merge([['id' => array('in', $id)], (array)$where);
+
         $msg = array_merge(array('success' => lang('_OPERATION_SUCCESS_'), 'error' => lang('_OPERATION_FAILED_'), 'url' => '', 'ajax' => request()->isAjax()), (array)$msg);
 
         if (Db::name($model)->where($where)->update($data) !== false) {
@@ -198,7 +198,7 @@ class Admin extends Controller
      *
      * @author 朱亚杰  <zhuyajie@topthink.net>
      */
-    protected function forbid($model, $where = [], $msg = array('success' => '状态禁用成功！', 'error' => '状态禁用失败！'))
+    protected function forbid($model, $where = [], $msg = array('success' => lang('_DISABLE_SUCCESS_'), 'error' => lang('_DISABLE_FAIL_')))
     {
         $data = array('status' => 0);
         $this->editRow($model, $data, $where, $msg);
@@ -212,7 +212,7 @@ class Admin extends Controller
      *                     url为跳转页面,ajax是否ajax方式(数字则为倒数计时秒数)
      *
      */
-    protected function resume($model, $where = [], $msg = array('success' => '状态恢复成功！', 'error' => '状态恢复失败！'))
+    protected function resume($model, $where = [], $msg = array('success' => lang('_ENABLE_SUCCESS_'), 'error' => lang('_DISABLE_FAIL_')))
     {
         $data = ['status' => 1];
         $this->editRow($model, $data, $where, $msg);
@@ -239,40 +239,11 @@ class Admin extends Controller
      * @param array  $msg 执行正确和错误的消息 array('success'=>'','error'=>'', 'url'=>'','ajax'=>false)
      *                     url为跳转页面,ajax是否ajax方式(数字则为倒数计时秒数)
      */
-    protected function delete($model, $where = [], $msg =['success' => '删除成功！', 'error' => '删除失败！'])
+    protected function delete($model, $where = [], $msg =['success' => lang('_DELETE_SUCCESS_EXCLAMATION_'), 'error' => lang('_DELETE_FAILED_EXCLAMATION_')])
     {
         $data['status'] = -1;
         //$data['update_time'] = time();
         $this->editRow($model, $data, $where, $msg);
-    }
-
-    /**
-     * 设置一条或者多条数据的状态
-     */
-    public function setStatus()
-    {   
-        $ids = input('ids/a');
-        $status = input('status');
-        if(empty($Model)) $Model = request()->controller();
-        if (empty($ids)) {
-            $this->error(lang('_PLEASE_CHOOSE_THE_DATA_TO_BE_OPERATED_'));
-        }
-
-        $map['id'] = array('in', $ids);
-        switch ($status) {
-            case -1 :
-                $this->delete($Model, $map, array('success' => lang('_DELETE_SUCCESS_EXCLAMATION_'), 'error' => lang('_DELETE_FAILED_EXCLAMATION_')));
-                break;
-            case 0  :
-                $this->forbid($Model, $map, array('success' => lang('_DISABLE_SUCCESS_'), 'error' => lang('_DISABLE_FAIL_')));
-                break;
-            case 1  :
-                $this->resume($Model, $map, array('success' => lang('_ENABLE_SUCCESS_'), 'error' => lang('_ENABLE_FAILED_')));
-                break;
-            default :
-                $this->error(lang('_PARAMETER_ERROR_'));
-                break;
-        }
     }
 
     /**
