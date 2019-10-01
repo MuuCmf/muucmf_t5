@@ -68,6 +68,65 @@ class Database extends Admin{
     }
 
     /**
+     * 数据备份
+     * @return [type] [description]
+     */
+    public function dataExport()
+    {
+        $list  = Db::query('SHOW TABLE STATUS');
+        $list  = array_map('array_change_key_case', $list);
+        $title = lang('_DATA_BACKUP_');
+
+        //渲染模板
+        $this->setTitle($title);
+        $this->assign('list', $list);
+        return $this->fetch('export');
+    }
+
+    /**
+     * 数据还原
+     * @return [type] [description]
+     */
+    public function dataImport()
+    {
+        //列出备份文件列表
+        $path = realpath(config('data_backup_path'));
+        $flag = \FilesystemIterator::KEY_AS_FILENAME;
+        $glob = new \FilesystemIterator($path,  $flag);
+
+        $list = [];
+        foreach ($glob as $name => $file) {
+            if(preg_match('/^\d{8,8}-\d{6,6}-\d+\.sql(?:\.gz)?$/', $name)){
+                $name = sscanf($name, '%4s%2s%2s-%2s%2s%2s-%d');
+
+                $date = "{$name[0]}-{$name[1]}-{$name[2]}";
+                $time = "{$name[3]}:{$name[4]}:{$name[5]}";
+                $part = $name[6];
+
+                if(isset($list["{$date} {$time}"])){
+                    $info = $list["{$date} {$time}"];
+                    $info['part'] = max($info['part'], $part);
+                    $info['size'] = $info['size'] + $file->getSize();
+                } else {
+                    $info['part'] = $part;
+                    $info['size'] = $file->getSize();
+                }
+                $extension        = strtoupper(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
+                $info['compress'] = ($extension === 'SQL') ? '-' : $extension;
+                $info['time']     = strtotime("{$date} {$time}");
+
+                $list["{$date} {$time}"] = $info;
+            }
+        }
+        $title = lang('_DATA_REDUCTION_');
+        
+        //渲染模板
+        $this->setTitle($title);
+        $this->assign('list', $list);
+        return $this->fetch('import');
+    }
+
+    /**
      * 优化表
      * @param  String $tables 表名
      */

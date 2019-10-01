@@ -198,7 +198,7 @@ class Admin extends Controller
      *
      * @author 朱亚杰  <zhuyajie@topthink.net>
      */
-    protected function forbid($model, $where = [], $msg = array('success' => lang('_DISABLE_SUCCESS_'), 'error' => lang('_DISABLE_FAIL_')))
+    protected function forbid($model, $where = [], $msg = ['success' => '状态禁用成功', 'error' => '状态禁用失败'])
     {
         $data = array('status' => 0);
         $this->editRow($model, $data, $where, $msg);
@@ -212,7 +212,7 @@ class Admin extends Controller
      *                     url为跳转页面,ajax是否ajax方式(数字则为倒数计时秒数)
      *
      */
-    protected function resume($model, $where = [], $msg = array('success' => lang('_ENABLE_SUCCESS_'), 'error' => lang('_DISABLE_FAIL_')))
+    protected function resume($model, $where = [], $msg = ['success' => '启用成功', 'error' => '启用失败'])
     {
         $data = ['status' => 1];
         $this->editRow($model, $data, $where, $msg);
@@ -239,7 +239,7 @@ class Admin extends Controller
      * @param array  $msg 执行正确和错误的消息 array('success'=>'','error'=>'', 'url'=>'','ajax'=>false)
      *                     url为跳转页面,ajax是否ajax方式(数字则为倒数计时秒数)
      */
-    protected function delete($model, $where = [], $msg =['success' => lang('_DELETE_SUCCESS_EXCLAMATION_'), 'error' => lang('_DELETE_FAILED_EXCLAMATION_')])
+    protected function delete($model, $where = [], $msg =['success' => '删除成功', 'error' => '删除失败'])
     {
         $data['status'] = -1;
         //$data['update_time'] = time();
