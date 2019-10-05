@@ -133,13 +133,15 @@
             </script>
         {/case}
         {case value="group"}
-            <ul class="nav nav-secondary">
-                {volist name="form.options" id="li"}
-                <li {eq name="i" value="1"}class="active"{/eq} >
-                    <a data-target="#tab{$i}" data-toggle="tab" href="#tab{$i}">{$li.title}</a>
-                </li>
-                {/volist}
-            </ul>
+            <div class="tab-wrap">
+                <ul class="nav nav-pills nav-secondary">
+                    {volist name="form.options" id="li"}
+                    <li {eq name="i" value="1"}class="active"{/eq} >
+                        <a data-target="#tab{$i}" data-toggle="tab" href="#tab{$i}">{$li.title}</a>
+                    </li>
+                    {/volist}
+                </ul>
+            </div>
             <div class="tab-content">
                 {volist name="form.options" id="tab"}
                     <div id="tab{$i}" class="tab-pane {eq name="i" value="1"}active{/eq} tab{$i}">
