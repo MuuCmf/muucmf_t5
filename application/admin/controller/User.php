@@ -568,10 +568,10 @@ class User extends Admin
         //$builder->meta_title = lang('_GROUP_EXPAND_INFO_');
 
         $builder
-            ->buttonNew(Url('editProfile', array('id' => '0')))
-            ->buttonDelete(Url('changeProfileStatus', array('status' => '-1')))
-            ->setStatusUrl(Url('changeProfileStatus'))
-            ->buttonSort(Url('sortProfile'));
+            ->buttonNew(url('editProfile', array('id' => '0')))
+            ->buttonDelete(url('changeProfileStatus', array('status' => '-1')))
+            ->setStatusUrl(url('changeProfileStatus'))
+            ->buttonSort(url('sortProfile'));
 
         $builder
             ->keyId()
@@ -655,10 +655,10 @@ class User extends Admin
         $builder->title('【' . $profile['profile_name'] . '】' .lang('_FIELD_MANAGEMENT_'));
 
         $builder
-        ->buttonNew(Url('editFieldSetting', array('id' => '0', 'profile_group_id' => $id)))
-        ->buttonDelete(Url('setFieldSettingStatus', array('status' => '-1')))
-        ->setStatusUrl(Url('setFieldSettingStatus'))
-        ->buttonSort(Url('sortField', array('id' => $id)))
+        ->buttonNew(url('editFieldSetting', array('id' => '0', 'profile_group_id' => $id)))
+        ->buttonDelete(url('setFieldSettingStatus', array('status' => '-1')))
+        ->setStatusUrl(url('setFieldSettingStatus'))
+        ->buttonSort(url('sortField', array('id' => $id)))
         ->button(lang('_RETURN_'), array('href' => Url('profile')));
 
         $builder
