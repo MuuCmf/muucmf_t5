@@ -314,7 +314,7 @@ class Admin extends Controller
                     if ($item['id'] == $nav_current_id) {
                         $menus['main'][$key]['class'] = 'active';
                         //生成child树
-                        $groups = Db::name('Menu')->where("pid = '{$item['id']}'")->distinct(true)->field("`group`")->order('sort asc')->select();
+                        $groups = Db::name('Menu')->where(['pid'=>$item['id']])->distinct(true)->field("`group`")->order('sort asc')->select();
 
                         if ($groups) {
                             $groups = array_column($groups, 'group');
