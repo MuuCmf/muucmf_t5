@@ -24,11 +24,12 @@ class CountActive extends Model
 
         $day_data = $this->_dayActiveCount($activeAction,$time);
         
-        $have = $this->where('date',$day_data['date'])->find();
+        $have = $this->where(['date'=>$day_data['date']])->find();
+
         if(!$have){
             $this->save($day_data);
         }else{
-            $this->save($day_data,$have['id']);
+            $this->save($day_data,['id'=>$have['id']]);
         }
         
         if(date('w',$time) === '0'){
@@ -37,7 +38,7 @@ class CountActive extends Model
             if(!$have){
                 $this->save($week_data);
             }else{
-                $this->save($week_data,$have['id']);
+                $this->save($week_data,['id'=>$have['id']]);
             }
         }
 
@@ -47,7 +48,7 @@ class CountActive extends Model
         if(!$have){
             $this->save($month_data);
         }else{
-            $this->save($month_data,$have['id']);
+            $this->save($month_data,['id'=>$have['id']]);
         }
 
         return true;
@@ -64,6 +65,7 @@ class CountActive extends Model
         $startTime = $today - 24*60*60;
         $map['action_id'] = $action;
         $map['create_time'] = ['between',[$startTime,$today-1]];
+
         $users_num = Db::name('action_log')->where($map)->count();
         $data['num'] = $users_num;
         $data['type'] = 'day';

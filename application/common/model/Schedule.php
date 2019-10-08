@@ -162,6 +162,8 @@ class Schedule extends Model
             $method = explode('->', $schedule['method']);
             parse_str($schedule['args'], $args);  //分解参数
             $action = $method[1]; //todo:数组方式就报错，转成变量就OK
+            //debug
+            $return = model($method[0])->$action($args, $schedule); 
             try {
                 $return = model($method[0])->$action($args, $schedule); //执行model中的方法
                 

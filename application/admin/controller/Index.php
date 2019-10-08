@@ -168,5 +168,4 @@ class Index extends Admin
 
         $this->assign('actionLog', $actionLog);
     }
-
 }

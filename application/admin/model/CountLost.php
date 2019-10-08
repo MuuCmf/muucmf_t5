@@ -17,7 +17,7 @@ class CountLost extends Model
      */
     public function lostCount()
     {
-        $memberModel = model('Member');
+        $memberModel = model('admin/Member');
         $map['status'] = 1;
         $totalUser = $memberModel->where($map)->count()*1;
 

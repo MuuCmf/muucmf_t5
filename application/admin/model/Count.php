@@ -18,14 +18,14 @@ class Count extends Model
     public function dayCount()
     {
         $map['date'] = strtotime(time_format(time(),'Y-m-d 00:00')." - 1 day");
-        if(!Db::name('count_lost')->where($map)->find()){
+        //if(!Db::name('count_lost')->where($map)->find()){
             //流失率统计
-            model('CountLost')->lostCount();
+            model('admin/CountLost')->lostCount();
             //留存率统计
-            model('CountRemain')->remainCount();
+            model('admin/CountRemain')->remainCount();
             //活跃用户统计
-            modle('CountActive')->activeCount();
-        }
+            modle('admin/CountActive')->activeCount();
+        //}
         return true;
     }
 

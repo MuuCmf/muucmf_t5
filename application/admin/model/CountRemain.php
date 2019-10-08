@@ -41,7 +41,7 @@ class CountRemain extends Model
         $data = null;
         $remain = $this->where(['date'=>$strDayTime])->find();
         if($remain){
-            $data = $remain;
+            $data = $remain->toArray();
         }
 
         $map_reg['reg_time'] = ['between',[$strDayTime,$endDayTime]];
@@ -54,7 +54,7 @@ class CountRemain extends Model
         }
 
         if(count($regUids)){
-            $tag='LOHIN_ACTION_ID';
+            $tag='LOGIN_ACTION_ID';
             $login_action_id = cache($tag);
             if($login_action_id === false){
                 $login_action_id = Db::name('Action')->where(['name'=>'user_login','status'=>1])->value('id');
@@ -72,13 +72,14 @@ class CountRemain extends Model
         }
         $data['day'.$day.'_num'] = $loginCount;
         cache('DAY_'.$day,$data);
+
         if($remain){//更新
-            Db::name('CountRemain')->save($data,$data['id']);
+            $this->save($data,['id'=>$data['id']]);
         }else{//新增
-            Db::name('CountRemain')->save($data);
+            $this->save($data);
         }
         //统计end
-
+        //dump($day);
         if($day == 8){
             return true;
         }
