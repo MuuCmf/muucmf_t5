@@ -24,7 +24,7 @@ class Count extends Model
             //留存率统计
             model('admin/CountRemain')->remainCount();
             //活跃用户统计
-            modle('admin/CountActive')->activeCount();
+            model('admin/CountActive')->activeCount();
         //}
         return true;
     }
