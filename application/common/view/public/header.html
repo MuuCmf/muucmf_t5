@@ -52,11 +52,14 @@
 
                                 {:hook('personalMenus')}
                                 {if condition="check_auth('admin/Index/index')"}
-                                    <li><a href="{:Url('admin/Index/index')}" target="_blank">
-                                        {:lang('_MANAGE_BACKGROUND_')}</a>
-                                    </li>
+                                <li>
+                                    <a href="{:url('admin/Index/index')}" target="_blank">
+                                        {:lang('_MANAGE_BACKGROUND_')}
+                                    </a>
+                                </li>
                                 {/if}
-                                <li><a event-node="logout">
+                                <li>
+                                    <a event-node="logout" data-url="{:url('ucenter/Member/logout')}">
                                         {:lang('_LOGOUT_')}
                                     </a>
                                 </li>

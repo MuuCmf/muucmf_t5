@@ -186,7 +186,8 @@ $(function () {
  */
 $(function(){
     $('[event-node=logout]').click(function () {
-        $.get(Url('Ucenter/Member/logout'), function (msg) {
+        var url = $(this).data('url');
+        $.get(url, function (msg) {
             toast.success(msg.msg + '。', '温馨提示');
             setTimeout(function () {
                 location.href = msg.url;
