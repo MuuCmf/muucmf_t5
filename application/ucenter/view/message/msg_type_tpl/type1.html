@@ -1,7 +1,7 @@
 <!--消息类型列表start-->
 {volist name="message_type_list" id="one_message_type"}
     <li class="session3">
-        <a data-role="open-message-list" data-type="{$one_message_type.type}" >
+        <a data-role="open-message-list" data-url="{:url('ucenter/Message/messagelist')}" data-type="{$one_message_type.type}" >
             <div class="message-s clearfix">
                 <div class="pic pull-left">
                     <img class="img-wrap img-circle" src="{$one_message_type.detail.icon}" alt="" title="{$one_message_type.detail.title}">

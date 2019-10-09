@@ -23,7 +23,7 @@
                     {if condition="is_login()"}
                     <!--登陆状态-->
                         <li >
-                            <a id="messages_btn" data-role="open-slider-box" data-toggle="modal" data-target="#msgModal" class="dropdown-toggle text-left" >
+                            <a id="messages_btn" data-role="open-slider-box" data-url="{:url('ucenter/Message/messagetypelist')}" data-toggle="modal" data-target="#msgModal" class="dropdown-toggle text-left" >
                                 <span class="icon-bell"></span>
                                 <span id="nav_bandage_count"  style="display: none" class="label label-danger" data-role="now-message-num"></span>
                             </a>

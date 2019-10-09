@@ -64,48 +64,6 @@ var admin_image ={
     }
 }
 
-var moduleManager = {
-    'install': function (id) {
-        $.post(Url('admin/module/install'),{id:id},function(msg){
-            handleAjax(msg);
-        })
-    },
-    'uninstall': function (id) {
-        $.post(Url('admin/module/uninstall'),{id:id},function(msg){
-            handleAjax(msg);
-        })
-
-    }
-}
-
-/**
- * 模拟Url函数
- * @param url
- * @param params
- * @returns {string}
- * @constructor
- */
-function Url(url, params, rewrite) {
-
-    var website = '/index.php';
-    url = url.split('/');
-    if (url[0] == '' || url[0] == '@')
-        url[0] = APPNAME;
-    if (!url[1])
-        url[1] = 'Index';
-    if (!url[2])
-        url[2] = 'index';
-    website = website + '?s=/' + url[0] + '/' + url[1] + '/' + url[2];
-    if (params) {
-        params = params.join('/');
-        website = website + '/' + params;
-    }
-    if (!rewrite) {
-        website = website + '.html';
-    }
-    return website;
-}
-
 /**
  * 操纵toastor的便捷类
  * @type {{success: success, error: error, info: info, warning: warning}}

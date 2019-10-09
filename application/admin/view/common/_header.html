@@ -34,17 +34,18 @@
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
           <li class="messages-menu">
-            <a href="#" class="" data-role="open-slider-box" data-toggle="modal" data-target="#msgModal">
+            <a data-role="open-slider-box" data-url="{:url('ucenter/Message/messagetypelist')}" data-toggle="modal" data-target="#msgModal">
               <i class="fa fa-bell"></i>
               <span class="label label-success" id="nav_bandage_count"></span>
             </a>
           </li>
-          <li><a href="javascript:;" title="{:lang('_CACHE_CLEAR_')}" data-id="clear_cache" data-msg="{:lang('_CACHE_CLEAR_SUCCESS_')}{:lang('_PERIOD_')}">
+          <!--clear cache-->
+          <li><a href="javascript:;" title="{:lang('_CACHE_CLEAR_')}" data-id="clear_cache" data-msg="{:lang('_CACHE_CLEAR_SUCCESS_')}{:lang('_PERIOD_')}" data-url="{:url('admin/common/clear_cache')}">
                 <i class="fa fa-trash"></i> 
               </a>
           </li>
 
-          <li><a target="_blank" title="{:lang('_FORESTAGE_OPEN_')}" href="{:Url('index/Index/index')}">
+          <li><a target="_blank" title="{:lang('_FORESTAGE_OPEN_')}" href="{:url('index/Index/index')}">
                 <i class="fa fa-copy"></i> 
               </a>
           </li>
@@ -89,8 +90,8 @@
               <!-- Menu Footer-->
               <li class="user-footer">
                 <div class="pull-left">
-                  <a target="main_iframe" href="{:Url('User/updatePassword')}" class="btn btn-default btn-flat">{:lang('_PASSWORD_CHANGE_')}</a>
-                  <a target="main_iframe" href="{:Url('User/updateNickname')}" class="btn btn-default btn-flat">{:lang('_NICKNAME_CHANGE_')}</a>
+                  <a target="main_iframe" href="{:url('User/updatePassword')}" class="btn btn-default btn-flat">{:lang('_PASSWORD_CHANGE_')}</a>
+                  <a target="main_iframe" href="{:url('User/updateNickname')}" class="btn btn-default btn-flat">{:lang('_NICKNAME_CHANGE_')}</a>
                 </div>
                 <div class="pull-right">
                   <a href="{:url('common/logout')}" class="btn btn-default btn-flat ajax-get confirm">

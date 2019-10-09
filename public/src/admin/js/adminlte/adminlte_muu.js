@@ -94,19 +94,18 @@ $(function () {
   	 */
   	$('a[data-id="clear_cache"]').on('click', function() {
         var result = $(this).attr("data-msg");
-        clear_cache(result);
+        var url = $(this).attr('data-url');
+        clear_cache(url,result);
+
+        function clear_cache(url,result) {
+          var msg = new $.adminLTE_zui.Messager(result, {placement: 'bottom'});
+          
+          $.get(url);
+          msg.show();
+      }
     });
-  	/**
-  	 * clear_cache
-  	 */
-    function clear_cache(result) {
-        var msg = new $.adminLTE_zui.Messager(result, {placement: 'bottom'});
-        $.get(Url('admin/common/clear_cache'));
-        msg.show();
-    }
 
     //高亮导航
-    
     var location = $('input[data-toggle="location_href"]').val();
     //二级高亮
     $('.sidebar-menu').find('a[href="' + location + '"]').closest('li.treeview').addClass('active');
