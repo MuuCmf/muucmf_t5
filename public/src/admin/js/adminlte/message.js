@@ -40,7 +40,7 @@
      * 检查是否有新的消息
      */
      var checkMessage = function() {
-        var url = $('input[name="getInformation"]').val();
+        var url = Config.GET_INFORMATION_API;
         $.get(url, {}, function (msg) {
             
             if (msg.messages.length!=0) {
