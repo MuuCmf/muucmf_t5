@@ -9,6 +9,11 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
+//定义static路径
+$root = \think\Request::instance()->root();
+$root = str_replace('/index.php', '', $root);
+define('STATIC_URL', \think\Request::instance()->domain() . $root .'/static');
+
 use think\Env;
 //error_reporting(E_ERROR | E_WARNING | E_PARSE);
 return [
@@ -137,10 +142,10 @@ return [
     ],
     // 视图输出字符串内容替换,留空则会自动进行计算
     'view_replace_str'       => [
-        '__STATIC__'    => '/static',
-        '__COMMON__'    => '/static/common',
-        '__LIB__'       => '/static/common/lib',
-        '__ZUI__'       => '/static/common/lib/zui-1.9.0',
+        '__STATIC__'    => STATIC_URL,
+        '__COMMON__'    => STATIC_URL . '/common',
+        '__LIB__'       => STATIC_URL . '/common/lib',
+        '__ZUI__'       => STATIC_URL . '/common/lib/zui-1.9.0',
     ],
     // 默认跳转页面对应的模板文件
     'dispatch_success_tmpl'  => APP_PATH . 'common' . DS . 'view' . DS . 'tpl' . DS . 'dispatch_jump.tpl',
