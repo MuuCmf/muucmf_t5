@@ -419,7 +419,7 @@ class Message extends Model
                     $val['name'] = 'common_' . $val['name'];
                 }
                 $val['module'] = 'common';
-                $val['icon'] = '/static/common/images/message_icon/' . $val['icon'];
+                $val['icon'] = STATIC_URL . '/common/images/message_icon/' . $val['icon'];
                 !isset($val['sort']) && $val['sort'] = 0;
                 $val['alias']='系统';
             }
@@ -468,12 +468,12 @@ class Message extends Model
                     !isset($one_type['sort']) && $one_type['sort'] = 0;
                     if($one_type['icon']==null){
 
-                        $one_type['icon'] = '/static/' . $key . '/images/message_icon.png';//使用模块logo
+                        $one_type['icon'] = STATIC_URL . '/' . $key . '/images/message_icon.png';//使用模块logo
                         //图标文件不存在用系统默认图标
                         if(!file_exists($one_type['icon'])){
-                            $one_type['icon'] = '/static/common/images/message_icon/system.png';//模块logo不存在使用系统logo
+                            $one_type['icon'] = STATIC_URL . '/common/images/message_icon/system.png';//模块logo不存在使用系统logo
                         }else{
-                            $one_type['icon'] = '/Static/'. $key . '/images/message_icon.png';//使用模块logo
+                            $one_type['icon'] = STATIC_URL . '/'. $key . '/images/message_icon.png';//使用模块logo
                         }
                     }
                     $one_type['alias']=$module_alias[$key];

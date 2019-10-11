@@ -24,11 +24,11 @@ class Module extends Model
         foreach ($list as &$val) {
             //如果icon图片存在
             if(file_exists(PUBLIC_PATH . '/static/' . $val['name'] . '/images/icon.png')){
-                $val['icon'] = '/static/'. $val['name'] .'/images/icon.png';
+                $val['icon'] = STATIC_URL . '/'. $val['name'] .'/images/icon.png';
             }elseif(file_exists(PUBLIC_PATH . '/static/' . $val['name'] . '/icon.png')){
-                $val['icon'] = '/static/'. $val['name'] .'/icon.png';
+                $val['icon'] = STATIC_URL . '/'. $val['name'] .'/icon.png';
             }else{
-                $val['icon'] = '/static/admin/images/module_default_icon.png';
+                $val['icon'] = STATIC_URL . '/admin/images/module_default_icon.png';
             }
         }
         unset($val);
@@ -92,11 +92,11 @@ class Module extends Model
                 //如果icon图片存在
                 //图标所在位置为模块静态目录跟下（推荐）
                 if(file_exists(PUBLIC_PATH . '/static/' . $info['name'] . '/images/icon.png')){
-                    $info['icon'] = '/static/'. $info['name'] .'/images/icon.png';
+                    $info['icon'] = STATIC_URL . '/'. $info['name'] .'/images/icon.png';
                 }elseif(file_exists(PUBLIC_PATH . '/static/' . $info['name'] . '/icon.png')){
-                    $info['icon'] = '/static/'. $info['name'] .'/icon.png';
+                    $info['icon'] = STATIC_URL . '/'. $info['name'] .'/icon.png';
                 }else{
-                    $info['icon'] = '/static/admin/images/module_default_icon.png';
+                    $info['icon'] = STATIC_URL . '/admin/images/module_default_icon.png';
                 }
 
                 //合并数据表内模块
@@ -245,11 +245,11 @@ class Module extends Model
 
         if($info){
             if(file_exists(PUBLIC_PATH . '/static/' . $info['name'] . '/images/icon.png')){
-                $info['icon'] = '/static/'. $info['name'] .'/images/icon.png';
+                $info['icon'] = STATIC_URL . '/'. $info['name'] .'/images/icon.png';
             }elseif(file_exists(PUBLIC_PATH . '/static/' . $info['name'] . '/icon.png')){
-                $info['icon'] = '/static/'. $info['name'] .'/icon.png';
+                $info['icon'] = STATIC_URL . '/'. $info['name'] .'/icon.png';
             }else{
-                $info['icon'] = '/static/admin/images/module_default_icon.png';
+                $info['icon'] = STATIC_URL . '/admin/images/module_default_icon.png';
             }
         }
 

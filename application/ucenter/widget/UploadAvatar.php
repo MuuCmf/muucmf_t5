@@ -106,10 +106,10 @@ class UploadAvatar extends Controller
             }
         }else{//角色没有默认
             if ($size != 0) {
-                $default_avatar = "/static/common/images/default_avatar.jpg";
+                $default_avatar = STATIC_URL . "/common/images/default_avatar.jpg";
                 $path=$this->getImageUrlByPath($default_avatar, $size, false);
             } else {
-                $path= get_pic_src("/static/common/images/default_avatar.jpg");
+                $path= get_pic_src(STATIC_URL . "/common/images/default_avatar.jpg");
             }
         }
         return $path;

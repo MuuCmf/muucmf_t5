@@ -52,7 +52,7 @@ class Common extends Controller
     private function initLogo()
     {
         $logo = get_cover(modC('LOGO',0,'Config'),'path');
-        $logo = $logo?$logo: '/static/common/images/logo.png';
+        $logo = $logo?$logo: STATIC_URL . '/common/images/logo.png';
         $this->assign('logo',$logo);
     }
 

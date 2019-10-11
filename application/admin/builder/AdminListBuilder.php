@@ -697,7 +697,7 @@ class AdminListBuilder extends AdminBuilder
 
             if (is_numeric($value)) {//value是图片id
                 if($value===0 || $value==='0'){
-                    $html = "<div class='popup-gallery'><img src=\"/static/common/images/nopic.png\" style=\"width:80px;height:80px\"></div>";
+                    $html = '<div class="popup-gallery"><img src=' .STATIC_URL. '"/common/images/nopic.png" style="width:80px;height:80px"></div>';
                     return $html;
                 }
                 $value = htmlspecialchars($value);

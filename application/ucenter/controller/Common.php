@@ -27,7 +27,7 @@ class Common extends Controller
         if ($cover) {
             $userProfile['cover_path'] = getThumbImageById($cover['value'], 344, 100);
         } else {
-            $userProfile['cover_path'] ='/static/common/images/qtip_bg.png';
+            $userProfile['cover_path'] = STATIC_URL . '/common/images/qtip_bg.png';
         }
         //个人标签
         $userProfile['tags'] = '';
@@ -138,7 +138,7 @@ class Common extends Controller
             if($cover['value']){
                 $my_cover['cover_path'] = getThumbImageById($cover['value'], 348, 70);
             }else{
-                $my_cover['cover_path'] = '/static/ucenter/images/user_top_default_bg.jpg';
+                $my_cover['cover_path'] = STATIC_URL . '/ucenter/images/user_top_default_bg.jpg';
             }
             
             $this->assign('my_cover', $my_cover);
@@ -154,13 +154,13 @@ class Common extends Controller
     {
         $aUid=input('post.uid',0,'intval');
         if (!is_login()) {
-            $this->ajaxReturn(array('status' => 0, 'info' => L("_PLEASE_")." ".L("_LOG_IN_")));
+            $this->ajaxReturn(array('status' => 0, 'info' => lang("_PLEASE_")." ".lang("_LOG_IN_")));
         }
 
         if (model('Follow')->follow($aUid)) {
-            $this->ajaxReturn(array('status' => 1, 'info' => L("_FOLLOWERS_")." ".L('_SUCCESS_')));
+            $this->ajaxReturn(array('status' => 1, 'info' => lang("_FOLLOWERS_")." ".L('_SUCCESS_')));
         } else {
-            $this->ajaxReturn(array('status' => 0, 'info' => L("_FOLLOWERS_")." ".L("_FAIL_")));
+            $this->ajaxReturn(array('status' => 0, 'info' => lang("_FOLLOWERS_")." ".lang("_FAIL_")));
         }
     }
 
@@ -172,13 +172,13 @@ class Common extends Controller
     {
         $aUid=input('post.uid',0,'intval');
         if (!is_login()) {
-            $this->ajaxReturn(array('status' => 0, 'info' => L("_PLEASE_")." ".L("_LOG_IN_")));
+            $this->ajaxReturn(array('status' => 0, 'info' => lang("_PLEASE_")." ".lang("_LOG_IN_")));
         }
 
         if (model('Follow')->unfollow($aUid)) {
-            $this->ajaxReturn(array('status' => 1, 'info' =>  L("_CANCEL_")." ".L("_FOLLOWERS_")." ".L("_SUCCESS_")));
+            $this->ajaxReturn(array('status' => 1, 'info' =>  lang("_CANCEL_")." ".lang("_FOLLOWERS_")." ".lang("_SUCCESS_")));
         } else {
-            $this->ajaxReturn(array('status' => 0, 'info' =>  L("_CANCEL_")." ".L("_FOLLOWERS_")." ".L("_FAIL_")));
+            $this->ajaxReturn(array('status' => 0, 'info' =>  lang("_CANCEL_")." ".lang("_FOLLOWERS_")." ".lang("_FAIL_")));
         }
     }
 
