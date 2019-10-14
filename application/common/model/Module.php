@@ -98,25 +98,23 @@ class Module extends Model
                 }else{
                     $info['icon'] = STATIC_URL . '/admin/images/module_default_icon.png';
                 }
-
+                
                 //合并数据表内模块
                 $module_info = $this->getModule($info['name']);
                 if($module_info){
                     $module_info = $module_info->toArray();
-
+                    
                     if(is_array($module_info)){
-                        $info = array_merge($info, $module_info);
+                        $info = array_merge($module_info, $info);
                     }
                 }
                 $module[] = $info;
             }
-
-
         }
 
         $this->saveAll($module);
 
-        //$this->cleanModulesCache();
+        $this->cleanModulesCache();
     }
 
     /**重置单个模块信息
@@ -167,6 +165,31 @@ class Module extends Model
         }
         
         return false;
+    }
+
+    /**
+     * 清理全部模块的缓存
+     */
+    public function cleanModulesCache()
+    {
+        $modules = $this->getAll();
+
+        foreach ($modules as $m) {
+            $this->cleanModuleCache($m['name']);
+        }
+        cache('module_all', null);
+        cache('admin_modules', null);
+        cache('ALL_MESSAGE_SESSION',null);
+        cache('ALL_MESSAGE_TPLS',null);
+    }
+
+    /**清理某个模块的缓存
+     * @param $name 模块名
+     */
+    public function cleanModuleCache($name)
+    {
+        cache('common_module_' . strtolower($name), null);
+
     }
 
     /**卸载模块
