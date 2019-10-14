@@ -108,9 +108,8 @@ $(function () {
     //高亮导航
     var location = $('input[data-toggle="location_href"]').val();
     //二级高亮
-    $('.sidebar-menu').find('a[href="' + location + '"]').closest('li.treeview').addClass('active');
-    $('.sidebar-menu').find('a[href="' + location + '"]').closest('ul').css('display','block');
-    $('.sidebar-menu').find('a[href="' + location + '"]').closest('li').addClass('active');
+    $('.sidebar-menu').find('li[data-url="' + location + '"]').closest('li.treeview').addClass('active');
+    $('.sidebar-menu').find('li[data-url="' + location + '"]').addClass('active');
     //一级高亮
     $('.nav-system-menu .nav li').each(function(){
         var module = $(this).attr('data-url');

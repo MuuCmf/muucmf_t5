@@ -55,7 +55,7 @@ class Admin extends Controller
         $auth_user = query_user(['nickname','username','sex','avatar32','title','fans', 'following','signature'],is_login());
         
         $this->assign('__MODULE__', $this->getModule(request()->module()));
-        //dump($this->getModule(request()->module()));exit;
+        $this->assign('module', request()->module());
         $this->assign('controller', request()->controller());
         $this->assign('action', request()->action());
         $this->assign('seo', $this->_seo);

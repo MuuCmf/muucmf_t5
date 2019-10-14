@@ -30,9 +30,9 @@
                 <i class="fa fa-angle-left pull-right"></i>
               </span>
           </a>
-          <ul class="treeview-menu" style="display: block">
+          <ul class="treeview-menu menu-open">
               {volist name="sub_menu" id="c_menu"}
-              <li data-id="{$c_menu.id}">
+              <li data-id="{$c_menu.id}" data-url="{$c_menu.url|url}">
                   <a href="{$c_menu.url|url}">
                     {notempty name="c_menu.icon"}
                         <i class="fa fa-{$c_menu.icon}"></i>

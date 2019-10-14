@@ -59,7 +59,7 @@
 
 </div>
 
-<input data-toggle="location_href" value="{:url('admin'.'/'.$controller.'/'.$action,$_GET)}" type="hidden" />
+<input data-toggle="location_href" value="{:url($module.'/'.$controller.'/'.$action,$_GET)}" type="hidden" />
 <input data-toggle="can_update" value="{$can_update}" type="hidden" />
 <input data-toggle="version" value="{$version}" type="hidden" />
 <input data-toggle="server_ip" value="{php}echo $_SERVER['SERVER_ADDR']{/php}" type="hidden" />

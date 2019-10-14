@@ -77,6 +77,9 @@ body {
       li.menu-open > a {
         background-color: #f1f1f1;
       }
+      .menu-open {
+        display: block;
+      }
 
       .treeview-menu {
         background:#fff;
@@ -169,7 +172,9 @@ body {
       li.menu-open > a {
         background-color: #2d323d;
       }
-
+      .menu-open {
+        display: block;
+      }
 
       .treeview-menu {
         background: #383e4b;
