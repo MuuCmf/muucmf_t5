@@ -36,6 +36,13 @@ class Menu extends Model {
         return $res;
     }
 
+    public function getDataByMap($map=[],$fields= '*'){
+        
+        $data=$this->where($map)->field($fields)->find();
+        
+        return $data;
+    }
+
     /**
      * 获取菜单列表
      *

@@ -56,7 +56,6 @@ class Admin extends Controller
         
         $this->assign('__MODULE__', $this->getModule(request()->module()));
         $this->assign('__AUTH_USER__',$auth_user);
-        $this->assign('__MANAGE_COULD__',$this->checkRule('admin/module/lists',array('in','1,2')));
         $this->assign('__MODULE_MENU__', $this->getMenus()); //当前模块菜单
         $this->assign('__ADDONS_MENU__', $addons_admin );
         $this->assign('seo', $this->_seo);
@@ -281,7 +280,7 @@ class Admin extends Controller
                 ['=', $controller .'/'. $action],
                 'OR'
             ];
-            $current = Db::name('Menu')->where($current_map)->find();
+            $current = model('admin/Menu')->getDataByMap($current_map);
 
             if ($current) {
                 //获取顶级菜单数据
