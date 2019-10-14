@@ -55,14 +55,11 @@ class Admin extends Controller
         $auth_user = query_user(['nickname','username','sex','avatar32','title','fans', 'following','signature'],is_login());
         
         $this->assign('__MODULE__', $this->getModule(request()->module()));
-        $this->assign('module', request()->module());
-        $this->assign('controller', request()->controller());
-        $this->assign('action', request()->action());
-        $this->assign('seo', $this->_seo);
         $this->assign('__AUTH_USER__',$auth_user);
         $this->assign('__MANAGE_COULD__',$this->checkRule('admin/module/lists',array('in','1,2')));
         $this->assign('__MODULE_MENU__', $this->getMenus()); //当前模块菜单
         $this->assign('__ADDONS_MENU__', $addons_admin );
+        $this->assign('seo', $this->_seo);
         $this->assign('version',$this->localVersion());
         $this->checkUpdate();
     }
