@@ -48,6 +48,8 @@ body {
   .main-sidebar {
     background-color: #fff;
     z-index:860;
+    height: 100%;
+    overflow-x:hidden;
     overflow-y:auto; 
 
     .expand-info {
@@ -131,6 +133,8 @@ body {
   .main-sidebar {
     background-color: #383e4b;
     z-index:860;
+    height: 100%;
+    overflow-x:hidden;
     overflow-y:auto; 
 
     .expand-info {
