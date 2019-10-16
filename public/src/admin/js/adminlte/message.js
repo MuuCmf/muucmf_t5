@@ -9,15 +9,6 @@
 ;(function($, window, undefined) {
     'use strict';
 
-    /* Check jquery */
-    if(typeof($) === 'undefined') throw new Error('MUU requires jQuery');
-    // muu shared object
-    if(!$.muu) $.muu = function(obj) {
-        if($.isPlainObject(obj)) {
-            $.extend($.muu, obj);
-        }
-    };
-
     function play_bubble_sound() {
         playsound('/static/common/lib/toastr/message.wav');
     }

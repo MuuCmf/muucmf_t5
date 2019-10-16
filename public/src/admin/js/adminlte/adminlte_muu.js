@@ -2,40 +2,27 @@
  * AdminLTE MuuCmf 
  * ------------------
  */
-$(function () {
-  'use strict'
+;(function($,window, undefined) {
+    'use strict';
+
+    /* Check jquery */
+    if(typeof($) === 'undefined') throw new Error('muu requires jQuery');
+
+    // muu shared object
+    if(!$.muu) $.muu = function(obj) {
+        if($.isPlainObject(obj)) {
+            $.extend($.muu, obj);
+        }
+    };
+}(jQuery, window, undefined));
+
+
+$(function(){
+    'use strict';
     /**
-     * 模拟Url函数
-     * @param url
-     * @param params
-     * @returns {string}
-     * @constructor
+     * 操纵toastor的便捷类
+     * @type {{success: success, error: error, info: info, warning: warning}}
      */
-     window.Url = function(url, params, rewrite) {
-
-        var website = '/index.php';
-        url = url.split('/');
-        if (url[0] == '' || url[0] == '@')
-            url[0] = APPNAME;
-        if (!url[1])
-            url[1] = 'Index';
-        if (!url[2])
-            url[2] = 'index';
-        website = website + '/' + url[0] + '/' + url[1] + '/' + url[2];
-        if (params) {
-            params = params.join('/');
-            website = website + '/' + params;
-        }
-        if (!rewrite) {
-            website = website + '.html';
-        }
-        return website;
-    }
-
- /**
- * 操纵toastor的便捷类
- * @type {{success: success, error: error, info: info, warning: warning}}
- */
       window.toast = {
        /**
        * 成功提示
@@ -71,7 +58,7 @@ $(function () {
         },
 
         show: function (text, option) {
-            new $.adminLTE_zui.Messager(text, option).show();
+            new $.zui.Messager(text, option).show();
         },
         /**
          *  显示loading
@@ -89,16 +76,16 @@ $(function () {
         }
     }
 
-  	/**
-  	 * clear cache
-  	 */
-  	$('a[data-id="clear_cache"]').on('click', function() {
+    /**
+     * clear cache
+     */
+    $('a[data-id="clear_cache"]').on('click', function() {
         var result = $(this).attr("data-msg");
         var url = $(this).attr('data-url');
         clear_cache(url,result);
 
         function clear_cache(url,result) {
-          var msg = new $.adminLTE_zui.Messager(result, {placement: 'bottom'});
+          var msg = new $.zui.Messager(result, {placement: 'bottom'});
           
           $.get(url);
           msg.show();
@@ -117,7 +104,10 @@ $(function () {
             $(this).closest('li').addClass('active');
         }
     })
-    
+})
+
+$(function () {
+    'use strict'
 
   	/**
   	 * treeview-menu click addClass active

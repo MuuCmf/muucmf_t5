@@ -6,16 +6,6 @@
 ;(function($,window, undefined) {
     'use strict';
 
-    /* Check jquery */
-    if(typeof($) === 'undefined') throw new Error('muu requires jQuery');
-
-    // muu shared object
-    if(!$.muu) $.muu = function(obj) {
-        if($.isPlainObject(obj)) {
-            $.extend($.muu, obj);
-        }
-    };
-
     var target_change = function(){
         $('.channel-ul').off('click').on('click','label.target-blank',function(event){
             event.preventDefault();
