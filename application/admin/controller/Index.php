@@ -168,4 +168,9 @@ class Index extends Admin
 
         $this->assign('actionLog', $actionLog);
     }
+
+    public function debug()
+    {
+        return $this->fetch();
+    }
 }

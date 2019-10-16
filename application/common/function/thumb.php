@@ -4,6 +4,90 @@ use think\Loader;
 use think\Image;
 
 /**
+ * 单图上传组件
+ * @param  [type] $name      [description]
+ * @param  [type] $image_id [description]
+ * @return [type]           [description]
+ */
+function singleImage($name, $image_id){
+
+    if(!empty($image_id)){
+        $image_path = get_cover($image_id);
+    }else{
+        $image_path = '';
+    }
+
+    $upload_picture = lang("_SELECT_PICTURES_");
+    $delete_picture = lang("_DELETE_");
+    $api = url('api/file/uploadPicture',array('session_id'=>session_id()));
+
+    $html = <<<EOF
+<div class="singleImage">
+    
+    <input type="hidden" name="{$name}" value="{$image_id}"/>
+    <div class="upload-img-box">
+        <div class="upload-pre-item popup-gallery">
+            <div class="each">
+                <a href="{$image_path}">
+                    <img src="{$image_path}">
+                </a>
+            </div>
+        </div>
+    </div>
+    <div id="upload_single_image_{$name}" class="">{$upload_picture}</div>
+</div>
+
+<script>
+    $(function () {
+        var uploader_{$name}= WebUploader.create({
+            // 选完文件后，是否自动上传。
+            auto: true,
+            // swf文件路径
+            swf: 'Uploader.swf',
+            // 文件接收服务端。
+            server: "{$api}",
+            // 选择文件的按钮。可选。
+            // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+            pick: {id:'#upload_single_image_{$name}',multiple: false},
+            // 只允许选择图片文件
+            accept: {
+                title: 'Images',
+                extensions: 'gif,jpg,jpeg,bmp,png',
+                mimeTypes: 'image/jpg,image/jpeg,image/png'
+            }
+        });
+        uploader_{$name}.on('fileQueued', function (file) {
+            uploader_{$name}.upload();
+            toast.showLoading();
+        });
+        /*上传成功**/
+        uploader_{$name}.on('uploadSuccess', function (file, data) {
+            if (data.code) {
+                $("[name='{$name}']").val(data.data[0].id);
+                $("[name='{$name}']").parent().find('.upload-pre-item').html(
+                    ' <div class="each"><a href="'+ data.data[0].path+'"><img src="'+ data.data[0].path+'"></a></div>'
+                );
+                //重启webuploader,可多次上传
+                uploader_{$name}.reset();
+            } else {
+                updateAlert(data.msg);
+                setTimeout(function () {
+                    $('#top-alert').find('button').click();
+                    $(that).removeClass('disabled').prop('disabled', false);
+                }, 1500);
+            }
+        });
+        //上传完成
+        uploader_{$name}.on( 'uploadComplete', function( file ) {
+            toast.hideLoading();
+        });
+    })
+</script>
+EOF;
+
+    return $html;
+}
+/**
  * 获取文档封面图片
  * @param int $cover_id
  * @param string $field

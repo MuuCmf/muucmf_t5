@@ -262,7 +262,7 @@
     {/case}
     {case value="singleImage"}
         <div class="singleImage">
-        <div id="upload_single_image_{$field.name}" style="padding-bottom: 5px;">{:lang("_SELECT_PICTURES_")}</div>
+        <div id="upload_single_image_{$field.name}">{:lang("_SELECT_PICTURES_")}</div>
         <input class="attach" type="hidden" name="{$field.name}" value="{$field['value']}"/>
         <div class="upload-img-box">
             <div class="upload-pre-item popup-gallery">
@@ -438,7 +438,7 @@
         }
         {/php}
         <div class="singleAudio">
-            <div id="upload_single_audio_{$field.name}" style="padding-bottom: 5px;">{:lang("_SELECT_AUDIO_")}</div>
+            <div id="upload_single_audio_{$field.name}">{:lang("_SELECT_AUDIO_")}</div>
             <div class="audio-file-list" id="single_audio_list_{$field.name}">
                 <input type="hidden" name="{$field.name}" value="{$field['value']}" data-rule="audio_id" />
                 <div class="progress-box"></div>

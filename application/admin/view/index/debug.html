@@ -1,0 +1,13 @@
+{extend name="common/main"/}
+
+{block name="body"}
+<link href="__LIB__/webuploader/css/webuploader.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="__LIB__/webuploader/js/webuploader.js"></script>
+    <div class="main-title">
+        <h2>{:lang('_CONFIG_MANAGER_')}</h2>
+    </div>
+
+    <div class="with-padding">
+        {:singleImage('cover', 0)}
+    </div>
+{/block}

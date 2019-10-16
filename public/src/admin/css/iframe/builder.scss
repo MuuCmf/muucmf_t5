@@ -77,91 +77,95 @@
 			.chosen {
 				max-width:400px;
 			}
+		}
+	}
 
-			/*图片上传部分*/
-			.upload-img-box .upload-pre-item img {
-			  width: 150px;
+
+	/*图片上传部分*/
+	.upload-img-box {
+		margin: 5px 0;
+		.upload-pre-item {
+			.each {
+				position: relative;
+				border: 1px solid #e5e5e5;
+				width: 150px;
+				height: 150px;
+				margin-right: 5px;
+				margin-bottom: 5px;
+				overflow: hidden;
 			}
-			.upload-img-box .upload-pre-item .del_btn {
-			  width: 150px;
-			  position: absolute;
-			  color: #fff;
-			  margin-top: -30px;
-			  height: 30px;
-			  line-height: 30px;
-			  cursor: pointer;
+			img {
+				width: 150px;
 			}
-			.upload-img-box .upload-pre-item .opacity {
-			  filter: alpha(opacity=50);
-			  -moz-opacity: 0.5;
-			  -khtml-opacity: 0.5;
-			  background: #000;
-			  opacity: 0.5;
-			}
-			.multiImage .upload-img-box .upload-pre-item .each {
-			  display: inline-block;
-			  margin-right: 5px;
-			  margin-bottom: 5px;
-			}
-			.multiImage .upload-img-box .upload-pre-item img {
-			  width: 150px;
-			  height: 150px;
-			}
-			.multiImage .upload-img-box .upload-pre-item .del_btn {
+
+			.del_btn {
 			  width: 150px;
 			  position: absolute;
 			  color: #fff;
 			  margin-top: -30px;
 			  height: 30px;
 			  line-height: 30px;
+			  bottom: 0;
 			  cursor: pointer;
 			}
-			.multiImage .upload-img-box .upload-pre-item .opacity {
+
+			.opacity {
 			  filter: alpha(opacity=50);
 			  -moz-opacity: 0.5;
 			  -khtml-opacity: 0.5;
 			  background: #000;
 			  opacity: 0.5;
 			}
+		}
+	}
+	
 
-			/*文件上传*/
-			.file-upload .file_item {
-				padding:5px 0;
-				margin:5px auto;
-			}
+	.multiImage {
 
-			/*视频上传盒子*/
-			.video-file-list {
-				max-width:400px;
-
-				.action-btn-box {
-					margin-bottom:5px;
-				}
-				.video-item-box {
-					max-width:400px;
-
-					.each {
-						margin-bottom:5px;
-					}
+		.upload-img-box {
+			.upload-pre-item {
+				.each {
+					display: inline-block;
 				}
 			}
+		}
+	}
 
-			/*音频上传盒子*/
-			.audio-file-list {
-				max-width:400px;
+	/*文件上传*/
+	.file-upload .file_item {
+		padding:5px 0;
+		margin:5px auto;
+	}
 
-				.action-btn-box {
-					margin-bottom:5px;
-				}
-				.audio-item-box {
-					max-width:400px;
+	/*视频上传盒子*/
+	.video-file-list {
+		max-width:400px;
 
-					.each {
-						margin-bottom:5px;
-					}
-				}
+		.action-btn-box {
+			margin-bottom:5px;
+		}
+		.video-item-box {
+			max-width:400px;
+
+			.each {
+				margin-bottom:5px;
 			}
+		}
+	}
 
+	/*音频上传盒子*/
+	.audio-file-list {
+		max-width:400px;
+
+		.action-btn-box {
+			margin-bottom:5px;
+		}
+		.audio-item-box {
+			max-width:400px;
+
+			.each {
+				margin-bottom:5px;
+			}
 		}
 	}
 	
