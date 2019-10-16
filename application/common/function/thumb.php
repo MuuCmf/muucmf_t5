@@ -93,7 +93,7 @@ EOF;
  * @param string $field
  * @return 完整的数据  或者  指定的$field字段值
  */
-function get_cover($cover_id, $field = null)
+function get_cover($cover_id, $field = 'path')
 {
     if (empty($cover_id)) {
         return false;
