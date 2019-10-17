@@ -9,28 +9,30 @@ use think\Image;
  * @param  [type] $image_id [description]
  * @return [type]           [description]
  */
-function singleImage($name, $image_id){
+function single_image_upload($name, $image_id){
 
-    if(!empty($image_id)){
-        $image_path = get_cover($image_id);
-    }else{
-        $image_path = '';
-    }
-
+    $image_path = get_cover($image_id);
     $upload_picture = lang("_SELECT_PICTURES_");
     $delete_picture = lang("_DELETE_");
     $api = url('api/file/uploadPicture',array('session_id'=>session_id()));
 
     $html = <<<EOF
-<div class="singleImage controls">
-    <input type="hidden" name="{$name}" value="{$image_id}"/>
+<div class="single-image-upload image-upload controls">
+    <input class="attach" type="hidden" name="{$name}" value="{$image_id}"/>
     <div class="upload-img-box">
         <div class="upload-pre-item popup-gallery">
-            <div class="each">
-                <a href="{$image_path}">
-                    <img src="{$image_path}">
-                </a>
-            </div>
+EOF;
+    if(!empty($image_id)){
+    $html .= <<<EOF
+        <div class="each">
+            <img src="{$image_path}">
+            <div class="text-center opacity del_btn"></div>
+            <div data-id="{$image_id}" class="text-center del_btn">{$delete_picture}</div>
+        </div>
+EOF;
+    }
+            
+    $html .= <<<EOF
         </div>
     </div>
     <div id="upload_single_image_{$name}" class="">{$upload_picture}</div>
@@ -64,7 +66,11 @@ function singleImage($name, $image_id){
             if (data.code) {
                 $("[name='{$name}']").val(data.data[0].id);
                 $("[name='{$name}']").parent().find('.upload-pre-item').html(
-                    ' <div class="each"><a href="'+ data.data[0].path+'"><img src="'+ data.data[0].path+'"></a></div>'
+                    '<div class="each">' +
+                    '<img src="'+ data.data[0].path+'">' +
+                    '<div class="text-center opacity del_btn"></div>' +
+                    '<div data-id="'+data.data[0].id+'" class="text-center del_btn">{$delete_picture}</div>'+
+                    '</div>'
                 );
                 //重启webuploader,可多次上传
                 uploader_{$name}.reset();
@@ -80,6 +86,13 @@ function singleImage($name, $image_id){
         uploader_{$name}.on( 'uploadComplete', function( file ) {
             toast.hideLoading();
         });
+
+        //移除图片
+        $('.single-image-upload').on('click','.del_btn',function(){
+            var id = $(this).data('id');
+            admin_image.removeImage($(this),id);
+        })
+
     })
 </script>
 EOF;
@@ -92,7 +105,7 @@ EOF;
  * @param  [type] $ids  [description]
  * @return [type]       [description]
  */
-function multiImage($name, $ids = '')
+function multi_image_upload($name, $ids = '')
 {
     $upload_picture = lang("_SELECT_PICTURES_");
     $delete_picture = lang("_DELETE_");
@@ -102,7 +115,7 @@ function multiImage($name, $ids = '')
 
     $html = '';
     $html .= '
-    <div class="multiImage controls">
+    <div class="multi-image-upload image-upload controls">
         <input class="attach" type="hidden" name="'.$name.'" value="'.$ids.'"/>
         <div class="upload-img-box">
             <div class="upload-pre-item popup-gallery">';
@@ -112,12 +125,9 @@ function multiImage($name, $ids = '')
             $path = get_cover($aId);
             $html .= '
                 <div class="each">
-                    <a href="'.$path.'" data-toggle="lightbox">
-                        <img src="'.$path.'">
-                    </a>
+                    <img src="'.$path.'">
                     <div class="text-center opacity del_btn"></div>
-                        <div data-id="'.$aId.'" class="text-center del_btn">'.$delete_picture.'</div>
-                    </div>
+                    <div data-id="'.$aId.'" class="text-center del_btn">'.$delete_picture.'</div>
                 </div>
             ';
         }
@@ -171,11 +181,9 @@ function multiImage($name, $ids = '')
                 
                 $("[name='{$name}']").parent().find('.upload-pre-item').append(
                     '<div class="each">'+
-                    '<a href="'+ data.data[0].path+'" data-toggle="lightbox">'+
                     '<img src="'+ data.data[0].path+'">'+
-                    '</a>'+
                     '<div class="text-center opacity del_btn"></div>' +
-                        '<div data-id="'+data.data[0].id+'" class="text-center del_btn">{$delete_picture}</div>'+
+                    '<div data-id="'+data.data[0].id+'" class="text-center del_btn">{$delete_picture}</div>'+
                     '</div>'
                 );
             }else{
@@ -193,6 +201,13 @@ function multiImage($name, $ids = '')
         uploader_{$name}.on( 'uploadComplete', function( file ) {
             toast.hideLoading();
         });
+
+        //移除图片
+        $('.multi-image-upload').on('click','.del_btn',function(){
+            var id = $(this).data('id');
+            admin_image.removeImage($(this),id);
+        })
+
     })
     </script>
 EOF;

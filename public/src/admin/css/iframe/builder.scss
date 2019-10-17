@@ -47,9 +47,6 @@
 
 		.controls {
 			padding-bottom:5px;
-
-
-
 			label {
 				font-weight:500;
 			}
@@ -82,53 +79,49 @@
 
 
 	/*图片上传部分*/
-	.upload-img-box {
-		margin: 5px 0;
-		.upload-pre-item {
-			.each {
-				position: relative;
-				border: 1px solid #e5e5e5;
-				width: 150px;
-				height: 150px;
-				margin-right: 5px;
-				margin-bottom: 5px;
-				overflow: hidden;
-			}
-			img {
-				width: 150px;
-			}
+	.image-upload {
 
-			.del_btn {
-			  width: 150px;
-			  position: absolute;
-			  color: #fff;
-			  margin-top: -30px;
-			  height: 30px;
-			  line-height: 30px;
-			  bottom: 0;
-			  cursor: pointer;
-			}
+	  .upload-img-box {
+	    margin: 0;
+	    .upload-pre-item {
+	      font-size:0;
+	      letter-spacing:-3px;
 
-			.opacity {
-			  filter: alpha(opacity=50);
-			  -moz-opacity: 0.5;
-			  -khtml-opacity: 0.5;
-			  background: #000;
-			  opacity: 0.5;
-			}
-		}
-	}
-	
+	      .each {
+	        position: relative;
+	        display: inline-block;
+	        border: 1px solid #e5e5e5;
+	        width: 150px;
+	        height: 150px;
+	        margin-right: 5px;
+	        margin-bottom: 5px;
+	        overflow: hidden;
+	      }
+	      img {
+	        width: 150px;
+	      }
 
-	.multiImage {
+	      .del_btn {
+	        width: 150px;
+	        position: absolute;
+	        color: #fff;
+	        margin-top: -30px;
+	        height: 30px;
+	        line-height: 30px;
+	        bottom: 0;
+	        cursor: pointer;
+	        font-size:12px;
+	      }
 
-		.upload-img-box {
-			.upload-pre-item {
-				.each {
-					display: inline-block;
-				}
-			}
-		}
+	      .opacity {
+	        filter: alpha(opacity=50);
+	        -moz-opacity: 0.5;
+	        -khtml-opacity: 0.5;
+	        background: #000;
+	        opacity: 0.5;
+	      }
+	    }
+	  }
 	}
 
 	/*文件上传*/
