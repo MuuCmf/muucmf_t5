@@ -22,8 +22,7 @@ function singleImage($name, $image_id){
     $api = url('api/file/uploadPicture',array('session_id'=>session_id()));
 
     $html = <<<EOF
-<div class="singleImage">
-    
+<div class="singleImage controls">
     <input type="hidden" name="{$name}" value="{$image_id}"/>
     <div class="upload-img-box">
         <div class="upload-pre-item popup-gallery">
@@ -83,6 +82,119 @@ function singleImage($name, $image_id){
         });
     })
 </script>
+EOF;
+    return $html;
+}
+
+/**
+ * 多图上传
+ * @param  [type] $name [description]
+ * @param  [type] $ids  [description]
+ * @return [type]       [description]
+ */
+function multiImage($name, $ids = '')
+{
+    $upload_picture = lang("_SELECT_PICTURES_");
+    $delete_picture = lang("_DELETE_");
+    $picture_exists = lang('_THE_PICTURE_ALREADY_EXISTS_WITH_SINGLE_');
+    $limit_exceed = lang('_EXCEED_THE_PICTURE_LIMIT_WITH_SINGLE_');
+    $api = url('api/file/uploadPicture',array('session_id'=>session_id()));
+
+    $html = '';
+    $html .= '
+    <div class="multiImage controls">
+        <input class="attach" type="hidden" name="'.$name.'" value="'.$ids.'"/>
+        <div class="upload-img-box">
+            <div class="upload-pre-item popup-gallery">';
+    if(!empty($ids)){
+        $aIds = explode(',',$ids);
+        foreach($aIds as $aId){
+            $path = get_cover($aId);
+            $html .= '
+                <div class="each">
+                    <a href="'.$path.'" data-toggle="lightbox">
+                        <img src="'.$path.'">
+                    </a>
+                    <div class="text-center opacity del_btn"></div>
+                        <div data-id="'.$aId.'" class="text-center del_btn">'.$delete_picture.'</div>
+                    </div>
+                </div>
+            ';
+        }
+    }
+    
+    $html .= '
+            </div>
+        </div>
+        <div id="upload_multi_image_'.$name.'">'.$upload_picture.'</div>
+    </div>
+    ';       
+    $html .= <<<EOF
+    <script>
+    $(function () {
+        var id = "#upload_multi_image_{$name}";
+        var limit = parseInt(6);
+        var uploader_{$name}= WebUploader.create({
+            // 选完文件后，是否自动上传。
+            swf: 'Uploader.swf',
+            // 文件接收服务端。
+            server: "{$api}",
+            // 选择文件的按钮。可选。
+            // 内部根据当前运行是创建，可能是input元素
+            pick: {'id': id, 'multi': true},
+            fileNumLimit: limit,
+            // 只允许文件。
+            accept: {
+                title: 'Images',
+                extensions: 'gif,jpg,jpeg,bmp,png',
+                mimeTypes: 'image/image/jpg,image/jpeg,image/png'
+            }
+        });
+        uploader_{$name}.on('fileQueued', function (file) {
+            uploader_{$name}.upload();
+            toast.showLoading();
+        });
+        uploader_{$name}.on('uploadFinished', function (file) {
+            uploader_{$name}.reset();
+        });
+        /*上传成功**/
+        uploader_{$name}.on('uploadSuccess', function (file, data) {
+          if (data.code) {
+            var ids = $("[name='{$name}']").val();
+            ids = ids.split(',');
+            if( ids.indexOf(data.data[0].id) == -1){
+                var rids = admin_image.upAttachVal('add',data.data[0].id, $("[name='{$name}']"));
+                if(rids.length>limit){
+                    updateAlert({$limit_exceed});
+                    return;
+                }
+                
+                $("[name='{$name}']").parent().find('.upload-pre-item').append(
+                    '<div class="each">'+
+                    '<a href="'+ data.data[0].path+'" data-toggle="lightbox">'+
+                    '<img src="'+ data.data[0].path+'">'+
+                    '</a>'+
+                    '<div class="text-center opacity del_btn"></div>' +
+                        '<div data-id="'+data.data[0].id+'" class="text-center del_btn">{$delete_picture}</div>'+
+                    '</div>'
+                );
+            }else{
+                updateAlert({$picture_exists});
+            }
+        } else {
+            updateAlert(data.msg);
+            setTimeout(function () {
+                $('#top-alert').find('button').click();
+                $(that).removeClass('disabled').prop('disabled', false);
+            }, 1500);
+        }
+        });
+        //上传完成
+        uploader_{$name}.on( 'uploadComplete', function( file ) {
+            toast.hideLoading();
+        });
+    })
+    </script>
 EOF;
 
     return $html;

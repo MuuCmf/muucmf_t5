@@ -3,38 +3,6 @@
  * 后台公共文件
  * 主要定义后台公共函数库
  */
-function cloudU($url, $p = array())
-{
-    $url = adminU($url, $p);
-    return str_replace(__ROOT__, '', $url);
-}
-
-function appstoreU($url, $p = array())
-{
-    return config('__CLOUD__') . cloudU($url, $p);
-}
-
-function formatLog($log)
-{
-    $log = explode("\r\n", $log);
-    $log = '<li>' . implode('</li><li>', $log) . '</li>';
-    return $log;
-}
-
-function show_cloud_cover($path){
-    //不存在http://
-    $not_http_remote=(strpos($path, 'http://') === false);
-    //不存在https://
-    $not_https_remote=(strpos($path, 'https://') === false);
-    if ($not_http_remote && $not_https_remote) {
-        //本地url
-        return str_replace('//', '/', C('TMPL_PARSE_STRING.__CLOUD__') . $path); //防止双斜杠的出现
-    } else {
-        //远端url
-        return $path;
-    }
-}
-
 function guid(){
     
     mt_srand((double)microtime()*10000);//optional for php 4.2.0 and up.
