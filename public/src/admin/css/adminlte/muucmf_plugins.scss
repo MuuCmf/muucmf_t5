@@ -12,6 +12,14 @@ body {
     padding-top:100px;
   }
 }
+
+@media (min-width: 768px) {
+  .navbar-nav>li>a {
+      padding-top: 15px;
+      padding-bottom: 15px;
+  }
+}
+
 .nav-pills>li>a {
     border-radius: 4px;
     border-top: 0;
@@ -32,6 +40,16 @@ body {
     &:hover, &:active, &:focus, &:active:hover {
       background-color: #0BA0B3;
       border-color: #0BA0B3;
+    }
+}
+
+/*修复ZUI tree li样式*/
+.sidebar-menu.tree li {
+    position: relative;
+    padding: 0;
+    list-style: none;
+    &::before {
+      content: none;
     }
 }
 
@@ -108,7 +126,7 @@ body {
         
         li {
           a {
-            padding: 10px 5px 10px 30px;
+            padding: 8px 5px 8px 30px;
 
             &:hover,&:active {
               color:#000;
@@ -205,7 +223,7 @@ body {
 
         li {
           a {
-            padding: 10px 5px 10px 30px;
+            padding: 8px 5px 8px 30px;
             background: #383e4b;
             color:#fff;
 

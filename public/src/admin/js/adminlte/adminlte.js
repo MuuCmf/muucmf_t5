@@ -980,7 +980,7 @@ throw new Error('AdminLTE requires jQuery')
 +function ($) {
   'use strict';
 
-  var DataKey = 'lte.tree';
+  var DataKey = 'lte.muu-tree';
 
   var Default = {
     animationSpeed: 500,
@@ -990,7 +990,7 @@ throw new Error('AdminLTE requires jQuery')
   };
 
   var Selector = {
-    tree        : '.tree',
+    tree        : '.muu-tree',
     treeview    : '.treeview',
     treeviewMenu: '.treeview-menu',
     open        : '.menu-open, .active',
@@ -1001,12 +1001,12 @@ throw new Error('AdminLTE requires jQuery')
 
   var ClassName = {
     open: 'menu-open',
-    tree: 'tree'
+    tree: 'muu-tree'
   };
 
   var Event = {
-    collapsed: 'collapsed.tree',
-    expanded : 'expanded.tree'
+    collapsed: 'collapsed.muu-tree',
+    expanded : 'expanded.muu-tree'
   };
 
   // Tree Class Definition
