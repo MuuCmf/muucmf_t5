@@ -261,8 +261,7 @@
     </div>  
     {/case}
     {case value="singleImage"}
-        <div class="singleImage">
-        <div id="upload_single_image_{$field.name}">{:lang("_SELECT_PICTURES_")}</div>
+        <div class="singleImage single-image-upload image-upload controls">
         <input class="attach" type="hidden" name="{$field.name}" value="{$field['value']}"/>
         <div class="upload-img-box">
             <div class="upload-pre-item popup-gallery">
@@ -278,6 +277,7 @@
             {/notempty}
             </div>
         </div>
+        <div id="upload_single_image_{$field.name}">{:lang("_SELECT_PICTURES_")}</div>
         </div>
 
         <script>
@@ -332,8 +332,7 @@
     {/case}
 
     {case value="multiImage"}
-        <div class="multiImage">
-            <div id="upload_multi_image_{$field.name}">{:lang("_SELECT_PICTURES_")}</div>
+        <div class="multiImage multi-image-upload image-upload controls">
             <input class="attach" type="hidden" name="{$field.name}" value="{$field['value']}"/>
             <div class="upload-img-box">
                 <div class="upload-pre-item popup-gallery">
@@ -353,6 +352,7 @@
                     {/notempty}
                 </div>
             </div>
+            <div id="upload_multi_image_{$field.name}">{:lang("_SELECT_PICTURES_")}</div>
         </div>
         <script>
         $(function () {
