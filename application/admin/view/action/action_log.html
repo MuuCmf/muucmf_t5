@@ -40,7 +40,7 @@
                     <input class="check-all" id="check-all" type="checkbox"/>
                     <label for="check-all"></label>
                 </th>
-                <th class="">{:lang("_NO_")}</th>
+                <th class="">{:lang("_ID_")}</th>
                 <th class="">{:lang("_BEHAVIOR_NAME_")}</th>
 
                 <th class="">{:lang("_EXECUTIVE_")}</th>
@@ -60,14 +60,14 @@
                     </td>
                     <td>{$vo.id} </td>
                     <td>{:get_action($vo['action_id'],'title')}</td>
-                    <td><a href="{:url('Action/actionlog',array('uid'=>$vo['user_id']))}">{:get_nickname($vo['user_id'])}</a></td>
+                    <td><a href="{:url('Action/actionlog',['uid'=>$vo['user_id']])}">{:get_nickname($vo['user_id'])}</a></td>
                     <td>{$vo.ip}</td>
                     <td>{$vo['remark']}</td>
                     <td><span>{$vo.create_time|time_format}</span></td>
 
-                    <td><a href="{:url('Action/edit?id='.$vo['id'])}">{:lang("_DETAILED_")}</a>
-                        <a class="confirm ajax-get" href="{:url('Action/remove?ids='.$vo['id'])}">{:lang("_DELETE_")}</a>
-                        </td>
+                    <td><a class="btn btn-sm btn-info" href="{:url('Action/detail',['id'=>$vo['id']])}">{:lang("_DETAILED_")}</a>
+                        <a class="btn btn-sm btn-danger ajax-get" data-confirm="确认执行该操作" href="{:url('Action/remove',['ids'=>$vo['id']])}">{:lang("_DELETE_")}</a>
+                    </td>
                 </tr>
                 {/volist}
                 {else/}

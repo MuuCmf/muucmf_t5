@@ -7,7 +7,7 @@ use think\Db;
 class ActionLimit extends Model
 {
 
-    var $item = array();
+    var $item = [];
     var $state = true;
     var $url;
     var $info = '';
@@ -18,11 +18,13 @@ class ActionLimit extends Model
         array('ban_ip', '封IP'),
     );
 
-    function __construct()
+    public function _initialize()
     {
         $this->url = '';
         $this->info = '';
         $this->state = true;
+
+        parent::_initialize();
     }
     protected $autoWriteTimestamp = true;
     
@@ -79,7 +81,7 @@ class ActionLimit extends Model
         }
         unset($k, $v);
 
-        $limitList = Db::name('actionLimit')->where('action_list','like','%'.$item['action'].'%')->where('status','=',1)->select();
+        $limitList = $this->where('action_list','like','%'.$item['action'].'%')->where('status','=',1)->select();
         $item['action_id'] = Db::name('action')->where(['name' => $item['action']])->field('id')->find();
         $item['action_id'] = implode($item['action_id']);
         unset($item['action']);
@@ -107,6 +109,41 @@ class ActionLimit extends Model
         }
         unset($val);
     }
+
+    /**
+     * [editData description]
+     * @param  [type] $data [description]
+     * @return [type]       [description]
+     */
+    public function editData($data)
+    {
+        if($data['id']){
+            $res = $this->allowField(true)->save($data,$data['id']);
+        }else{
+            $res = $this->allowField(true)->save($data);
+        }
+        
+        return $res;
+    }
+
+    /**
+     * Gets the list by page.
+     *
+     * @param      <type>   $map    The map
+     * @param      string   $order  The order
+     * @param      string   $field  The field
+     * @param      integer  $r      { parameter_description }
+     *
+     * @return     <type>   The list by page.
+     */
+    public function getListByPage($map,$order='create_time desc',$field='*',$r=20)
+    {
+        $list = $this->where($map)->order($order)->field($field)->paginate($r,false,['query'=>request()->param()]);
+
+        return $list;
+    }
+
+
 }
 
 

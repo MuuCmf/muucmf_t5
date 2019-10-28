@@ -11,6 +11,12 @@ use app\admin\builder\AdminListBuilder;
  */
 class ActionLimit extends Admin
 {
+    public function _initialize()
+    {
+
+        parent::_initialize();
+    }
+
     public function limitList()
     {
         $action_name = input('get.action','','text') ;
@@ -18,23 +24,24 @@ class ActionLimit extends Admin
         //读取规则列表
         $map['status'] = ['EGT', 0];
         
-        $List = Db::name('action_limit')->where($map)->order('id asc')->select();
+        $list = model('common/ActionLimit')->getListByPage($map);
 
         $timeUnit = $this->getTimeUnit();
-        foreach($List as &$val){
-            $val['time'] =$val['time_number']. $timeUnit[$val['time_unit']];
+        foreach($list as &$val){
+            $val['time'] = $val['time_number']. $timeUnit[$val['time_unit']];
             $val['action_list'] = get_action_name($val['action_list']);
             empty( $val['action_list']) &&  $val['action_list'] = lang('_ALL_ACTS_');
 
             $val['punish'] = get_punish_name($val['punish']);
         }
         unset($val);
+
         //显示页面
         $builder = new AdminListBuilder();
         $builder
             ->title(lang('_ACTION_LIST_'))
-            ->buttonNew(Url('editLimit'))
-            ->setStatusUrl(Url('setLimitStatus'))
+            ->buttonNew(url('editLimit'))
+            ->setStatusUrl(url('setLimitStatus'))
             ->buttonEnable()
             ->buttonDisable()
             ->buttonDelete()
@@ -49,10 +56,14 @@ class ActionLimit extends Admin
             ->keyText('action_list', lang('_ACT_'))
             ->keyStatus()
             ->keyDoActionEdit('editLimit?id=###')
-            ->data($List)
+            ->data($list)
             ->display();
     }
 
+    /**
+     * [editLimit description]
+     * @return [type] [description]
+     */
     public function editLimit()
     {
         $aId = input('id', 0, 'intval');
@@ -67,11 +78,11 @@ class ActionLimit extends Admin
             $data['punish'] = input('post.punish/a', array());
             $data['if_message'] = input('post.if_message', '', 'text');
             $data['message_content'] = input('post.message_content', '', 'text');
-            $data['action_list'] = input('post.action_list', '', 'text');
+            $data['action_list'] = input('post.action_list/a');
             $data['status'] = input('post.status', 1, 'intval');
             $data['module'] = input('post.module', '', 'text');
             $data['id'] = $aId;
-
+            
             $data['punish'] = implode(',', $data['punish']);
             if($data['action_list']){
                 foreach($data['action_list'] as &$v){
@@ -81,21 +92,17 @@ class ActionLimit extends Admin
                 $data['action_list'] = implode(',', $data['action_list']);
             }
 
-            if($data['id']){
-                $res = Db::name('actionLimit')->where(['id'=>$data['id']])->update($data);
-            }else{
-                unset($data['id']);
-                $res = Db::name('actionLimit')->insert($data);
-            }
+            $res = model('ActionLimit')->editData($data);
             
             if($res){
-                $this->success(($aId == 0 ? lang('_ADD_') : lang('_EDIT_')) . lang('_SUCCESS_'), $aId == 0 ? Url('') : '');
+                $this->success(($aId == 0 ? lang('_ADD_') : lang('_EDIT_')) . lang('_SUCCESS_'), url('limitList'));
             }else{
                 $this->error($aId == 0 ? lang('_THE_OPERATION_FAILED_') : lang('_THE_OPERATION_FAILED_VICE_'));
             }
         } else {
-            $builder = new AdminConfigBuilder();
 
+            $builder = new AdminConfigBuilder();
+            //获取所有模块
             $modules = model('Module')->getAll();
             $module['all'] = lang('_TOTAL_STATION_');
             foreach($modules as $k=>$v){
@@ -103,7 +110,7 @@ class ActionLimit extends Admin
             }
 
             if ($aId != 0) {
-                $limit = Db::name('ActionLimit')->where(['id' => $aId])->find();
+                $limit = model('common/ActionLimit')->where(['id' => $aId])->find();
                 $limit['punish'] = explode(',', $limit['punish']);
                 $limit['action_list'] = str_replace('[','',$limit['action_list']);
                 $limit['action_list'] = str_replace(']','',$limit['action_list']);

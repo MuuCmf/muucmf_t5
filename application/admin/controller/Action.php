@@ -110,7 +110,7 @@ class Action extends Admin {
      * 查看行为日志
      * @author huajie <banhuajie@163.com>
      */
-    public function edit($id = 0){
+    public function detail($id = 0){
         empty($id) && $this->error(lang('_PARAMETER_ERROR_'));
 
         $info = Db::name('ActionLog')->field(true)->find($id);
