@@ -8,10 +8,11 @@
 <div class="header text-center">
   <img src="__IMG__/120x120icon.png" />
 </div>
+
 <div class="container">
   <ol class="breadcrumb">
       <li><a href="{:url('index')}">演示首页</a></li>
-      <li><a href="{:url('index')}">演示首页</a></li>
+      
   </ol>
   <section id="grid" class="demo-section">
     <h3>DEMO前台演示</h3> 
@@ -26,13 +27,13 @@
             <div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-control-icon" data-id="icon" data-chapter="control" data-order="16" data-accent="green" data-target="page">
               <div class="card-heading" title="使用和查找图标">
                 <i class="icon icon-star"></i>
-                <h5><a class="name" href="#control/icon">图标</a></h5>
+                <h5><a class="name" href="{:url('control/icon')}">图标</a></h5>
               </div>
             </div>
             <div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-control-button" data-id="button" data-chapter="control" data-order="17" data-accent="green" data-target="page">
               <div class="card-heading" title="按钮和按钮组">
                 <i class="icon icon-bold"></i>
-                <h5><a class="name" href="#control/button">按钮</a></h5>
+                <h5><a class="name" href="{:url('control/button')}">按钮</a></h5>
               </div>
             </div>
             <div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-control-progressbar" data-id="progressbar" data-chapter="control" data-order="18" data-accent="green" data-target="page">
@@ -377,153 +378,127 @@
             <h4><i class="icon icon-list-alt"></i> <span class="name">视图</span></h4>
           </div>
           <div class="chapter-body" id="sections-view">
-          <div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-datagrid" data-id="datagrid" data-chapter="view" data-order="66" data-accent="purple" data-target="page">
-    <div class="card-heading" title="功能强大的数据网格视图">
-      <i class="icon icon-table"></i>
-      <h5><a class="name" href="#view/datagrid">数据表格②</a></h5>
-    </div>
-    <div class="card-content">
-      <ul class="topics">
-      <li data-id="0"><a href="#view/datagrid/0">综合示例</a></li><li data-id="1"><a href="#view/datagrid/1">数据源</a></li><li data-id="2"><a href="#view/datagrid/2">固定行和列</a></li><li data-id="3"><a href="#view/datagrid/3">排序</a></li><li data-id="4"><a href="#view/datagrid/4">分页</a></li><li data-id="5"><a href="#view/datagrid/5">搜索</a></li><li data-id="6"><a href="#view/datagrid/6">行选择</a></li><li data-id="7"><a href="#view/datagrid/7">跨行跨列的单元格</a></li><li data-id="8"><a href="#view/datagrid/8">值转换器</a></li><li data-id="9"><a href="#view/datagrid/9">自适应列宽</a></li><li data-id="10"><a href="#view/datagrid/10">个性化配置</a></li><li data-id="11"><a href="#view/datagrid/11">自定义模板</a></li><li data-id="12"><a href="#view/datagrid/12">外观选项</a></li><li data-id="13"><a href="#view/datagrid/13">选项</a></li><li data-id="14"><a href="#view/datagrid/14">属性和方法</a></li><li data-id="15"><a href="#view/datagrid/15">事件</a></li></ul>
-    </div>
-  </div><div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-tabs" data-id="tabs" data-chapter="view" data-order="67" data-accent="purple" data-target="page">
-    <div class="card-heading" title="灵活的标签页管理视图">
-      <i class="icon icon-credit"></i>
-      <h5><a class="name" href="#view/tabs">标签页管理器</a></h5>
-    </div>
-    <div class="card-content">
-      <ul class="topics">
-      <li data-id="0"><a href="#view/tabs/0">综合示例</a></li><li data-id="1"><a href="#view/tabs/1">选项</a></li><li data-id="2"><a href="#view/tabs/2">标签页对象</a></li><li data-id="3"><a href="#view/tabs/3">方法</a></li><li data-id="4"><a href="#view/tabs/4">事件</a></li><li data-id="5"><a href="#view/tabs/5">自定义</a></li></ul>
-    </div>
-  </div><div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-tree" data-id="tree" data-chapter="view" data-order="68" data-accent="purple" data-target="page">
-    <div class="card-heading" title="体现层级关系的树形菜单">
-      <i class="icon icon-th-list"></i>
-      <h5><a class="name" href="#view/tree">树形菜单</a></h5>
-    </div>
-    <div class="card-content">
-      <ul class="topics">
-      <li data-id="0"><a href="#view/tree/0">综合示例</a></li><li data-id="1"><a href="#view/tree/1">树形导航菜单</a></li><li data-id="2"><a href="#view/tree/2">外观选项</a></li><li data-id="3"><a href="#view/tree/3">用法</a></li><li data-id="4"><a href="#view/tree/4">数据加载与更新</a></li></ul>
-    </div>
-  </div><div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-uploader" data-id="uploader" data-chapter="view" data-order="69" data-accent="purple" data-target="page">
-    <div class="card-heading" title="提供文件管理和大文件批量上传功能。">
-      <i class="icon icon-cloud-upload"></i>
-      <h5><a class="name" href="#view/uploader">文件上传</a></h5>
-    </div>
-    <div class="card-content">
-      <ul class="topics">
-      <li data-id="0"><a href="#view/uploader/0">综合示例</a></li><li data-id="1"><a href="#view/uploader/1">使用</a></li><li data-id="2"><a href="#view/uploader/2">选项</a></li><li data-id="3"><a href="#view/uploader/3">对象和属性</a></li><li data-id="4"><a href="#view/uploader/4">方法</a></li><li data-id="5"><a href="#view/uploader/5">事件</a></li><li data-id="6"><a href="#view/uploader/6">静态文件</a></li><li data-id="7"><a href="#view/uploader/7">自定义 UI</a></li><li data-id="8"><a href="#view/uploader/8">处理服务器结果</a></li><li data-id="9"><a href="#view/uploader/9">使用七牛 JavaScript SDK</a></li><li data-id="10"><a href="#view/uploader/10">获取 plupload 对象</a></li></ul>
-    </div>
-  </div><div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-calendar" data-id="calendar" data-chapter="view" data-order="70" data-accent="purple" data-target="page">
-    <div class="card-heading" title="在日历上展示有时间限定的内容">
-      <i class="icon icon-calendar"></i>
-      <h5><a class="name" href="#view/calendar">日历</a></h5>
-    </div>
-    <div class="card-content">
-      <ul class="topics">
-      <li data-id="0"><a href="#view/calendar/0">实例</a></li><li data-id="1"><a href="#view/calendar/1">使用方法</a></li></ul>
-    </div>
-  </div><div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-form" data-id="form" data-chapter="view" data-order="71" data-accent="purple" data-target="page">
-    <div class="card-heading" title="用于用户提交数据的视图">
-      <i class="icon icon-layout"></i>
-      <h5><a class="name" href="#view/form">表单</a></h5>
-    </div>
-    <div class="card-content">
-      <ul class="topics">
-      <li data-id="0"><a href="#view/form/0">基本形式</a></li><li data-id="1"><a href="#view/form/1">水平排列的表单</a></li><li data-id="2"><a href="#view/form/2">内联表单</a></li><li data-id="3"><a href="#view/form/3">帮助性文本</a></li><li data-id="4"><a href="#view/form/4">多选框和单选框</a></li><li data-id="5"><a href="#view/form/5">效验状态</a></li><li data-id="6"><a href="#view/form/6">使用 fieldset</a></li><li data-id="7"><a href="#view/form/7">静态文本</a></li><li data-id="8"><a href="#view/form/8">禁用状态和只读状态</a></li><li data-id="9"><a href="#view/form/9">标记必填项</a></li><li data-id="10"><a href="#view/form/10">更为紧凑的表单</a></li></ul>
-    </div>
-  </div><div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-article" data-id="article" data-chapter="view" data-order="72" data-accent="purple" data-target="page">
-    <div class="card-heading" title="用于展示带标题和其他额外信息的图文内容">
-      <i class="icon icon-file-text-alt"></i>
-      <h5><a class="name" href="#view/article">文章</a></h5>
-    </div>
-    <div class="card-content">
-      <ul class="topics">
-      <li data-id="0"><a href="#view/article/0">结构</a></li><li data-id="1"><a href="#view/article/1">综合示例</a></li><li data-id="2"><a href="#view/article/2">更紧凑的文章视图</a></li></ul>
-    </div>
-  </div><div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-card" data-id="card" data-chapter="view" data-order="73" data-accent="purple" data-target="page">
-    <div class="card-heading" title="可以展示图片和文本的卡片网格视图">
-      <i class="icon icon-th"></i>
-      <h5><a class="name" href="#view/card">卡片</a></h5>
-    </div>
-    <div class="card-content">
-      <ul class="topics">
-      <li data-id="0"><a href="#view/card/0">结构</a></li><li data-id="1"><a href="#view/card/1">简单示例</a></li><li data-id="2"><a href="#view/card/2">卡片内容类型</a></li><li data-id="3"><a href="#view/card/3">无边框视图</a></li><li data-id="4"><a href="#view/card/4">紧凑视图</a></li></ul>
-    </div>
-  </div><div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-list" data-id="list" data-chapter="view" data-order="74" data-accent="purple" data-target="page">
-    <div class="card-heading" title="包含图文内容的列表">
-      <i class="icon icon-list"></i>
-      <h5><a class="name" href="#view/list">列表</a></h5>
-    </div>
-    <div class="card-content">
-      <ul class="topics">
-      <li data-id="0"><a href="#view/list/0">结构</a></li><li data-id="1"><a href="#view/list/1">列表项</a></li><li data-id="2"><a href="#view/list/2">综合示例</a></li><li data-id="3"><a href="#view/list/3">更紧凑的列表</a></li></ul>
-    </div>
-  </div><div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-comment" data-id="comment" data-chapter="view" data-order="75" data-accent="purple" data-target="page">
-    <div class="card-heading" title="展示评论的列表视图">
-      <i class="icon icon-comments"></i>
-      <h5><a class="name" href="#view/comment">评论</a></h5>
-    </div>
-    <div class="card-content">
-      <ul class="topics">
-      <li data-id="0"><a href="#view/comment/0">结构</a></li><li data-id="1"><a href="#view/comment/1">评论条目</a></li><li data-id="2"><a href="#view/comment/2">评论表单</a></li><li data-id="3"><a href="#view/comment/3">综合示例</a></li></ul>
-    </div>
-  </div><div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-chart" data-id="chart" data-chapter="view" data-order="76" data-accent="purple" data-target="page">
-    <div class="card-heading" title="展示曲线图和饼图">
-      <i class="icon icon-bar-chart"></i>
-      <h5><a class="name" href="#view/chart">图表</a></h5>
-    </div>
-    <div class="card-content">
-      <ul class="topics">
-      <li data-id="0"><a href="#view/chart/0">创建图表</a></li><li data-id="1"><a href="#view/chart/1">全局选项</a></li><li data-id="2"><a href="#view/chart/2">曲线图</a></li><li data-id="3"><a href="#view/chart/3">饼图</a></li><li data-id="4"><a href="#view/chart/4">柱状图</a></li><li data-id="5"><a href="#view/chart/5">兼容IE浏览器</a></li></ul>
-    </div>
-  </div><div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-treemap" data-id="treemap" data-chapter="view" data-order="77" data-accent="purple" data-target="page">
-    <div class="card-heading">
-      <i class="icon icon-sitemap"></i>
-      <h5><a class="name" href="#view/treemap">组织结构图</a></h5>
-    </div>
-    <div class="card-content">
-      <ul class="topics">
-      <li data-id="0"><a href="#view/treemap/0">综合示例</a></li><li data-id="1"><a href="#view/treemap/1">使用</a></li><li data-id="2"><a href="#view/treemap/2">节点对象</a></li><li data-id="3"><a href="#view/treemap/3">选项</a></li><li data-id="4"><a href="#view/treemap/4">方法</a></li><li data-id="5"><a href="#view/treemap/5">事件</a></li><li data-id="6"><a href="#view/treemap/6">其他问题</a></li></ul>
-    </div>
-  </div><div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-board" data-id="board" data-chapter="view" data-order="78" data-accent="purple" data-target="page">
-    <div class="card-heading" title="在多个列进行拖放内容">
-      <i class="icon icon-columns"></i>
-      <h5><a class="name" href="#view/board">看板</a></h5>
-    </div>
-    <div class="card-content">
-      <ul class="topics">
-      <li data-id="0"><a href="#view/board/0">综合示例</a></li><li data-id="1"><a href="#view/board/1">HTML 结构</a></li><li data-id="2"><a href="#view/board/2">选项</a></li><li data-id="3"><a href="#view/board/3">处理看板交互过程</a></li></ul>
-    </div>
-  </div><div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-dashboard" data-id="dashboard" data-chapter="view" data-order="79" data-accent="purple" data-target="page">
-    <div class="card-heading" title="支持拖放调整位置的面板网格">
-      <i class="icon icon-th-large"></i>
-      <h5><a class="name" href="#view/dashboard">仪表盘</a></h5>
-    </div>
-    <div class="card-content">
-      <ul class="topics">
-      <li data-id="0"><a href="#view/dashboard/0">使用示例</a></li><li data-id="1"><a href="#view/dashboard/1">选项</a></li><li data-id="2"><a href="#view/dashboard/2">结构</a></li><li data-id="3"><a href="#view/dashboard/3">用户个性化定制</a></li><li data-id="4"><a href="#view/dashboard/4">操作按钮</a></li><li data-id="5"><a href="#view/dashboard/5">从远程加载</a></li></ul>
-    </div>
-  </div><div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-lightbox" data-id="lightbox" data-chapter="view" data-order="80" data-accent="purple" data-target="page">
-    <div class="card-heading" title="灯箱式图片浏览 (Lightbox)">
-      <i class="icon icon-carousel"></i>
-      <h5><a class="name" href="#view/lightbox">图片浏览</a></h5>
-    </div>
-    <div class="card-content">
-      <ul class="topics">
-      <li data-id="0"><a href="#view/lightbox/0">实例</a></li><li data-id="1"><a href="#view/lightbox/1">用法</a></li></ul>
-    </div>
-  </div><div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-datatable" data-id="datatable" data-chapter="view" data-order="81" data-accent="purple" data-target="page">
-    <div class="card-heading" title="可以固定列和表头的增强表格">
-      <i class="icon icon-table"></i>
-      <h5><a class="name" href="#view/datatable">数据表格</a></h5>
-    </div>
-    <div class="card-content">
-      <ul class="topics">
-      <li data-id="0"><a href="#view/datatable/0">简单应用</a></li><li data-id="1"><a href="#view/datatable/1">启用排序功能</a></li><li data-id="2"><a href="#view/datatable/2">高亮选中行</a></li><li data-id="3"><a href="#view/datatable/3">综合示例</a></li><li data-id="4"><a href="#view/datatable/4">选项</a></li><li data-id="5"><a href="#view/datatable/5">事件</a></li><li data-id="6"><a href="#view/datatable/6">属性</a></li><li data-id="7"><a href="#view/datatable/7">数据配置</a></li></ul>
-    </div>
-  </div></div>
+            <div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-datagrid" data-id="datagrid" data-chapter="view" data-order="66" data-accent="purple" data-target="page">
+              <div class="card-heading" title="功能强大的数据网格视图">
+                <i class="icon icon-table"></i>
+                <h5><a class="name" href="#view/datagrid">数据表格②</a></h5>
+              </div>
+            </div>
+
+            <div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-tabs" data-id="tabs" data-chapter="view" data-order="67" data-accent="purple" data-target="page">
+              <div class="card-heading" title="灵活的标签页管理视图">
+                <i class="icon icon-credit"></i>
+                <h5><a class="name" href="#view/tabs">标签页管理器</a></h5>
+              </div>
+            </div>
+
+            <div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-tree" data-id="tree" data-chapter="view" data-order="68" data-accent="purple" data-target="page">
+              <div class="card-heading" title="体现层级关系的树形菜单">
+                <i class="icon icon-th-list"></i>
+                <h5><a class="name" href="#view/tree">树形菜单</a></h5>
+              </div>
+            </div>
+
+            <div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-uploader" data-id="uploader" data-chapter="view" data-order="69" data-accent="purple" data-target="page">
+              <div class="card-heading" title="提供文件管理和大文件批量上传功能。">
+                <i class="icon icon-cloud-upload"></i>
+                <h5><a class="name" href="#view/uploader">文件上传</a></h5>
+              </div>
+            </div>
+
+            <div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-calendar" data-id="calendar" data-chapter="view" data-order="70" data-accent="purple" data-target="page">
+              <div class="card-heading" title="在日历上展示有时间限定的内容">
+                <i class="icon icon-calendar"></i>
+                <h5><a class="name" href="#view/calendar">日历</a></h5>
+              </div>
+            </div>
+
+            <div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-form" data-id="form" data-chapter="view" data-order="71" data-accent="purple" data-target="page">
+              <div class="card-heading" title="用于用户提交数据的视图">
+                <i class="icon icon-layout"></i>
+                <h5><a class="name" href="#view/form">表单</a></h5>
+              </div>
+            </div>
+
+            <div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-article" data-id="article" data-chapter="view" data-order="72" data-accent="purple" data-target="page">
+              <div class="card-heading" title="用于展示带标题和其他额外信息的图文内容">
+                <i class="icon icon-file-text-alt"></i>
+                <h5><a class="name" href="#view/article">文章</a></h5>
+              </div>
+            </div>
+
+            <div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-card" data-id="card" data-chapter="view" data-order="73" data-accent="purple" data-target="page">
+              <div class="card-heading" title="可以展示图片和文本的卡片网格视图">
+                <i class="icon icon-th"></i>
+                <h5><a class="name" href="#view/card">卡片</a></h5>
+              </div>
+            </div>
+
+            <div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-list" data-id="list" data-chapter="view" data-order="74" data-accent="purple" data-target="page">
+              <div class="card-heading" title="包含图文内容的列表">
+                <i class="icon icon-list"></i>
+                <h5><a class="name" href="#view/list">列表</a></h5>
+              </div>
+            </div>
+
+            <div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-comment" data-id="comment" data-chapter="view" data-order="75" data-accent="purple" data-target="page">
+              <div class="card-heading" title="展示评论的列表视图">
+                <i class="icon icon-comments"></i>
+                <h5><a class="name" href="#view/comment">评论</a></h5>
+              </div>
+            </div>
+
+            <div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-chart" data-id="chart" data-chapter="view" data-order="76" data-accent="purple" data-target="page">
+              <div class="card-heading" title="展示曲线图和饼图">
+                <i class="icon icon-bar-chart"></i>
+                <h5><a class="name" href="#view/chart">图表</a></h5>
+              </div>
+            </div>
+
+            <div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-treemap" data-id="treemap" data-chapter="view" data-order="77" data-accent="purple" data-target="page">
+              <div class="card-heading">
+                <i class="icon icon-sitemap"></i>
+                <h5><a class="name" href="#view/treemap">组织结构图</a></h5>
+              </div>
+            </div>
+
+            <div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-board" data-id="board" data-chapter="view" data-order="78" data-accent="purple" data-target="page">
+              <div class="card-heading" title="在多个列进行拖放内容">
+                <i class="icon icon-columns"></i>
+                <h5><a class="name" href="#view/board">看板</a></h5>
+              </div>
+            </div>
+
+            <div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-dashboard" data-id="dashboard" data-chapter="view" data-order="79" data-accent="purple" data-target="page">
+              <div class="card-heading" title="支持拖放调整位置的面板网格">
+                <i class="icon icon-th-large"></i>
+                <h5><a class="name" href="#view/dashboard">仪表盘</a></h5>
+              </div>
+            </div>
+
+            <div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-lightbox" data-id="lightbox" data-chapter="view" data-order="80" data-accent="purple" data-target="page">
+              <div class="card-heading" title="灯箱式图片浏览 (Lightbox)">
+                <i class="icon icon-carousel"></i>
+                <h5><a class="name" href="#view/lightbox">图片浏览</a></h5>
+              </div>
+            </div>
+
+            <div class="card section fade scale slide-in-up-100 slide-in-right-50 show in" id="section-view-datatable" data-id="datatable" data-chapter="view" data-order="81" data-accent="purple" data-target="page">
+              <div class="card-heading" title="可以固定列和表头的增强表格">
+                <i class="icon icon-table"></i>
+                <h5><a class="name" href="#view/datatable">数据表格</a></h5>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+
+    </div>
+  </section>
+
+  <section class="demo-section">
+    <div id="control/icon">
+      图标
     </div>
   </section>
 </div>
