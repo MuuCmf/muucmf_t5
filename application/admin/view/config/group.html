@@ -18,7 +18,7 @@
 
     </div>
     <div class="col-md-12">
-        <form action="{:url('save')}" method="post" class="form-horizontal">
+        <form action="{:url('save')}" method="post" class="form-horizontal ajax-form">
             {volist name="list" id="config"}
                 <div class="form-item builder_item">
                     <label class="item-label">{$config.title}<span class="check-tips">（{$config.remark}）</span>
@@ -191,7 +191,7 @@
                                 target-form="form-horizontal">{:lang("_SURE_WITH_SPACE_")}
                         </button>
                     {else/}
-                        <button type="submit" class="btn submit-btn btn-success ajax-post" target-form="form-horizontal">{:lang("_SURE_WITH_SPACE_")}
+                        <button type="submit" class="btn submit-btn btn-success" target-form="form-horizontal">{:lang("_SURE_WITH_SPACE_")}
                         </button>
                     {/empty}
 

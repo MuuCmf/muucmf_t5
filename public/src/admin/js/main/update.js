@@ -28,20 +28,3 @@
         });
     }
 });
-
-/**
- * 反馈数据，用户统计安装量
- * @param  {Object} ){                 var data [description]
- * @return {[type]}     [description]
- */
-$(function(){
-    var data = {
-        host:$('[data-toggle="server_name"]').val(),
-        ip:$('[data-toggle="server_ip"]').val(),
-        version:$('[data-toggle="version"]').val(),
-        v:'T5'
-    };
-
-    var url = 'https://www.muucmf.cn/muucmf/index/feedback';
-    $.post(url,data,function(result){});
-});
