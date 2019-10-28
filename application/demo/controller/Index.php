@@ -16,12 +16,26 @@ class Index extends Common
     {
     	return $this->fetch();
     }
+
+    public function button(){
+
+        return $this->fetch();
+    }
     /**
-     * 前台编辑器演示
+     * 前台表单演示
      * @return [type] [description]
      */
     public function editor()
     {
+        //模拟数据
+        $data['title'] = '文本框';
+        $data['category'] = [
+            0 => ['id'=>1,'title'=>'分类1'],
+            1 => ['id'=>2,'title'=>'分类2'],
+        ];
+        $data['content'] = '初始数据';
+        $this->assign('data',$data);
+
     	return $this->fetch();
     }
     /**
