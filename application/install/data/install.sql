@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_action_log` (
 
 DROP TABLE IF EXISTS `muucmf_addons`;
 CREATE TABLE IF NOT EXISTS `muucmf_addons` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `name` varchar(40) NOT NULL COMMENT '插件名或标识',
   `title` varchar(20) NOT NULL DEFAULT '' COMMENT '中文名',
   `description` text COMMENT '插件描述',
@@ -73,14 +73,17 @@ CREATE TABLE IF NOT EXISTS `muucmf_addons` (
   `config` text COMMENT '配置',
   `author` varchar(40) DEFAULT '' COMMENT '作者',
   `version` varchar(20) DEFAULT '' COMMENT '版本号',
-  `create_time` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '安装时间',
+  `create_time` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '安装时间',
+  `update_time` int(11) NOT NULL COMMENT '更新时间',
   `has_adminlist` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '是否有后台列表',
+  `is_setup` tinyint(2) NOT NULL DEFAULT '0' COMMENT '是否已安装',
+  `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='插件表' AUTO_INCREMENT=15 ;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COMMENT='插件表';
 
-INSERT INTO `muucmf_addons` (`id`, `name`, `title`, `description`, `status`, `config`, `author`, `version`, `create_time`, `has_adminlist`) VALUES
-(3, 'chinacity', '中国省市区三级联动', '每个系统都需要的一个中国省市区三级联动插件。想天-駿濤修改，将镇级地区移除', 1, 'null', 'muucmf', '2.0', 0, 0),
-(46, 'demo', 'demo测试', '这就是个案例', 1, '{"can_show":"0","title":"0","select":"0"}', 'muucmf', '1.0.0', 0, 1);
+INSERT INTO `muucmf_addons` (`id`, `name`, `title`, `description`, `status`, `config`, `author`, `version`, `create_time`, `update_time`, `has_adminlist`, `is_setup`, `sort`) VALUES
+(3, 'chinacity', '中国省市区三级联动', '每个系统都需要的一个中国省市区三级联动插件。想天-駿濤修改，将镇级地区移除', 1, 'null', 'muucmf', '2.1', 1572355361, 1572355361, 0, 1, 0),
+(4, 'demo', 'demo测试', '这就是个案例', 1, '{"radio":"0","checkbox":"1","text":"","select":"0","textarea":"0","text2":""}', 'muucmf', '1.0.0', 1572355361, 1572356192, 0, 1, 0),
 
 DROP TABLE IF EXISTS `muucmf_adv_pos`;
 CREATE TABLE IF NOT EXISTS `muucmf_adv_pos` (
