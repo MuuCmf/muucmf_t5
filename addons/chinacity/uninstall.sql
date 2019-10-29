@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS `thinkox_district`;
+DROP TABLE IF EXISTS `muucmf_district`;

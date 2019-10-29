@@ -6,7 +6,7 @@
 		<h2>{:lang("_PLUGIN_CONFIGURATION_")}<small>[ {$data.title} ]</small></h2>
 	</div>
     <div class="with-padding">
-    <form action="{:Url('saveConfig')}" class="form-horizontal" method="post">
+    <form action="{:url('saveConfig')}" class="form-horizontal ajax-form" method="post">
     {empty name="custom_config"}
     {foreach name="data['config']" item="form" key="o_key"}
         <div class="form-item builder_item">
@@ -134,7 +134,7 @@
         {/case}
         {case value="group"}
             <div class="tab-wrap">
-                <ul class="nav nav-pills nav-secondary">
+                <ul class="nav nav-pills">
                     {volist name="form.options" id="li"}
                     <li {eq name="i" value="1"}class="active"{/eq} >
                         <a data-target="#tab{$i}" data-toggle="tab" href="#tab{$i}">{$li.title}</a>
@@ -277,7 +277,7 @@
     <div style="margin-top: 10px">
 
         <input type="hidden" name="id" value="{:input('id')}" readonly>
-        <button type="submit" class="btn submit-btn ajax-post" target-form="form-horizontal">{:lang("_SURE_WITH_SPACE_")}</button>
+        <button type="submit" class="btn submit-btn">{:lang("_SURE_WITH_SPACE_")}</button>
         <button class="btn btn-return" onclick="javascript:history.back(-1);return false;">{:lang("_RETURN_WITH_SPACE_")}</button>
         </div>
     </div>

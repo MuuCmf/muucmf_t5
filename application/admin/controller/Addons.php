@@ -17,20 +17,6 @@ class Addons extends Admin
         parent::_initialize();
     }
 
-    public function checkForm()
-    {
-        $data = $_POST;
-        $data['info']['name'] = trim($data['info']['name']);
-        if (!$data['info']['name'])
-            $this->error(lang('_PLUGIN_LOGO_MUST_'));
-        //检测插件名是否合法
-        $addons_dir = ADDONS_PATH;
-        if (file_exists("{$addons_dir}{$data['info']['name']}")) {
-            $this->error(lang('_PLUGIN_ALREADY_EXISTS_'));
-        }
-        $this->success(lang('_CAN_CREATE_'));
-    }
-
     /**
      * 插件列表
      */
@@ -39,51 +25,48 @@ class Addons extends Admin
         $param = input('');
         $type = isset($param['type']) ? $param['type'] : 'all';
 
-        $list = model('admin/Addons')->getList('');
-        $request = (array)input('request.');
-        if ($type == 'yes') {//已安装的
-            foreach ($list as $key => $value) {
-                if ($value['uninstall'] != 0) {
-                    unset($list[$key]);
-                }
-            }
-        } else if ($type == 'no') {
-            foreach ($list as $key => $value) {
-                if ($value['uninstall'] == 0) {
-                    $value['id'] = 0;
-                    unset($list[$key]);
-                }
-            }
-        } 
+        $map = [];
+        if($type == 'yes'){
+            $map['is_setup'] = 1;
+        }
+        if($type == 'no'){
+            $map['is_setup'] = 0;
+        }
+
+        $list = model('Addons')->getListByPage($map);
+        // 获取分页显示
+        $page = $list->render();
+
         $this->setTitle(lang('_PLUGIN_LIST_'));
         $this->assign('type', $type);
         $this->assign('_list', $list);
+        $this->assign('page', $page);
         
         return $this->fetch();
     }
 
     /**
-     * 启用插件
+     * 设置状态
      */
-    public function enable()
+    public function setStatus()
     {
-        $id = input('id');
-        $msg = array('success' => lang('_ENABLE_SUCCESS_'), 'error' => lang('_ENABLE_FAILED_'));
-        cache('hooks', null);
+        $data['id'] = input('id');
+        $status = input('status');
+        if($status == 'enable'){
+            $data['status'] = 1;
+            $msg = lang('_ENABLE_SUCCESS_');
+        }else{
+            $data['status'] = 0;
+            $msg = lang('_DISABLE_SUCCESS_');
+        }
 
-        $this->resume('Addons', "id={$id}", $msg);
-    }
+        $res = model('Addons')->editData($data);
 
-    /**
-     * 禁用插件
-     */
-    public function disable()
-    {
-        $id = input('id');
-        $msg = array('success' => lang('_DISABLE_SUCCESS_'), 'error' => lang('_DISABLE_'));
-        cache('hooks', null);
-
-        $this->forbid('Addons', "id={$id}", $msg);
+        if($res){
+            $this->success($msg);
+        }else{
+            $this->error('error');
+        }
     }
 
     /**
@@ -159,13 +142,13 @@ class Addons extends Admin
      */
     public function install()
     {
+        $id = input('id',0,'intval');
         $addon_name = trim(input('addon_name'));
-        $addonsModel = model('admin/Addons');
-        $rs = $addonsModel->install($addon_name);
+        $rs = model('admin/Addons')->install($addon_name);
         if ($rs === true) {
             $this->success(lang('_INSTALL_PLUG-IN_SUCCESS_'));
         } else {
-            $this->error($addonsModel->getError());
+            $this->error(model('admin/Addons')->getError());
         }
     }
 
@@ -176,27 +159,19 @@ class Addons extends Admin
     {
         $id = trim(input('id'));
         $db_addons = Db::name('Addons')->find($id);
-
         $class = get_addon_class($db_addons['name']);
-
-        $this->assign('jumpUrl', url('index'));
 
         if (!$db_addons || !class_exists($class))
             $this->error(lang('_PLUGIN_DOES_NOT_EXIST_'));
 
-        session('addons_uninstall_error', null);
         $addons = new $class;
         $uninstall_flag = $addons->uninstall();
         if (!$uninstall_flag)
             $this->error(lang('_EXECUTE_THE_PLUG-IN_TO_THE_PRE_UNLOAD_OPERATION_FAILED_') . session('addons_uninstall_error'));
-        $hooks_update = model('Hooks')->removeHooks($db_addons['name']);
-        if ($hooks_update === false) {
-            $this->error(lang('_FAILED_HOOK_MOUNTED_DATA_UNINSTALL_PLUG-INS_'));
-        }
-        cache('hooks', null);
-        $delete = Db::name('Addons')->where(['id'=>$id])->delete();
-        if ($delete === false) {
-            $this->error(lang('_UNINSTALL_PLUG-IN_FAILED_'));
+        
+        $res = model('Addons')->uninstall($db_addons['name']);
+        if ($res === false) {
+            $this->error(model('admin/Addons')->getError());
         } else {
             $this->success(lang('_SUCCESS_UNINSTALL_'));
         }
@@ -213,15 +188,16 @@ class Addons extends Admin
         list($list,$page) = $this->commonLists('Hooks', $map, 'id desc', []);
         $list = $list->toArray()['data'];
         int_to_string($list, ['type' => config('HOOKS_TYPE')]);
-        // 记录当前列表页的cookie
-        Cookie('__forward__', $_SERVER['REQUEST_URI']);
 
         $this->assign('list', $list);
         
         return $this->fetch();
     }
 
-
+    /**
+     * 新增钩子
+     * @return [type] [description]
+     */
     public function addhook()
     {
         $this->assign('data', null);
@@ -234,15 +210,7 @@ class Addons extends Admin
     {
         $hook = Db::name('Hooks')->field(true)->find($id);
         //所有插件
-        $all_addons = model('Addons')->getList();
-
-        //只获取已安装插件
-        foreach ($all_addons as $key => $value) {
-            if ($value['uninstall'] == 1) {
-                unset($all_addons[$key]);
-            }
-        }
-
+        $all_addons = model('Addons')->getAll(['status'=>1,'is_setup'=>1]);
         $all_addons = array_combine(array_column($all_addons,'name'),$all_addons);
 
         $all_addons_arr = [];

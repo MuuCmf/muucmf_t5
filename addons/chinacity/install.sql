@@ -1,4 +1,5 @@
-CREATE TABLE IF NOT EXISTS `thinkox_district` (
+DROP TABLE IF EXISTS `muucmf_district`;
+CREATE TABLE IF NOT EXISTS `muucmf_district` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '',
   `level` tinyint(4) unsigned NOT NULL DEFAULT '0',
@@ -6,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `thinkox_district` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='中国省市区乡镇数据表';
 
-INSERT INTO `thinkox_district` (`id`, `name`, `level`, `upid`) VALUES
+INSERT INTO `muucmf_district` (`id`, `name`, `level`, `upid`) VALUES
 (110000, '北京市', 1, 0),
 (120000, '天津市', 1, 0),
 (130000, '河北省', 1, 0),
@@ -1524,7 +1525,7 @@ INSERT INTO `thinkox_district` (`id`, `name`, `level`, `upid`) VALUES
 (341821, '郎溪县', 3, 341800),
 (341822, '广德县', 3, 341800),
 (341823, '泾　县', 3, 341800);
-INSERT INTO `thinkox_district` (`id`, `name`, `level`, `upid`) VALUES
+INSERT INTO `muucmf_district` (`id`, `name`, `level`, `upid`) VALUES
 (341824, '绩溪县', 3, 341800),
 (341825, '旌德县', 3, 341800),
 (341881, '宁国市', 3, 341800),
@@ -3044,7 +3045,7 @@ INSERT INTO `thinkox_district` (`id`, `name`, `level`, `upid`) VALUES
 (532628, '富宁县', 3, 532600),
 (532801, '景洪市', 3, 532800),
 (532822, '勐海县', 3, 532800);
-INSERT INTO `thinkox_district` (`id`, `name`, `level`, `upid`) VALUES
+INSERT INTO `muucmf_district` (`id`, `name`, `level`, `upid`) VALUES
 (532823, '勐腊县', 3, 532800),
 (532901, '大理市', 3, 532900),
 (532922, '漾濞彝族自治县', 3, 532900),

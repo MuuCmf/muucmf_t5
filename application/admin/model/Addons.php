@@ -8,62 +8,57 @@ use think\Model;
  */
 class Addons extends Model
 {
-    public function getListByPage()
+    protected $autoWriteTimestamp = true;
+
+    /**
+     * 新增或编辑数据
+     *
+     * @param      <type>  $data   The data
+     *
+     * @return     <type>  ( description_of_the_return_value )
+     */
+    public function editData($data)
     {
+        if(!empty($data['id'])){
+            $res = $this->allowField(true)->save($data,$data['id']);
+        }else{
+            $res = $this->allowField(true)->save($data);
+        }
+        if($res){
+            return $this->id;
+        }else{
+            return false;
+        }
         
     }
 
     /**
-     * 获取插件列表
-     * @param string $addon_dir
+     * [getListByPage description]
+     * @param  [type]  $map   [description]
+     * @param  string  $order [description]
+     * @param  string  $field [description]
+     * @param  integer $r     [description]
+     * @return [type]         [description]
      */
-    public function getList()
+    public function getListByPage($map,$order='sort desc,create_time desc',$field='*',$r=20)
     {
-        $dirs = array_map('basename', glob(ADDONS_PATH . '*', GLOB_ONLYDIR));
+        $this->reload();
 
-        if ($dirs === FALSE || !file_exists(ADDONS_PATH)) {
-            $this->error = lang('_THE_PLUGIN_DIRECTORY_IS_NOT_READABLE_OR_NOT_');
-            return FALSE;
-        }
+        $list = $this->where($map)->order($order)->field($field)->paginate($r,false,['query'=>request()->param()]);
 
-        $addons = [];
-        $where['name'] = ['in', $dirs];
-        $list = collection($this->where($where)->select())->toArray();
-
-        foreach ($list as $addon) {
-            $addon['uninstall'] = 0;
-            $addon['icon_photo'] = $this->getIcon($addon['name']);
-            $addons[$addon['name']] = $addon;
-        }
-
-        foreach ($dirs as $value) {
-            if (!isset($addons[$value])) {
-                $class = get_addon_class($value);
-                
-                if (!class_exists($class)) { // 实例化插件失败忽略执行
-                    \think\Log::record(lang('_PLUGIN_') . $value . lang('_THE_ENTRY_FILE_DOES_NOT_EXIST_WITH_EXCLAMATION_'));
-                    continue;
-                }
-                
-                $obj = new $class;
-                $addons[$value] = $obj->info;
-                if ($addons[$value]) {
-                    $addons[$value]['uninstall'] = 1;
-                    unset($addons[$value]['status']);
-                }
-                $addons[$value]['icon_photo'] = $this->getIcon($addons[$value]['name']);
+        foreach ($list as &$val) {
+            $val['icon'] = $this->getIcon($val['name']);
+            $class  = get_addon_class($val['name']);
+            if(!class_exists($class)){
+                $val['has_config'] = 0;
+            }else{
+                $addon = new $class();
+                $val['has_config'] = count($addon->getConfig());
             }
         }
+        unset($val);
         
-        int_to_string($addons, ['status' => [
-            -1 => lang('_DAMAGE_'), 
-            0 => lang('_DISABLE_'), 
-            1 => lang('_ENABLE_'), 
-            null => lang('_NOT_INSTALLED_')
-        ]]);
-
-        $addons = list_sort_by($addons, 'uninstall', 'desc');
-        return $addons;
+        return $list;
     }
 
     /**
@@ -73,7 +68,6 @@ class Addons extends Model
      */
     public function install($name)
     {
-
         $class = get_addon_class($name);
         if (!class_exists($class)) {
             $this->error = lang('_PLUGIN_DOES_NOT_EXIST_');
@@ -88,40 +82,59 @@ class Addons extends Model
             $this->error = lang('_PLUGIN_INFORMATION_MISSING_');
             return false;
         }
-        session('addons_install_error', null);
         $install_flag = $addons->install();
         if (!$install_flag) {
             $this->error = lang('_PERFORM_A_PLUG__IN__OPERATION_FAILED_') . session('addons_install_error');
             return false;
         }
-        
-        $data = (array)$info;
 
-        if ($addons->admin == 1 || $addons->admin == true) {
-            $data['has_adminlist'] = 1;
-        } else {
-            $data['has_adminlist'] = 0;
-        }
+        //获取库内插件信息
+        $data = $this->getAddon($name);
+        $data = $data->toArray();
+        $data['config'] = json_encode($addons->getConfig());
+        $data['is_setup'] = 1;
+        
         if (!$data) {
             $this->error = $this->getError();
             return false;
         }
-        if ($this->save($data)) {
-            $config = ['config' => json_encode($addons->getConfig())];
-            $this->save($config,['name'=>$name]);
-
+        if ($this->save($data,['id'=>$data['id']])) {
             $hooks_update = model('Hooks')->updateHooks($name);
             if ($hooks_update) {
                 cache('hooks', null);
                 return true;
             } else {
-                $this->where(['name'=>$name])->delete();
                 $this->error = lang('_THE_UPDATE_HOOK_IS_FAILED_PLEASE_TRY_TO_REINSTALL_');
                 return false;
             }
 
         } else {
             $this->error = lang('_WRITE_PLUGIN_DATA_FAILED_');
+            return false;
+        }
+    }
+
+    /**
+     * 卸载插件
+     * @param  [type] $name [description]
+     * @return [type]       [description]
+     */
+    public function uninstall($name)
+    {
+        //获取库内插件信息
+        $data = $this->getAddon($name);
+        $data = $data->toArray();
+        $data['is_setup'] = 0;
+
+        if ($this->save($data,['id'=>$data['id']])) {
+            $hooks_update = model('Hooks')->removeHooks($name);
+            if ($hooks_update === false) {
+                $this->error(lang('_FAILED_HOOK_MOUNTED_DATA_UNINSTALL_PLUG-INS_'));
+            }
+            cache('hooks', null);
+            return true;
+        } else {
+            $this->error = lang('_UNINSTALL_PLUG-IN_FAILED_');
             return false;
         }
     }
@@ -157,5 +170,82 @@ class Addons extends Model
             }
         }
         return $admin;
+    }
+
+    /**
+     * [getAll description]
+     * @return [type] [description]
+     */
+    public function getAll($where = [])
+    {
+        $result = $this->where($where)->order('sort desc,id desc')->select();
+
+        return $result;
+    }
+
+    /**
+     * 在库里获取单个插件信息
+     * @return [type] [description]
+     */
+    public function getAddon($name)
+    {
+        $map['name'] = $name;
+        $res = $this->where($map)->find();
+
+        return $res;
+    }
+
+    /**
+     * 重新加载插件并处理数据表
+     * @return [type] [description]
+     * @author 严大蒙同学<59262424@qq.com>
+     */
+    private function reload()
+    {
+        $dirs = array_map('basename', glob(ADDONS_PATH . '*', GLOB_ONLYDIR));
+
+        if ($dirs === FALSE || !file_exists(ADDONS_PATH)) {
+            $this->error = lang('_THE_PLUGIN_DIRECTORY_IS_NOT_READABLE_OR_NOT_');
+            return FALSE;
+        }
+        //初始化空容器
+        $addons = [];
+        foreach ($dirs as $value) {
+            if (!isset($addons[$value])) {
+                $class = get_addon_class($value);
+                
+                if (!class_exists($class)) { // 实例化插件失败忽略执行
+                    \think\Log::record(lang('_PLUGIN_') . $value . lang('_THE_ENTRY_FILE_DOES_NOT_EXIST_WITH_EXCLAMATION_'));
+                    continue;
+                }
+                
+                $obj = new $class;
+                $info = $obj->info;
+                if ($info) {
+                    unset($info['status']);
+                }
+
+                //合并数据表内模块
+                $db_info = $this->getAddon($info['name']);
+                if($db_info){
+                    $db_info = $db_info->toArray();
+                    
+                    if(is_array($db_info)){
+                        $info = array_merge($db_info, $info);
+                    }
+                }
+                $addons[] = $info;
+            }
+        }
+        //写入数据库
+        $this->saveAll($addons);
+
+        //移除已删除的模块目录
+        $db_list = $this->getAll();
+        foreach($db_list as $val){
+            if(!is_dir(ADDONS_PATH . '/' .$val['name'])){
+                $this->destroy(['id' => $val['id']]);
+            }
+        }
     }
 }
