@@ -8,6 +8,64 @@ use think\Model;
  */
 class Addons extends Model
 {
+    public function getListByPage()
+    {
+        
+    }
+
+    /**
+     * 获取插件列表
+     * @param string $addon_dir
+     */
+    public function getList()
+    {
+        $dirs = array_map('basename', glob(ADDONS_PATH . '*', GLOB_ONLYDIR));
+
+        if ($dirs === FALSE || !file_exists(ADDONS_PATH)) {
+            $this->error = lang('_THE_PLUGIN_DIRECTORY_IS_NOT_READABLE_OR_NOT_');
+            return FALSE;
+        }
+
+        $addons = [];
+        $where['name'] = ['in', $dirs];
+        $list = collection($this->where($where)->select())->toArray();
+
+        foreach ($list as $addon) {
+            $addon['uninstall'] = 0;
+            $addon['icon_photo'] = $this->getIcon($addon['name']);
+            $addons[$addon['name']] = $addon;
+        }
+
+        foreach ($dirs as $value) {
+            if (!isset($addons[$value])) {
+                $class = get_addon_class($value);
+                
+                if (!class_exists($class)) { // 实例化插件失败忽略执行
+                    \think\Log::record(lang('_PLUGIN_') . $value . lang('_THE_ENTRY_FILE_DOES_NOT_EXIST_WITH_EXCLAMATION_'));
+                    continue;
+                }
+                
+                $obj = new $class;
+                $addons[$value] = $obj->info;
+                if ($addons[$value]) {
+                    $addons[$value]['uninstall'] = 1;
+                    unset($addons[$value]['status']);
+                }
+                $addons[$value]['icon_photo'] = $this->getIcon($addons[$value]['name']);
+            }
+        }
+        
+        int_to_string($addons, ['status' => [
+            -1 => lang('_DAMAGE_'), 
+            0 => lang('_DISABLE_'), 
+            1 => lang('_ENABLE_'), 
+            null => lang('_NOT_INSTALLED_')
+        ]]);
+
+        $addons = list_sort_by($addons, 'uninstall', 'desc');
+        return $addons;
+    }
+
     /**
      * 插件安装
      * @param  [type] $name [description]
@@ -68,55 +126,6 @@ class Addons extends Model
         }
     }
 
-
-    /**
-     * 获取插件列表
-     * @param string $addon_dir
-     */
-    public function getList()
-    {
-        $addon_dir = ADDONS_PATH;
-        $dirs = array_map('basename', glob($addon_dir . '*', GLOB_ONLYDIR));
-
-        if ($dirs === FALSE || !file_exists($addon_dir)) {
-            $this->error = lang('_THE_PLUGIN_DIRECTORY_IS_NOT_READABLE_OR_NOT_');
-            return FALSE;
-        }
-
-        $addons = [];
-        $where['name'] = ['in', $dirs];
-        $list = collection($this->where($where)->select())->toArray();
-
-        foreach ($list as $addon) {
-            $addon['uninstall'] = 0;
-            $addon['icon_photo'] = $this->getIcon($addon['name']);
-            $addons[$addon['name']] = $addon;
-        }
-
-        foreach ($dirs as $value) {
-            if (!isset($addons[$value])) {
-                $class = get_addon_class($value);
-                
-                if (!class_exists($class)) { // 实例化插件失败忽略执行
-                    \think\Log::record(lang('_PLUGIN_') . $value . lang('_THE_ENTRY_FILE_DOES_NOT_EXIST_WITH_EXCLAMATION_'));
-                    continue;
-                }
-                
-                $obj = new $class;
-                $addons[$value] = $obj->info;
-                if ($addons[$value]) {
-                    $addons[$value]['uninstall'] = 1;
-                    unset($addons[$value]['status']);
-                }
-                $addons[$value]['icon_photo'] = $this->getIcon($addons[$value]['name']);
-            }
-        }
-        
-        int_to_string($addons, ['status' => [-1 => lang('_DAMAGE_'), 0 => lang('_DISABLE_'), 1 => lang('_ENABLE_'), null => lang('_NOT_INSTALLED_')]]);
-
-        $addons = list_sort_by($addons, 'uninstall', 'desc');
-        return $addons;
-    }
     /**
      * 获取图标
      * @param  [type] $name [description]
@@ -124,13 +133,14 @@ class Addons extends Model
      */
     public function getIcon($name) 
     {
-        $file = STATIC_URL . '/addons/'.$name.'/images/icon.png';
+        $file = PUBLIC_PATH . '/addons/'.$name.'/images/icon.png';
         if(is_file($file)){
             return STATIC_URL . '/addons/'.$name.'/images/icon.png';
         }else{
-            return '';
+            return STATIC_URL . '/admin/images/plugin.png';
         }
     }
+
     /**
      * 获取插件的后台列表
      */

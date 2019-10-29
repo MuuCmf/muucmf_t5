@@ -22,14 +22,7 @@ class Module extends Model
         $list = $this->where($map)->order($order)->field($field)->paginate($r,false,['query'=>request()->param()]);
 
         foreach ($list as &$val) {
-            //如果icon图片存在
-            if(file_exists(PUBLIC_PATH . '/static/' . $val['name'] . '/images/icon.png')){
-                $val['icon'] = STATIC_URL . '/'. $val['name'] .'/images/icon.png';
-            }elseif(file_exists(PUBLIC_PATH . '/static/' . $val['name'] . '/icon.png')){
-                $val['icon'] = STATIC_URL . '/'. $val['name'] .'/icon.png';
-            }else{
-                $val['icon'] = STATIC_URL . '/admin/images/module_default_icon.png';
-            }
+            $val['icon'] = $this->getIcon($val['name']);
         }
         unset($val);
 
@@ -89,15 +82,8 @@ class Module extends Model
             if (file_exists(APP_PATH . '/' . $subdir . '/info/info.php') && $subdir != '.' && $subdir != '..')
             {
                 $info = $this->getInfo($subdir);
-                //如果icon图片存在
-                //图标所在位置为模块静态目录跟下（推荐）
-                if(file_exists(PUBLIC_PATH . '/static/' . $info['name'] . '/images/icon.png')){
-                    $info['icon'] = STATIC_URL . '/'. $info['name'] .'/images/icon.png';
-                }elseif(file_exists(PUBLIC_PATH . '/static/' . $info['name'] . '/icon.png')){
-                    $info['icon'] = STATIC_URL . '/'. $info['name'] .'/icon.png';
-                }else{
-                    $info['icon'] = STATIC_URL . '/admin/images/module_default_icon.png';
-                }
+                
+                $info['icon'] = $this->getIcon($info['name']);
                 
                 //合并数据表内模块
                 $module_info = $this->getModule($info['name']);
@@ -111,8 +97,16 @@ class Module extends Model
                 $module[] = $info;
             }
         }
-
+        //写入数据库
         $this->saveAll($module);
+
+        //移除已删除的模块目录
+        $db_list = $this->getAll();
+        foreach($db_list as $val){
+            if(!is_dir(APP_PATH . '/' .$val['name'])){
+                $this->destroy(['id' => $val['id']]);
+            }
+        }
 
         $this->cleanModulesCache();
     }
@@ -267,13 +261,7 @@ class Module extends Model
         $info = $this->where(['name'=>$name])->find();
 
         if($info){
-            if(file_exists(PUBLIC_PATH . '/static/' . $info['name'] . '/images/icon.png')){
-                $info['icon'] = STATIC_URL . '/'. $info['name'] .'/images/icon.png';
-            }elseif(file_exists(PUBLIC_PATH . '/static/' . $info['name'] . '/icon.png')){
-                $info['icon'] = STATIC_URL . '/'. $info['name'] .'/icon.png';
-            }else{
-                $info['icon'] = STATIC_URL . '/admin/images/module_default_icon.png';
-            }
+            $info['icon'] = $this->getIcon($info['name']);
         }
 
         return $info;
@@ -446,6 +434,24 @@ class Module extends Model
     }
 
     /*——————————————————————————私有域—————————————————————————————*/
+    /**
+     * 获取模块图标
+     * @param  [type] $name [description]
+     * @return [type]       [description]
+     */
+    private function getIcon($name)
+    {
+        //图标所在位置为模块静态目录跟下（推荐）
+        if(file_exists(PUBLIC_PATH . '/static/' . $name . '/images/icon.png')){
+            $icon = STATIC_URL . '/'. $name .'/images/icon.png';
+        }elseif(file_exists(PUBLIC_PATH . '/static/' . $name . '/icon.png')){
+            $icon = STATIC_URL . '/'. $info['name'] .'/icon.png';
+        }else{
+            $icon = STATIC_URL . '/admin/images/module_default_icon.png';
+        }
+
+        return $icon;
+    }
 
     /**获取模块的相对目录
      * @param $file

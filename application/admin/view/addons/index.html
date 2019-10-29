@@ -32,16 +32,9 @@
                                 <a href="{:url('config',['id'=>$vo['id']])}">
                                 {/empty}
                                 
-                                {empty name="vo.icon_photo"}
-                                    <div class="cover-icon">
-                                        <img src="__IMG__/plugin.png" alt=""> 
-                                    </div>
-                                {else/}
-                                    <div class="cover-icon">
-                                        <img src="{$vo.icon_photo}" alt=""> 
-                                    </div>
-                                {/empty}
-                                    
+                                <div class="cover-icon">
+                                    <img src="{$vo.icon_photo}" alt=""> 
+                                </div>
                                 </a>
                             </div>
 

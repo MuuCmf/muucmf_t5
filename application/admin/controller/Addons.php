@@ -31,8 +31,6 @@ class Addons extends Admin
         $this->success(lang('_CAN_CREATE_'));
     }
 
-
-
     /**
      * 插件列表
      */
@@ -61,8 +59,6 @@ class Addons extends Admin
         $this->assign('type', $type);
         $this->assign('_list', $list);
         
-        // 记录当前列表页的cookie
-        Cookie('__forward__', $_SERVER['REQUEST_URI']);
         return $this->fetch();
     }
 
@@ -113,7 +109,6 @@ class Addons extends Admin
         $db_config = $addon['config'];
         $addon['config'] = include $data->config_file;
 
-        
         if ($db_config) {
             $db_config = json_decode($db_config, true);
             foreach ($addon['config'] as $key => $value) {
@@ -179,13 +174,12 @@ class Addons extends Admin
      */
     public function uninstall()
     {
-        $addonsModel = Db::name('Addons');
         $id = trim(input('id'));
         $db_addons = Db::name('Addons')->find($id);
 
         $class = get_addon_class($db_addons['name']);
 
-        $this->assign('jumpUrl', Url('index'));
+        $this->assign('jumpUrl', url('index'));
 
         if (!$db_addons || !class_exists($class))
             $this->error(lang('_PLUGIN_DOES_NOT_EXIST_'));
@@ -226,6 +220,7 @@ class Addons extends Admin
         
         return $this->fetch();
     }
+
 
     public function addhook()
     {
