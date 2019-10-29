@@ -5,14 +5,9 @@ use think\Db;
 use think\Controller;
 use app\common\controller\Common;
 
-class Control extends Common
+class Component extends Common
 {
-	public function _initialize()
-    {
-        parent::_initialize();
-    }
-
-    /**
+	/**
      * 空方法直接调用方法模板
      * @return [type] [description]
      */
