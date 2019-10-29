@@ -25,11 +25,6 @@
 </style>
 
 
-
-
-
-
-
 <section><header><h3>静态类型</h3></header><article><div class="example example-popover-static clearfix">
   <div class="popover top">
     <div class="arrow"></div>
@@ -104,13 +99,9 @@ $</span><span class="pun">(</span><span class="str">'[data-toggle="popover"]'</s
 
 
 
-
-
-
-
-
-
-<section><header><h3>外观</h3></header><article><p>使用 <code>tipClass</code> 指定外观类名来更改颜色主题。</p><div class="example text-center">
+<section>
+  <header><h3>外观</h3></header>
+  <article><p>使用 <code>tipClass</code> 指定外观类名来更改颜色主题。</p><div class="example text-center">
   <button type="button" class="btn btn-primary" data-toggle="popover" data-tip-class="popover-primary" data-content="千山鸟飞绝，万径人踪灭。" title="" data-placement="left" data-original-title="江雪">.popover-primary</button>
   <button type="button" class="btn btn-success" data-toggle="popover" data-tip-class="popover-success" data-content="千山鸟飞绝，万径人踪灭。" title="" data-placement="top" data-original-title="江雪">.popover-success</button>
   <button type="button" class="btn btn-info" data-toggle="popover" data-tip-class="popover-info" data-content="千山鸟飞绝，万径人踪灭。" title="" data-placement="bottom" data-original-title="江雪">.popover-info</button>
@@ -121,37 +112,18 @@ $</span><span class="pun">(</span><span class="str">'[data-toggle="popover"]'</s
     tipClass</span><span class="pun">:</span><span class="pln"> </span><span class="str">'danger'</span><span class="pln">
 </span><span class="pun">});</span></code></pre></article></section>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <script>
-function afterPageLoad() {
-    $('#pageBody [data-toggle="popover"]').popover();
-};
-</script><section><header><h3>用法</h3></header><article><h4>初始化</h4><p>出于性能方面的考虑，工具提示和弹框组件的data属性api是选择性加入的，也就是说 <strong>你必须自己初始化他们</strong>。</p><ul>
+$(function(){
+  $('[data-toggle="popover"]').popover();
+})
+</script>
+
+<section>
+  <header><h3>用法</h3></header>
+  <article>
+    <h4>初始化</h4>
+    <p>出于性能方面的考虑，工具提示和弹框组件的data属性api是选择性加入的，也就是说 <strong>你必须自己初始化他们</strong>。</p>
+    <ul>
 <li><code>$().popover()</code></li>
 <li><code>$().popover(options)</code></li>
 </ul><p>参数 <code>options</code> 用于设置初始化选项，是可以选的。初始化选项也可以通过元素上的 <code>[data-*]</code> 属性来设置。</p><h4>选项</h4><p>可用的初始化选项如下：</p><div class="table-responsive"><table class="table table-bordered table-striped">

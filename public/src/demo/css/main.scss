@@ -4507,38 +4507,6 @@ body.query-enabled[data-query=icons] #grid .card.open.section-preview-show .sect
   width: 36px
 }
 
-#pageCloseBtn {
-  position: absolute;
-  top: 5px;
-  right: 15px;
-  width: 48px;
-  height: 48px;
-  border-radius: 4px
-}
-
-#pageReloadBtn {
-  position: absolute;
-  top: 5px;
-  right: 70px;
-  display: none;
-  width: 48px;
-  height: 48px;
-  color: grey
-}
-
-#pageReloadBtn:hover {
-  color: #353535
-}
-
-#pageBody {
-  position: absolute;
-  top: 60px;
-  bottom: 0;
-  width: 100%;
-  padding: 15px 0;
-  overflow-y: auto
-}
-
 #pageAttrs {
   padding: 0 0 10px 23px;
   margin: 0 0 20px 21px;

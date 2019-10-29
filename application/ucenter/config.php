@@ -6,7 +6,7 @@ return [
     'view_replace_str'       => [
     	'__COMMON__'    => STATIC_URL . '/common',
         '__LIB__'       => STATIC_URL . '/common/lib',
-        '__ZUI__'       => STATIC_URL . '/common/lib/zui-1.9.0',
+        '__ZUI__'       => STATIC_URL . '/common/lib/zui',
         '__JS__'    	=> STATIC_URL . '/ucenter/js',
         '__IMG__'       => STATIC_URL . '/ucenter/images',
         '__CSS__'       => STATIC_URL . '/ucenter/css',   

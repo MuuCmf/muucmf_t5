@@ -144,7 +144,7 @@ return [
         '__STATIC__'    => STATIC_URL,
         '__COMMON__'    => STATIC_URL . '/common',
         '__LIB__'       => STATIC_URL . '/common/lib',
-        '__ZUI__'       => STATIC_URL . '/common/lib/zui-1.9.0',
+        '__ZUI__'       => STATIC_URL . '/common/lib/zui',
     ],
     // 默认跳转页面对应的模板文件
     'dispatch_success_tmpl'  => APP_PATH . 'common' . DS . 'view' . DS . 'tpl' . DS . 'dispatch_jump.tpl',

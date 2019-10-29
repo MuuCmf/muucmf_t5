@@ -111,7 +111,9 @@ $(function() {
 
 
 
-<section><header><h3>示例</h3></header><article><h4>简单应用</h4><div class="example">
+<section><header><h3>示例</h3></header>
+    <article><h4>简单应用</h4>
+        <div class="example">
   <div id="draggableBox">
     <pre id="dragLog" class="pre-scrollable prettyprint prettyprinted" style=""></pre>
     <button id="draggableBtn" type="button" class="btn btn-primary"><i class="icon-move"></i> <span id="printPosition">拖动我</span></button>
@@ -144,6 +146,7 @@ $</span><span class="pun">(</span><span class="str">'#draggableBtn'</span><span 
         $dragLog</span><span class="pun">.</span><span class="pln">prepend</span><span class="pun">(</span><span class="pln">count</span><span class="pun">++</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> </span><span class="str">': '</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> </span><span class="str">'[完毕]：pos = '</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> JSON</span><span class="pun">.</span><span class="pln">stringify</span><span class="pun">(</span><span class="pln">e</span><span class="pun">.</span><span class="pln">pos</span><span class="pun">)</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> </span><span class="str">', offset = '</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> JSON</span><span class="pun">.</span><span class="pln">stringify</span><span class="pun">(</span><span class="pln">e</span><span class="pun">.</span><span class="pln">offset</span><span class="pun">)</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> </span><span class="str">'\n'</span><span class="pun">);</span><span class="pln">
     </span><span class="pun">}</span><span class="pln">
 </span><span class="pun">});</span></code></pre><h4>容器内多个元素拖动</h4><div class="example">
+    
   <div id="draggableBox2">
     <pre id="dragLog2" class="pre-scrollable prettyprint prettyprinted" style=""><span class="pun">用于输出演示日志信息</span></pre>
     <button type="button" class="btn btn-primary btn-draggable" style="top: 10px; left: 10px;"><i class="icon-move"></i> 按钮 #<span class="btn-draggable-id">1</span></button>
