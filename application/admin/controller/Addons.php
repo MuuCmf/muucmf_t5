@@ -131,7 +131,7 @@ class Addons extends Admin
         }
         if ($flag !== false) {
             cache('hooks', null);
-            $this->success(lang('_SAVE_'), Cookie('__forward__'));
+            $this->success(lang('_SAVE_'));
         } else {
             $this->error(lang('_SAVE_FAILED_'));
         }
