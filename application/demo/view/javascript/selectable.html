@@ -2,25 +2,6 @@
 
 {block name="style"}
 <link href="__CSS__/main.min.css" rel="stylesheet" type="text/css"/>
-{/block}
-
-{block name="body"}
-<div class="container">
-  <ol class="breadcrumb">
-      <li><a href="{:url('index/index')}">演示首页</a></li>
-      <li>拖拽选取</li>
-  </ol>
-<section class="demo-section">
-<div id="pageContent">
-
-
-<article><div class="alert alert-warning">
-  <h4>兼容性提示</h4>
-  <p>在触摸屏上无法支持拖拽范围选取功能，所以不支持多选，但仍然支持点选单个元素。</p>
-</div></article>
-
-
-
 <style>
 .selectable-example {padding: 10px;}
 .selectable-example > .message {margin: -10px -10px 10px; background-color: #e5e5e5; padding: 8px 10px;}
@@ -43,15 +24,70 @@
 }
 #shape-circle4 {width: 100px; height: 60px; line-height: 60px; left: 0%; bottom: 110px; border-radius: 30px; animation: example-move-circle 10s infinite alternate linear; box-shadow: 0 1px 6px rgba(50,128,252,.3);}
 </style>
+{/block}
+
+{block name="body"}
+<div class="container">
+  <ol class="breadcrumb">
+      <li><a href="{:url('index/index')}">演示首页</a></li>
+      <li>拖拽选取</li>
+  </ol>
+<section class="demo-section">
+<div id="pageContent">
 
 
+<article><div class="alert alert-warning">
+  <h4>兼容性提示</h4>
+  <p>在触摸屏上无法支持拖拽范围选取功能，所以不支持多选，但仍然支持点选单个元素。</p>
+</div></article>
 
 
-
-
-<section><header><h3>综合示例</h3></header><article><p>拖拽选取允许通过按住鼠标左键不放并拖动来选取范围内的元素。</p><p>在目标元素上单击鼠标左键来选取或者取消选取元素</p><p>当再次拖选时会取消上选中的元素，如果按住 <kbd>Ctrl</kbd> 键的同时进行拖拽选取操作则不会取消上次选中的元素，这样就可以实现分批次多选。</p><div class="clearfix selectable-example example" id="selectableExample1">
+<section>
+  <header><h3>综合示例</h3></header>
+  <article>
+    <p>拖拽选取允许通过按住鼠标左键不放并拖动来选取范围内的元素。</p>
+    <p>在目标元素上单击鼠标左键来选取或者取消选取元素</p><p>当再次拖选时会取消上选中的元素，如果按住 <kbd>Ctrl</kbd> 键的同时进行拖拽选取操作则不会取消上次选中的元素，这样就可以实现分批次多选。</p>
+    <div class="clearfix selectable-example example" id="selectableExample1">
   <div class="message">用光标点击并拖拽选取下方的方块。</div>
-<div class="tile" data-id="1">1</div><div class="tile" data-id="2">2</div><div class="tile" data-id="3">3</div><div class="tile" data-id="4">4</div><div class="tile" data-id="5">5</div><div class="tile" data-id="6">6</div><div class="tile" data-id="7">7</div><div class="tile" data-id="8">8</div><div class="tile" data-id="9">9</div><div class="tile" data-id="10">10</div><div class="tile" data-id="11">11</div><div class="tile" data-id="12">12</div><div class="tile" data-id="13">13</div><div class="tile" data-id="14">14</div><div class="tile" data-id="15">15</div><div class="tile" data-id="16">16</div><div class="tile" data-id="17">17</div><div class="tile" data-id="18">18</div><div class="tile" data-id="19">19</div><div class="tile" data-id="20">20</div><div class="tile" data-id="21">21</div><div class="tile" data-id="22">22</div><div class="tile" data-id="23">23</div><div class="tile" data-id="24">24</div><div class="tile" data-id="25">25</div><div class="tile" data-id="26">26</div><div class="tile" data-id="27">27</div><div class="tile" data-id="28">28</div><div class="tile" data-id="29">29</div><div class="tile" data-id="30">30</div><div class="tile" data-id="31">31</div><div class="tile" data-id="32">32</div><div class="tile" data-id="33">33</div><div class="tile" data-id="34">34</div><div class="tile" data-id="35">35</div><div class="tile" data-id="36">36</div></div><pre class="prettyprint prettyprinted" style=""><code class="lang-html"><span class="tag">&lt;div</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"selectableExample1"</span><span class="tag">&gt;</span><span class="pln">
+    <div class="tile" data-id="1">1</div>
+    <div class="tile" data-id="2">2</div>
+    <div class="tile" data-id="3">3</div>
+    <div class="tile" data-id="4">4</div>
+    <div class="tile" data-id="5">5</div>
+    <div class="tile" data-id="6">6</div>
+    <div class="tile" data-id="7">7</div>
+    <div class="tile" data-id="8">8</div>
+    <div class="tile" data-id="9">9</div>
+    <div class="tile" data-id="10">10</div>
+    <div class="tile" data-id="11">11</div>
+    <div class="tile" data-id="12">12</div>
+    <div class="tile" data-id="13">13</div>
+    <div class="tile" data-id="14">14</div>
+    <div class="tile" data-id="15">15</div>
+    <div class="tile" data-id="16">16</div>
+    <div class="tile" data-id="17">17</div>
+    <div class="tile" data-id="18">18</div>
+    <div class="tile" data-id="19">19</div>
+    <div class="tile" data-id="20">20</div>
+    <div class="tile" data-id="21">21</div>
+    <div class="tile" data-id="22">22</div>
+    <div class="tile" data-id="23">23</div>
+    <div class="tile" data-id="24">24</div>
+    <div class="tile" data-id="25">25</div>
+    <div class="tile" data-id="26">26</div>
+    <div class="tile" data-id="27">27</div>
+    <div class="tile" data-id="28">28</div>
+    <div class="tile" data-id="29">29</div>
+    <div class="tile" data-id="30">30</div>
+    <div class="tile" data-id="31">31</div>
+    <div class="tile" data-id="32">32</div>
+    <div class="tile" data-id="33">33</div>
+    <div class="tile" data-id="34">34</div>
+    <div class="tile" data-id="35">35</div>
+    <div class="tile" data-id="36">36</div>
+</div>
+
+<pre class="prettyprint prettyprinted" style=""><code class="lang-html"><span class="tag">&lt;div</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"selectableExample1"</span><span class="tag">&gt;</span><span class="pln">
   </span><span class="tag">&lt;div</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"tile"</span><span class="pln"> </span><span class="atn">data-id</span><span class="pun">=</span><span class="atv">"1"</span><span class="tag">&gt;</span><span class="pln">1</span><span class="tag">&lt;/div&gt;</span><span class="pln">
   </span><span class="tag">&lt;div</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"tile"</span><span class="pln"> </span><span class="atn">data-id</span><span class="pun">=</span><span class="atv">"2"</span><span class="tag">&gt;</span><span class="pln">2</span><span class="tag">&lt;/div&gt;</span><span class="pln">
   </span><span class="tag">&lt;div</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"tile"</span><span class="pln"> </span><span class="atn">data-id</span><span class="pun">=</span><span class="atv">"3"</span><span class="tag">&gt;</span><span class="pln">3</span><span class="tag">&lt;/div&gt;</span><span class="pln">
@@ -359,49 +395,8 @@ mySelectable</span><span class="pun">.</span><span class="pln">select</span><spa
 
 
 
-<script src="__ZUI__/lib/datatable/zui.datatable.min.js"></script>
-
-<script src="__ZUI__/lib/selectable/zui.selectable.min.js"></script>
-<script>
-$(function() {
-    var onTileSelect = function(e, that, a) {
-      this.$.children('.message').html('你选取了 <strong>#' + e.id + '</strong>，共选择了 <strong>' + e.selected.length + '</strong> 个。');
-    };
-
-    var $example1 = $('#selectableExample1');
-    for(var i = 0; i < 36; ++i) {
-        $example1.append('<div class="tile" data-id="' + (i + 1) + '">' + (i + 1) + '</div>');
-    }
-    $example1.selectable({
-        selector: '.tile',
-        clickBehavior: 'single',
-        select: onTileSelect,
-        unselect: onTileSelect
-    });
-
-    $('#selectableExample2').selectable({
-        selector: 'tr',
-        select: onTileSelect,
-        unselect: onTileSelect
-    });
-
-    $('#selectableExample3').selectable({
-        selectClass: 'selected',
-        selector: '.shape',
-        select: onTileSelect,
-        unselect: onTileSelect
-    });
-
-    $('#selectableDatableExample').datatable({
-        checkable: true,
-        selectable: {
-            finish: function(e) {
-                $('#selectableDatableExample').prev('.message').html('你共选择了 <strong>' + e.selected.length + '</strong> 个。');
-            }
-        }
-    });
-});
-</script><section><header><h3>数据表格</h3></header><article><p>ZUI 中的 <a href="#view/datatable">数据表格</a> 现已支持拖拽选择，只需要在数据表格中的 <code>selectable</code> 选项设置为 <code>true</code> 即可，或者将该选项直接设置为 <code>selectable</code> 所支持的选项对象。</p><div class="selectable-example example">
+<section>
+  <header><h3>数据表格</h3></header><article><p>ZUI 中的 <a href="#view/datatable">数据表格</a> 现已支持拖拽选择，只需要在数据表格中的 <code>selectable</code> 选项设置为 <code>true</code> 即可，或者将该选项直接设置为 <code>selectable</code> 所支持的选项对象。</p><div class="selectable-example example">
   <div class="message">为数据表格启用拖拽选择。</div>
   <table class="table" id="selectableDatableExample" data-datatable-id="datatable-selectableDatableExample" style="display: none;">
     <thead>
@@ -454,4 +449,50 @@ $(function() {
     </span><span class="pun">}</span><span class="pln">
 </span><span class="pun">});</span></code></pre><link href="__ZUI__/lib/datatable/zui.datatable.min.css" rel="stylesheet"></article></section></div>
 </section>
+{/block}
+
+{block name="script"}
+<script src="__ZUI__/lib/datatable/zui.datatable.min.js"></script>
+
+<script src="__ZUI__/lib/selectable/zui.selectable.min.js"></script>
+<script>
+$(function() {
+    var onTileSelect = function(e, that, a) {
+      this.$.children('.message').html('你选取了 <strong>#' + e.id + '</strong>，共选择了 <strong>' + e.selected.length + '</strong> 个。');
+    };
+
+    var $example1 = $('#selectableExample1');
+    for(var i = 0; i < 36; ++i) {
+        $example1.append('<div class="tile" data-id="' + (i + 1) + '">' + (i + 1) + '</div>');
+    }
+    $example1.selectable({
+        selector: '.tile',
+        clickBehavior: 'single',
+        select: onTileSelect,
+        unselect: onTileSelect
+    });
+
+    $('#selectableExample2').selectable({
+        selector: 'tr',
+        select: onTileSelect,
+        unselect: onTileSelect
+    });
+
+    $('#selectableExample3').selectable({
+        selectClass: 'selected',
+        selector: '.shape',
+        select: onTileSelect,
+        unselect: onTileSelect
+    });
+
+    $('#selectableDatableExample').datatable({
+        checkable: true,
+        selectable: {
+            finish: function(e) {
+                $('#selectableDatableExample').prev('.message').html('你共选择了 <strong>' + e.selected.length + '</strong> 个。');
+            }
+        }
+    });
+});
+</script>
 {/block}

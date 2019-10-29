@@ -23,9 +23,9 @@
 
 
 
-
-
-<section><header><h3>被动式</h3></header><article><p>被动式使用 <code>$().contextmenu(options)</code> 初始化上下文菜单。此方式自动监听所选操作元素上的 <code>contextmenu</code> 鼠标事件（可以通过 <code>trigger</code> 选项更改监听事件），在事件触发时弹出上下文菜单。</p><div class="example hl-primary" id="contextMenuExample1">
+<section>
+  <header><h3>被动式</h3></header>
+  <article><p>被动式使用 <code>$().contextmenu(options)</code> 初始化上下文菜单。此方式自动监听所选操作元素上的 <code>contextmenu</code> 鼠标事件（可以通过 <code>trigger</code> 选项更改监听事件），在事件触发时弹出上下文菜单。</p><div class="example hl-primary" id="contextMenuExample1">
 在此区域点击右键显示上下文菜单。
   <div class="text-info"></div>
 </div><pre class="prettyprint prettyprinted" style=""><code class="lang-html"><span class="tag">&lt;div</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"hl-primary"</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"contextMenuExample1"</span><span class="tag">&gt;</span><span class="pln">
@@ -300,30 +300,12 @@
     </span><span class="pun">{</span><span class="pln">label</span><span class="pun">:</span><span class="pln"> </span><span class="str">'粘贴'</span><span class="pun">}</span><span class="pln">
 </span><span class="pun">];</span></code></pre></article></section>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <script>
+
+$(function(){
+  afterPageLoad();
+});
+
 function afterPageLoad() {
     $('#contextMenuExample1').contextmenu({
         items: [{

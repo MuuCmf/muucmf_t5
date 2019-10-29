@@ -10,18 +10,10 @@
       <li><a href="{:url('index/index')}">演示首页</a></li>
       <li>对话框</li>
   </ol>
-<section class="demo-section">
+<section id="pageBody" class="demo-section">
 <div id="pageContent">
 
 <article><p>对话框允许以对话框的形式弹出，有半透明的页面遮罩层，并在显示和隐藏时支持动画。</p></article>
-
-
-
-
-
-
-
-
 
 <section><header><h3>实例</h3></header><article><h4>静态实例</h4><div class="example">
   <div class="modal">
@@ -118,17 +110,6 @@
   </span><span class="tag">&lt;/div&gt;</span><span class="pln">
 </span><span class="tag">&lt;/div&gt;</span></code></pre></article></section>
 
-
-
-
-
-
-
-
-
-
-
-
 <section><header><h3>可移动的对话框</h3></header><article><p>开启此选项可以允许用户在对话框显示之后通过拖拽头部移动对话框。</p><p>要启用此功能需要手动设置<code>moveable</code>参数值为<code>true</code>，或者为<code>.modal-dialog</code>增加一个class<code>.modal-moveable</code>。</p><div class="example">
   <button type="button" class="btn btn-primary" data-moveable="true" data-remember-pos="false" data-toggle="modal" data-target="#moveableModal" data-position="center"><i class="icon icon-move"></i> 打开我 拖动我</button>
 </div><pre class="prettyprint prettyprinted" style=""><code class="lang-html"><span class="tag">&lt;button</span><span class="pln"> </span><span class="atn">type</span><span class="pun">=</span><span class="atv">"button"</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"btn"</span><span class="pln"> </span><span class="atn">data-moveable</span><span class="pun">=</span><span class="atv">"true"</span><span class="pln"> </span><span class="atn">data-toggle</span><span class="pun">=</span><span class="atv">"modal"</span><span class="pln"> </span><span class="atn">data-target</span><span class="pun">=</span><span class="atv">"#myModal"</span><span class="tag">&gt;</span><span class="pln">打开我 拖动我</span><span class="tag">&lt;/button&gt;</span></code></pre><p>通过设置<code>rememberPos</code>为<code>true</code>来记住对话框移动之后的位置。<code>rememberPos</code>可取的值如下：</p><ul>
@@ -155,63 +136,15 @@
 <section><header><h3>关闭对话框</h3></header><article><p>在静态对话框HTML中增加一个按钮并添加data属性<code>data-dismiss="modal"</code>，这样当点击该按钮时会关闭此对话框。你可以将该属性添加至对话框内的任何元素。</p><pre class="prettyprint prettyprinted" style=""><code class="lang-html"><span class="tag">&lt;button</span><span class="pln"> </span><span class="atn">type</span><span class="pun">=</span><span class="atv">"button"</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"close"</span><span class="pln"> </span><span class="atn">data-dismiss</span><span class="pun">=</span><span class="atv">"modal"</span><span class="tag">&gt;&lt;span</span><span class="pln"> </span><span class="atn">aria-hidden</span><span class="pun">=</span><span class="atv">"true"</span><span class="tag">&gt;</span><span class="pln">×</span><span class="tag">&lt;/span&gt;&lt;span</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"sr-only"</span><span class="tag">&gt;</span><span class="pln">关闭</span><span class="tag">&lt;/span&gt;&lt;/button&gt;</span></code></pre></article></section>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <style>
 #pageContent .example > .modal {display: block; position: static;}
 </style>
 
 <script>
+$(function(){
+  afterPageLoad();
+});
+
 function afterPageLoad() {
     $('body > .modal-for-page').remove();
     $('#pageBody .modal-for-page').appendTo('body').on('click', function(e) {
@@ -339,5 +272,107 @@ function onPageClose() {
 <li>静态对话框的HTML代码应该放在文档最高层级内，作为<code>&lt;body&gt;</code>的直接子元素，以避免与文档中的其他组件冲突；</li>
 <li>对话框继承自Bootstrap对话框(v3.2)，包含其所有功能和接口。参考：<a href="http://getbootstrap.com/javascript/#modals">英</a>，<a href="http://v3.bootcss.com/javascript/#modals">中</a>。</li>
 </ul></article></section></div>
+
+
+
+<div class="modal modal-for-page fade" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
+        <h4 class="modal-title">对话框标题</h4>
+      </div>
+      <div class="modal-body">
+        <h4>虞美人·春花秋月何时了 <small>五代·李煜</small></h4>
+        <p>春花秋月何时了？往事知多少。小楼昨夜又东风，故国不堪回首月明中。<br>雕栏玉砌应犹在，只是朱颜改。问君能有几多愁？恰似一江春水向东流</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary">确定</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal modal-for-page fade" id="myLgModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
+        <h4 class="modal-title">大对话框</h4>
+      </div>
+      <div class="modal-body">...</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal modal-for-page fade" id="mySmModal">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
+        <h4 class="modal-title">小对话框</h4>
+      </div>
+      <div class="modal-body">...</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal modal-for-page fade" id="myFullscreenModal">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
+        <h4 class="modal-title">全屏对话框</h4>
+      </div>
+      <div class="modal-body">...</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal modal-for-page" id="fastModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
+        <h4 class="modal-title">禁用动画效果演示</h4>
+      </div>
+      <div class="modal-body">...</div>
+    </div>
+  </div>
+</div>
+
+<div class="modal modal-for-page fade" id="moveableModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
+        <h4 class="modal-title">可拖拽的对话框</h4>
+      </div>
+      <div class="modal-body">
+        <h1 class="text-warning">:)</h1>
+        <p>拖动我的头部来更改我的位置。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal modal-for-page fade" id="rememberMoveableModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
+        <h4 class="modal-title">可拖拽的对话框</h4>
+      </div>
+      <div class="modal-body">
+        <h1 class="text-warning">:)</h1>
+        <p>拖动我的头部来更改我的位置。</p>
+        <p>关闭此页面或浏览器再次打开我，对话框会在上次显示的位置显示。</p>
+      </div>
+    </div>
+  </div>
+</div>
 </section>
+
+
 {/block}

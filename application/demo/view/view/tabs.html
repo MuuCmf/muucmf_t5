@@ -2,6 +2,7 @@
 
 {block name="style"}
 <link href="__CSS__/main.min.css" rel="stylesheet" type="text/css"/>
+<link href="__ZUI__/lib/tabs/zui.tabs.css" rel="stylesheet">
 {/block}
 
 {block name="body"}
@@ -13,9 +14,16 @@
 <section class="demo-section">
 <div id="pageContent">
 
-<section><header><h3>综合示例</h3></header><article><div class="example">
-  <div class="tabs" id="tabsExample"><nav class="tabs-navbar"><ul class="tabs-nav nav nav-tabs"><li class="tab-nav-item active" data-id="fhc9bx8lzp" id="tab-nav-item-fhc9bx8lzp" style="max-width: 209px;"><a class="tab-nav-link not-closable" href="#tabs-item-fhc9bx8lzp" data-id="fhc9bx8lzp"><i class="icon icon-window"></i><span class="title">iframe 例子</span><i class="close tab-nav-close" title="关闭">×</i></a></li><li class="tab-nav-item" data-id="fhc9bx8mri" id="tab-nav-item-fhc9bx8mri" style="max-width: 209px;"><a class="tab-nav-link" href="#tabs-item-fhc9bx8mri" data-id="fhc9bx8mri"><i class="icon icon-window"></i><span class="title">Ajax 例子</span><i class="close tab-nav-close" title="关闭">×</i></a></li><li class="tab-nav-item" data-id="fhc9bx8njb" id="tab-nav-item-fhc9bx8njb" style="max-width: 209px;"><a class="tab-nav-link" href="#tabs-item-fhc9bx8njb" data-id="fhc9bx8njb"><i class="icon icon-star"></i><span class="title">自定义例子</span><i class="close tab-nav-close" title="关闭">×</i></a></li><li class="tab-nav-item" data-id="fhc9bx8ob4" id="tab-nav-item-fhc9bx8ob4" style="max-width: 209px;"><a class="tab-nav-link" href="#tabs-item-fhc9bx8ob4" data-id="fhc9bx8ob4"><i class="icon icon-window"></i><span class="title">MZUI</span><i class="close tab-nav-close" title="关闭">×</i></a></li><li class="tab-nav-item" data-id="fhc9bx8ob5" id="tab-nav-item-fhc9bx8ob5" style="max-width: 209px;"><a class="tab-nav-link" href="#tabs-item-fhc9bx8ob5" data-id="fhc9bx8ob5"><i class="icon icon-window"></i><span class="title">无法加载的标签页</span><i class="close tab-nav-close" title="关闭">×</i></a></li></ul></nav><div class="tabs-container"><div class="tab-pane active" id="tab-fhc9bx8lzp"><iframe id="tab-iframe-fhc9bx8lzp" name="tab-iframe-fhc9bx8lzp" src="docs/partial/iframe-tab.html" frameborder="no" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true" allowtransparency="true" scrolling="auto" style="width: 100%; height: 100%; left: 0px;"></iframe><div class="tab-iframe-cover"></div></div></div></div>
-</div><pre class="prettyprint prettyprinted" style=""><code class="lang-html"><span class="tag">&lt;div</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"tabs"</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"tabsExample"</span><span class="tag">&gt;&lt;/div&gt;</span></code></pre><pre class="prettyprint prettyprinted" style=""><code class="lang-js"><span class="com">// 定义标签页</span><span class="pln">
+<section>
+  <header><h3>综合示例</h3></header>
+  <article>
+    <div class="example">
+
+  <div class="tabs" id="tabsExample">
+
+  </div>
+</div>
+<pre class="prettyprint prettyprinted" style=""><code class="lang-html"><span class="tag">&lt;div</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"tabs"</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"tabsExample"</span><span class="tag">&gt;&lt;/div&gt;</span></code></pre><pre class="prettyprint prettyprinted" style=""><code class="lang-js"><span class="com">// 定义标签页</span><span class="pln">
 </span><span class="kwd">var</span><span class="pln"> tabs </span><span class="pun">=</span><span class="pln"> </span><span class="pun">[{</span><span class="pln">
     title</span><span class="pun">:</span><span class="pln"> </span><span class="str">'iframe 例子'</span><span class="pun">,</span><span class="pln">
     url</span><span class="pun">:</span><span class="pln"> </span><span class="str">'docs/partial/iframe-tab.html'</span><span class="pun">,</span><span class="pln">
@@ -45,7 +53,10 @@
 $</span><span class="pun">(</span><span class="str">'#tabsExample'</span><span class="pun">).</span><span class="pln">tabs</span><span class="pun">({</span><span class="pln">tabs</span><span class="pun">:</span><span class="pln"> tabs</span><span class="pun">});</span></code></pre></article></section>
 
 
-<section><header><h3>选项</h3></header><article><div class="table-responsive"><table class="table table-bordered">
+<section>
+  <header><h3>选项</h3></header>
+  <article><div class="table-responsive">
+    <table class="table table-bordered">
   <thead>
     <tr>
       <th style="width: 140px">选项</th>
@@ -231,39 +242,6 @@ $</span><span class="pun">(</span><span class="str">'#tabsExample'</span><span c
   </tbody>
 </table></div></article></section>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <section><header><h3>方法</h3></header><article><h4><code>open(tab)</code></h4><p>打开并激活一个标签页，如果此标签页是首次打开，则打开后自动加载标签页内容。此方法参数定义：</p><ul>
 <li><code>tab</code>：标签页对象，或者使用一个远程服务器地址字符串作为参数自动创建一个标签页对象；</li>
 <li><code>forceReload</code>：可选参数，如果设置为 <code>true</code>，则强制标签页重新加载内容，即使标签页内容已经加载过，相当于重新载入（刷新）功能。</li>
@@ -330,17 +308,6 @@ myTabs</span><span class="pun">.</span><span class="pln">reopen</span><span clas
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 <section><header><h3>事件</h3></header><article><h4><code>onOpen</code></h4><p>当标签页被打开时触发。事件回调函数 <code>this</code> 为当前标签页管理器实例，参数定义如下：</p><ul>
 <li><code>tab</code>：当前被打开的标签页对象。</li>
 </ul><pre class="prettyprint prettyprinted" style=""><code class="lang-js"><span class="com">// 在初始化的时候设置事件回调函数</span><span class="pln">
@@ -373,23 +340,18 @@ $</span><span class="pun">(</span><span class="str">'#myTabs'</span><span class=
     console</span><span class="pun">.</span><span class="pln">log</span><span class="pun">(</span><span class="str">'标签页 '</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> tab</span><span class="pun">.</span><span class="pln">title </span><span class="pun">+</span><span class="pln"> </span><span class="str">' 被关闭了。'</span><span class="pun">);</span><span class="pln">
 </span><span class="pun">});</span></code></pre></article></section>
 
-
 <script src="__ZUI__/lib/tabs/zui.tabs.js"></script>
-
 <script>
 $(function(){
-	afterPageLoad();
-});
-function afterPageLoad() {
-    $('#tabsExample').tabs({
+	$('#tabsExample').tabs({
         tabs: [{
             title: 'iframe 例子',
-            url: 'docs/partial/iframe-tab.html',
+            url: "{:url('iframe_tab')}",
             type: 'iframe',
             forbidClose: true
         }, {
             title: 'Ajax 例子',
-            url: 'docs/partial/remote-tab.html',
+            url: "{:url('remote_tab')}",
             type: 'ajax'
         }, {
             title: '自定义例子',
@@ -407,10 +369,22 @@ function afterPageLoad() {
             url: 'http://zui1.sexy'
         }]
     });
-}
-</script><section><header><h3>自定义</h3></header><article><p>在标签页初始化元素中可以使用 <code>.tabs-navbar</code> 元素和 <code>.tabs-container</code> 元素来自定义导航和标签页内容的父级元素。</p><pre class="prettyprint prettyprinted" style=""><code class="lang-html"><span class="tag">&lt;div</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"myTabs"</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"tabs"</span><span class="tag">&gt;</span><span class="pln">
+});
+
+</script>
+
+<section>
+  <header>
+    <h3>自定义</h3>
+  </header>
+  <article><p>在标签页初始化元素中可以使用 <code>.tabs-navbar</code> 元素和 <code>.tabs-container</code> 元素来自定义导航和标签页内容的父级元素。</p><pre class="prettyprint prettyprinted" style=""><code class="lang-html"><span class="tag">&lt;div</span><span class="pln"> </span><span class="atn">id</span><span class="pun">=</span><span class="atv">"myTabs"</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"tabs"</span><span class="tag">&gt;</span><span class="pln">
   </span><span class="tag">&lt;nav</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"tabs-navbar"</span><span class="tag">&gt;&lt;/nav&gt;</span><span class="pln">
   </span><span class="tag">&lt;nav</span><span class="pln"> </span><span class="atn">class</span><span class="pun">=</span><span class="atv">"tabs-container"</span><span class="tag">&gt;&lt;/nav&gt;</span><span class="pln">
-</span><span class="tag">&lt;/div&gt;</span></code></pre><link href="__ZUI__/lib/tabs/zui.tabs.css" rel="stylesheet"></article></section></div>
+</span><span class="tag">&lt;/div&gt;</span></code></pre>
+
+
+</article>
+</section>
+</div>
 </section>
 {/block}

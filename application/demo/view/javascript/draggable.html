@@ -2,6 +2,7 @@
 
 {block name="style"}
 <link href="__CSS__/main.min.css" rel="stylesheet" type="text/css"/>
+
 {/block}
 
 {block name="body"}
@@ -12,8 +13,6 @@
   </ol>
 <section class="demo-section">
 <div id="pageContent">
-
-
 
 
 
@@ -64,10 +63,6 @@ $(function() {
 });
 </script>
 
-
-
-
-
 <style>
 #draggableBox2 {
     height: 340px;
@@ -85,8 +80,6 @@ $(function() {
     background: none;
 }
 </style>
-
-
 
 <script>
 $(function() {
@@ -108,12 +101,7 @@ $(function() {
 });
 </script>
 
-
-
-
-<section><header><h3>示例</h3></header>
-    <article><h4>简单应用</h4>
-        <div class="example">
+<section><header><h3>示例</h3></header><article><h4>简单应用</h4><div class="example">
   <div id="draggableBox">
     <pre id="dragLog" class="pre-scrollable prettyprint prettyprinted" style=""></pre>
     <button id="draggableBtn" type="button" class="btn btn-primary"><i class="icon-move"></i> <span id="printPosition">拖动我</span></button>
@@ -146,7 +134,6 @@ $</span><span class="pun">(</span><span class="str">'#draggableBtn'</span><span 
         $dragLog</span><span class="pun">.</span><span class="pln">prepend</span><span class="pun">(</span><span class="pln">count</span><span class="pun">++</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> </span><span class="str">': '</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> </span><span class="str">'[完毕]：pos = '</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> JSON</span><span class="pun">.</span><span class="pln">stringify</span><span class="pun">(</span><span class="pln">e</span><span class="pun">.</span><span class="pln">pos</span><span class="pun">)</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> </span><span class="str">', offset = '</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> JSON</span><span class="pun">.</span><span class="pln">stringify</span><span class="pun">(</span><span class="pln">e</span><span class="pun">.</span><span class="pln">offset</span><span class="pun">)</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> </span><span class="str">'\n'</span><span class="pun">);</span><span class="pln">
     </span><span class="pun">}</span><span class="pln">
 </span><span class="pun">});</span></code></pre><h4>容器内多个元素拖动</h4><div class="example">
-    
   <div id="draggableBox2">
     <pre id="dragLog2" class="pre-scrollable prettyprint prettyprinted" style=""><span class="pun">用于输出演示日志信息</span></pre>
     <button type="button" class="btn btn-primary btn-draggable" style="top: 10px; left: 10px;"><i class="icon-move"></i> 按钮 #<span class="btn-draggable-id">1</span></button>
@@ -318,5 +305,8 @@ $</span><span class="pun">(</span><span class="str">'#dragBtn'</span><span class
 <li><code>e.smallOffset</code>：被拖动元素当前相对于上次位置发生变化时的位置变化；</li>
 <li><code>e.startOffset</code>：被拖动元素在开始拖动前相对父级容器（<code>container</code> 指定）的位置变化。</li>
 </ul><h4><span class="code">$().draggable('destroy')</span></h4><p>如果以确定不需要拖拽操作，则可以调用 <code>$().draggable('destroy')</code> 来销毁拖拽插件。销毁之后如果需要重新启用拖拽则重新进行初始化即可。</p><pre class="prettyprint prettyprinted" style=""><code class="lang-js"><span class="pln">$</span><span class="pun">(</span><span class="str">'#dragEles'</span><span class="pun">).</span><span class="pln">draggable</span><span class="pun">(</span><span class="str">'destroy'</span><span class="pun">);</span></code></pre></article></section></div>
-</section>
+{/block}
+
+{block name="script"}
+
 {/block}

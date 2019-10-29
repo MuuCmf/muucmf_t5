@@ -17,4 +17,14 @@ class View extends Common
 
         return $this->fetch($action);
 	}
+
+	public function remote_tab()
+	{
+		echo 'remote_tab';
+	}
+
+	public function iframe_tab()
+	{
+		echo 'iframe_tab';
+	}
 }
