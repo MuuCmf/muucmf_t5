@@ -21,7 +21,9 @@ return [
     //前台入口，可用url函数
     'entry' => 'index/index/index',
     //后台入口
-    'admin_entry' => 'admin/index/index',
+    'admin_entry' => 'index/admin/config',
+    //允许卸载
+    'can_uninstall' => 1,
     //是否自定义独立后台，1是 0否
     'custom_admin' => 0
 ];
