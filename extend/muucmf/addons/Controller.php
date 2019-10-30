@@ -37,7 +37,7 @@ class Controller extends \app\common\controller\Common
      * @param Request $request Request对象
      * @access public
      */
-    public function _initialize(Request $request = null)
+    public function __construct(Request $request = null)
     {
         // 生成request对象
         $this->request = is_null($request) ? Request::instance() : $request;
@@ -59,7 +59,7 @@ class Controller extends \app\common\controller\Common
         // 重置配置
         Config::set('template.view_path', ADDONS_PATH . $this->addon . DS . $view_path . DS);
 
-        parent::_initialize();
+        parent::__construct($request);
     }
 
     /**
