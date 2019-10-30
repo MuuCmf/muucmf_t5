@@ -140,7 +140,7 @@ class Count extends Admin{
             }
         }else{
             $map['status'] = 1;
-            $actionList = model('Action')->getAction($map);
+            $actionList = model('common/Action')->getAction($map);
             $this->assign('action_list',$actionList);
             $nowAction = config('COUNT_ACTIVE_ACTION');
             //dump($nowAction);exit;

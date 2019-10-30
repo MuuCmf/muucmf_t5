@@ -4,6 +4,7 @@ namespace muucmf\addons;
 use think\Request;
 use think\Config;
 use think\Loader;
+use think\Db;
 
 /**
  * 插件后台管理基类控制器
@@ -36,7 +37,7 @@ class Admin extends \app\admin\controller\Admin
      * @param Request $request Request对象
      * @access public
      */
-    public function __construct(Request $request = null)
+    public function _initialize(Request $request = null)
     {
         // 生成request对象
         $this->request = is_null($request) ? Request::instance() : $request;
@@ -58,7 +59,7 @@ class Admin extends \app\admin\controller\Admin
         // 重置配置
         Config::set('template.view_path', ADDONS_PATH . $this->addon . DS . $view_path . DS);
 
-        parent::__construct($request);
+        parent::_initialize();
     }
 
     /**

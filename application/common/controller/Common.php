@@ -61,7 +61,7 @@ class Common extends Controller
      */
     private function initNav()
     {
-        $nav = model('Channel')->lists();
+        $nav = model('common/Channel')->lists();
         $this->assign('nav',$nav);
     }
 

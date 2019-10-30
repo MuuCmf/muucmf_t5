@@ -1,13 +1,4 @@
 <?php
-// +----------------------------------------------------------------------
-// | thinkphp5 Addons [ WE CAN DO IT JUST THINK IT ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2016 http://www.zzstudio.net All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( http://www.apache.org/licenses/LICENSE-2.0 )
-// +----------------------------------------------------------------------
-// | Author: Byron Sampson <xiaobo.sun@qq.com>
-// +----------------------------------------------------------------------
 namespace muucmf\addons;
 
 use think\Request;
@@ -20,9 +11,8 @@ use think\Db;
  * Class Controller
  * @package think\addons
  */
-class Controller extends \think\Controller
+class Controller extends \app\common\controller\Common
 {
-
     // 当前插件操作
     protected $addon = null;
     protected $controller = null;
@@ -47,7 +37,7 @@ class Controller extends \think\Controller
      * @param Request $request Request对象
      * @access public
      */
-    public function __construct(Request $request = null)
+    public function _initialize(Request $request = null)
     {
         // 生成request对象
         $this->request = is_null($request) ? Request::instance() : $request;
@@ -69,7 +59,7 @@ class Controller extends \think\Controller
         // 重置配置
         Config::set('template.view_path', ADDONS_PATH . $this->addon . DS . $view_path . DS);
 
-        parent::__construct($request);
+        parent::_initialize();
     }
 
     /**

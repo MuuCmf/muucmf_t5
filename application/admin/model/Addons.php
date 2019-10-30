@@ -218,11 +218,14 @@ class Addons extends Model
                     \think\Log::record(lang('_PLUGIN_') . $value . lang('_THE_ENTRY_FILE_DOES_NOT_EXIST_WITH_EXCLAMATION_'));
                     continue;
                 }
-                
                 $obj = new $class;
                 $info = $obj->info;
                 if ($info) {
                     unset($info['status']);
+                }
+                $admin = $obj->admin;
+                if($admin == 1 || $admin == true){
+                    $info['has_adminlist'] = 1;
                 }
 
                 //合并数据表内模块
@@ -237,6 +240,7 @@ class Addons extends Model
                 $addons[] = $info;
             }
         }
+
         //写入数据库
         $this->saveAll($addons);
 

@@ -126,7 +126,7 @@ class ActionLimit extends Admin
 
             $opt_punish = $this->getPunish();
 
-            $opt = model('Action')->getActionOpt();
+            $opt = model('common/Action')->getActionOpt();
             
             $builder->title(($aId == 0 ? lang('_NEW_') : lang('_EDIT_')) . lang('_ACT_RESTRICTION_'))->keyId()
                 ->keyTitle()

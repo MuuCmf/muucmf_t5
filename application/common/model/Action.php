@@ -101,7 +101,7 @@ class Action extends Model
 	    }
 
 	    //查询行为,判断是否执行
-	    $action_info = Db::name('Action')->where(['name'=>$action])->find();
+	    $action_info = $this->where(['name'=>$action])->find();
 
 	    if ($action_info['status'] != 1) {
 	        return lang('_THE_ACT_IS_DISABLED_OR_DELETED_');

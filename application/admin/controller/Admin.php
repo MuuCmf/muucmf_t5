@@ -18,9 +18,9 @@ class Admin extends Controller
     public $is_root;
 
     public function _initialize()
-    {   
-        $this->w7login();
+    {
         $this->_seo = ['title' => 'MuuCmf T5','setKeywords' => '', 'description' => ''];
+        $this->w7login();
         // 判断登陆
         $this->needLogin();
         // 是否是超级管理员
@@ -160,11 +160,12 @@ class Admin extends Controller
     protected function w7login()
     {
         if (!session_id()) session_start();
-        
-        $uid = intval($_SESSION['uid']);
-        if(!empty($uid) && $uid == 1){
-            //判断是否有这个UID
-            model('common/Member')->login($uid);
+        if (isset($_SESSION['uid'])){
+            $uid = intval($_SESSION['uid']);
+            if(!empty($uid) && $uid == 1){
+                //判断是否有这个UID
+                model('common/Member')->login($uid);
+            }
         }
     }
 

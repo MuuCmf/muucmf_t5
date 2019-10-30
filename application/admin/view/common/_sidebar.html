@@ -47,6 +47,29 @@
         </li>
         {/volist}
       </ul>
+      
+      <ul class="sidebar-menu" data-widget="tree">
+        <li class="treeview menu-open">
+          <a>
+              <i class="fa fa-circle-o"></i>
+              <span>插件菜单</span>
+              
+              <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+              </span>
+          </a>
+          <ul class="treeview-menu menu-open">
+            {volist name="__ADDONS_MENU__" id="menu"}
+            <li>
+                <a href="{$menu.url|url}" target="main_iframe">  
+                  <i class="fa fa-circle-o"></i>
+                  <span>{$menu.title}</span>
+              </a>
+            </li>
+            {/volist}
+          </ul>
+        </li>
+      </ul>
     </section>
     <!-- /.sidebar -->
   </aside>
