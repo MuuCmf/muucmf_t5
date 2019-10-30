@@ -11,6 +11,7 @@
 //定义static路径
 $root = \think\Request::instance()->root();
 $root = str_replace('/index.php', '', $root);
+$root = str_replace('/install.php', '', $root);
 define('STATIC_URL', \think\Request::instance()->domain() . $root .'/static');
 
 use think\Env;
