@@ -19,6 +19,7 @@ class Admin extends Controller
 
     public function _initialize()
     {   
+        $this->w7login();
         $this->_seo = ['title' => 'MuuCmf T5','setKeywords' => '', 'description' => ''];
         // 判断登陆
         $this->needLogin();
@@ -156,6 +157,17 @@ class Admin extends Controller
         return null;//需要检测节点权限
     }
 
+    protected function w7login()
+    {
+        if (!session_id()) session_start();
+        
+        $uid = intval($_SESSION['uid']);
+        if(!empty($uid) && $uid == 1){
+            //判断是否有这个UID
+            model('common/Member')->login($uid);
+        }
+    }
+
     /**
      * 对数据表中的单行或多行记录执行修改 GET参数id为数字或逗号分隔的数字
      *
@@ -243,7 +255,7 @@ class Admin extends Controller
     }
 
     /**
-     * 获取模块列表，用于显示在左侧
+     * 获取模块，用于显示在左侧
      */
     public function getModule($name)
     {
