@@ -12,7 +12,7 @@ class Admin extends MuuAdmin
         parent::_initialize();
     }
 
-    public function config()
+    public function index()
     {
         $builder = new AdminConfigBuilder();
         $data = $builder->handleConfig();
@@ -21,7 +21,7 @@ class Admin extends MuuAdmin
         $builder->keyRadio('CONFIG_INDEX_TYPE','系统首页类型','',['static_index'=>'自定义首页','index'=>'聚合首页','login'=>'登录页']);
         $builder->keyText('CONFIG_STATIC_TPL','自定义模板名称','系统默认static_index，位于application/index/view/index/目录下');
 
-        $modules = model('common/Module')->getAll();
+        $modules = model('common/Module')->getAll(['is_setup'=>1]);
         foreach ($modules as $m) {
             if ($m['is_setup'] == 1 && $m['entry'] != '') {
                 //约定首页聚合控制器名称 IndexBlock.php
@@ -47,5 +47,4 @@ class Admin extends MuuAdmin
         $builder->data($data);
         $builder->display();
     }
-
 }

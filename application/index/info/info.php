@@ -19,11 +19,11 @@ return [
     //开发者网站
     'website' => 'http://www.muucmf.com',
     //前台入口，可用url函数
-    'entry' => 'index/index/index',
+    'entry' => 'index/Index/index',
     //后台入口
-    'admin_entry' => 'index/admin/config',
+    'admin_entry' => 'index/Admin/index',
     //允许卸载
-    'can_uninstall' => 1,
+    'can_uninstall' => 0,
     //是否自定义独立后台，1是 0否
     'custom_admin' => 0
 ];
