@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_addons` (
 
 INSERT INTO `muucmf_addons` (`id`, `name`, `title`, `description`, `status`, `config`, `author`, `version`, `create_time`, `update_time`, `has_adminlist`, `is_setup`, `sort`) VALUES
 (3, 'chinacity', '中国省市区三级联动', '每个系统都需要的一个中国省市区三级联动插件。想天-駿濤修改，将镇级地区移除', 1, 'null', 'muucmf', '2.1', 1572355361, 1572355361, 0, 1, 0),
-(4, 'demo', 'demo测试', '这就是个案例', 1, '{"radio":"0","checkbox":"1","text":"","select":"0","textarea":"0","text2":""}', 'muucmf', '1.0.0', 1572355361, 1572356192, 0, 1, 0),
+(4, 'demo', 'demo测试', '这就是个案例', 1, '{"radio":"0","checkbox":"1","text":"","select":"0","textarea":"0","text2":""}', 'muucmf', '1.0.0', 1572355361, 1572356192, 0, 1, 0);
 
 DROP TABLE IF EXISTS `muucmf_adv_pos`;
 CREATE TABLE IF NOT EXISTS `muucmf_adv_pos` (
