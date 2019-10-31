@@ -54,8 +54,8 @@
                                 </div>
                                 
                                 <div class="card-actions clearfix">
-                                    {notempty name="$vo['can_uninstall'] "}
-                                        {if condition="$vo['is_setup']"}
+                                    {if condition="($vo['is_com'] == 1) OR ($vo['can_uninstall'] == 1)"}
+                                        {if condition="$vo['is_setup'] == 1"}
                                             <!--进入模块-->
                                             <a class="btn btn-block btn-info"
                                                href="{:url($vo.admin_entry)}" {if $vo.custom_admin == 1}target="_blank"{/if}>进入模块</a>
@@ -63,7 +63,7 @@
                                                href="{:url('uninstall', array('id' => $vo['id']))}">{:lang("_UNINSTALL_")}</a>
                                         {else/}
                                             <!--进入模块-->
-                                            <a class="btn btn-block btn-info disabled"
+                                            <a class="btn btn-block btn-default disabled"
                                                href="{:url($vo.admin_entry)}" {if $vo.custom_admin == 1}target="_blank"{/if}>进入模块</a>
                                             <a class="btn btn-block btn-success"
                                                href="{:url('install', array('name' => $vo['name']))}">{:lang("_INSTALL_")}</a>
@@ -72,7 +72,7 @@
                                         <a class="btn btn-block btn-info"
                                                href="{:url($vo.admin_entry)}" {if $vo.custom_admin == 1}target="_blank"{/if}>进入模块</a>
                                         <a disabled class="btn btn-block btn-default">系统模块</a>
-                                    {/notempty}
+                                    {/if}
                                 </div>
                             </div>
                         </div>

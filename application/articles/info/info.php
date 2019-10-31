@@ -20,4 +20,6 @@ return [
     'entry' => 'articles/Index/index',
     //后台入口
     'admin_entry' => 'articles/Admin/index',
+    //允许卸载
+    'can_uninstall' => 1,
 ];

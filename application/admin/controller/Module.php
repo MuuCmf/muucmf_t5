@@ -173,7 +173,6 @@ class Module extends Admin
                 ->keyReadOnly('developer', lang('_DEVELOPER_'))
                 ->keyText('entry', lang('_FRONT_ENTRANCE_'))
                 ->keyText('admin_entry', lang('_BACKGROUND_ENTRY_'))
-                ->keyCheckBox('auth_role', '允许身份前台访问', '都不选表示非登录状态也可访问', $auth_role_array)
                 ->keyRadio('mode', lang('_INSTALLATION_MODE_'), '', array('install' => lang('_COVER_INSTALLATION_MODE_')));
                 //, 'repair' => lang('_FIX_MODE_')修复模式不会导入模块专用数据表，只导入菜单、权限、行为、行为限制
             if ($module['entry']) {
@@ -181,7 +180,7 @@ class Module extends Admin
                 $builder->keyBool('add_nav', lang('_ADD_NAVIGATION_'), lang('_INSTALL_AUTO_ADD_MENU_'));
             }
 
-            $builder->group(lang('_INSTALL_OPTION_'), 'name,version,mode,add_nav,auth_role');
+            $builder->group(lang('_INSTALL_OPTION_'), 'name,alias,version,mode,add_nav,auth_role');
             
             $module['mode'] = 'install';
             $builder->data($module);

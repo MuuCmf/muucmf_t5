@@ -208,37 +208,30 @@ class Module extends Model
         if ($withoutData == 0) {
             //如果不保留数据
             if (file_exists(APP_PATH . '/' . $module['name'] . '/info/cleanData.sql')) {
-                $uninstallSql = APP_PATH . '/' . $module['name'] . '/info/cleanData.sql';
-
-                $uninstallSql = file_get_contents($uninstallSql);
-                if(empty($uninstallSql) || $uninstallSql = ''){
-                    $this->cleanModulesCache();
-                    return true;
-                }
-                $uninstallSql = str_replace("\r", "\n", $uninstallSql);
-                $uninstallSql = explode(";\n", $uninstallSql);
-                $res = Db::execute($uninstallSql);
-                if ($res === false) {
-                    $this->error = lang('_CLEAN_UP_THE_MODULE_DATA_AND_ERROR_MESSAGE_WITH_COLON_') . $res['error_code'];
-                    return false;
-                }
+                $uninstall_file = APP_PATH . '/' . $module['name'] . '/info/cleanData.sql';
             }
             //兼容老的卸载方式，执行uninstall.sql
             if (file_exists(APP_PATH . '/' . $module['name'] . '/info/uninstall.sql')) {
-                $uninstallSql = APP_PATH . '/' . $module['name'] . '/info/uninstall.sql';
+                $uninstall_file = APP_PATH . '/' . $module['name'] . '/info/uninstall.sql';
+            }
+            //读取sql语句
+            $uninstallSql = file_get_contents($uninstall_file);
 
-                $uninstallSql = file_get_contents($uninstallSql);
-                if(empty($uninstallSql) || $uninstallSql = ''){
-                    $this->cleanModulesCache();
-                    return true;
-                }
-                $uninstallSql = str_replace("\r", "\n", $uninstallSql);
-                $uninstallSql = explode(";\n", $uninstallSql);
-                $res = Db::execute($uninstallSql);
-                if ($res === false) {
-                    $this->error = lang('_CLEAN_UP_THE_MODULE_DATA_AND_ERROR_MESSAGE_WITH_COLON_') . $res['error_code'];
-                    return false;
-                }
+            if(empty($uninstallSql)){
+                $this->cleanModulesCache();
+                return true;
+            }
+
+            $uninstallSql = str_replace("\r", "", $uninstallSql);
+            $uninstallSql = explode(";\n", $uninstallSql);
+            
+            foreach($uninstallSql as $sql){    
+                $res = Db::execute($sql);
+            }
+            
+            if ($res === false) {
+                $this->error = lang('_CLEAN_UP_THE_MODULE_DATA_AND_ERROR_MESSAGE_WITH_COLON_') . $res['error_code'];
+                return false;
             }
         }
         
