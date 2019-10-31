@@ -44,10 +44,11 @@ class Common
 
                 foreach ($hooks as $key => $value) {
                     
-                    $map['status']  =   1;
+                    $addons_map['status']  =   1;
                     $names          =   explode(',',$value);
-                    $map['name']    =   ['in',$names];
-                    $data = Db::name('Addons')->where($map)->column('id,name');
+                    $addons_map['name']    =   ['in',$names];
+                    $addons_map['is_setup'] = 1;
+                    $data = Db::name('Addons')->where($addons_map)->column('id,name');
                     if($data){
                         $addons = array_filter(array_map('get_addon_class', $data));
                         Hook::add($key,$addons);
