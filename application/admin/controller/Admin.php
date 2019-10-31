@@ -19,8 +19,9 @@ class Admin extends Controller
 
     public function _initialize()
     {
-        $this->_seo = ['title' => 'MuuCmf T5','setKeywords' => '', 'description' => ''];
-        $this->w7login();
+        $this->_seo = ['title' => 'MuuCmf T5','Keywords' => '', 'Description' => ''];
+        $this->assign('seo', $this->_seo);
+        
         // 判断登陆
         $this->needLogin();
         // 是否是超级管理员
@@ -50,16 +51,29 @@ class Admin extends Controller
             }
         }
         
-        // 获取插件后台管理列表
-        $addons_admin = model('admin/Addons')->getAdminList();
         //获取管理员数据
         $auth_user = query_user(['nickname','username','sex','avatar32','title','fans', 'following','signature'],is_login());
-        
-        $this->assign('__MODULE__', $this->getModule(request()->module()));
         $this->assign('__AUTH_USER__',$auth_user);
-        $this->assign('__MODULE_MENU__', $this->getMenus()); //当前模块菜单
-        $this->assign('__ADDONS_MENU__', $addons_admin );
-        $this->assign('seo', $this->_seo);
+        // 当前模块、控制器及方法名
+        $this->assign('this_module',strtolower(request()->module()));
+        $this->assign('this_controller',strtolower(request()->controller()));
+        $this->assign('this_action',strtolower(request()->action()));
+        // 当前应用模块信息
+        $module = model('common/Module')->getModule(request()->module());
+        $this->assign('__MODULE__', $module);
+        // 当前模块菜单
+        $this->assign('__MODULE_MENU__', $this->getMenus()); 
+        // 模块入口
+        $all_module_list = model('common/Module')->getAll(['is_setup'=>1,'name'=>['neq','ucenter']]);
+        $this->assign('all_module_list', $all_module_list); 
+        // 插件菜单
+        $addons_menu = model('admin/Addons')->getAdminList();
+        $this->assign('__ADDONS_MENU__', $addons_menu );
+        // 是否插件后台
+        if(isset($this->addon)){
+            $this->assign('addons_admin',$this->addon);
+        }
+        // 本地版本
         $this->assign('version',$this->localVersion());
         $this->checkUpdate();
     }
@@ -68,9 +82,26 @@ class Admin extends Controller
 
         $uid = is_login();
         if (!$uid) {// 还没登录 跳转到登录页面
+            $uid = $this->w7login();
+            if($uid) return $uid;
+
             $this->redirect('admin/common/login');
         }
         return $uid;
+    }
+
+    protected function w7login()
+    {
+        $res = false;
+        if (!session_id()) session_start();
+        if (isset($_SESSION['w7_uid'])){
+            $uid = intval($_SESSION['w7_uid']);
+            if(!empty($uid) && $uid == 1){
+                //判断是否有这个UID
+                $res = model('common/Member')->login($uid);
+            }
+        }
+        return $res;
     }
 
     public function setTitle($title)
@@ -157,18 +188,6 @@ class Admin extends Controller
         return null;//需要检测节点权限
     }
 
-    protected function w7login()
-    {
-        if (!session_id()) session_start();
-        if (isset($_SESSION['uid'])){
-            $uid = intval($_SESSION['uid']);
-            if(!empty($uid) && $uid == 1){
-                //判断是否有这个UID
-                model('common/Member')->login($uid);
-            }
-        }
-    }
-
     /**
      * 对数据表中的单行或多行记录执行修改 GET参数id为数字或逗号分隔的数字
      *
@@ -253,16 +272,6 @@ class Admin extends Controller
         $data['status'] = -1;
         //$data['update_time'] = time();
         $this->editRow($model, $data, $where, $msg);
-    }
-
-    /**
-     * 获取模块，用于显示在左侧
-     */
-    public function getModule($name)
-    {
-        $modules = model('common/Module')->getModule($name);
-        
-        return $modules;
     }
 
     /**

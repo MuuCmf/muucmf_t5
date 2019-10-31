@@ -142,8 +142,6 @@ class Module extends Model
             header("Content-Type: text/html; charset=utf-8");
             exit('您所访问的模块未安装，禁止访问，请管理员到后台应用-模块管理中安装。');
         }
-        
-
     }
 
     /**检查模块是否已经安装

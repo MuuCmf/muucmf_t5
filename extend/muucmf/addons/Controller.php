@@ -58,7 +58,7 @@ class Controller extends \app\common\controller\Common
 
         // 重置配置
         Config::set('template.view_path', ADDONS_PATH . $this->addon . DS . $view_path . DS);
-
+        
         parent::__construct($request);
     }
 

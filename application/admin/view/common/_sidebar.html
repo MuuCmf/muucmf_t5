@@ -47,12 +47,43 @@
         </li>
         {/volist}
       </ul>
-      
+
+      {notempty name="all_module_list"}
+      {if condition="($this_controller == 'index')"}
+      <!--常用应用-->
       <ul class="sidebar-menu" data-widget="tree">
         <li class="treeview menu-open">
           <a>
               <i class="fa fa-circle-o"></i>
-              <span>插件菜单</span>
+              <span>应用入口</span>
+              
+              <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+              </span>
+          </a>
+          <ul class="treeview-menu menu-open">
+            {volist name="all_module_list" id="vo"}
+            <li>
+                <a href="{:url($vo.admin_entry)}">  
+                  <i class="fa fa-circle-o"></i>
+                  <span>{$vo.alias}</span>
+              </a>
+            </li>
+            {/volist}
+          </ul>
+        </li>
+      </ul>
+      {/if}
+      {/notempty}
+      
+      {notempty name="__ADDONS_MENU__"}
+      {if condition="($this_controller == 'index') OR ($this_controller == 'module') OR ($this_controller == 'addons') OR (!empty($addons_admin ))"}
+      <!--插件菜单-->
+      <ul class="sidebar-menu" data-widget="tree">
+        <li class="treeview menu-open">
+          <a>
+              <i class="fa fa-circle-o"></i>
+              <span>插件入口</span>
               
               <span class="pull-right-container">
                 <i class="fa fa-angle-left pull-right"></i>
@@ -61,7 +92,7 @@
           <ul class="treeview-menu menu-open">
             {volist name="__ADDONS_MENU__" id="menu"}
             <li>
-                <a href="{$menu.url|url}" target="main_iframe">  
+                <a href="{$menu.url|url}">  
                   <i class="fa fa-circle-o"></i>
                   <span>{$menu.title}</span>
               </a>
@@ -70,6 +101,8 @@
           </ul>
         </li>
       </ul>
+      {/if}
+      {/notempty}
     </section>
     <!-- /.sidebar -->
   </aside>

@@ -160,7 +160,7 @@ class Addons extends Model
     public function getAdminList()
     {
         $admin = [];
-        $db_addons = $this->where("status=1 AND has_adminlist=1")->field('title,name')->select();
+        $db_addons = $this->where("status=1 AND has_adminlist=1 AND is_setup=1")->field('title,name')->select();
         if ($db_addons) {
             foreach ($db_addons as $value) {
                 $admin[] = [

@@ -58,7 +58,7 @@ class Admin extends \app\admin\controller\Admin
 
         // 重置配置
         Config::set('template.view_path', ADDONS_PATH . $this->addon . DS . $view_path . DS);
-
+        
         parent::__construct($request);
     }
 
@@ -85,5 +85,52 @@ class Admin extends \app\admin\controller\Admin
             }
         }
         return parent::fetch($template, $vars, $replace, $config);
+    }
+
+    /**
+     * 获取插件的配置数组
+     */
+    final public function getConfig($name=''){
+        static $_config = [];
+        if(empty($name)){
+            $name = $this->getName();
+        }
+        if(isset($_config[$name])){
+            return $_config[$name];
+        }
+        $config = [];
+        $map['name']    =   $name;
+        $map['status']  =   1;
+        $config  =   Db::name('Addons')->where($map)->value('config');
+        if($config){
+            $config   =   json_decode($config, true);
+        }else{
+            if (is_file($this->config_file)) {
+                $temp_arr = include $this->config_file;
+                foreach ($temp_arr as $key => $value) {
+                    if($value['type'] == 'group'){
+                        foreach ($value['options'] as $gkey => $gvalue) {
+                            foreach ($gvalue['options'] as $ikey => $ivalue) {
+                                $config[$ikey] = $ivalue['value'];
+                            }
+                        }
+                    }else{
+                        $config[$key] = $temp_arr[$key]['value'];
+                    }
+                }
+            }
+        }
+        $_config[$name]     =   $config;
+        return $config;
+    }
+
+    /**
+     * 获取当前模块名
+     * @return string
+     */
+    final public function getName()
+    {
+        $data = explode('\\', get_class($this));
+        return strtolower(array_pop($data));
     }
 }

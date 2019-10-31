@@ -13,7 +13,7 @@ class Admin extends AddonsAdmin
 	public function index(){
 
 		
-		$this->setTitle('插件管理后台');
+		$this->setTitle('DEMO插件管理后台');
 		return $this->fetch();
 	}
 
