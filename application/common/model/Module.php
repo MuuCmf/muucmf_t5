@@ -22,7 +22,7 @@ class Module extends Model
         $list = $this->where($map)->order($order)->field($field)->paginate($r,false,['query'=>request()->param()]);
 
         foreach ($list as &$val) {
-            $val['icon'] = $this->getIcon($val['name']);
+            $val['icon_image'] = $this->getIcon($val['name']);
         }
         unset($val);
 
@@ -35,9 +35,13 @@ class Module extends Model
      */
     public function getAll($where = [])
     {
-        $result = $this->where($where)->order('sort desc')->select();
+        $list = $this->where($where)->order('sort desc')->select();
+        foreach ($list as &$val) {
+            $val['icon_image'] = $this->getIcon($val['name']);
+        }
+        unset($val);
 
-        return $result;
+        return $list;
     }
 
     /**
@@ -83,8 +87,6 @@ class Module extends Model
             {
                 $info = $this->getInfo($subdir);
                 
-                $info['icon'] = $this->getIcon($info['name']);
-                
                 //合并数据表内模块
                 $module_info = $this->getModule($info['name']);
                 if($module_info){
@@ -98,7 +100,7 @@ class Module extends Model
             }
         }
         //写入数据库
-        $this->saveAll($module);
+        $this->allowField(true)->saveAll($module);
 
         //移除已删除的模块目录
         $db_list = $this->getAll();
@@ -259,7 +261,7 @@ class Module extends Model
         $info = $this->where(['name'=>$name])->find();
 
         if($info){
-            $info['icon'] = $this->getIcon($info['name']);
+            $info['icon_image'] = $this->getIcon($info['name']);
         }
 
         return $info;

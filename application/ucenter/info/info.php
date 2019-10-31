@@ -16,6 +16,8 @@ return array(
     'developer' => '北京火木科技有限公司',
     //开发者网站
     'website' => 'http://www.muucmf.com',
-    //前台入口，可用U函数
-    'entry' => 'ucenter/index/index'
+    //前台入口，可用url函数
+    'entry' => 'ucenter/index/index',
+    //字符图标，支持fa图标库
+    'icon' => 'user',
 );

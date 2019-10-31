@@ -25,5 +25,7 @@ return [
     //允许卸载
     'can_uninstall' => 0,
     //是否自定义独立后台，1是 0否
-    'custom_admin' => 0
+    'custom_admin' => 0,
+    //字符图标，支持fa图标库
+    'icon' => 'home',
 ];
