@@ -188,10 +188,10 @@ class Module extends Model
 
     /**卸载模块
      * @param $id 模块ID
-     * @param int $withoutData 0.不清理数据 1.清理数据
+     * @param int $withoutData 0.清理数据 1.不清理数据
      * @return bool
      */
-    public function uninstall($id, $withoutData = 1)
+    public function uninstall($id, $withoutData = 0)
     {
         $module = $this->get($id);
         $module = $module->toArray();
@@ -417,7 +417,9 @@ class Module extends Model
                         $orginal = preg_replace("/[\s\S]*INSERT INTO `([a-zA-Z]+_)[\s\S]*/", "\\1", $value);
                         //替换表前缀
                         $value = str_replace(" `{$orginal}", " `{$prefix}", $value);
-                        
+                        //如果存在数据就跳过
+                        $value = str_replace('INSERT INTO', 'INSERT IGNORE INTO', $value);
+
                         Db::execute($value);
                     }
                 }
