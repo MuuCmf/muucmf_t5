@@ -225,8 +225,20 @@ class Module extends Model
             $uninstallSql = str_replace("\r", "", $uninstallSql);
             $uninstallSql = explode(";\n", $uninstallSql);
             
-            foreach($uninstallSql as $sql){    
-                $res = Db::execute($sql);
+            //系统配置表前缀
+            $prefix = config('database.prefix');
+            foreach($uninstallSql as $value){
+                $value = trim($value);
+                if (empty($value)) continue; 
+
+                //获取表名
+                $name = preg_replace("/[\s\S]*DROP TABLE IF EXISTS `(\w+)`[\s\S]*/", "\\1", $value);
+                //获取表前缀
+                $orginal = preg_replace("/[\s\S]*DROP TABLE IF EXISTS `([a-zA-Z]+_)[\s\S]*/", "\\1", $value);
+                //替换表前缀
+                $value = str_replace(" `{$orginal}", " `{$prefix}", $value);
+
+                $res = Db::execute($value);
             }
             
             if ($res === false) {
@@ -378,35 +390,33 @@ class Module extends Model
                 $install_sql = explode(";\n", $install_sql);
                 //系统配置表前缀
                 $prefix = config('database.prefix');
-
+                
                 foreach ($install_sql as $value) {
                     
                     $value = trim($value);
                     if (empty($value)) continue;
-                    if (strpos($value,'CREATE TABLE')) {//创建表
+                    if (strpos($value,'CREATE TABLE') !== false) {//创建表
                         //获取表名
                         $name = preg_replace("/[\s\S]*CREATE TABLE IF NOT EXISTS `(\w+)`[\s\S]*/", "\\1", $value);
                         //获取表前缀
                         $orginal = preg_replace("/[\s\S]*CREATE TABLE IF NOT EXISTS `([a-zA-Z]+_)[\s\S]*/", "\\1", $value);
                         //替换表前缀
                         $value = str_replace(" `{$orginal}", " `{$prefix}", $value);
-                        
                         $msg = "创建数据表{$name}";
                         if (false !== Db::execute($value)) {
                             $log .= '&nbsp;&nbsp;>'.$msg . '...成功;';
                         } else {
                             $log .= '&nbsp;&nbsp;>'.$msg . '...失败;';
                         }
-                    } else {//写入数据
-                        
+                    } 
+                    //写入前清空
+                    if (strpos($value,'INSERT INTO') !== false) {//写入数据
                         //获取表名
                         $name = preg_replace("/[\s\S]*INSERT INTO `(\w+)`[\s\S]*/", "\\1", $value);
                         //获取表前缀
                         $orginal = preg_replace("/[\s\S]*INSERT INTO `([a-zA-Z]+_)[\s\S]*/", "\\1", $value);
                         //替换表前缀
                         $value = str_replace(" `{$orginal}", " `{$prefix}", $value);
-                        //写入前清空
-                        Db::execute("TRUNCATE TABLE `{$name}`;");
                         
                         Db::execute($value);
                     }
@@ -538,7 +548,6 @@ class Module extends Model
     {
         Db::name('Menu')->strict(false)->insert($menu);
 
-        //$menu['id'] = $id;
         if (!empty($menu['_']))
             foreach ($menu['_'] as $v) {
                 $this->addMenus($v);
