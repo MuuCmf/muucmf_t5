@@ -467,6 +467,11 @@ class Module extends Model
         return APP_PATH . $this->moduleName . $file;
     }
 
+    /**
+     * 添加模块权限
+     * @param [type] $default_rule [description]
+     * @param [type] $module_name  [description]
+     */
     private function addDefaultRule($default_rule, $module_name)
     {
         foreach ($default_rule as $v) {
@@ -482,7 +487,7 @@ class Module extends Model
                 $old = explode(',', $g['rules']);
                 $new = array_merge($old, $auth_id);
                 $g['rules'] = implode(',', $new);
-                Db::name('AuthGroup')->save($g);
+                Db::name('AuthGroup')->update($g);
             }
         }
         return true;
