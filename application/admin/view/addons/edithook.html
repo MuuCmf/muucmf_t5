@@ -17,7 +17,7 @@
 	</div>
 
 	<!-- 修改密码表单 -->
-	<form action="{:url('updateHook')}" method="post" class="form-horizontal">
+	<form action="{:url('updateHook')}" method="post" class="form-horizontal ajax-form">
         <div class="with-padding">
             <div class="form-item builder_item">
                 <label class="item-label">{:lang("_HOOK_NAME_")}<span class="check-tips"></span></label>
@@ -88,7 +88,7 @@
                 <input type="hidden" name="id" value="{$data.id}">
                 <input type="hidden" name="addons" value="{$data.addons}" style="width: 100%" readonly>
 
-                <button type="submit" class="btn btn-success submit-btn ajax-post" target-form="form-horizontal">{:lang("_SURE_WITH_SPACE_")}</button>
+                <button type="submit" class="btn btn-success submit-btn">{:lang("_SURE_WITH_SPACE_")}</button>
                 <button class="btn btn-return" onclick="javascript:history.back(-1);return false;">{:lang("_RETURN_WITH_SPACE_")}</button>
             </div>
         </div>

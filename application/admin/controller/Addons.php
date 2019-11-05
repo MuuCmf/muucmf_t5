@@ -278,7 +278,7 @@ class Addons extends Admin
             $res = model('admin/Hooks')->editData($data);
             if ($res !== false){
                 cache('hooks', null);
-                $this->success(lang('_UPDATE_'), Cookie('__forward__'));
+                $this->success(lang('_UPDATE_'), url('hooks'));
             }else{
                 $this->error(lang('_UPDATE_FAILED_'));
             }
