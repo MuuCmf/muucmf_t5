@@ -52,7 +52,7 @@ class AuthGroup extends Model {
      * @param array $where   查询条件,供where()方法使用
      */
     public function getGroups($where=array()){
-        $map = array('status'=>1,'type'=>self::TYPE_ADMIN,'module'=>'admin');
+        $map = ['status'=>1,'type'=>self::TYPE_ADMIN,'module'=>'admin'];
         $map = array_merge($map,$where);
         return $this->where($map)->select();
     }

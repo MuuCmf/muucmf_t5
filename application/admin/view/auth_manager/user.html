@@ -9,7 +9,7 @@
   <div class="with-padding">
     <div class="tab-wrap clearfix">
         <div class="col-xs-10">
-            <ul class="nav nav-pills nav-secondary">
+            <ul class="nav nav-pills">
                 <li><a href="{:url('AuthManager/access',array('group_name'=>input('group_name') ,'group_id'=> input('group_id')))}">{:lang("_MANAGEMENT_BACKGROUND_AUTHORIZATION_")}</a></li>
                 <li><a href="{:url('AuthManager/accessUser',array('group_name'=>input('group_name') ,'group_id'=> input('group_id')))}">{:lang("_FRONT_DESK_ACCESS_AUTHORIZATION_")}</a></li>
                 <li class="active"><a href="javascript:;">{:lang("_MEMBER_DELEGATION_")}</a></li>
@@ -28,7 +28,7 @@
     </div>
 
 
-	<table class="table table-bordered table-striped muu-table">
+	<table class="table table-bordered table-striped">
     <thead>
     <tr>
   		<th class="">UID</th>
@@ -48,7 +48,7 @@
 			<td><span>{$vo.last_login_ip|long2ip}</span></td>
 			<td>{$vo.status_text}</td>
 			<td>
-          <a href="{:url('AuthManager/removeFromGroup?uid='.$vo['uid'].'&group_id='.input('group_id'))}" class="ajax-get">{:lang("_RELEASE_AUTHORITY_")}
+          <a class="btn btn-sm btn-danger" href="{:url('AuthManager/removeFromGroup?uid='.$vo['uid'].'&group_id='.input('group_id'))}" class="ajax-get">{:lang("_RELEASE_AUTHORITY_")}
           </a>
       </td>
 		</tr>

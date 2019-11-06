@@ -8,8 +8,8 @@
 
         <div class="tab-wrap rows clearfix">
             <div class="col-xs-10">
-                <ul class="nav nav-pills nav-secondary">
-                    <li><a href="{:Url('AuthManager/access',['group_name'=>input('group_name') ,'group_id'=> input('group_id')])}">{:lang("_MANAGEMENT_BACKGROUND_AUTHORIZATION_")}</a></li>
+                <ul class="nav nav-pills">
+                    <li><a href="{:url('AuthManager/access',['group_name'=>input('group_name') ,'group_id'=> input('group_id')])}">{:lang("_MANAGEMENT_BACKGROUND_AUTHORIZATION_")}</a></li>
                     <li class="active"><a href="javascript:;">{:lang("_FRONT_DESK_ACCESS_AUTHORIZATION_")}</a></li>
                     <li><a href="{:url('AuthManager/user',array('group_name'=>input('group_name') ,'group_id'=> input('group_id')))}">{:lang("_MEMBER_DELEGATION_")}</a></li>
 
@@ -27,20 +27,18 @@
 		<div class="node-list">
 			<!-- 访问授权 -->
 			<div class="tab-pane in">
-				<form action="{:url('AuthManager/accessUser')}" enctype="application/x-www-form-urlencoded" method="POST" class="form-horizontal auth-form">
+				<form action="{:url('')}" enctype="application/x-www-form-urlencoded" method="post" class="form-horizontal auth-form ajax-form">
 
-                    <input type="hidden" name="old_rules" value="{$this_group.rules}">
 					{volist name="node_list" id="node" }
 						<dl class="checkmod">
 							<dt class="hd">
-								<label class="checkbox">
-                                    <input class="auth_rules rules_all" type="checkbox" name="rules[]" value="
+                                <input class="auth_rules rules_all" id="auth-rules-{$node.name}" type="checkbox" name="rules[]" value="
                                     {php} 
                                     if(!empty($main_rules)) {
                                         echo $main_rules[$node['url']];
                                     }{/php}
-                                    ">{$node.alias}{:lang("_MODULAR_")}
-                                </label>
+                                    ">
+                                <label for="auth-rules-{$node.name}">{$node.alias}{:lang("_MODULAR_")}</label>
 							</dt>
 							<dd class="bd">
 								{present name="node['child']"}
@@ -62,10 +60,9 @@
                                        {notempty name="child['operator']"}
                                            <span class="divsion">&nbsp;</span>
                                            <div class="child_row">
-                                               {volist name="child['operator']" id="op"}
-                                                   
-                                                    <input class="auth_rules" id="auth-child-rules-<?php echo $auth_rules[$op['url']] ?>" type="checkbox" name="rules[]" value="<?php echo $auth_rules[$op['url']] ?>"/>{$op.title}
-                                                    <label for="auth-child-rules-<?php echo $auth_rules[$op['url']] ?>"></label>
+                                               {volist name="child['operator']" id="op"} 
+                                                <input class="auth_rules" id="auth-child-rules-{$auth_rules[$op['url']]}" type="checkbox" name="rules[]" value="{$auth_rules[$op['url']]}"/>{$op.title}
+                                                <label for="auth-child-rules-{$auth_rules[$op['url']]}"></label>
                                                {/volist}
                                            </div>
                                         {/notempty}
@@ -74,13 +71,13 @@
 
 								{/present}
 
-                                <a class="btn btn-success btn-sm btn-mini" data-remote="{:Url('addnode',array('module'=>$node['name'],'group_id'=>input('group_id')))}" data-toggle="modal">+ {:lang("_NEW_NODE_")}</a>
+                                <a class="btn btn-success btn-sm btn-mini" data-remote="{:url('addnode',array('module'=>$node['name'],'group_id'=>input('group_id')))}" data-toggle="modal">+ {:lang("_NEW_NODE_")}</a>
 							</dd>
 						</dl>
 					{/volist}
 
-			        <input type="hidden" name="id" value="{$this_group.id}" />
-                    <button type="submit" class="btn btn-success submit-btn ajax-post" target-form="auth-form">{:lang("_SURE_WITH_SPACE_")}</button>
+			        <input type="hidden" name="group_id" value="{$this_group.id}" />
+                    <button type="submit" class="btn btn-success submit-btn">{:lang('_SURE_WITH_SPACE_')}</button>
                     <button class="btn btn-return" onclick="javascript:history.back(-1);return false;">{:lang("_RETURN_WITH_SPACE_")}</button>
 			    </form>
 			</div>

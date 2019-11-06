@@ -60,7 +60,7 @@ class AuthManager extends Admin
      */
     public function writeGroup()
     {
-        $data = input('');
+        $data = input();
         if (isset($data['rules']) && !empty($data['rules'])) {
             sort($data['rules']);
             $data['rules'] = implode(',', array_unique($data['rules']));
@@ -70,24 +70,25 @@ class AuthManager extends Admin
         $AuthGroup = model('admin/AuthGroup');
         
         if ($data) {
-            if(isset($data['rules'])){
-                $data['rules'] = $data['rules'];
-                //大蒙没搞懂自己搞了下，先注销
-                //$data['rules'] = $this->getJoinRules($data['rules']);
-            }
+            empty($data['rules'])&&$data['rules'] = '';
+            $group = Db::name('AuthGroup')->find($data['id']);
+            $old_rules = array_filter(explode(',',$group['rules']));
+            $data['rules'] = $this->getMergedRules($old_rules, explode(',', $data['rules']), 'eq');
             
             $r = $AuthGroup->editData($data);
             if ($r === false) {
                 $this->error(lang('_FAIL_OPERATE_') . $AuthGroup->getError());
             } else {
-                $this->success('操作成功!',Url('AuthManager/index'));
+                $back_url = url('AuthManager/index');
+                if(!empty($data['back_url'])){
+                    $back_url = $data['back_url'];
+                }
+                $this->success('操作成功!',$back_url);
             }
         } else {
             $this->error(lang('_FAIL_OPERATE_') . $AuthGroup->getError());
         }
     }
-
-    
 
     /**
      * 状态修改
@@ -117,8 +118,9 @@ class AuthManager extends Admin
      * 用户组授权用户列表
      * @author 大蒙 <59262424@qq.com>
      */
-    public function user($group_id)
+    public function user()
     {
+        $group_id = input('group_id', 1, 'intval');
         if (empty($group_id)) {
             $this->error(lang('_PARAMETER_ERROR_'));
         }
@@ -140,7 +142,6 @@ class AuthManager extends Admin
 
             ]);
         // 获取分页显示
-        //dump($list);
         $page = $list->render();
         // 转数组
         $list = $list->toArray()['data'];
@@ -284,14 +285,12 @@ class AuthManager extends Admin
                     unset($data['id']);
                     $id = Db::name('AuthRule')->insert($data);
                 } else {
-
                     $id = Db::name('AuthRule')->update($data);
                 }
 
                 if ($id) {
-                    // S('DB_CONFIG_DATA',null);
                     //记录行为
-                    $this->success(lang('_SUCCESS_EDIT_'),Url('AuthManager/accessUser?group_id='.input('get.group_id')));
+                    $this->success(lang('_SUCCESS_EDIT_'),url('AuthManager/accessUser?group_id='.input('get.group_id')));
                 } else {
                     $this->error(lang('_EDIT_FAILED_'));
                 }
@@ -334,8 +333,9 @@ class AuthManager extends Admin
      */
     public function access()
     {
-        $aId = input('group_id', 0, 'intval');
+        $group_id = input('group_id', 0, 'intval');
         $this->updateRules();
+
         $auth_group = Db::name('AuthGroup')->where(['status' => ['egt', '0'], 'module' => 'admin', 'type' => AuthGroup::TYPE_ADMIN])
             ->field('id,title,rules')->select();
         $node_list = $this->returnNodes();
@@ -348,35 +348,38 @@ class AuthManager extends Admin
         $this->assign('main_rules', $main_rules);
         $this->assign('auth_rules', $child_rules);
 
-
-        $group = Db::name('AuthGroup')->find($aId);
-        //$rule_list = Db::name('AuthRule')->where('id','in',$group['rules'])->select();
-        //dump($rule_list);
+        $group = Db::name('AuthGroup')->find($group_id);
         $this->setTitle(lang('_ACCESS_AUTHORIZATION_'));
 
         $this->assign('node_list', $node_list);
+
         $this->assign('auth_group', $auth_group);
         $this->assign('this_group', $group);
         
         return $this->fetch('');
     }
 
+    /**
+     * 前台授权
+     * @return [type] [description]
+     */
     public function accessUser()
     {
-        $aId = input('group_id', 0, 'intval');
+        $group_id = input('group_id', 0, 'intval');
 
         if (request()->isPost()) {
-            $aId = input('id', 0, 'intval');
-            $aOldRule = input('post.old_rules', '', 'text');
-            $aRules = input('post.rules/a', array());
-            $rules = $this->getMergedRules($aOldRule, $aRules);
+            $group_id = input('group_id', 0, 'intval');
+            $rules = input('post.rules/a', array());
             
-            $group = Db::name('AuthGroup')->find($aId);
+            $group = Db::name('AuthGroup')->find($group_id);
+            $old_rules = array_filter(explode(',',$group['rules']));
+            $new_rules = $rules;
+            $rules = $this->getMergedRules($old_rules,$new_rules);
             $group['rules'] = $rules;
             
             $result = Db::name('AuthGroup')->update($group);
             if ($result) {
-                $this->success(lang('_RIGHT_TO_SAVE_SUCCESS_'));
+                $this->success(lang('_RIGHT_TO_SAVE_SUCCESS_'),url('accessUser',['group_id'=>$group_id]));
             } else {
                 $this->error(lang('_RIGHT_SAVE_FAILED_'));
             }
@@ -393,7 +396,7 @@ class AuthManager extends Admin
         $map = array('module' => array('neq', 'admin'), 'type' => AuthRule::RULE_URL, 'status' => 1);
         $child_rules = Db::name('AuthRule')->where($map)->field('name,id')->select();
 
-        $group = Db::name('AuthGroup')->find($aId);
+        $group = Db::name('AuthGroup')->find($group_id);
 
         $this->setTitle(lang('_USER_FRONT_DESK_AUTHORIZATION_'));
         $this->assign('main_rules', $main_rules);
@@ -403,6 +406,26 @@ class AuthManager extends Admin
         $this->assign('this_group', $group);
 
         return $this->fetch();
+    }
+
+    private function getMergedRules($oldRules = [], $rules = [], $isAdmin = 'neq')
+    {
+        $map = ['module' => [$isAdmin, 'admin'], 'status' => 1];
+        $otherRules = Db::name('AuthRule')->where($map)->field('id')->select();
+        
+        $otherRulesArray = getSubByKey($otherRules, 'id');
+
+        //1.删除全部非Admin模块下的权限，排除老的权限的影响
+        //2.合并新的规则
+        foreach ($otherRulesArray as $key => $v) {
+            if (in_array($v, $oldRules)) {
+                $key_search = array_search($v, $oldRules);
+                if ($key_search !== false)
+                    array_splice($oldRules, $key_search, 1);
+            }
+        }
+
+        return str_replace(',,', ',', implode(',', array_unique(array_merge($oldRules, $rules))));
     }
 
 
@@ -424,36 +447,6 @@ class AuthManager extends Admin
         return $node_list;
     }
 
-    /**
-     * 规则ID更改为auth_rule表的规则ID
-     */
-    protected function getJoinRules($menu_ids)
-    {
-        $menu_list = Db::name('menu')->where('id','in',$menu_ids)->field('id,url,module')->select();
-        foreach($menu_list as $key => $value){
-            if(empty($value['module']) || $value['module'] == ''){
-                if (stripos($value['url'], request()->module()) !== 0) {
-                    $menu_list[$key]['url'] = request()->module() . '/' . $value['url'];
-                }
-            }
-        }
-        //拼接字符串
-        $menu_url = '';
-        foreach($menu_list as $value){
-            $menu_url .=','.$value['url'];
-        }
-        $menu_url = substr($menu_url, 1 );
-        $auth_rule_list = Db::name('auth_rule')->where('name','in',$menu_url)->field('id,name')->select();
-
-        //拼接权限节点ID
-        $rules_id = '';
-        foreach($auth_rule_list as $value){
-            $rules_id .= ','.$value['id'];
-        }
-        $rules_id = substr($rules_id, 1 );
-
-        return $rules_id;
-    }
     /**
      * 后台节点配置的url作为规则存入auth_rule
      * 执行新节点的插入,已有节点的更新,无效规则的删除三项任务
@@ -523,7 +516,7 @@ class AuthManager extends Admin
      *
      * 注意,返回的主菜单节点数组中有'controller'元素,以供区分子节点和主节点
      *
-     * @author 朱亚杰 <xcoolcc@gmail.com>
+     * @author 朱亚杰 <xcoolcc@gmail.com> 大蒙<59262424@qq.com> 更新
      */
     protected function returnNodes($tree = true)
     {

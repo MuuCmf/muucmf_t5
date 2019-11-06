@@ -4450,7 +4450,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_menu` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `type`, `tip`, `group`, `is_dev`, `icon`, `module`) VALUES
-('0AAED4DF-55D3-03DA-5860-3ABAEC00096D', '数据统计', '197', 0, 'admin/Count/active', 0, 0, '', '数据统计', 0, 'bar-chart', ''),
+('0AAED4DF-55D3-03DA-5860-3ABAEC00096D', '数据统计', '197', 0, 'admin/count/active', 0, 0, '', '数据统计', 0, 'bar-chart', ''),
 ('100', '新增、编辑', '99', 0, 'SEO/editRule', 0, 0, '', '', 0, '', ''),
 ('10001', '基本设置', '10000', 0, 'index/Admin/config', 0, 0, '', '设置', 0, '', 'index'),
 ('101', '排序', '99', 0, 'SEO/sortRule', 1, 0, '', '', 0, '', ''),
@@ -4554,7 +4554,7 @@ INSERT INTO `muucmf_menu` (`id`, `title`, `pid`, `sort`, `url`, `hide`, `type`, 
 ('51', '积分类型列表', '113', 1, 'admin/User/scoreList', 0, 0, '', '积分管理', 0, 'sticky-note', ''),
 ('52', '新增/编辑类型', '51', 2, 'User/editScoreType', 1, 0, '', '', 0, '', ''),
 ('57', '插件管理', '105', 4, 'admin/Addons/index', 0, 0, '', '本地', 0, 'plus-square', ''),
-('58', '钩子管理', '57', 2, 'Addons/hooks', 0, 0, '', '本地', 0, '', ''),
+('58', '钩子管理', '105', 2, 'Addons/hooks', 1, 0, '', '本地', 0, '', ''),
 ('59', '创建', '57', 0, 'Addons/create', 0, 0, '服务器上创建插件结构向导', '', 0, '', ''),
 ('5C8C82C4-A290-A74C-058A-59A176BEEDCB', '开发者工具', '0', 0, 'devtool/Admin/module', 0, 1, '', '', 0, '', 'devtool'),
 ('6', '新增、编辑用户行为', '4', 0, 'admin/action/editaction', 0, 0, '', '', 0, '', ''),
