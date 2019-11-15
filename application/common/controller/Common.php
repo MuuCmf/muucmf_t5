@@ -150,5 +150,23 @@ class Common extends Controller
         $this->assign('seo_meta', $this->_seo);
     }
 
+    public function checkAuth($rule ='',$except_uid =-1,$msg = ''){
+        if (!check_auth($rule,$except_uid)) {
+            $this->error(empty($msg)?'您无操作权限。':$msg);
+        }
+    }
 
+    public function checkActionLimit($action = null, $model = null, $record_id = null, $user_id = null, $ip = false,$url = false){
+        
+        $return = model('ActionLimit')->checkActionLimit($action, $model, $record_id, $user_id, $ip);
+        if ($return && !$return['code']) {
+            if($url === true){
+                $url = $return['url'];
+            }elseif($url === false){
+                $url = '';
+            }
+
+            $this->error($return['msg'],$url);
+        }
+    }
 }

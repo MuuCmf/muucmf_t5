@@ -1,36 +1,5 @@
 <?php
 
-/**
- * 检查行为限制
- * @param  [type]  $action    [description]
- * @param  [type]  $model     [description]
- * @param  [type]  $record_id [description]
- * @param  [type]  $user_id   [description]
- * @param  boolean $ip        [description]
- * @return [type]             [description]
- */
-function check_action_limit($action = null, $model = null, $record_id = null, $user_id = null, $ip = false)
-{
-    $obj = model('ActionLimit');
-
-    $item = array('action' => $action, 'model' => $model, 'record_id' => $record_id, 'user_id' => $user_id, 'action_ip' => $ip);
-    if(empty($record_id)){
-        unset($item['record_id']);
-    }
-
-    $obj->checkOne($item);
-
-    $return = array();
-    if (!$obj->state) {
-        $return['state'] = $obj->state;
-        $return['info'] = $obj->info;
-        $return['url'] = $obj->url;
-    }else{
-        $return['state'] = true;
-    }
-    return $return;
-}
-
 function get_time_ago($type = 'second', $some = 1, $time = null)
 {
     $time = empty($time) ? time() : $time;

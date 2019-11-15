@@ -8,9 +8,9 @@ class ActionLimit extends Model
 {
 
     var $item = [];
-    var $state = true;
+    var $code = 1;
     var $url;
-    var $info = '';
+    var $msg = '';
     var $punish = array(
         array('warning','警告并禁止'),
         array('logout_account', '强制退出登陆'),
@@ -21,8 +21,8 @@ class ActionLimit extends Model
     public function _initialize()
     {
         $this->url = '';
-        $this->info = '';
-        $this->state = true;
+        $this->msg = '';
+        $this->code = 1;
 
         parent::_initialize();
     }
@@ -45,9 +45,9 @@ class ActionLimit extends Model
     }
 
     public function warning($item,$val){
-        $this->state = false;
-        $this->info = lang('_OPERATION_IS_FREQUENT_PLEASE_').$val['time_number'].get_time_unit($val['time_unit']).lang('_AND_THEN_');
-        $this->url = Url('index/index/index');
+        $this->code = 0;
+        $this->msg = lang('_OPERATION_IS_FREQUENT_PLEASE_').$val['time_number'].get_time_unit($val['time_unit']).lang('_AND_THEN_');
+        $this->url = url();
     }
 
     public function getList($where){
@@ -103,11 +103,44 @@ class ActionLimit extends Model
                 }
                 unset($punish);
                 if ($val['if_message']) {
-                    model('Message')->sendMessageWithoutCheckSelf($item['user_id'], lang('_SYSTEM_MESSAGE_'),$val['message_content'],$_SERVER['HTTP_REFERER']);
+                    model('Message')->sendMessageWithoutCheckSelf($item['user_id'], lang('_SYSTEM_MESSAGE_'),$val['message_content'],'');
+                    
                 }
             }
         }
         unset($val);
+    }
+
+    /**
+     * 检查行为限制
+     * @param  [type]  $action    [description]
+     * @param  [type]  $model     [description]
+     * @param  [type]  $record_id [description]
+     * @param  [type]  $user_id   [description]
+     * @param  boolean $ip        [description]
+     * @return [type]             [description]
+     */
+    public function checkActionLimit($action = null, $model = null, $record_id = null, $user_id = null, $ip = false)
+    {
+        $obj = model('ActionLimit');
+
+        $item = array('action' => $action, 'model' => $model, 'record_id' => $record_id, 'user_id' => $user_id, 'action_ip' => $ip);
+        if(empty($record_id)){
+            unset($item['record_id']);
+        }
+
+        $obj->checkOne($item);
+
+        $return = [];
+        if (!$obj->code) {
+            $return['code'] = $obj->code;
+            $return['msg'] = $obj->msg;
+            $return['url'] = $obj->url;
+        }else{
+            $return['code'] = 1;
+        }
+        
+        return $return;
     }
 
     /**

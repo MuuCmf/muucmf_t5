@@ -128,7 +128,7 @@ class Action extends Model
 	            $log['time'] = time();
 	            $log['data'] = ['user' => $user_id, 'model' => $model, 'record' => $record_id, 'time' => time()];
 	            
-	            /*
+	            
 	            if(isset($match[1])){
 	            	foreach ($match[1] as $value) {
 		                $param = explode('|', $value);
@@ -141,14 +141,16 @@ class Action extends Model
 	            }
 	            
 	            $data['remark'] = str_replace($match[0], $replace, $action_info['log']);
-	            */
+	            
 	        } else {
 	            $data['remark'] = $action_info['log'];
 	        }
+
 	    } else {
 	        //未定义日志规则，记录操作url
 	        $data['remark'] = '操作url：' . $_SERVER['REQUEST_URI'];
 	    }
+
 	    $log_id = Db::name('ActionLog')->insertGetId($data);
 
 	    //解析积分规则并执行
@@ -213,24 +215,8 @@ class Action extends Model
 	    }
 	    unset($key, $rule);
 
-	    /*    $rules = str_replace('{$self}', $self, $rules);
-	        $rules = explode(';', $rules);
-	        $return = array();
-	        foreach ($rules as $key => &$rule) {
-	            $rule = explode('|', $rule);
-	            foreach ($rule as $k => $fields) {
-	                $field = empty($fields) ? array() : explode(':', $fields);
-	                if (!empty($field)) {
-	                    $return[$key][$field[0]] = $field[1];
-	                }
-	            }
-	            //cycle(检查周期)和max(周期内最大执行次数)必须同时存在，否则去掉这两个条件
-	            if (!array_key_exists('cycle', $return[$key]) || !array_key_exists('max', $return[$key])) {
-	                unset($return[$key]['cycle'], $return[$key]['max']);
-	            }
-	        }*/
-
-
+	    $rules = str_replace("{$self}", $self, $rules);
+	    
 	    return $rules;
 	}
 
@@ -244,8 +230,6 @@ class Action extends Model
 	 */
 	public function execute_action($rules = false, $action_id = null, $user_id = null, $log_id = null)
 	{
-	    $log_score = '';
-
 	    hook('handleAction',array('action_id'=>$action_id,'user_id'=>$user_id,'log_id'=>$log_id,'log_score'=>&$log_score));
 
 	    if (!$rules || empty($action_id) || empty($user_id)) {
@@ -255,8 +239,8 @@ class Action extends Model
 
 	    $action_log = Db::name('ActionLog')->where(['id' => $log_id])->find();
 
-	    /*
-	    //行为日志在微信登陆时报错，不知为个啥子~~~，先注释了
+	    
+	    //行为日志在微信登陆时报错
 	    foreach ($rules as $rule) {
 
 	        //检查执行周期
@@ -290,14 +274,13 @@ class Action extends Model
 		        //写积分日志
 		        $scoreModel->addScoreLog($user_id,$rule['field'],$action , substr($rule['rule'],1,strlen($rule['rule'])-1),$action_log['model'],$action_log['record_id'],$action_log['remark'].'【' . $sType['title'] . '：' . $rule['rule'] . $sType['unit'] . '】');
 	        }
+
+	        if (isset($log_score)) {
+		        cookie('score_tip', $log_score, 30);
+		        Db::name('ActionLog')->where(['id' => $log_id])->setField('remark', $action_log['remark'] .','. $log_score);
+		    }
 	    }
-	    */
-	    /* php7不支持exp表达式 暂取消
-	    if ($log_score) {
-	        cookie('score_tip', $log_score, 30);
-	        Db::name('ActionLog')->where(['id' => $log_id])->setField('remark', ['exp', "CONCAT(remark,'" . $log_score . "')"]);
-	    }
-	    */
+	    
 	    return $return;
 	}
 
