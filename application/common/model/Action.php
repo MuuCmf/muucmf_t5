@@ -12,8 +12,6 @@ class Action extends Model
      */
     public function editAction($data){
 
-        
-
         if(empty($data)){
             return false;
         }
@@ -80,6 +78,12 @@ class Action extends Model
     public function getActionOpt(){
         $result = collection($this->where(['status'=>1])->field('name,title')->select())->toArray();
         return $result;
+    }
+
+    public function getListByPage($map,$order='create_time desc',$field='*',$r=20)
+    {
+        $list = $this->where($map)->order($order)->field($field)->paginate($r,false,['query'=>request()->param()]);
+        return $list;
     }
 
 	/**
@@ -158,7 +162,6 @@ class Action extends Model
 	    }
 
 	    return true;
-
 	}
 
 	/**

@@ -198,7 +198,6 @@ class Action extends Admin {
      */
     public function action()
     {
-        
         $aModule = $this->parseSearchKey('module');
 
         is_null($aModule) && $aModule = -1;
@@ -211,8 +210,10 @@ class Action extends Admin {
         //获取列表数据
         $Action = Db::name('Action')->where(['status' => ['gt', -1]]);
 
-        list($list,$page) = $this->commonLists($Action, $map);
-        
+        $list = model('action')->getListByPage($map,'update_time desc','*',20);
+        $page = $list->render();
+        $this->assign('page',$page);
+
         $list = $list->toArray()['data'];
 
         lists_plus($list);
@@ -235,6 +236,7 @@ class Action extends Admin {
         $this->assign('module', $module);
 
         $this->setTitle(lang('_USER_BEHAVIOR_'));
+
         return $this->fetch();
     }
 
