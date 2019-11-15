@@ -8,8 +8,39 @@
         </div>
         <h3 class="title">{$__MODULE__.alias}</h3>
         <p class="version">版本：{$__MODULE__.version}</p>
-        <a href="{:url('admin/module/index')}" class="btn btn-module">切换应用</a>
       </div>
+        {notempty name="all_module_list"}
+        <!--常用应用-->
+        <ul class="sidebar-menu menu-open" data-widget="tree">
+          <li class="treeview">
+            <a>
+                <i class="fa fa-circle-o"></i>
+                <span>切换应用</span>
+                
+                <span class="pull-right-container">
+                  <i class="fa fa-angle-left pull-right"></i>
+                </span>
+            </a>
+            <ul class="treeview-menu">
+              {volist name="all_module_list" id="vo"}
+              <li>
+                  <a href="{:url($vo.admin_entry)}">  
+                    <i class="fa fa-circle-o"></i>
+                    <span>{$vo.alias}</span>
+                </a>
+              </li>
+              {/volist}
+              <!--更多应用-->
+              <li>
+                <a href="{:url('admin/module/index')}">  
+                    <i class="fa fa-circle-o"></i>
+                    <span>更多应用...</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+        {/notempty}
       {/notempty}
       <!-- sidebar menu: : style can be found in sidebar.less -->
       {volist name="__MODULE_MENU__.child" id="sub_menu"}
