@@ -12,9 +12,9 @@
       </div>
       {/notempty}
       <!-- sidebar menu: : style can be found in sidebar.less -->
+      {volist name="__MODULE_MENU__.child" id="sub_menu"}
       <ul class="sidebar-menu" data-widget="tree">
         
-        {volist name="__MODULE_MENU__.child" id="sub_menu"}
         <li class="treeview menu-open">
           <a>
               {notempty name="sub_menu.icon"}
@@ -45,9 +45,9 @@
               {/volist}
           </ul>
         </li>
-        {/volist}
+        
       </ul>
-
+      {/volist}
       {notempty name="all_module_list"}
       {if condition="($this_controller == 'index')"}
       <!--常用应用-->

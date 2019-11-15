@@ -1075,7 +1075,7 @@ throw new Error('AdminLTE requires jQuery')
 
     $(this.element).on('click', this.options.trigger, function (event) {
       //禁止菜单关闭
-      //that.toggle($(this), event);
+      that.toggle($(this), event);
     });
   };
 
