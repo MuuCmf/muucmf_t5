@@ -187,7 +187,7 @@ class User extends Base
                 }
 
                 //注册用户
-                $return = check_action_limit('reg', 'ucenter_member', 1, 1, true);
+                $return = model('ActionLimit')->checkActionLimit('reg', 'ucenter_member', 1, 1, true);
                 if ($return && !$return['state']) {
                     return $this->sendError($return['info']);
                 }

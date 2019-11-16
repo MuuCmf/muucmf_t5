@@ -110,10 +110,10 @@ class UcenterMember extends Model
         /* 获取用户数据 */
         $user = $this->get($map);
 
-        $return = check_action_limit('input_password','ucenter_member',$user['id'],$user['id']);
+        $return = model('ActionLimit')->checkActionLimit('input_password','ucenter_member',$user['id'],$user['id']);
 
-        if($return && !$return['state']){
-            return $return['info'];
+        if($return && !$return['code']){
+            return $return['msg'];
         }
 
         if ($user['id'] && $user['status']) {

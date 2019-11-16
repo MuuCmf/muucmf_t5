@@ -33,7 +33,7 @@ class Member extends Controller
         //提交注册
         if (request()->isPost()) {
             
-            $return = check_action_limit('reg', 'ucenter_member', 1, 1, true);
+            $return = model('ActionLimit')->checkActionLimit('reg', 'ucenter_member', 1, 1, true);
             
             if ($return && !$return['state']) {
                 $this->error($return['info'], $return['url']);
