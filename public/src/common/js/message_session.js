@@ -29,11 +29,12 @@
      * 绑定消息检查
      */
     var bindMessageChecker = function () {
-
-        if (Config.GET_INFORMATION) {
-            setInterval(function () {
-                checkMessage();
-            }, Config.GET_INFORMATION_INTERNAL);
+        if(MID > 0){//登陆后执行
+            if (Config.GET_INFORMATION) {
+                setInterval(function () {
+                    checkMessage();
+                }, Config.GET_INFORMATION_INTERNAL);
+            }
         }
     }
     /**
@@ -142,9 +143,6 @@
 
 // Initialize
 $(document).ready(function(e){
-    
-    $.muu.check_message();//检查一次消息
     $.muu.bind_message_checker();//绑定用户消息
     $.muu.send_imessage(); //绑定发送私信
-
 });
