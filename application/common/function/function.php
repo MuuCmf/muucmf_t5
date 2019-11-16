@@ -5,7 +5,6 @@ use think\Db;
 require_once(APP_PATH . '/common/function/addons.php');
 require_once(APP_PATH . '/common/function/builder.php');
 require_once(APP_PATH . '/common/function/file.php');
-require_once(APP_PATH . '/common/function/limit.php');
 require_once(APP_PATH . '/common/function/message.php');
 require_once(APP_PATH . '/common/function/parse.php');
 require_once(APP_PATH . '/common/function/query_user.php');

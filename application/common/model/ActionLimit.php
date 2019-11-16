@@ -176,7 +176,25 @@ class ActionLimit extends Model
         return $list;
     }
 
-
+    /**
+     * 获取限制
+     * @param  [type] $key [description]
+     * @return [type]      [description]
+     */
+    public function getPunishName($key){
+        !is_array($key) && $key = explode(',',$key);
+        
+        $punish = $this->punish;
+        $return = array();
+        foreach($key as $val){
+            foreach($punish as $v){
+                if($v[0] == $val){
+                    $return[]= $v[1];
+                }
+            }
+        }
+        return implode(',',$return);
+    }
 }
 
 

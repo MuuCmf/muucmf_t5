@@ -80,6 +80,16 @@ class Action extends Model
         return $result;
     }
 
+    public function getActionName($key){
+        !is_array($key) && $key = explode(',',str_replace(array('[',']'),'',$key));
+        $return = array();
+        foreach($key as $val){
+            $return[] = $this->where(['name'=>$val])->value('title');
+        }
+        
+        return implode(',',$return);
+    }
+
     public function getListByPage($map,$order='create_time desc',$field='*',$r=20)
     {
         $list = $this->where($map)->order($order)->field($field)->paginate($r,false,['query'=>request()->param()]);

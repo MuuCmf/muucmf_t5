@@ -29,10 +29,10 @@ class ActionLimit extends Admin
         $timeUnit = $this->getTimeUnit();
         foreach($list as &$val){
             $val['time'] = $val['time_number']. $timeUnit[$val['time_unit']];
-            $val['action_list'] = get_action_name($val['action_list']);
+            $val['action_list'] = model('Action')->getActionName($val['action_list']);
             empty( $val['action_list']) &&  $val['action_list'] = lang('_ALL_ACTS_');
 
-            $val['punish'] = get_punish_name($val['punish']);
+            $val['punish'] = model('ActionLimit')->getPunishName($val['punish']);
         }
         unset($val);
 

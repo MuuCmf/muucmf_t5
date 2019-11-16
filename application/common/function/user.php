@@ -110,22 +110,6 @@ function getUserConfigMap($name = '', $model = '', $uid = 0, $role_id = 0)
     return $map;
 }
 
-
-
-/**
- * 检测权限
- */
-function CheckPermission($uids)
-{
-    if (is_administrator()) {
-        return true;
-    }
-    if (in_array(is_login(), $uids)) {
-        return true;
-    }
-    return false;
-}
-
 function check_auth($rule = '', $except_uid = -1, $type = AuthRule::RULE_URL)
 {
     if (is_administrator()) {

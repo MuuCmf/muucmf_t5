@@ -99,3 +99,48 @@ if (!function_exists('datetime')) {
     }
 
 }
+
+function get_time_ago($type = 'second', $some = 1, $time = null)
+{
+    $time = empty($time) ? time() : $time;
+    switch ($type) {
+        case 'second':
+            $result = $time - $some;
+            break;
+        case 'minute':
+            $result = $time - $some * 60;
+            break;
+        case 'hour':
+            $result = $time - $some * 60 * 60;
+            break;
+        case 'day':
+            $result = strtotime('-' . $some . ' day', $time);
+            break;
+        case 'week':
+            $result = strtotime('-' . ($some * 7) . ' day', $time);
+            break;
+        case 'month':
+            $result = strtotime('-' . $some . ' month', $time);
+            break;
+        case 'year':
+            $result = strtotime('-' . $some . ' year', $time);
+            break;
+        default:
+            $result = $time - $some;
+    }
+    return $result;
+}
+
+function get_time_unit($key = null){
+
+    $array = array(
+        'second' => lang('_TIME_SECOND_'), 
+        'minute' => lang('_TIME_MINUTE_'), 
+        'hour' => lang('_HOUR_'), 
+        'day' => lang('_TIME_DAY_'), 
+        'week' => lang('_TIME_WEEK_'), 
+        'month' => lang('_TIME_MONTH_'), 
+        'year' => lang('_TIME_YEAR_')
+    );
+    return empty($key)?$array:$array[$key];
+}
