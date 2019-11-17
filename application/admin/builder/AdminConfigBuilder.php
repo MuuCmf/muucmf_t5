@@ -604,7 +604,9 @@ class AdminConfigBuilder extends AdminBuilder
     private function readUserGroups()
     {
         $list = Db::name('AuthGroup')->where(['status' => 1])->order('id asc')->select();
+
         $result = [];
+        $result[0] = '未登陆';
         foreach ($list as $group) {
             $result[$group['id']] = $group['title'];
         }
