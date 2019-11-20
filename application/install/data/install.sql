@@ -4420,6 +4420,7 @@ CREATE TABLE IF NOT EXISTS `muucmf_member` (
   `pos_city` int(11) NOT NULL,
   `pos_district` int(11) NOT NULL,
   `pos_community` int(11) NOT NULL,
+  `balance` int(11) NOT NULL COMMENT '用户余额，单位：分',
   `score1` double DEFAULT '0' COMMENT '用户积分',
   `score2` double DEFAULT '0' COMMENT 'score2',
   `score3` double DEFAULT '0' COMMENT 'score3',
