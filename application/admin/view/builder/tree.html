@@ -1,24 +1,25 @@
 {volist name="tree" id="list"}
+
 	<dl class="cate-item">
 		<dt class="clearfix">
 			<form action="{:url('add'.$model)}" method="post">
 				<div class="btn-toolbar opt-btn clearfix">
-					<a title={:lang("_EDIT_")} href="{:url('add'.$model.'?id='.$list['id'].'&pid='.$list['pid'])}">
+					<a class="btn btn-mini btn-success" title={:lang("_EDIT_")} href="{:url('add'.$model.'?id='.$list['id'].'&pid='.$list['pid'])}">
 						{:lang("_EDIT_")}
 					</a>
-					<a title="{$list.status|show_status_op}" href="{:url('set'.$model.'Status?ids='.$list['id'].'&status='.abs(1-$list['status']))}" class="ajax-get">
+					<a class="btn btn-mini btn-info" title="{$list.status|show_status_op}" href="{:url('set'.$model.'Status?ids='.$list['id'].'&status='.abs(1-$list['status']))}" class="ajax-get">
 						{$list.status|show_status_op}
 					</a>
-					<a title={:lang("_DELETE_")} href="{:url('set'.$model.'Status?ids='.$list['id'].'&status=-1')}" class="confirm ajax-get">
+					<a class="btn btn-mini btn-danger" title={:lang("_DELETE_")} href="{:url('set'.$model.'Status?ids='.$list['id'].'&status=-1')}" class="confirm ajax-get">
 						{:lang("_DELETE_")}
 					</a>
 					{eq name="canMove" value="true"}
-                    <a title={:lang("_MOVE_WITH_DOUBLE_")} href="{:url('operate'.$model.'?type=move&from='.$list['id'])}">
+                    <a class="btn btn-mini btn-warning" title={:lang("_MOVE_WITH_DOUBLE_")} href="{:url('operate'.$model.'?type=move&from='.$list['id'])}">
                         {:lang("_MOBILE_")}
                     </a>
 					{/eq}
                     {eq name="canMerge" value="true"}
-                    <a title={:lang("_MERGER_WITH_DOUBLE_")} href="{:url('operate'.$model.'?type=merge&from='.$list['id'])}">
+                    <a class="btn btn-mini btn-warning" title={:lang("_MERGER_WITH_DOUBLE_")} href="{:url('operate'.$model.'?type=merge&from='.$list['id'])}">
                         {:lang("_MERGE_")}
                     </a>
                     {/eq}
