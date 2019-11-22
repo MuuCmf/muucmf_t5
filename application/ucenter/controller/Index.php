@@ -272,7 +272,7 @@ class Index extends Base
         $uid = isset($uid) ? $uid : is_login();
 
         $this->assign('tab', 'fans');
-        $fans = model('Follow')->getFans($uid, ['avatar128', 'uid', 'nickname', 'fans', 'following', 'space_url', 'title']);
+        $fans = model('common/Follow')->getFans($uid, ['avatar128', 'uid', 'nickname', 'fans', 'following', 'space_url', 'title']);
         $this->assign('fans', $fans);
 
         return $this->fetch();
@@ -282,7 +282,7 @@ class Index extends Base
     {
         $uid = isset($uid) ? $uid : is_login();
 
-        $following = model('Follow')->getFollowing($uid,['avatar128', 'uid', 'nickname', 'fans', 'following', 'weibocount', 'space_url', 'title']);
+        $following = model('common/Follow')->getFollowing($uid,['avatar128', 'uid', 'nickname', 'fans', 'following', 'weibocount', 'space_url', 'title']);
         
         $this->assign('following', $following);
 

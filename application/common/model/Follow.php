@@ -2,6 +2,7 @@
 namespace app\common\Model;
 
 use think\Model;
+use think\Db;
 
 class Follow extends Model
 {
@@ -67,7 +68,7 @@ class Follow extends Model
     {
         $follow = $this->cache($who_follow, $follow_who);
         if ($follow === false) {
-            $follow = Db::name('Follow')->where(['who_follow' => $who_follow, 'follow_who' => $follow_who])->count();
+            $follow = $this->where(['who_follow' => $who_follow, 'follow_who' => $follow_who])->count();
             $follow++;
             $this->cache($who_follow, $follow_who, $follow);
         }

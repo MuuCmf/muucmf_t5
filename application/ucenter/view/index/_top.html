@@ -2,14 +2,14 @@
     <div class="top_bg_box" 
     {if condition="$user_info['cover_id']"}
         style="background-image:url('{$user_info['cover_path']}')"
-        {else/}
+    {else/}
         style="background:url('__IMG__/user_top_default_bg.jpg')"
     {/if}
     >
     </div>
     {if condition="is_login() && $user_info['uid'] eq is_login()"}
         <div class="change_cover">
-            <a data-type="ajax" data-url="{:Url('ucenter/Common/changeCover')}" data-toggle="modal" data-title="{:lang('_UPLOAD_PERSONAL_COVER_')}">
+            <a data-type="ajax" data-url="{:url('ucenter/Common/changeCover')}" data-toggle="modal" data-title="{:lang('_UPLOAD_PERSONAL_COVER_')}">
             <img class="img-responsive" src="__IMG__/fractional.png">
             </a>
         </div>
@@ -44,19 +44,19 @@
                     </div>
                 {/notempty}
                 <div class="followers_btn text-center">
-                        <a href="{:Url('ucenter/Index/fans',array('uid'=>$user_info['uid']))}" title="{:lang('_FANS_NUMBER_')}">
+                        <a href="{:url('ucenter/Index/fans',array('uid'=>$user_info['uid']))}" title="{:lang('_FANS_NUMBER_')}">
                             <span>{:lang('_FANS_')}</span>
                             <span>{$user_info.fans}</span>
                         </a>
 
-                        <a href="{:Url('ucenter/Index/following',array('uid'=>$user_info['uid']))}" title="{:lang('_FOLLOWERS_NUMBER_')}">
+                        <a href="{:url('ucenter/Index/following',array('uid'=>$user_info['uid']))}" title="{:lang('_FOLLOWERS_NUMBER_')}">
                             <span>{:lang('_FOLLOWERS_')}</span>
                             <span>{$user_info.following}</span>
                         </a>
                 </div>
                 {if condition="is_login() && $user_info['uid'] != get_uid()"}
                     <div class="uc_follow text-center">
-                        {:widget('follow/follow',array('follow_who'=>$user_info['uid']))}
+                        
 
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#iMessagesModal">
     私&nbsp;信</button>

@@ -9,7 +9,7 @@
                 {/if}
                 {:lang('_DE_FOLLOWER_')}({$follow_totalCount|default=0})
             </div>
-            <div class="uc_fl_right uc_more_link"><a href="{:Url('following',array('uid'=>$uid))}">{:lang('_MORE_')}</a></div>
+            <div class="uc_fl_right uc_more_link"><a href="{:url('following',array('uid'=>$uid))}">{:lang('_MORE_')}</a></div>
         </div>
         <div class="col-xs-12 uc_link_info">
             <div class="row">
@@ -44,7 +44,7 @@
                 {/if}
                 {:lang('_DE_FANS_')}({$follow_totalCount|default=0})
             </div>
-            <div class="uc_fl_right uc_more_link"><a href="{:Url('fans',array('uid'=>$uid))}">{:lang('_MORE_')}</a></div>
+            <div class="uc_fl_right uc_more_link"><a href="{:url('fans',array('uid'=>$uid))}">{:lang('_MORE_')}</a></div>
         </div>
         <div class="col-xs-12 uc_link_info">
         <div class="row">
