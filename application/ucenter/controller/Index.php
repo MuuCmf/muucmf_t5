@@ -18,31 +18,30 @@ class Index extends Base
         $this->_tab_menu();
     }
 
-    public function index($uid = null,$page=1)
+    /**
+     * 用户个人主页
+     * @param  [type]  $uid  [description]
+     * @param  integer $page [description]
+     * @return [type]        [description]
+     */
+    public function index($uid = null)
     {
+        if($uid == null){
+            $uid = is_login();
+        }
         $appArr = $this->_tab_menu();
         if (!$appArr) {
             $this->redirect('ucenter/Index/information', array('uid' => $uid));
         }
-        $type=key($appArr);
+        $type = key($appArr);
         if (!isset ($appArr [$type])) {
             $this->error(lang('_ERROR_PARAM_').lang('_EXCLAMATION_').lang('_EXCLAMATION_'));
         }
         $this->assign('type', $type);
         $this->assign('module',$appArr[$type]['data-id']);
-        $this->assign('page',$page);
 
-        ////四处一词 seo
-        //$str = '{$user_info.nickname|text}';
-        //$str_app = '{$appArr.'.$type.'.title|text}';
-        //$this->setTitle($str . lang('_INDEX_TITLE_'));
-        //$this->setKeywords($str . lang('_PAGE_PERSON_') . $str_app);
-        //$this->setDescription($str . lang('_DE_PERSON_') . $str_app . lang('_PAGE_'));
-        //四处一词 seo end
         return $this->fetch();
     }
-
-
 
     private function userInfo($uid = null)
     {
@@ -59,8 +58,6 @@ class Index extends Base
         $user_info['tags']=model('ucenter/UserTagLink')->getUserTag($uid);
 
         $this->assign('user_info', $user_info);
-        
-        //return $user_info;
     }
 
     public function information($uid = null)
@@ -89,6 +86,7 @@ class Index extends Base
     public function getExpandInfo($uid = null, $profile_group_id = null)
     {
         $profile_group_list = $this->_profile_group_list($uid);
+
         foreach ($profile_group_list as &$val) {
             $val['info_list'] = $this->_info_list($val['id'], $uid);
         }
@@ -321,9 +319,10 @@ class Index extends Base
     private function sortApps($apps)
     {
         if (is_array($apps)) {
+            
             foreach ($apps as $row_array) {
                 if (is_array($row_array)) {
-                    $key_array[] = $row_array[$sort_key];
+                    $key_array[] = $row_array['sort'];
                 } else {
                     return false;
                 }
@@ -333,9 +332,8 @@ class Index extends Base
         }
 
         array_multisort($key_array, SORT_ASC, $apps);
-        return $apps;
 
-        //return $this->multi_array_sort($apps, 'sort', SORT_DESC);
+        return $apps;
     }
 
     public function multi_array_sort($multi_array, $sort_key, $sort = SORT_ASC)

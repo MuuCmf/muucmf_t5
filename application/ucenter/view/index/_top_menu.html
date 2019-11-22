@@ -22,8 +22,8 @@
             
             {volist name='appArr' id='vo'}
             {neq name='vo' value=''}
-                <li class="{$tabClass[$key]}">
-                    <a href="{:Url('appList',array('type'=>$key,'uid'=>$user_info['uid']))}"  class="{$tabClass[$key]}">    
+                <li class="">
+                    <a href="{:url('appList',array('type'=>$key,'uid'=>$user_info['uid']))}">
                         {$vo.title}
                     </a>
                 </li>
@@ -31,10 +31,10 @@
             {/volist}
 
             <li class="{$tabClass.user_data}">
-                <a href="{:Url('information',array('uid'=>$user_info['uid']))}" >{:lang('_INFORMATION_')}</a>
+                <a href="{:url('information',array('uid'=>$user_info['uid']))}" >{:lang('_INFORMATION_')}</a>
             </li>
             <li class="{$tabClass.user_fans}">
-                <a href="{:Url('following',array('uid'=>$user_info['uid']))}">{:lang('_FOLLOWERS_NO_SPACE_')}{:lang('_SLASH_')}{:lang('_FANS_')}</a>
+                <a href="{:url('following',array('uid'=>$user_info['uid']))}">{:lang('_FOLLOWERS_NO_SPACE_')}{:lang('_SLASH_')}{:lang('_FANS_')}</a>
             </li>
         </ul>
     </div>
