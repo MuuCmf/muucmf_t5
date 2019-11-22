@@ -34,9 +34,11 @@ class Index extends Base
         if (!isset ($appArr [$type])) {
             $this->error(lang('_ERROR_PARAM_').lang('_EXCLAMATION_').lang('_EXCLAMATION_'));
         }
+        
         $this->assign('uid',$uid);
         $this->assign('type', $type);
         $this->assign('module',$appArr[$type]['data-id']);
+        $this->setTitle($this->userInfo($uid)['nickname'] . lang('_INDEX_TITLE_'));
 
         return $this->fetch();
     }
@@ -56,6 +58,7 @@ class Index extends Base
         $user_info['tags']=model('ucenter/UserTagLink')->getUserTag($uid);
 
         $this->assign('user_info', $user_info);
+        return $user_info;
     }
 
     public function information($uid = null)
