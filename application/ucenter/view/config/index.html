@@ -36,41 +36,29 @@
                                             <input type="text" class="form-control pull-left" id="aUsername" value=""
                                                placeholder="{:lang('_USER_NAME_NOT_SET_')}{:lang('_WAVE_')}">
                                             <a class="pull-left lh32 saveUsername" style="margin-left: 10px">{:lang('_SETTINGS_')}</a>
-
                                         {php}}{/php}
                                     </div>
                                 </div>
-
                                 {php}}{/php}
-
-                                {php}if(check_reg_type('email')){{/php}
                                 <div class="form-group">
                                     <label for="aEmail" class="col-xs-2 control-label">{:lang('_EMAIL_')}</label>
-
                                     <div class="col-xs-10">
-
                                         {$accountInfo.email|default=lang('_SET_NOT_')}
                                         <a class=" lh32"
                                            data-remote="{:url('ucenter/config/changeaccount',array('tag'=>'email'))}"
                                            data-toggle="modal">{:lang('_EMAIL_MODIFY_')}</a>
                                     </div>
                                 </div>
-                                {php}}{/php}
-
-                                {php}if(check_reg_type('mobile')){{/php}
-
                                 <div class="form-group">
                                     <label for="aMobile" class="col-xs-2 control-label">{:lang('_PHONE_')}</label>
 
                                     <div class="col-xs-10">
                                         {$accountInfo.mobile|default=lang('_SET_NOT_')}
-
                                         <a class=" lh32 " style="margin-left: 10px"
                                            data-remote="{:url('ucenter/config/changeaccount',array('tag'=>'mobile'))}"
                                            data-toggle="modal">{:lang('_PHONE_MODIFY_')}</a>
                                     </div>
                                 </div>
-                                {php}}{/php}
                             </div>
                         </div>
                         <div class="row">

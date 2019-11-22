@@ -16,10 +16,11 @@ class Verify extends Controller
         $aType = $aType == 'mobile' ? 'mobile' : 'email';
         $aAction = input('post.action', 'config', 'text');//member或config或find:找回密码操作
         $sendType = input('post.sendtype','verify','text'); //发送的短信类型，如：验证码类、通知类，推广类
+        /*
         if (!check_reg_type($aType)) {
             $str = $aType == 'mobile' ? lang('_PHONE_') : lang('_EMAIL_');
             $this->error($str . lang('_ERROR_OPTIONS_CLOSED_').lang('_EXCLAMATION_'));
-        }
+        }*/
 
         if (empty($aAccount)) {
             $this->error(lang('_ERROR_ACCOUNT_CANNOT_EMPTY_'));
@@ -77,7 +78,7 @@ class Verify extends Controller
                 }
                 //TODO:其它类型该版本暂不写，这里留个记号
                 $res = sendSMS($aAccount, $content, $sendType, $param);
-                break;
+            break;
             case 'email':
                 //发送验证邮箱
                 $content = modC('REG_EMAIL_VERIFY', '{$verify}', 'USERCONFIG');
@@ -85,7 +86,7 @@ class Verify extends Controller
                 $content = str_replace('{$account}', $aAccount, $content);
                 $res = send_mail($aAccount, modC('WEB_SITE_NAME', lang('_MUUCMF_'), 'Config') . lang('_EMAIL_VERIFY_2_'), $content);
                 //return $res;
-                break;
+            break;
         }
         /*
         if($aAction==='find'){//找回密码
