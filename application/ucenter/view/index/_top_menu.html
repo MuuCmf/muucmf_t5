@@ -23,7 +23,7 @@
             {volist name='appArr' id='vo'}
             {neq name='vo' value=''}
                 <li class="">
-                    <a href="{:url('appList',array('type'=>$key,'uid'=>$user_info['uid']))}">
+                    <a href="{:url('index',array('type'=>$key,'uid'=>$user_info['uid']))}">
                         {$vo.title}
                     </a>
                 </li>

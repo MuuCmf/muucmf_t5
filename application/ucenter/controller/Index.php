@@ -26,9 +26,6 @@ class Index extends Base
      */
     public function index($uid = null)
     {
-        if($uid == null){
-            $uid = is_login();
-        }
         $appArr = $this->_tab_menu();
         if (!$appArr) {
             $this->redirect('ucenter/Index/information', array('uid' => $uid));
@@ -37,6 +34,7 @@ class Index extends Base
         if (!isset ($appArr [$type])) {
             $this->error(lang('_ERROR_PARAM_').lang('_EXCLAMATION_').lang('_EXCLAMATION_'));
         }
+        $this->assign('uid',$uid);
         $this->assign('type', $type);
         $this->assign('module',$appArr[$type]['data-id']);
 
@@ -213,27 +211,6 @@ class Index extends Base
         }
         $result['field_data'] = op_t($result['field_data']);
         return $result;
-    }
-
-    public function appList($uid = null, $page = 1, $tab = null)
-    {
-
-        $appArr = $this->_tab_menu();
-
-        if (!$appArr) {
-            $this->redirect('ucenter/Index/information', array('uid' => $uid));
-        }
-
-        $type = text($_GET['type']);
-        if (!isset ($appArr [$type])) {
-            $this->error(lang('_ERROR_PARAM_').lang('_EXCLAMATION_').lang('_EXCLAMATION_'));
-        }
-        $this->assign('type', $type);
-        $this->assign('module',$appArr[$type]['data-id']);
-        $this->assign('page',$page);
-        $this->assign('tab',$tab);
-
-        $this->fetch('index');
     }
 
     /**

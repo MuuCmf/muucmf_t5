@@ -22,7 +22,7 @@
             </ul>
         </div>
 
-        <form action="{$savePostUrl}" method="post" class="form-horizontal">
+        <form action="{$savePostUrl}" method="post" class="form-horizontal ajax-form">
         {php}if($group){{/php}
             {volist name="group" id="vGroup"}
                 <div class="group_list" style="{if condition='$i neq 1'}display: none;{/if}">

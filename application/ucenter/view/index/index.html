@@ -11,10 +11,10 @@
 
             <div class="uc_content clearfix">
                 <div class="col-md-8">
-                    {:widget($module.'/UcenterBlock/render',array('uid'=>$user_info['uid']))}
+                    {:widget($module.'/UcenterBlock/render',array('uid'=>$uid))}
                 </div>
                 <div class="col-md-4 uc_other_link">
-                    <include file="_right_link"/>
+                    {include file="index/_right_link"/}
                 </div>
             </div>
         </div>

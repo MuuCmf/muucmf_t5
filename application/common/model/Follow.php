@@ -89,25 +89,23 @@ class Follow extends Model
     public function getFans($uid, $fields)
     {
         $map['follow_who'] = $uid;
-        $fans = $this->where($map)->field('who_follow')->order('create_time desc')->paginate(10)->each(
-            function($item,$key){
-                $item->user = query_user($fields, $item->who_follow);
-            }
-        );
-
-        return $fans;
+        $list = $this->where($map)->order('create_time desc')->field('who_follow')->paginate(10,false,['query'=>request()->param()]);
+        foreach($list as $vo){
+            $vo['user'] = query_user($fields, $vo['who_follow']);
+        }
+        
+        return $list;
     }
 
     public function getFollowing($uid, $fields)
     {
         $map['who_follow'] = $uid;
-        $fans = $this->where($map)->field('follow_who')->order('create_time desc')->paginate(10)->each(
-            function($item,$key){
-                $item->user = query_user($fields, $item->who_follow);
-            }
-        );
-
-        return $fans;
+        $list = $this->where($map)->order('create_time desc')->field('follow_who')->paginate(10,false,['query'=>request()->param()]);
+        foreach($list as $vo){
+            $vo['user'] = query_user($fields, $vo['follow_who']);
+        }
+        
+        return $list;
     }
 
 

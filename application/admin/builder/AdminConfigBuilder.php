@@ -362,7 +362,7 @@ class AdminConfigBuilder extends AdminBuilder
         $this->savePostUrl($url);
 
         $attr = array();
-        $attr['class'] = "btn submit-btn ajax-post btn-success";
+        $attr['class'] = "btn submit-btn btn-success";
         $attr['id'] = 'submit';
         $attr['type'] = 'submit';
         $attr['target-form'] = 'form-horizontal';
