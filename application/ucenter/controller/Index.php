@@ -212,7 +212,7 @@ class Index extends Base
                 $result['field_data'] = isset($data['field_content']['field_data']) ? date("Y-m-d", $data['field_content']['field_data']) : "还未设置";
                 break;
         }
-        $result['field_data'] = op_t($result['field_data']);
+        $result['field_data'] = text($result['field_data']);
         return $result;
     }
 
