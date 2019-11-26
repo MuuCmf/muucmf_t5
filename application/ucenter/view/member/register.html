@@ -194,6 +194,18 @@
 
                             <div class="clearfix"></div>
                         </div>
+                        <div class="form-group">
+                            <div class="password_block" style="position: relative;display: table;border-collapse: separate;">
+                                <input type="password" class="form-control input-lg new-input" check-length="6,30"  placeholder="再次输入密码"  name="confirm_password">
+
+                                <div class="input-group-addon">
+                                    <a href="javascript:void(0);" id="change_show"><i class="icon icon-eye-open"></i></a>
+                                </div>
+                            </div>
+                            <span class="help-block">请输入密码</span>
+
+                            <div class="clearfix"></div>
+                        </div>
                         {if condition="check_verify_open('reg')"}
                             <div class="form-group">
                                 <label for="verifyCode" class=".sr-only col-xs-12"

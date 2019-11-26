@@ -35,8 +35,8 @@ class Member extends Controller
             
             $return = model('ActionLimit')->checkActionLimit('reg', 'ucenter_member', 1, 1, true);
             
-            if ($return && !$return['state']) {
-                $this->error($return['info'], $return['url']);
+            if ($return && !$return['code']) {
+                $this->error($return['msg'], $return['url']);
             }
 
             //昵称注册开关
