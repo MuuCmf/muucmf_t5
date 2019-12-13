@@ -2,6 +2,7 @@
 <html>
 <head>
     {include file="common@public/head"/}
+    <link href="__CSS__/ucenter.min.css" type="text/css" rel="stylesheet">
 </head>
 <body>
 <div id="main-container" class="container">
@@ -98,21 +99,21 @@
                                             <input type="text" id="email" class="form-control form_check new-input" check-type="UserEmail" check-url="{:url('ucenter/member/checkAccount')}" {if condition='$key neq 0'}disabled="disabled"{/if}
                                                    placeholder="{:lang('_PLACEHOLDER_EMAIL_INPUT_')}" name="username">
                                             <input type="hidden" name="reg_type" value="email" 
-                                            {if condition='$key neq 0'}
-                                                disabled="disabled"
-                                            {/if}>
+                                            {if condition='$key neq 0'}disabled="disabled"{/if}>
                                             
                                             <div class="clearfix"></div>
                                         </div>
 
                                         {php}if(modC('EMAIL_VERIFY_TYPE', 0, 'USERCONFIG') == 2){{/php}
-                                        <div class="form-group">
-                                            <input type="text" class="form-control new-input pull-left" placeholder="{:lang('_VERIFY_CODE_')}" {if condition='$key neq 0'}disabled="disabled"{/if} name="reg_verify" style="width: 278px">
-
-                                            <a class="btn btn-danger" data-role="getVerify" style="margin-left: 10px">
-                                                {:lang('_EMAIL_VERIFY_')}
-                                            </a>
-                                            
+                                        <div class="form-group row">
+                                            <div class="col-xs-8">
+                                                <input type="text" class="form-control new-input pull-left" placeholder="{:lang('_VERIFY_CODE_')}" {if condition='$key neq 0'}disabled="disabled"{/if} name="reg_verify">
+                                            </div>
+                                            <div class="col-xs-4">
+                                                <a class="btn btn-block btn-danger" data-role="getVerify">
+                                                    {:lang('_EMAIL_VERIFY_')}
+                                                </a>
+                                           </div> 
                                             <div class="clearfix"></div>
                                         </div>
                                         {php}}{/php}
@@ -137,11 +138,13 @@
 
                                         {php}if(modC('MOBILE_VERIFY_TYPE', 0, 'USERCONFIG') == 1){{/php}
 
-                                        <div class="form-group">
-                                            <input type="text" class="form-control new-input pull-left" placeholder="{:lang('_VERIFY_CODE_')}" name="reg_verify" {if condition='$key neq 0'}disabled="disabled"{/if} style="width: 278px">
-
-                                            <a class="btn btn-danger" data-role="getVerify" style="margin-left: 10px">{:lang('_PHONE_VERIFY_')}</a>
-                                            
+                                        <div class="form-group row">
+                                            <div class="col-xs-8">
+                                                <input type="text" class="form-control new-input pull-left" placeholder="{:lang('_VERIFY_CODE_')}" name="reg_verify" {if condition='$key neq 0'}disabled="disabled"{/if}>
+                                            </div>
+                                            <div class="col-xs-4">
+                                                <a class="btn btn-block btn-danger" data-role="getVerify">{:lang('_PHONE_VERIFY_')}</a>
+                                            </div>
                                             <div class="clearfix"></div>
                                         </div>
                                         {php}}{/php}
@@ -152,7 +155,6 @@
                         {/volist}
                         {eq name="nicknameSwitch" value='1'}
                         <div class="form-group">
-                            <label for="nickname" class=".sr-only col-xs-12" style="display: none"></label>
                             <input type="text" id="nickname" class="form-control form_check new-input" check-type="Nickname"  check-url="{:url('ucenter/member/checkNickname')}" placeholder="请输入昵称" name="nickname">
                             <div class="clearfix"></div>
                         </div>
@@ -176,18 +178,15 @@
                             <div class="clearfix"></div>
                         </div>
                         {if condition="check_verify_open('reg')"}
-                            <div class="form-group">
-                                <label for="verifyCode" class=".sr-only col-xs-12"
-                                       style="display: none"></label>
-
-                                <div class="col-xs-4" style="padding: 0px;">
+                            <div class="form-group row">
+                                <div class="col-xs-8">
                                     <input type="text" id="verifyCode" class="form-control new-input" placeholder="验证码"
                                            errormsg="请填写正确的验证码" nullmsg="请填写验证码" datatype="*5-5" name="verify">
                                 </div>
-                                <div class="col-xs-8 lg_lf_fm_verify">
+                                <div class="col-xs-4 lg_lf_fm_verify">
                                     <img class="verifyimg reloadverify img-responsive" alt="点击切换"
                                          src="{:captcha_src(1)}"
-                                         style="cursor:pointer; height:43px">
+                                         style="cursor:pointer; height:32px">
                                 </div>
                                 <div class="col-xs-12 Validform_checktip text-warning lg_lf_fm_tip"></div>
                                 <div class="clearfix"></div>

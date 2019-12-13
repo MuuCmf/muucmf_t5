@@ -20,8 +20,12 @@ class RegStep extends Controller
         $aStep = input('step','','text');
         //调用方法输出参数
         if(method_exists($this,$aStep)){
-
             $this->$aStep();
+        }
+
+        if(check_step_can_skip($aStep)){
+            $url = url('ucenter/member/step', ['step' => get_next_step($aStep)]);
+            $this->redirect('ucenter/member/step', ['step' => get_next_step($aStep)]);
         }
 
         echo $this->fetch('ucenter@step/'.$aStep);
@@ -60,7 +64,7 @@ class RegStep extends Controller
             $this->assign('tag_list',$tag_list);
         }
         if(!count($tag_list)){
-            redirect(Url('ucenter/member/step', array('step' => get_next_step('set_tag'))));
+            redirect(url('ucenter/member/step', array('step' => get_next_step('set_tag'))));
         }
         $myTags=model('ucenter/UserTagLink')->getUserTag($aUid);
         $this->assign('my_tag',$myTags);
@@ -90,7 +94,7 @@ class RegStep extends Controller
     {
         $profile_group_list = $this->_profile_group_list($uid);
         if(!count($profile_group_list)){
-            redirect(Url('ucenter/member/step', ['step' => get_next_step('expand_info')]));
+            redirect(url('ucenter/member/step', ['step' => get_next_step('expand_info')]));
         }
         foreach ($profile_group_list as &$v) {
             $v['fields']=$this->_info_list($v['id']);;

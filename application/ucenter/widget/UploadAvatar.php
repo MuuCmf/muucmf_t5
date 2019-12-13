@@ -91,7 +91,7 @@ class UploadAvatar extends Controller
      */
     private function getImageUrlByRoleId($role_id, $size)
     {
-        $avatar_id=cache('Role_Avatar_Id_'.$role_id);
+        $avatar_id = cache('Role_Avatar_Id_'.$role_id);
 
         if(!$avatar_id){
             $map = getRoleConfigMap('avatar', $role_id);
@@ -100,9 +100,9 @@ class UploadAvatar extends Controller
         }
         if ($avatar_id) {
             if ($size != 0) {
-                $path=getThumbImageById($avatar_id['value'], $size, $size);
+                $path = getThumbImageById($avatar_id, $size, $size);
             }else{
-                $path=getThumbImageById($avatar_id['value']);
+                $path = getThumbImageById($avatar_id);
             }
         }else{//角色没有默认
             if ($size != 0) {
