@@ -299,7 +299,7 @@ ul {
 
   .form-group {
     position:relative;
-    margin-bottom:5px;
+    margin-bottom:10px;
   }
 
   .new-input {
@@ -309,7 +309,7 @@ ul {
   .existing-account {
     text-align:center;
     line-height: 36px;
-    margin-top:60px;
+    margin-top:10px;
     border-top:1px solid #f6f6f6;
   }
 
@@ -537,6 +537,7 @@ ul {
   right:0;
   bottom:0;
   left:0;
+  z-index: 9999999;
   text-align: center;
     img{
         vertical-align: middle;
