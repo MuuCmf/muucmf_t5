@@ -4823,6 +4823,16 @@ INSERT INTO `muucmf_ucenter_score_type` (`id`, `title`, `status`, `unit`) VALUES
 (3, '贡献', 1, '元'),
 (4, '余额', 1, '点');
 
+DROP TABLE IF EXISTS `muucmf_sync_login`;
+CREATE TABLE IF NOT EXISTS `muucmf_sync_login` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `uid` int(11) NOT NULL,
+  `type_uid` varchar(255) NOT NULL,
+  `type` varchar(255) NOT NULL,
+  `is_sync` tinyint(4) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
 DROP TABLE IF EXISTS `muucmf_ucenter_setting`;
 CREATE TABLE IF NOT EXISTS `muucmf_ucenter_setting` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '设置ID',

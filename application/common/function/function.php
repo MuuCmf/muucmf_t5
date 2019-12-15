@@ -715,43 +715,6 @@ function get_some_day($some = 30, $day = null)
 }
 
 /**
- * 获取指定表字段信息，可定义多个组合查询条件（查阅thinkphp）返回查询字段和ID
- * @param string $map 数组：条件字段以及条件（array('level'=>1,'name'=>array('like','%UUIMA'));）
- * @param string $field 需要返回的字段
- * @param string $table 查询表
- * @param string $yesnoid 是否返回ID(预留·)
- * @return  NULL, string, unknown, mixed, object>
- * @author MingYang<xint5288@126.com>
- */
-function get_data_field_id($map = null, $field = null, $table = null, $yesnoid = '')
-{
-    if (empty($table) || empty($field)) {
-        return false;
-    }
-
-    if (empty($map)) {
-        $data = D($table)->select();
-        foreach ($data as $key => $val) {
-            $list[$key]['id'] = $val['id'];
-            $list[$key]['value'] = $val[$field];
-        }
-        return $list;
-    } else {
-        if (empty($yesnoid)) {
-            $data = D($table)->where($map)->select();
-            foreach ($data as $key => $val) {
-                $list[$key]['id'] = $val['id'];
-                $list[$key]['value'] = $val[$field];
-            }
-        } else {
-            $list = D($table)->where($map)->getField($field);
-        }
-        return $list;
-    }
-}
-
-
-/**
  * convert_url_query  转换url参数为数组
  * @param $query
  * @return array|string

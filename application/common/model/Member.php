@@ -160,7 +160,7 @@ class Member extends Model
         /* 登录用户 */
         $this->autoLogin($user, $remember);
         //记录行为
-        model('action')->action_log('user_login', 'member', $uid, $uid);
+        model('common/action')->action_log('user_login', 'member', $uid, $uid);
         //挂载登录成功后钩子
         hook('login_after',['uid'=>$uid]);
         return true;

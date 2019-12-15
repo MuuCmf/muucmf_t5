@@ -34,6 +34,8 @@ class Common extends Controller
         $this->initUserBaseInfo();
         //初始化统计代码
         $this->initCountCode();
+
+        $this->wxoauth();
     }
 
     /**
@@ -167,6 +169,16 @@ class Common extends Controller
             }
 
             $this->error($return['msg'],$url);
+        }
+    }
+
+    public function wxoauth()
+    {
+        if(!is_login()){
+            if(isWeixinBrowser() && addons_status('wxoauth')){
+                $requer_url = request()->url(true);
+                hook('wxoauth',['requer_url'=>$requer_url]);
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 <?php
 use think\Loader;
 use think\Hook;
+use think\Db;
 /**
  * 处理插件钩子
  * @param string $hook 钩子名称
@@ -85,4 +86,19 @@ function addons_url($url, $param = [], $suffix = true, $domain = false)
     $actions = "{$addons}-{$controller}-{$action}";
 
     return url("addons/execute/{$actions}", $param, $suffix, $domain);
+}
+
+/**
+ * 判断插件是否安装并启用
+ * @param  [type] $name [description]
+ * @return [type]       [description]
+ */
+function addons_status($name)
+{
+    $map['name'] = $name;
+    $map['is_setup'] = 1;
+    $map['status'] = 1;
+    $res = Db::name('addons')->where($map)->find();
+
+    return $res;
 }
