@@ -9,17 +9,8 @@ use think\Db;
  */
 class Common extends Controller
 {
-    
-    public $_seo = [
-        'title' => '',
-        'setKeywords' => '', 
-        'description' => ''
-    ];
-
 	public function _initialize()
     {
-        //获取seo数据
-        $this->initSeo();
  		//获取站点LOGO
  		$this->initLogo();
         //获取前端导航菜单
@@ -34,18 +25,8 @@ class Common extends Controller
         $this->initUserBaseInfo();
         //初始化统计代码
         $this->initCountCode();
-
+        //微信授权登陆
         $this->wxoauth();
-    }
-
-    /**
-     * 初始化seo数据
-     */
-    private function initSeo()
-    {
-        //seo 
-        $seo_meta = model('common/SeoRule')->getMetaOfCurrentPage();
-        $this->assign('seo_meta',$seo_meta);
     }
 
     /**
@@ -134,22 +115,28 @@ class Common extends Controller
      *
      * @param      <type>  $title  The title
      */
+    public $_seo = [
+        'title' => '',
+        'setKeywords' => '', 
+        'description' => ''
+    ];
+
     public function setTitle($title)
     {
         $this->_seo['title'] = $title;
-        $this->assign('seo_meta', $this->_seo);
+        $this->assign('set_meta', $this->_seo);
     }
 
     public function setKeywords($keywords)
     {
         $this->_seo['keywords'] = $keywords;
-        $this->assign('seo_meta', $this->_seo);
+        $this->assign('set_meta', $this->_seo);
     }
 
     public function setDescription($description)
     {
         $this->_seo['description'] = $description;
-        $this->assign('seo_meta', $this->_seo);
+        $this->assign('set_meta', $this->_seo);
     }
 
     public function checkAuth($rule ='',$except_uid =-1,$msg = ''){

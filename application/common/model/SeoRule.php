@@ -2,14 +2,36 @@
 namespace app\common\Model;
 
 use think\Model;
+use think\View;
 
 class SeoRule extends Model
 {
-    public function getMetaOfCurrentPage()
+    public function getMetaOfCurrentPage($vars)
     {
         $result = $this->getMeta(request()->module(), request()->controller(), request()->action());
+        
+        //替换META中的变量
+        foreach ($result as $key => &$value) {
+            $value = $this->seo_replace_variables($value,$vars);
+        }
+        unset($value);
+
+        //返回被替换的META信息
         return $result;
     }
+
+    public function seo_replace_variables($string,$vars)
+    {
+        //如果输入的文字是空的，那就直接返回空的字符串好了。
+        if (!$string) {
+            return '';
+        }
+        $view = new View();
+        $view->assign('website_name',modC('WEB_SITE_NAME','MuuCmf','Config'));
+        //调用ThinkPHP中的解析引擎解析变量
+        return $view->display($string,$vars);
+    }
+
 
     private function getMeta($module, $controller, $action)
     {

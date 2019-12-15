@@ -1,14 +1,24 @@
 {:hook('syncMeta')}
-    
-    {notempty name="$seo_meta['title']"}
-        <title>{$seo_meta['title']}-{:modC('WEB_SITE_NAME',lang('_MUUCMF_'),'Config')}</title>
+    {php}
+    $seo_meta = model('common/SeoRule')->getMetaOfCurrentPage($vars);
+    {/php}
+    {notempty name="$set_meta['title']"}
+        <title>{$set_meta['title']}-{:modC('WEB_SITE_NAME',lang('_MUUCMF_'),'config')}</title>
     {else/}
-        <title>{:modC('WEB_SITE_NAME',lang('_MUUCMF_'),'Config')}</title>
+        {notempty name="$seo_meta['title']"}
+            <title>{$seo_meta['title']}-{:modC('WEB_SITE_NAME',lang('_MUUCMF_'),'config')}</title>
+        {else/}
+            <title>{:modC('WEB_SITE_NAME',lang('_MUUCMF_'),'Config')}</title>
+        {/notempty}
     {/notempty}
-    {notempty name="$seo_meta['keywords']"}
+    {notempty name="$set_meta['keywords']"}
+        <meta name="keywords" content="{$set_meta['keywords']}" />
+    {else/}
         <meta name="keywords" content="{$seo_meta['keywords']}" />
     {/notempty}
-    {notempty name="$seo_meta['description']"}
+    {notempty name="$set_meta['description']"}
+        <meta name="description" content="{$set_meta['description']}" />
+    {else/}
         <meta name="description" content="{$seo_meta['description']}" />
     {/notempty}
     <!-- zui -->
