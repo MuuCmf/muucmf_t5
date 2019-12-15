@@ -57,7 +57,7 @@ class Addons extends Model
             }
         }
         unset($val);
-        
+
         return $list;
     }
 
@@ -146,8 +146,9 @@ class Addons extends Model
      */
     public function getIcon($name) 
     {
-        $file = PUBLIC_PATH . '/addons/'.$name.'/images/icon.png';
-        if(is_file($file)){
+        $file = PUBLIC_PATH . '/static/addons/'.$name.'/images/icon.png';
+        
+        if(file_exists($file)){
             return STATIC_URL . '/addons/'.$name.'/images/icon.png';
         }else{
             return STATIC_URL . '/admin/images/plugin.png';
