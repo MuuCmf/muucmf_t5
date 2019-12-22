@@ -96,6 +96,7 @@ return array(
     '_ERROR_'=> '错误',
     '_SUCCESS_'=>'成功',
     '_DISABLE_' => '禁用',
+    '_ENABLE_' => '启用',
     '_ENABLED_' => '启用',
     '_GO_BACK_' => '返回',
     '_JUMP_NOW_' => '立即跳转',

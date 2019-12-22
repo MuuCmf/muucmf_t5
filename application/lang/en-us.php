@@ -96,6 +96,7 @@ return array(
     '_ERROR_'=> 'error',
     '_SUCCESS_'=>'success',
     '_DISABLE_' => 'Disable',
+    '_ENABLE_' => 'Enable',
     '_ENABLED_' => 'Enable',
     '_GO_BACK_' => 'Go back',
     '_JUMP_NOW_' => 'Jump now',
