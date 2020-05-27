@@ -20,7 +20,7 @@
         "topthink/think-captcha": "^1.0",
         "topthink/think-image": "^1.0.7",
         "mtdowling/cron-expression": "^1.2",
-        "phpmailer/phpmailer": "^5.2",
+        "phpmailer/phpmailer": "^6.1",
         "overtrue/pinyin": "~3.0",
         "phpoffice/phpexcel": "^1.8",
         "pclzip/pclzip": "^2.8",
